@@ -54,26 +54,26 @@ COMMANDS:
   cycle list --team <team>                List cycles
   cycle get <id>                          Cycle details
 
-IDS: Issue keys (ENG-123), UUIDs, or URL slugs accepted.
-     --team accepts team key (ENG) or name.
-     --project/project/roadmap <id> accept UUID, slug ID, or name.
-     Document <id> accepts UUID or slug ID.
+IDS: Issue keys (ENG-123), UUIDs, or slugs. --team accepts key (ENG) or name.
+     Project/roadmap/document <id> accept UUID, slug ID, or name.
 
 FILTERS (issue list/search): --team --status --assignee --priority --label --cycle --project --limit
 FILTERS (document list): --project --creator --limit
 
 PAGINATION: --limit <n> --cursor <token>
-  Output: { "items": [...], "pagination": { "hasMore": true, "nextCursor": "..." } }
+  { "items": [...], "pagination": { "hasMore": true, "nextCursor": "..." } }
 
 OUTPUT: JSON to stdout. Errors: { "error": "..." } to stderr with valid values.
 
-PRIORITY: none | urgent | high | medium | low
-PROJECT STATUS: backlog | planned | started | paused | completed | canceled
+TRUNCATION: description/body/content truncated to ~200 chars + companion *Length field.
+  --expand <field,...>  Expand specific    --full  Expand all (e.g. lin --full issue get overview ENG-123)
+
+PRIORITY: none|urgent|high|medium|low
+PROJECT STATUS: backlog|planned|started|paused|completed|canceled
 ESTIMATES: Team-specific (fibonacci|linear|exponential|tShirt). Use "team get <id>" for values.
 
 AUTH: Set LINEAR_API_KEY env var, or: lin auth login <key>
-  Multiple workspaces: lin auth login <key1>, lin auth login <key2>
-  Switch: lin auth workspace switch <alias>
+  Multiple workspaces supported. Switch: lin auth workspace switch <alias>
 `;
 
 export function registerUsageCommand({ program }: { program: Command }): void {

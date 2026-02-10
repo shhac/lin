@@ -129,6 +129,20 @@ lin cycle list --team ENG --current
 lin cycle get <id>
 ```
 
+## Truncation
+
+Long text fields (`description`, `body`, `content`) are truncated to ~200 characters by default. A companion `*Length` field (e.g. `descriptionLength`) always shows the full size.
+
+To see full content, use `--expand` or `--full`:
+
+```bash
+lin --full issue get overview ENG-123                    # expand all fields
+lin --expand description issue get overview ENG-123      # expand specific field
+lin --expand description,content project get details <id>  # expand multiple
+```
+
+These are global flags — place them before the command or after it.
+
 ## IDs
 
 All commands accept multiple ID formats:

@@ -118,3 +118,10 @@ Run `lin usage` for concise LLM-optimized docs.
 | `--project <name\|slug\|id>`   | Filter by project (ID, slug, or name) |
 | `--limit <n>`                  | Max results per page                  |
 | `--cursor <token>`             | Pagination cursor                     |
+
+## Global flags
+
+| Flag                    | Description                                                         |
+| ----------------------- | ------------------------------------------------------------------- |
+| `--expand <field,...>`  | Expand specific truncated fields (e.g. `--expand description,body`) |
+| `--full`                | Expand all truncated fields                                         |

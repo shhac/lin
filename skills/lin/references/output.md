@@ -8,6 +8,32 @@ Empty/null fields are pruned automatically — missing keys mean no value, not `
 
 Error messages include valid values when input is invalid (e.g., unknown status names list all valid states).
 
+## Truncation
+
+Fields named `description`, `body`, or `content` are truncated to ~200 characters by default. A companion `*Length` field always shows the full character count.
+
+**Default (truncated):**
+
+```json
+{
+  "description": "This is the beginning of a long project description that goes on for many paragraphs...",
+  "descriptionLength": 1847
+}
+```
+
+**With `--full` or `--expand description` (expanded):**
+
+```json
+{
+  "description": "This is the beginning of a long project description that goes on for many paragraphs and includes detailed specifications, requirements, and implementation notes...",
+  "descriptionLength": 1847
+}
+```
+
+The `*Length` field is always present when the source field has content, regardless of truncation. Use it to detect whether content was truncated (`description.length < descriptionLength`).
+
+Truncatable fields: `description`, `body`, `content`. Global flags: `--expand <field,...>` or `--full`.
+
 ## List output
 
 List commands return:
