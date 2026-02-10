@@ -32,7 +32,7 @@
     "typescript": "^5.8.2"
   },
   "simple-git-hooks": {
-    "pre-commit": "bun run lintf && bun run format && git add -A"
+    "pre-commit": "bun run lintf && bun run format"
   },
   "engines": {
     "node": ">=24"
