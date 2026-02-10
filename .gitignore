@@ -9,6 +9,7 @@ bun.lockb
 # build
 dist
 release
+*.bun-build
 
 # local
 .cache
@@ -20,6 +21,10 @@ release
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# claude
+.claude/
+CLAUDE.local.md
 
 # design docs
 design-docs/
