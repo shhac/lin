@@ -85,8 +85,7 @@ Project commands accept UUID, slug ID, or name.
 ```bash
 lin project search "migration"
 lin project list --status started
-lin project get overview "CRM Actions"   # accepts UUID, slug, or name
-lin project get details <id>             # full markdown content
+lin project get overview "CRM Actions"   # accepts UUID, slug, or name — includes content (markdown body)
 lin project get issues <id>
 lin project new "New Feature" --team ENG --status planned --lead "alice@example.com"
 lin project update status <id> completed
@@ -138,7 +137,7 @@ To see full content, use `--expand` or `--full`:
 ```bash
 lin --full issue get overview ENG-123                    # expand all fields
 lin --expand description issue get overview ENG-123      # expand specific field
-lin --expand description,content project get details <id>  # expand multiple
+lin --expand description,content project get overview <id>  # expand multiple
 ```
 
 These are global flags — place them before the command or after it.

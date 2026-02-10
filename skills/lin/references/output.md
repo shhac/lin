@@ -145,7 +145,7 @@ Includes comment count, branch name, and attachments (e.g., linked GitHub PRs):
 }
 ```
 
-Use `project get details <id>` for the full markdown body.
+Use `project get overview <id>` with `--expand content` or `--full` for the full markdown body.
 
 ## Roadmap list items
 

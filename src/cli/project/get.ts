@@ -24,6 +24,7 @@ export function registerGet(project: Command): void {
           url: p.url,
           name: p.name,
           description: p.description,
+          content: p.content,
           status: p.state,
           progress: p.progress,
           lead: lead ? { id: lead.id, name: lead.name } : null,
