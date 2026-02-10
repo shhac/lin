@@ -14,7 +14,10 @@ import { registerUserCommand } from "./cli/user/index.ts";
 
 const program = new Command();
 program.name("lin").description("Linear CLI for humans and LLMs").version(getPackageVersion());
-program.option("--expand <fields>", "Expand truncated fields (comma-separated: description,body,content)");
+program.option(
+  "--expand <fields>",
+  "Expand truncated fields (comma-separated: description,body,content)",
+);
 program.option("--full", "Show full content for all truncated fields");
 program.hook("preAction", (thisCommand) => {
   const opts = thisCommand.opts();

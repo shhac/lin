@@ -121,7 +121,7 @@ Run `lin usage` for concise LLM-optimized docs.
 
 ## Global flags
 
-| Flag                    | Description                                                         |
-| ----------------------- | ------------------------------------------------------------------- |
-| `--expand <field,...>`  | Expand specific truncated fields (e.g. `--expand description,body`) |
-| `--full`                | Expand all truncated fields                                         |
+| Flag                   | Description                                                         |
+| ---------------------- | ------------------------------------------------------------------- |
+| `--expand <field,...>` | Expand specific truncated fields (e.g. `--expand description,body`) |
+| `--full`               | Expand all truncated fields                                         |

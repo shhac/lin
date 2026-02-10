@@ -12,16 +12,11 @@ const ELLIPSIS = "...";
 // Module-level state, configured once per CLI invocation
 let expandedFields: Set<string> | "all" = new Set();
 
-export function configureTruncation(opts: {
-  expand?: string;
-  full?: boolean;
-}): void {
+export function configureTruncation(opts: { expand?: string; full?: boolean }): void {
   if (opts.full) {
     expandedFields = "all";
   } else if (opts.expand) {
-    expandedFields = new Set(
-      opts.expand.split(",").map((s) => s.trim().toLowerCase()),
-    );
+    expandedFields = new Set(opts.expand.split(",").map((s) => s.trim().toLowerCase()));
   } else {
     expandedFields = new Set();
   }
@@ -58,9 +53,7 @@ export function applyTruncation(data: unknown): unknown {
     for (const [key, value] of Object.entries(obj)) {
       if (TRUNCATABLE_FIELDS.has(key) && typeof value === "string") {
         result[`${key}Length`] = value.length;
-        result[key] = shouldExpand(key)
-          ? value
-          : truncateString(value, DEFAULT_MAX_LENGTH);
+        result[key] = shouldExpand(key) ? value : truncateString(value, DEFAULT_MAX_LENGTH);
       } else if (typeof value === "object" && value !== null) {
         result[key] = applyTruncation(value);
       } else {
