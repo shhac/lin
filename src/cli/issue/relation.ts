@@ -56,9 +56,7 @@ export function registerRelation(issue: Command): void {
       try {
         const normalized = opts.type.toLowerCase();
         if (!VALID_TYPES.includes(normalized)) {
-          printError(
-            `Invalid relation type: "${opts.type}". Valid values: ${VALID_TYPES_DISPLAY}`,
-          );
+          printError(`Invalid relation type: "${opts.type}". Valid values: ${VALID_TYPES_DISPLAY}`);
           return;
         }
         const client = getClient();

@@ -1,4 +1,4 @@
-import type { LinearClient, Project, User } from "@linear/sdk";
+import type { LinearClient, Project, Roadmap, User } from "@linear/sdk";
 
 export async function resolveUser(client: LinearClient, input: string): Promise<User> {
   const results = await client.users();
@@ -39,5 +39,24 @@ export async function resolveProject(client: LinearClient, input: string): Promi
       throw new Error(`Project not found: "${input}". Provide a UUID, slug ID, or exact name.`);
     }
     return project;
+  }
+}
+
+export async function resolveRoadmap(client: LinearClient, input: string): Promise<Roadmap> {
+  // Try direct lookup first (works for UUIDs)
+  try {
+    return await client.roadmap(input);
+  } catch {
+    // Fall back to search by slug or name (client.roadmaps() has no filter param)
+    const results = await client.roadmaps();
+    const lower = input.toLowerCase();
+    const match = results.nodes.find((r) => r.slugId === input || r.name.toLowerCase() === lower);
+    if (!match) {
+      const names = results.nodes.map((r) => `${r.name} (${r.slugId})`).join(", ");
+      throw new Error(
+        `Roadmap not found: "${input}". Known roadmaps: ${names || "none"}. Provide a UUID, slug ID, or exact name.`,
+      );
+    }
+    return match;
   }
 }

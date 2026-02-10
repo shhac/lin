@@ -13,10 +13,7 @@ export function registerStates(team: Command): void {
         const states = await client.workflowStates({
           filter: {
             team: {
-              or: [
-                { key: { eqIgnoreCase: teamInput } },
-                { name: { eqIgnoreCase: teamInput } },
-              ],
+              or: [{ key: { eqIgnoreCase: teamInput } }, { name: { eqIgnoreCase: teamInput } }],
             },
           },
         });
