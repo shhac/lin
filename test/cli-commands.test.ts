@@ -24,7 +24,18 @@ describe("CLI command registration", () => {
   test("root shows help with all top-level commands", () => {
     const output = runCli("--help");
     // All resource commands should be listed
-    for (const cmd of ["auth", "project", "roadmap", "issue", "team", "user", "label", "cycle", "usage"]) {
+    for (const cmd of [
+      "auth",
+      "project",
+      "roadmap",
+      "document",
+      "issue",
+      "team",
+      "user",
+      "label",
+      "cycle",
+      "usage",
+    ]) {
       expect(output).toContain(cmd);
     }
   });
@@ -55,11 +66,27 @@ describe("CLI command registration", () => {
     expect(output).toContain("get");
   });
 
+  test("document --help shows search, list, get, new, update subcommands", () => {
+    const output = runCli("document --help");
+    for (const cmd of ["search", "list", "get", "new", "update"]) {
+      expect(output).toContain(cmd);
+    }
+  });
+
   test("issue --help shows all subcommands", () => {
     const output = runCli("issue --help");
     for (const cmd of [
-      "search", "list", "get", "new", "update", "comment",
-      "relation", "archive", "unarchive", "delete", "attachment",
+      "search",
+      "list",
+      "get",
+      "new",
+      "update",
+      "comment",
+      "relation",
+      "archive",
+      "unarchive",
+      "delete",
+      "attachment",
     ]) {
       expect(output).toContain(cmd);
     }
@@ -145,6 +172,13 @@ describe("CLI nested command registration", () => {
     expect(output).toContain("remove");
   });
 
+  test("document update --help shows title, content, project", () => {
+    const output = runCli("document update --help");
+    expect(output).toContain("title");
+    expect(output).toContain("content");
+    expect(output).toContain("project");
+  });
+
   test("roadmap get --help shows overview and projects", () => {
     const output = runCli("roadmap get --help");
     expect(output).toContain("overview");
@@ -187,6 +221,29 @@ describe("CLI option registration", () => {
   test("cycle list --help shows --team required option", () => {
     const output = runCli("cycle list --help");
     expect(output).toContain("--team");
+  });
+
+  test("document list --help shows filter options", () => {
+    const output = runCli("document list --help");
+    expect(output).toContain("--project");
+    expect(output).toContain("--creator");
+    expect(output).toContain("--limit");
+    expect(output).toContain("--include-archived");
+  });
+
+  test("document new --help shows optional flags", () => {
+    const output = runCli("document new --help");
+    expect(output).toContain("--project");
+    expect(output).toContain("--content");
+    expect(output).toContain("--icon");
+    expect(output).toContain("--color");
+  });
+
+  test("document search --help shows search options", () => {
+    const output = runCli("document search --help");
+    expect(output).toContain("--include-comments");
+    expect(output).toContain("--include-archived");
+    expect(output).toContain("--limit");
   });
 
   test("project list --help shows filter and limit options", () => {

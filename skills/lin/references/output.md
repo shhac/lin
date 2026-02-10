@@ -36,6 +36,43 @@ Single-item commands (e.g., `issue get overview`, `team get`) return the object 
 }
 ```
 
+## Document list items
+
+Documents in list/search output:
+
+```json
+{
+  "id": "...",
+  "slugId": "api-design-doc-a1b2c3",
+  "title": "API Design Doc",
+  "url": "https://linear.app/.../document/...",
+  "project": { "id": "...", "name": "CRM Actions" },
+  "creator": "Alice Example",
+  "updatedAt": "2025-01-15T10:30:00.000Z"
+}
+```
+
+## Document detail (`document get`)
+
+Includes full markdown content:
+
+```json
+{
+  "id": "...",
+  "slugId": "api-design-doc-a1b2c3",
+  "title": "API Design Doc",
+  "content": "# Overview\n\nThis document describes...",
+  "url": "https://linear.app/.../document/...",
+  "icon": "📄",
+  "color": "#5e6ad2",
+  "project": { "id": "...", "name": "CRM Actions", "slugId": "crm-actions-d0f9" },
+  "creator": { "id": "...", "name": "Alice Example" },
+  "updatedBy": { "id": "...", "name": "Bob Example" },
+  "createdAt": "2025-01-10T09:00:00.000Z",
+  "updatedAt": "2025-01-15T10:30:00.000Z"
+}
+```
+
 ## Issue list items
 
 Issues in list output include inline context to reduce follow-up calls:
@@ -112,7 +149,13 @@ State types: `triage` | `backlog` | `unstarted` | `started` | `completed` | `can
 
 ```json
 [
-  { "id": "...", "title": "PR #456", "url": "https://github.com/...", "subtitle": "Fixes login bug", "sourceType": "github" }
+  {
+    "id": "...",
+    "title": "PR #456",
+    "url": "https://github.com/...",
+    "subtitle": "Fixes login bug",
+    "sourceType": "github"
+  }
 ]
 ```
 

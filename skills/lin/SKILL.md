@@ -2,12 +2,12 @@
 name: lin
 description: |
   Linear CLI for humans and LLMs. Use when:
-  - Looking up Linear issues, projects, cycles, or teams
-  - Searching Linear issues or projects by text
-  - Creating or updating Linear issues
+  - Looking up Linear issues, projects, documents, cycles, or teams
+  - Searching Linear issues, projects, or documents by text
+  - Creating or updating Linear issues or documents
   - Adding comments to Linear issues
   - Checking project status, milestones, or team members
-  Triggers: "linear issue", "linear project", "linear ticket", "linear search", "create issue", "update issue", "linear team", "linear cycle"
+  Triggers: "linear issue", "linear project", "linear document", "linear ticket", "linear search", "create issue", "create document", "update issue", "update document", "linear team", "linear cycle"
 ---
 
 # Linear automation with `lin`
@@ -92,6 +92,20 @@ lin project update status <id> completed
 ```
 
 The `--project` filter on issue commands also accepts slug or name.
+
+## Documents
+
+Document commands accept UUID or slug ID.
+
+```bash
+lin document search "onboarding"
+lin document list --project "CRM Actions" --creator "alice@example.com"
+lin document get <id>                    # full markdown content
+lin document new "API Design Doc" --project "CRM Actions" --content "# Overview\n..."
+lin document update title <id> "New Title"
+lin document update content <id> "# Updated content"
+lin document update project <id> "Other Project"
+```
 
 ## Teams, users, labels, cycles
 

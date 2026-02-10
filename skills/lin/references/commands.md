@@ -24,6 +24,16 @@ Run `lin usage` for concise LLM-optimized docs.
 - `lin project update description <id> <value>`
 - `lin project update lead <id> <user-id>`
 
+## Documents
+
+- `lin document search <text> [--include-comments] [--include-archived] [--limit] [--cursor]` — full-text search
+- `lin document list [--project <name|slug|id>] [--creator <name|email|id>] [--include-archived] [--limit] [--cursor]` — list documents
+- `lin document get <id>` — full document details + markdown content (accepts UUID or slug ID)
+- `lin document new <title> [--project <name|slug|id>] [--content <markdown>] [--icon <emoji>] [--color <hex>]`
+- `lin document update title <id> <value>`
+- `lin document update content <id> <value>`
+- `lin document update project <id> <project>` — project ID, slug, or name
+
 ## Issues
 
 - `lin issue search <text> [filters]` — full-text search
@@ -86,7 +96,7 @@ Run `lin usage` for concise LLM-optimized docs.
 
 ## Usage
 
-- `lin usage` — print concise LLM-optimized docs (~700 tokens)
+- `lin usage` — print concise LLM-optimized docs (~1000 tokens)
 
 ## Common filters (list/search commands)
 
