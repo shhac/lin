@@ -1,5 +1,6 @@
 import { Command } from "commander";
 import { getPackageVersion } from "./lib/version.ts";
+import { configureTruncation } from "./lib/truncation.ts";
 import { registerAuthCommand } from "./cli/auth/index.ts";
 import { registerCycleCommand } from "./cli/cycle/index.ts";
 import { registerDocumentCommand } from "./cli/document/index.ts";
@@ -13,6 +14,12 @@ import { registerUserCommand } from "./cli/user/index.ts";
 
 const program = new Command();
 program.name("lin").description("Linear CLI for humans and LLMs").version(getPackageVersion());
+program.option("--expand <fields>", "Expand truncated fields (comma-separated: description,body,content)");
+program.option("--full", "Show full content for all truncated fields");
+program.hook("preAction", (thisCommand) => {
+  const opts = thisCommand.opts();
+  configureTruncation({ expand: opts.expand, full: opts.full });
+});
 
 registerAuthCommand({ program });
 registerProjectCommand({ program });

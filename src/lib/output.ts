@@ -1,3 +1,5 @@
+import { applyTruncation } from "./truncation.ts";
+
 export function pruneEmpty<T>(value: T): T {
   const pruned = pruneEmptyInternal(value);
   return (pruned === undefined ? ({} as T) : (pruned as T)) as T;
@@ -38,7 +40,7 @@ function pruneEmptyInternal(value: unknown): unknown {
 }
 
 export function printJson(data: unknown): void {
-  console.log(JSON.stringify(pruneEmpty(data), null, 2));
+  console.log(JSON.stringify(applyTruncation(pruneEmpty(data)), null, 2));
 }
 
 /**
@@ -50,8 +52,8 @@ export function printPaginated(
   items: unknown[],
   pageInfo: { hasNextPage: boolean; endCursor?: string },
 ): void {
-  // Prune individual items but always preserve the array structure
-  const prunedItems = items.map((item) => pruneEmpty(item));
+  // Prune individual items, apply truncation, but always preserve the array structure
+  const prunedItems = items.map((item) => applyTruncation(pruneEmpty(item)));
   const payload: Record<string, unknown> = { items: prunedItems };
   if (pageInfo.hasNextPage) {
     payload.pagination = {
