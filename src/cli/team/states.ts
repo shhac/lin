@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
+import { buildTeamFilter } from "../../lib/resolvers.ts";
 
 export function registerStates(team: Command): void {
   team
@@ -11,11 +12,7 @@ export function registerStates(team: Command): void {
       try {
         const client = getClient();
         const states = await client.workflowStates({
-          filter: {
-            team: {
-              or: [{ key: { eqIgnoreCase: teamInput } }, { name: { eqIgnoreCase: teamInput } }],
-            },
-          },
+          filter: { team: buildTeamFilter(teamInput) },
         });
         if (states.nodes.length === 0) {
           printError(`No workflow states found for team "${teamInput}".`);

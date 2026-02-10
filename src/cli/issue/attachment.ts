@@ -45,7 +45,7 @@ export function registerAttachment(issue: Command): void {
           subtitle: opts.subtitle,
         });
         const a = await payload.attachment;
-        printJson({ id: a?.id, created: payload.success });
+        printJson({ id: a?.id, title: a?.title, url: a?.url, created: payload.success });
       } catch (err) {
         printError(err instanceof Error ? err.message : "Add attachment failed");
       }

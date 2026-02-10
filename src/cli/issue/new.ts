@@ -2,7 +2,7 @@ import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
 import { PRIORITY_MAP, PRIORITY_VALUES } from "../../lib/priorities.ts";
-import { resolveUser } from "../../lib/resolvers.ts";
+import { resolveUser, resolveWorkflowState } from "../../lib/resolvers.ts";
 
 export function registerNew(issue: Command): void {
   issue
@@ -36,15 +36,7 @@ export function registerNew(issue: Command): void {
         // Resolve status name to state ID
         let stateId: string | undefined;
         if (opts.status) {
-          const states = await client.workflowStates();
-          const state = states.nodes.find(
-            (s) => s.name.toLowerCase() === opts.status!.toLowerCase(),
-          );
-          if (!state) {
-            const validNames = [...new Set(states.nodes.map((s) => s.name))];
-            printError(`Unknown status: "${opts.status}". Valid values: ${validNames.join(" | ")}`);
-            return;
-          }
+          const state = await resolveWorkflowState(client, opts.status);
           stateId = state.id;
         }
 

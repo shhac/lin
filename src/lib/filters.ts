@@ -1,4 +1,5 @@
 import { PRIORITY_MAP } from "./priorities.ts";
+import { buildTeamFilter } from "./resolvers.ts";
 
 /**
  * Build an IssueFilter from CLI options.
@@ -21,10 +22,7 @@ export function buildIssueFilter(
   }
 
   if (opts.team) {
-    // Accept team key (e.g. "ENG") or team name; try key first via OR filter
-    filter.team = {
-      or: [{ key: { eqIgnoreCase: opts.team } }, { name: { eqIgnoreCase: opts.team } }],
-    };
+    filter.team = buildTeamFilter(opts.team);
   }
 
   if (opts.assignee) {

@@ -67,7 +67,15 @@ export function registerRelation(issue: Command): void {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any -- enum not exported
           type: normalized as any,
         });
-        printJson({ created: payload.success });
+        const r = await payload.issueRelation;
+        const [issue, related] = await Promise.all([r?.issue, r?.relatedIssue]);
+        printJson({
+          id: r?.id,
+          type: r?.type,
+          issueIdentifier: issue?.identifier,
+          relatedIssueIdentifier: related?.identifier,
+          created: payload.success,
+        });
       } catch (err) {
         printError(err instanceof Error ? err.message : "Add relation failed");
       }

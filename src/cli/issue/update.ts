@@ -3,7 +3,7 @@ import { getClient } from "../../lib/client.ts";
 import { formatEstimateScale, getValidEstimates } from "../../lib/estimates.ts";
 import { printError, printJson } from "../../lib/output.ts";
 import { PRIORITY_MAP, PRIORITY_VALUES } from "../../lib/priorities.ts";
-import { resolveProject, resolveUser } from "../../lib/resolvers.ts";
+import { resolveProject, resolveUser, resolveWorkflowState } from "../../lib/resolvers.ts";
 
 export function registerUpdate(issue: Command): void {
   const update = issue.command("update").description("Update issue fields");
@@ -31,14 +31,7 @@ export function registerUpdate(issue: Command): void {
     .action(async (id: string, newStatus: string) => {
       try {
         const client = getClient();
-        // Look up the status ID by name
-        const states = await client.workflowStates();
-        const state = states.nodes.find((s) => s.name.toLowerCase() === newStatus.toLowerCase());
-        if (!state) {
-          const validNames = [...new Set(states.nodes.map((s) => s.name))];
-          printError(`Unknown status: "${newStatus}". Valid values: ${validNames.join(" | ")}`);
-          return;
-        }
+        const state = await resolveWorkflowState(client, newStatus);
         const payload = await client.updateIssue(id, { stateId: state.id });
         printJson({ updated: payload.success });
       } catch (err) {

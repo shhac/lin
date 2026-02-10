@@ -1,4 +1,4 @@
-import type { LinearClient, Project, Roadmap, User } from "@linear/sdk";
+import type { LinearClient, Project, Roadmap, User, WorkflowState } from "@linear/sdk";
 
 export async function resolveUser(client: LinearClient, input: string): Promise<User> {
   const results = await client.users();
@@ -40,6 +40,26 @@ export async function resolveProject(client: LinearClient, input: string): Promi
     }
     return project;
   }
+}
+
+export async function resolveWorkflowState(
+  client: LinearClient,
+  name: string,
+): Promise<WorkflowState> {
+  const states = await client.workflowStates();
+  const state = states.nodes.find((s) => s.name.toLowerCase() === name.toLowerCase());
+  if (!state) {
+    const validNames = [...new Set(states.nodes.map((s) => s.name))];
+    throw new Error(`Unknown status: "${name}". Valid values: ${validNames.join(" | ")}`);
+  }
+  return state;
+}
+
+/** Build a team filter that matches by key (e.g. "ENG") or name. */
+export function buildTeamFilter(input: string): Record<string, unknown> {
+  return {
+    or: [{ key: { eqIgnoreCase: input } }, { name: { eqIgnoreCase: input } }],
+  };
 }
 
 export async function resolveRoadmap(client: LinearClient, input: string): Promise<Roadmap> {
