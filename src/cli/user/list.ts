@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
+import { resolveTeam } from "../../lib/resolvers.ts";
 
 export function registerList(user: Command): void {
   user
@@ -11,7 +12,7 @@ export function registerList(user: Command): void {
       try {
         const client = getClient();
         if (opts.team) {
-          const team = await client.team(opts.team);
+          const team = await resolveTeam(client, opts.team);
           const members = await team.members();
           printJson(
             members.nodes.map((u) => ({

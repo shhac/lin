@@ -21,8 +21,7 @@ export function registerSearch(issue: Command): void {
       try {
         const client = getClient();
         const filter = buildIssueFilter(opts);
-        const results = await client.issueSearch({
-          query: text,
+        const results = await client.searchIssues(text, {
           first: parseInt(opts.limit ?? "50", 10),
           after: opts.cursor,
           filter:

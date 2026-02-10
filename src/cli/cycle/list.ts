@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
+import { resolveTeam } from "../../lib/resolvers.ts";
 
 export function registerList(cycle: Command): void {
   cycle
@@ -14,7 +15,7 @@ export function registerList(cycle: Command): void {
       async (opts: { team: string; current?: boolean; next?: boolean; previous?: boolean }) => {
         try {
           const client = getClient();
-          const team = await client.team(opts.team);
+          const team = await resolveTeam(client, opts.team);
 
           if (opts.current) {
             const c = await team.activeCycle;

@@ -1,4 +1,4 @@
-import type { LinearClient, Project, Roadmap, User, WorkflowState } from "@linear/sdk";
+import type { LinearClient, Project, Roadmap, Team, User, WorkflowState } from "@linear/sdk";
 
 export async function resolveUser(client: LinearClient, input: string): Promise<User> {
   const results = await client.users();
@@ -60,6 +60,25 @@ export function buildTeamFilter(input: string): Record<string, unknown> {
   return {
     or: [{ key: { eqIgnoreCase: input } }, { name: { eqIgnoreCase: input } }],
   };
+}
+
+export async function resolveTeam(client: LinearClient, input: string): Promise<Team> {
+  // Try direct lookup first (works for UUIDs)
+  try {
+    return await client.team(input);
+  } catch {
+    // Fall back to search by key or name
+    const results = await client.teams({ filter: buildTeamFilter(input) });
+    const [team] = results.nodes;
+    if (!team) {
+      const allTeams = await client.teams();
+      const keys = allTeams.nodes.map((t) => `${t.key} (${t.name})`).join(", ");
+      throw new Error(
+        `Team not found: "${input}". Known teams: ${keys || "none"}. Provide a UUID, key, or exact name.`,
+      );
+    }
+    return team;
+  }
 }
 
 export async function resolveRoadmap(client: LinearClient, input: string): Promise<Roadmap> {

@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { formatEstimateScale, getValidEstimates } from "../../lib/estimates.ts";
 import { printError, printJson } from "../../lib/output.ts";
+import { resolveTeam } from "../../lib/resolvers.ts";
 
 export function registerGet(team: Command): void {
   team
@@ -11,7 +12,7 @@ export function registerGet(team: Command): void {
     .action(async (id: string) => {
       try {
         const client = getClient();
-        const t = await client.team(id);
+        const t = await resolveTeam(client, id);
         const members = await t.members();
         const estimateConfig = {
           type: t.issueEstimationType,
