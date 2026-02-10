@@ -7,10 +7,14 @@ export function registerSearch(project: Command): void {
     .command("search")
     .description("Search projects by name/description")
     .argument("<text>", "Search text")
-    .action(async (text: string) => {
+    .option("--limit <n>", "Limit results", "50")
+    .option("--cursor <token>", "Pagination cursor for next page")
+    .action(async (text: string, opts: Record<string, string | undefined>) => {
       try {
         const client = getClient();
         const results = await client.projects({
+          first: parseInt(opts.limit ?? "50", 10),
+          after: opts.cursor,
           filter: { name: { containsIgnoreCase: text } },
         });
         printPaginated(

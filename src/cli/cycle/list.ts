@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
-import { printError, printJson } from "../../lib/output.ts";
+import { printError, printJson, printPaginated } from "../../lib/output.ts";
 import { resolveTeam } from "../../lib/resolvers.ts";
 
 export function registerList(cycle: Command): void {
@@ -11,8 +11,17 @@ export function registerList(cycle: Command): void {
     .option("--current", "Show only current cycle")
     .option("--next", "Show only next cycle")
     .option("--previous", "Show only previous cycle")
+    .option("--limit <n>", "Limit results", "50")
+    .option("--cursor <token>", "Pagination cursor for next page")
     .action(
-      async (opts: { team: string; current?: boolean; next?: boolean; previous?: boolean }) => {
+      async (opts: {
+        team: string;
+        current?: boolean;
+        next?: boolean;
+        previous?: boolean;
+        limit: string;
+        cursor?: string;
+      }) => {
         try {
           const client = getClient();
           const team = await resolveTeam(client, opts.team);
@@ -35,7 +44,10 @@ export function registerList(cycle: Command): void {
             return;
           }
 
-          const cycles = await team.cycles();
+          const cycles = await team.cycles({
+            first: parseInt(opts.limit, 10),
+            after: opts.cursor,
+          });
           const now = new Date();
 
           if (opts.next) {
@@ -78,15 +90,14 @@ export function registerList(cycle: Command): void {
             return;
           }
 
-          printJson(
-            cycles.nodes.map((c) => ({
-              id: c.id,
-              number: c.number,
-              name: c.name,
-              startsAt: c.startsAt,
-              endsAt: c.endsAt,
-            })),
-          );
+          const items = cycles.nodes.map((c) => ({
+            id: c.id,
+            number: c.number,
+            name: c.name,
+            startsAt: c.startsAt,
+            endsAt: c.endsAt,
+          }));
+          printPaginated(items, cycles.pageInfo);
         } catch (err) {
           printError(err instanceof Error ? err.message : "List failed");
         }
