@@ -23,6 +23,13 @@ Run `lin usage` for concise LLM-optimized docs.
 - `lin project update status <id> <value>` — backlog | planned | started | paused | completed | canceled
 - `lin project update description <id> <value>`
 - `lin project update lead <id> <user-id>`
+- `lin project new <name> [--team <keys>] [--description <text>] [--lead <user>] [--start-date <YYYY-MM-DD>] [--target-date <YYYY-MM-DD>] [--status <status>] [--content <markdown>]`
+
+## Roadmaps
+
+- `lin roadmap list [--limit] [--cursor]` — list roadmaps
+- `lin roadmap get overview <id>` — roadmap summary with owner, creator, url
+- `lin roadmap get projects <id> [--limit] [--cursor]` — projects linked to a roadmap
 
 ## Documents
 

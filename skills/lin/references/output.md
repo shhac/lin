@@ -121,6 +121,50 @@ Includes comment count, branch name, and attachments (e.g., linked GitHub PRs):
 
 Use `project get details <id>` for the full markdown body.
 
+## Roadmap list items
+
+```json
+{
+  "id": "...",
+  "slugId": "q1-2025-roadmap-a1b2c3",
+  "url": "https://linear.app/.../roadmap/...",
+  "name": "Q1 2025 Roadmap",
+  "description": "Key initiatives for Q1",
+  "owner": "Alice Example"
+}
+```
+
+## Roadmap overview (`roadmap get overview`)
+
+```json
+{
+  "id": "...",
+  "slugId": "q1-2025-roadmap-a1b2c3",
+  "url": "https://linear.app/.../roadmap/...",
+  "name": "Q1 2025 Roadmap",
+  "description": "Key initiatives for Q1",
+  "owner": { "id": "...", "name": "Alice Example" },
+  "creator": { "id": "...", "name": "Bob Example" },
+  "createdAt": "2025-01-01T00:00:00.000Z"
+}
+```
+
+## Roadmap projects (`roadmap get projects`)
+
+```json
+{
+  "id": "...",
+  "slugId": "crm-actions-d0f9",
+  "url": "https://linear.app/.../project/...",
+  "name": "CRM Actions",
+  "status": "started",
+  "progress": 0.45,
+  "lead": "Alice Example",
+  "startDate": "2025-01-15",
+  "targetDate": "2025-03-31"
+}
+```
+
 ## Issue relations (`issue relation list`)
 
 ```json

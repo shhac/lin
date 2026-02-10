@@ -88,10 +88,19 @@ lin project list --status started
 lin project get overview "CRM Actions"   # accepts UUID, slug, or name
 lin project get details <id>             # full markdown content
 lin project get issues <id>
+lin project new "New Feature" --team ENG --status planned --lead "alice@example.com"
 lin project update status <id> completed
 ```
 
 The `--project` filter on issue commands also accepts slug or name.
+
+## Roadmaps
+
+```bash
+lin roadmap list
+lin roadmap get overview <id>            # roadmap summary + owner
+lin roadmap get projects <id>            # projects linked to a roadmap
+```
 
 ## Documents
 
