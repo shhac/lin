@@ -14,7 +14,7 @@ COMMANDS:
   project get details <id>                Full project content (markdown)
   project get issues <id>                 Issues in a project
   project update <field> <id> <value>     Update (title|status|description|lead)
-  project new <name> --team <teams>       Create project (comma-separated team keys/IDs)
+  project new <name> --team <t> [options]  Create project
 
   roadmap list                            List roadmaps
   roadmap get overview <id>               Roadmap summary + owner
@@ -30,11 +30,11 @@ COMMANDS:
   issue list [filters]                    List issues (status, assignee, team, branchName)
   issue get overview <id>                 Full details + commentCount, attachments, branchName
   issue get comments <id>                 List comments with authors
-  issue new <title> --team <team>         Create issue (team key or ID)
-  issue update <field> <id> <value>        Update field (title|status|assignee|priority|
-                                           project|labels|estimate|description)
+  issue new <title> --team <t> [options]  Create issue
+  issue update <field> <id> <value>       Update (title|status|assignee|priority|project|labels|estimate|description)
   issue comment new <issue-id> <body>     Add comment
-  issue comment get|edit <id> [<body>]    Get or edit comment
+  issue comment get <comment-id>          Get a specific comment
+  issue comment edit <comment-id> <body>  Edit a comment
   issue relation list <issue-id>          List relations
   issue relation add <id> --type <t> --related <id>  Add (blocks|duplicate|related)
   issue relation remove <relation-id>     Remove relation
