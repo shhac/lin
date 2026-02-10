@@ -34,12 +34,13 @@ export function buildIssueFilter(
   }
 
   if (opts.assignee) {
-    // Accept user ID, name, or display name
+    // Accept user ID, name, display name, or email
     filter.assignee = {
       or: [
         { id: { eq: opts.assignee } },
         { name: { eqIgnoreCase: opts.assignee } },
         { displayName: { eqIgnoreCase: opts.assignee } },
+        { email: { eqIgnoreCase: opts.assignee } },
       ],
     };
   }

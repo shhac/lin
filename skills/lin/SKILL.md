@@ -53,6 +53,7 @@ lin issue new "Fix login redirect" --team ENG --priority high --status "Todo"
 lin issue update status ENG-123 "In Progress"
 lin issue update assignee ENG-123 "alice@example.com"
 lin issue update priority ENG-123 urgent
+lin issue update estimate ENG-123 5      # validated against team's estimate scale
 lin issue comment new ENG-123 "Started investigating"
 lin issue comment get <comment-id>
 lin issue comment edit <comment-id> "Updated analysis"
@@ -77,7 +78,7 @@ The `--project` filter on issue commands also accepts slug or name.
 
 ```bash
 lin team list
-lin team get ENG
+lin team get ENG                         # includes estimate config + valid values
 lin user me
 lin user list --team ENG
 lin label list --team ENG

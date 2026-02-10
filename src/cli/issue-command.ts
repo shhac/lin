@@ -3,7 +3,9 @@ import type { LinearDocument } from "@linear/sdk";
 import { registerCommentSubcommands } from "./comment-command.ts";
 import { getClient } from "../lib/client.ts";
 import { buildIssueFilter } from "../lib/filters.ts";
+import { formatEstimateScale, getValidEstimates } from "../lib/estimates.ts";
 import { printError, printJson, printPaginated } from "../lib/output.ts";
+import { resolveProject, resolveUser } from "../lib/resolvers.ts";
 
 const PRIORITY_MAP: Record<string, number> = {
   none: 0,
@@ -197,7 +199,7 @@ export function registerIssueCommand({ program }: { program: Command }): void {
     .argument("<title>", "Issue title")
     .requiredOption("--team <team>", "Team ID or key")
     .option("--project <project>", "Project ID, slug, or name")
-    .option("--assignee <user>", "Assignee user ID")
+    .option("--assignee <user>", "Assignee: name, email, or user ID")
     .option("--priority <priority>", "Priority: none|urgent|high|medium|low")
     .option("--status <status>", "Status name")
     .option("--labels <labels>", "Comma-separated label IDs")
@@ -234,11 +236,18 @@ export function registerIssueCommand({ program }: { program: Command }): void {
           stateId = state.id;
         }
 
+        // Resolve assignee name/email to user ID
+        let assigneeId: string | undefined;
+        if (opts.assignee) {
+          const user = await resolveUser(client, opts.assignee);
+          assigneeId = user.id;
+        }
+
         const payload = await client.createIssue({
           title,
           teamId: opts.team!,
           projectId: opts.project,
-          assigneeId: opts.assignee,
+          assigneeId,
           stateId,
           priority,
           description: opts.description,
@@ -304,11 +313,12 @@ export function registerIssueCommand({ program }: { program: Command }): void {
     .command("assignee")
     .description("Update issue assignee")
     .argument("<id>", "Issue ID or key")
-    .argument("<user-id>", "Assignee user ID")
-    .action(async (id: string, userId: string) => {
+    .argument("<user>", "Assignee: name, email, or user ID")
+    .action(async (id: string, userInput: string) => {
       try {
         const client = getClient();
-        const payload = await client.updateIssue(id, { assigneeId: userId });
+        const user = await resolveUser(client, userInput);
+        const payload = await client.updateIssue(id, { assigneeId: user.id });
         printJson({ updated: payload.success });
       } catch (err) {
         printError(err instanceof Error ? err.message : "Update failed");
@@ -339,11 +349,12 @@ export function registerIssueCommand({ program }: { program: Command }): void {
     .command("project")
     .description("Move issue to project")
     .argument("<id>", "Issue ID or key")
-    .argument("<project-id>", "Target project ID")
-    .action(async (id: string, projectId: string) => {
+    .argument("<project>", "Project ID, slug, or name")
+    .action(async (id: string, project: string) => {
       try {
         const client = getClient();
-        const payload = await client.updateIssue(id, { projectId });
+        const resolved = await resolveProject(client, project);
+        const payload = await client.updateIssue(id, { projectId: resolved.id });
         printJson({ updated: payload.success });
       } catch (err) {
         printError(err instanceof Error ? err.message : "Update failed");
@@ -374,6 +385,49 @@ export function registerIssueCommand({ program }: { program: Command }): void {
       try {
         const client = getClient();
         const payload = await client.updateIssue(id, { description });
+        printJson({ updated: payload.success });
+      } catch (err) {
+        printError(err instanceof Error ? err.message : "Update failed");
+      }
+    });
+
+  update
+    .command("estimate")
+    .description("Update issue estimate (validated against team scale)")
+    .argument("<id>", "Issue ID or key")
+    .argument("<value>", "Estimate value (number)")
+    .action(async (id: string, value: string) => {
+      try {
+        const estimate = parseInt(value, 10);
+        if (Number.isNaN(estimate)) {
+          printError(`Invalid estimate: "${value}". Must be a number.`);
+          return;
+        }
+        const client = getClient();
+        const i = await client.issue(id);
+        const team = await i.team;
+        if (!team) {
+          printError("Could not resolve team for this issue.");
+          return;
+        }
+        if (team.issueEstimationType === "notUsed") {
+          printError(`Team "${team.key}" does not use estimates.`);
+          return;
+        }
+        const estimateConfig = {
+          type: team.issueEstimationType,
+          allowZero: team.issueEstimationAllowZero,
+          extended: team.issueEstimationExtended,
+        };
+        const valid = getValidEstimates(estimateConfig);
+        if (!valid.includes(estimate)) {
+          const scale = formatEstimateScale(team.issueEstimationType, valid);
+          printError(
+            `Invalid estimate: ${estimate}. Team "${team.key}" uses ${team.issueEstimationType} scale. Valid values: ${scale}`,
+          );
+          return;
+        }
+        const payload = await client.updateIssue(id, { estimate });
         printJson({ updated: payload.success });
       } catch (err) {
         printError(err instanceof Error ? err.message : "Update failed");

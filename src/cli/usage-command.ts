@@ -27,17 +27,18 @@ COMMANDS:
   issue new <title> --team <team>         Create issue (team key or ID)
   issue update title <id> <value>         Update title
   issue update status <id> <value>        Update status (team-specific workflow states)
-  issue update assignee <id> <user-id>    Update assignee
+  issue update assignee <id> <user>       Update assignee (name, email, or ID)
   issue update priority <id> <priority>   Update priority
-  issue update project <id> <project-id>  Move to project
+  issue update project <id> <project>     Move to project (ID, slug, or name)
   issue update labels <id> <l1,l2,...>    Set labels
+  issue update estimate <id> <value>      Update estimate (validated against team scale)
   issue update description <id> <value>   Update description
   issue comment new <issue-id> <body>     Add comment
   issue comment get <comment-id>          Get a specific comment
   issue comment edit <comment-id> <body>  Edit a comment
 
   team list                               List teams (id, name, key)
-  team get <id>                           Team details + members
+  team get <id>                           Team details + members + estimate config
 
   user list [--team]                      List users
   user me                                 Current user
@@ -63,6 +64,8 @@ OUTPUT: JSON to stdout. Errors: { "error": "..." } to stderr.
 
 PRIORITY: none | urgent | high | medium | low
 PROJECT STATUS: backlog | planned | started | paused | completed | canceled
+ESTIMATES: Team-specific scales (fibonacci, linear, exponential, tShirt).
+  Use "team get <id>" to see valid estimate values for a team.
 
 AUTH: Set LINEAR_API_KEY env var, or: lin auth login <key>
   Multiple workspaces: lin auth login <key1>, lin auth login <key2>

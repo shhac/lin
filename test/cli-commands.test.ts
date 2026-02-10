@@ -104,7 +104,7 @@ describe("CLI nested command registration", () => {
     expect(output).toContain("comments");
   });
 
-  test("issue update --help shows title, status, assignee, priority, project, labels, description", () => {
+  test("issue update --help shows title, status, assignee, priority, project, labels, estimate, description", () => {
     const output = runCli("issue update --help");
     expect(output).toContain("title");
     expect(output).toContain("status");
@@ -112,6 +112,7 @@ describe("CLI nested command registration", () => {
     expect(output).toContain("priority");
     expect(output).toContain("project");
     expect(output).toContain("labels");
+    expect(output).toContain("estimate");
     expect(output).toContain("description");
   });
 

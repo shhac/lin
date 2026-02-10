@@ -94,6 +94,40 @@ Use `project get details <id>` for the full markdown body.
 | `medium` | P2              |
 | `low`    | P3              |
 
+## Team get output (`team get`)
+
+Includes estimate configuration so callers can discover valid values before updating:
+
+```json
+{
+  "id": "...",
+  "name": "Engineering",
+  "key": "ENG",
+  "estimates": {
+    "type": "fibonacci",
+    "allowZero": false,
+    "extended": false,
+    "default": 0,
+    "validValues": [1, 2, 3, 5, 8, 13],
+    "display": "1 | 2 | 3 | 5 | 8 | 13"
+  },
+  "members": [...]
+}
+```
+
+When `type` is `"notUsed"`, the `estimates` block is pruned.
+
+## Estimate scales
+
+| Type          | Base values                         | Extended adds  |
+| ------------- | ----------------------------------- | -------------- |
+| `fibonacci`   | 1, 2, 3, 5, 8, 13                   | 21, 34         |
+| `linear`      | 1, 2, 3, 4, 5                       | 6, 7, 8, 9, 10 |
+| `exponential` | 1, 2, 4, 8, 16                      | 32, 64         |
+| `tShirt`      | 1 (XS), 2 (S), 3 (M), 4 (L), 5 (XL) | 6 (XXL)        |
+
+When `allowZero` is true, `0` is also valid. T-shirt sizes are stored as integers.
+
 ## Project status values
 
 `backlog` | `planned` | `started` | `paused` | `completed` | `canceled`

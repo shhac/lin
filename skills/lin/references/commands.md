@@ -30,12 +30,13 @@ Run `lin usage` for concise LLM-optimized docs.
 - `lin issue list [filters]` — list issues (returns status, assignee, team, branchName)
 - `lin issue get overview <id>` — full issue details with commentCount, branchName, attachments (PR links)
 - `lin issue get comments <id>` — list comments with authors
-- `lin issue new <title> --team <team> [--priority <p>] [--status <s>] [--assignee <a>] [--project <p>] [--label <l>]`
+- `lin issue new <title> --team <team> [--priority <p>] [--status <s>] [--assignee <name|email|id>] [--project <p>] [--label <l>]`
 - `lin issue update title <id> <value>`
 - `lin issue update status <id> <value>` — team-specific workflow state names
-- `lin issue update assignee <id> <user-id>`
+- `lin issue update assignee <id> <user>` — accepts name, email, or user ID
 - `lin issue update priority <id> <priority>` — none | urgent | high | medium | low
-- `lin issue update project <id> <project-id>`
+- `lin issue update project <id> <project>` — project ID, slug, or name
+- `lin issue update estimate <id> <value>` — validated against team estimate scale
 - `lin issue update labels <id> <label1,label2,...>`
 - `lin issue update description <id> <value>`
 
@@ -48,7 +49,7 @@ Run `lin usage` for concise LLM-optimized docs.
 ## Teams
 
 - `lin team list` — list teams (id, name, key)
-- `lin team get <id>` — team details + members
+- `lin team get <id>` — team details + members + estimate config (type, valid values)
 
 ## Users
 
