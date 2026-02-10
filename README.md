@@ -61,7 +61,9 @@ lin
 │   ├── get comments <id>
 │   ├── new <title> --team <team>
 │   ├── update title|status|assignee|priority|project|labels|description <id> <value>
-│   └── comment new <issue-id> <body>
+│   ├── comment new <issue-id> <body>
+│   ├── comment get <comment-id>
+│   └── comment edit <comment-id> <body>
 ├── team
 │   ├── list
 │   └── get <id>
@@ -87,7 +89,7 @@ lin
 
 Most list/search commands accept:
 
-`--team`, `--status`, `--assignee`, `--priority`, `--label`, `--cycle`, `--project`, `--limit`
+`--team`, `--status`, `--assignee`, `--priority`, `--label`, `--cycle`, `--project`, `--limit`, `--cursor`
 
 ## Development
 

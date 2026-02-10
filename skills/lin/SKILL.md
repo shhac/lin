@@ -24,11 +24,15 @@ Set an env var (recommended):
 export LINEAR_API_KEY="lin_api_..."
 ```
 
-Or store it locally:
+Or store it locally (supports multiple workspaces — each Linear API key is per-org):
 
 ```bash
-lin auth login <api-key>
+lin auth login <api-key> --alias myorg
 lin auth status
+lin auth workspace list
+lin auth workspace switch <alias>
+lin auth logout [--all]
+lin auth workspace remove <alias>
 ```
 
 Generate a personal API key at **Settings > Account > Security > Personal API Keys** in the Linear app.
@@ -38,7 +42,7 @@ Generate a personal API key at **Settings > Account > Security > Personal API Ke
 ```bash
 lin issue search "auth bug"
 lin issue list --team ENG --status "In Progress" --assignee "alice@example.com"
-lin issue get overview ENG-123
+lin issue get overview ENG-123    # includes branchName, commentCount, attachments (PR links)
 lin issue get comments ENG-123
 ```
 
@@ -50,18 +54,24 @@ lin issue update status ENG-123 "In Progress"
 lin issue update assignee ENG-123 "alice@example.com"
 lin issue update priority ENG-123 urgent
 lin issue comment new ENG-123 "Started investigating"
+lin issue comment get <comment-id>
+lin issue comment edit <comment-id> "Updated analysis"
 ```
 
 ## Projects
 
+Project commands accept UUID, slug ID, or name.
+
 ```bash
 lin project search "migration"
 lin project list --status started
-lin project get overview <id>
-lin project get details <id>       # full markdown content
+lin project get overview "CRM Actions"   # accepts UUID, slug, or name
+lin project get details <id>             # full markdown content
 lin project get issues <id>
 lin project update status <id> completed
 ```
+
+The `--project` filter on issue commands also accepts slug or name.
 
 ## Teams, users, labels, cycles
 
