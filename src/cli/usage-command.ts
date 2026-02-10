@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 
-const USAGE_TEXT = `lin — Linear CLI
+const USAGE_TEXT = `lin — Linear CLI (JSON output, LLM-friendly)
 
 COMMANDS:
   auth login <api-key>                    Store API key
@@ -9,53 +9,55 @@ COMMANDS:
   project search <text>                   Search projects
   project list [--team] [--status]        List projects
   project get overview <id>               Project summary + milestones
-  project get details <id>               Full project content (markdown)
-  project get issues <id>                Issues in a project
+  project get details <id>                Full project content (markdown)
+  project get issues <id>                 Issues in a project
   project update title <id> <value>       Update title
-  project update status <id> <value>      Update status
+  project update status <id> <value>      Update status (backlog|planned|started|paused|completed|canceled)
   project update description <id> <value> Update description
   project update lead <id> <user-id>      Update lead
 
   issue search <text>                     Full-text search
-  issue list [filters]                    List issues
-  issue get overview <id>                 Issue details
-  issue get comments <id>                 List comments
-  issue new <title> --team <team>         Create issue
+  issue list [filters]                    List issues (returns status, assignee, team)
+  issue get overview <id>                 Full issue details
+  issue get comments <id>                 List comments with authors
+  issue new <title> --team <team>         Create issue (team key or ID)
   issue update title <id> <value>         Update title
-  issue update status <id> <value>        Update status
+  issue update status <id> <value>        Update status (team-specific workflow states)
   issue update assignee <id> <user-id>    Update assignee
   issue update priority <id> <priority>   Update priority
   issue update project <id> <project-id>  Move to project
   issue update labels <id> <l1,l2,...>    Set labels
   issue update description <id> <value>   Update description
   issue comment new <issue-id> <body>     Add comment
+  issue comment get <comment-id>          Get a specific comment
+  issue comment edit <comment-id> <body>  Edit a comment
 
-  team list                               List teams
+  team list                               List teams (id, name, key)
   team get <id>                           Team details + members
 
   user list [--team]                      List users
   user me                                 Current user
 
   label list [--team]                     List labels
-
   cycle list --team <team>                List cycles
   cycle get <id>                          Cycle details
 
-ID FORMAT:
-  Issue keys (ENG-123), UUIDs, or URL fragments accepted.
+IDS: Issue keys (ENG-123), UUIDs, or URL slugs accepted.
+     --team accepts team key (ENG) or name.
 
-FILTERS:
-  --team, --status, --assignee, --priority, --label, --cycle, --limit, --project
+FILTERS (list/search): --team --status --assignee --priority --label --cycle --project --limit
 
-OUTPUT:
-  All output is JSON to stdout. Errors go to stderr.
-  Lists return arrays. Single items return objects.
+PAGINATION: --limit <n> --cursor <token>
+  List output: { "items": [...], "pagination": { "hasMore": true, "nextCursor": "..." } }
+  When no more pages, pagination key is omitted.
 
-PRIORITY VALUES:
-  none | urgent | high | medium | low
+OUTPUT: JSON to stdout. Errors: { "error": "..." } to stderr.
+  Error messages include valid values when input is invalid.
 
-AUTH:
-  Set LINEAR_API_KEY env var, or run: lin auth login <key>
+PRIORITY: none | urgent | high | medium | low
+PROJECT STATUS: backlog | planned | started | paused | completed | canceled
+
+AUTH: Set LINEAR_API_KEY env var, or: lin auth login <key>
 `;
 
 export function registerUsageCommand({ program }: { program: Command }): void {

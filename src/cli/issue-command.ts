@@ -1,6 +1,9 @@
 import type { Command } from "commander";
+import type { LinearDocument } from "@linear/sdk";
+import { registerCommentSubcommands } from "./comment-command.ts";
 import { getClient } from "../lib/client.ts";
-import { printError, printJson } from "../lib/output.ts";
+import { buildIssueFilter } from "../lib/filters.ts";
+import { printError, printJson, printPaginated } from "../lib/output.ts";
 
 const PRIORITY_MAP: Record<string, number> = {
   none: 0,
@@ -9,6 +12,34 @@ const PRIORITY_MAP: Record<string, number> = {
   medium: 3,
   low: 4,
 };
+
+const PRIORITY_VALUES = "none | urgent | high | medium | low";
+
+/** Map an issue node to a rich summary for list/search output */
+async function mapIssueSummary(i: {
+  id: string;
+  identifier: string;
+  title: string;
+  priority: number;
+  priorityLabel: string;
+  state: Promise<{ name: string; type: string } | undefined>;
+  assignee: Promise<{ id: string; name: string } | undefined>;
+  team: Promise<{ key: string } | undefined>;
+}): Promise<Record<string, unknown>> {
+  const [state, assignee, team] = await Promise.all([i.state, i.assignee, i.team]);
+  return {
+    id: i.id,
+    identifier: i.identifier,
+    title: i.title,
+    status: state ? state.name : null,
+    statusType: state ? state.type : null,
+    assignee: assignee ? assignee.name : null,
+    assigneeId: assignee ? assignee.id : null,
+    team: team ? team.key : null,
+    priority: i.priority,
+    priorityLabel: i.priorityLabel,
+  };
+}
 
 export function registerIssueCommand({ program }: { program: Command }): void {
   const issue = program.command("issue").description("Issue operations");
@@ -23,22 +54,24 @@ export function registerIssueCommand({ program }: { program: Command }): void {
     .option("--status <status>", "Filter by status")
     .option("--priority <priority>", "Filter by priority")
     .option("--limit <n>", "Limit results", "50")
+    .option("--cursor <token>", "Pagination cursor for next page")
     .action(async (text: string, opts: Record<string, string | undefined>) => {
       try {
         const client = getClient();
+        const filter = buildIssueFilter(opts);
         const results = await client.issueSearch({
           query: text,
           first: parseInt(opts.limit ?? "50", 10),
+          after: opts.cursor,
+          filter:
+            Object.keys(filter).length > 0 ? (filter as LinearDocument.IssueFilter) : undefined,
         });
-        printJson(
-          results.nodes.map((i) => ({
-            id: i.id,
-            identifier: i.identifier,
-            title: i.title,
-            priority: i.priority,
-            priorityLabel: i.priorityLabel,
-          })),
+        const items = await Promise.all(
+          results.nodes.map((i) =>
+            mapIssueSummary(i as unknown as Parameters<typeof mapIssueSummary>[0]),
+          ),
         );
+        printPaginated(items, results.pageInfo);
       } catch (err) {
         printError(err instanceof Error ? err.message : "Search failed");
       }
@@ -55,21 +88,23 @@ export function registerIssueCommand({ program }: { program: Command }): void {
     .option("--label <label>", "Filter by label")
     .option("--cycle <cycle>", "Filter by cycle")
     .option("--limit <n>", "Limit results", "50")
+    .option("--cursor <token>", "Pagination cursor for next page")
     .action(async (opts: Record<string, string | undefined>) => {
       try {
         const client = getClient();
+        const filter = buildIssueFilter(opts);
         const results = await client.issues({
           first: parseInt(opts.limit ?? "50", 10),
+          after: opts.cursor,
+          filter:
+            Object.keys(filter).length > 0 ? (filter as LinearDocument.IssueFilter) : undefined,
         });
-        printJson(
-          results.nodes.map((i) => ({
-            id: i.id,
-            identifier: i.identifier,
-            title: i.title,
-            priority: i.priority,
-            priorityLabel: i.priorityLabel,
-          })),
+        const items = await Promise.all(
+          results.nodes.map((i) =>
+            mapIssueSummary(i as unknown as Parameters<typeof mapIssueSummary>[0]),
+          ),
         );
+        printPaginated(items, results.pageInfo);
       } catch (err) {
         printError(err instanceof Error ? err.message : "List failed");
       }
@@ -85,17 +120,24 @@ export function registerIssueCommand({ program }: { program: Command }): void {
       try {
         const client = getClient();
         const i = await client.issue(id);
-        const assignee = await i.assignee;
-        const state = await i.state;
-        const labels = await i.labels();
-        const parent = await i.parent;
+        const [assignee, state, labels, parent, team, project] = await Promise.all([
+          i.assignee,
+          i.state,
+          i.labels(),
+          i.parent,
+          i.team,
+          i.project,
+        ]);
         printJson({
           id: i.id,
           identifier: i.identifier,
+          url: i.url,
           title: i.title,
           description: i.description,
           status: state ? { id: state.id, name: state.name, type: state.type } : null,
           assignee: assignee ? { id: assignee.id, name: assignee.name } : null,
+          team: team ? { id: team.id, key: team.key, name: team.name } : null,
+          project: project ? { id: project.id, name: project.name } : null,
           priority: i.priority,
           priorityLabel: i.priorityLabel,
           labels: labels.nodes.map((l) => ({ id: l.id, name: l.name })),
@@ -119,14 +161,19 @@ export function registerIssueCommand({ program }: { program: Command }): void {
         const client = getClient();
         const i = await client.issue(id);
         const comments = await i.comments();
-        printJson(
-          comments.nodes.map((c) => ({
-            id: c.id,
-            body: c.body,
-            createdAt: c.createdAt,
-            updatedAt: c.updatedAt,
-          })),
+        const mapped = await Promise.all(
+          comments.nodes.map(async (c) => {
+            const user = await c.user;
+            return {
+              id: c.id,
+              body: c.body,
+              user: user ? { id: user.id, name: user.name } : null,
+              createdAt: c.createdAt,
+              updatedAt: c.updatedAt,
+            };
+          }),
         );
+        printJson(mapped);
       } catch (err) {
         printError(err instanceof Error ? err.message : "Get comments failed");
       }
@@ -149,15 +196,39 @@ export function registerIssueCommand({ program }: { program: Command }): void {
     .action(async (title: string, opts: Record<string, string | undefined>) => {
       try {
         const client = getClient();
+
+        // Validate priority early
+        let priority: number | undefined;
+        if (opts.priority) {
+          priority = PRIORITY_MAP[opts.priority.toLowerCase()];
+          if (priority === undefined) {
+            printError(`Invalid priority: "${opts.priority}". Valid values: ${PRIORITY_VALUES}`);
+            return;
+          }
+        }
+
+        // Resolve status name to state ID
+        let stateId: string | undefined;
+        if (opts.status) {
+          const states = await client.workflowStates();
+          const state = states.nodes.find(
+            (s) => s.name.toLowerCase() === opts.status!.toLowerCase(),
+          );
+          if (!state) {
+            const validNames = [...new Set(states.nodes.map((s) => s.name))];
+            printError(`Unknown status: "${opts.status}". Valid values: ${validNames.join(" | ")}`);
+            return;
+          }
+          stateId = state.id;
+        }
+
         const payload = await client.createIssue({
           title,
           teamId: opts.team!,
           projectId: opts.project,
           assigneeId: opts.assignee,
-          priority:
-            opts.priority && PRIORITY_MAP[opts.priority] !== undefined
-              ? PRIORITY_MAP[opts.priority]
-              : undefined,
+          stateId,
+          priority,
           description: opts.description,
           cycleId: opts.cycle,
           parentId: opts.parent,
@@ -168,6 +239,7 @@ export function registerIssueCommand({ program }: { program: Command }): void {
         printJson({
           id: created?.id,
           identifier: created?.identifier,
+          url: created?.url,
           title: created?.title,
           created: payload.success,
         });
@@ -205,7 +277,8 @@ export function registerIssueCommand({ program }: { program: Command }): void {
         const states = await client.workflowStates();
         const state = states.nodes.find((s) => s.name.toLowerCase() === newStatus.toLowerCase());
         if (!state) {
-          printError(`Unknown status: ${newStatus}`);
+          const validNames = [...new Set(states.nodes.map((s) => s.name))];
+          printError(`Unknown status: "${newStatus}". Valid values: ${validNames.join(" | ")}`);
           return;
         }
         const payload = await client.updateIssue(id, { stateId: state.id });
@@ -239,7 +312,7 @@ export function registerIssueCommand({ program }: { program: Command }): void {
       try {
         const p = PRIORITY_MAP[priority.toLowerCase()];
         if (p === undefined) {
-          printError(`Invalid priority: ${priority}. Use: none|urgent|high|medium|low`);
+          printError(`Invalid priority: "${priority}". Valid values: ${PRIORITY_VALUES}`);
           return;
         }
         const client = getClient();
@@ -295,22 +368,6 @@ export function registerIssueCommand({ program }: { program: Command }): void {
       }
     });
 
-  // Comment subcommands
-  const comment = issue.command("comment").description("Comment operations");
-
-  comment
-    .command("new")
-    .description("Add comment to issue")
-    .argument("<issue-id>", "Issue ID or key")
-    .argument("<body>", "Comment body (markdown)")
-    .action(async (issueId: string, body: string) => {
-      try {
-        const client = getClient();
-        const payload = await client.createComment({ issueId, body });
-        const c = await payload.comment;
-        printJson({ id: c?.id, body: c?.body, created: payload.success });
-      } catch (err) {
-        printError(err instanceof Error ? err.message : "Comment failed");
-      }
-    });
+  // Comment subcommands (extracted to comment-command.ts)
+  registerCommentSubcommands(issue);
 }

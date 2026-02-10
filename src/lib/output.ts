@@ -41,6 +41,27 @@ export function printJson(data: unknown): void {
   console.log(JSON.stringify(pruneEmpty(data), null, 2));
 }
 
+/**
+ * Print paginated list output with { items, pagination? } wrapper.
+ * Always returns { items: [...] } even when the array is empty.
+ * Includes pagination when hasNextPage is true.
+ */
+export function printPaginated(
+  items: unknown[],
+  pageInfo: { hasNextPage: boolean; endCursor?: string },
+): void {
+  // Prune individual items but always preserve the array structure
+  const prunedItems = items.map((item) => pruneEmpty(item));
+  const payload: Record<string, unknown> = { items: prunedItems };
+  if (pageInfo.hasNextPage) {
+    payload.pagination = {
+      hasMore: true,
+      nextCursor: pageInfo.endCursor ?? null,
+    };
+  }
+  console.log(JSON.stringify(payload, null, 2));
+}
+
 export function printError(message: string): void {
   console.error(JSON.stringify({ error: message }));
   process.exitCode = 1;
