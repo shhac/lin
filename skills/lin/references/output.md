@@ -45,11 +45,26 @@ Issues in list output include inline context to reduce follow-up calls:
   "id": "...",
   "identifier": "ENG-123",
   "title": "Fix login redirect",
+  "branchName": "alice/eng-123-fix-login-redirect",
   "status": "In Progress",
   "priority": "high",
   "assignee": "Alice Example",
-  "team": "Engineering",
-  "url": "https://linear.app/..."
+  "team": "Engineering"
+}
+```
+
+## Issue overview (`issue get overview`)
+
+Includes comment count, branch name, and attachments (e.g., linked GitHub PRs):
+
+```json
+{
+  "id": "...",
+  "identifier": "ENG-123",
+  "title": "Fix login redirect",
+  "branchName": "alice/eng-123-fix-login-redirect",
+  "commentCount": 3,
+  "attachments": [{ "title": "PR #456", "url": "https://github.com/...", "sourceType": "github" }]
 }
 ```
 

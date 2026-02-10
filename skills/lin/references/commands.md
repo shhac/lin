@@ -5,8 +5,12 @@ Run `lin usage` for concise LLM-optimized docs.
 
 ## Auth
 
-- `lin auth login <api-key>` — validate and store API key
-- `lin auth status` — show auth state, user, and workspace
+- `lin auth login <api-key> [--alias <name>]` — validate and store API key (auto-detects workspace)
+- `lin auth logout [--all]` — remove active workspace credentials (--all: clear all workspaces)
+- `lin auth status` — show auth state, active workspace, and other stored workspaces
+- `lin auth workspace list` — list all stored workspaces
+- `lin auth workspace switch <alias>` — set default workspace
+- `lin auth workspace remove <alias>` — remove a stored workspace
 
 ## Projects
 
@@ -23,8 +27,8 @@ Run `lin usage` for concise LLM-optimized docs.
 ## Issues
 
 - `lin issue search <text> [filters]` — full-text search
-- `lin issue list [filters]` — list issues (returns status, assignee, team inline)
-- `lin issue get overview <id>` — full issue details with url, team, project, labels
+- `lin issue list [filters]` — list issues (returns status, assignee, team, branchName)
+- `lin issue get overview <id>` — full issue details with commentCount, branchName, attachments (PR links)
 - `lin issue get comments <id>` — list comments with authors
 - `lin issue new <title> --team <team> [--priority <p>] [--status <s>] [--assignee <a>] [--project <p>] [--label <l>]`
 - `lin issue update title <id> <value>`
@@ -66,14 +70,14 @@ Run `lin usage` for concise LLM-optimized docs.
 
 ## Common filters (list/search commands)
 
-| Flag                           | Description                     |
-| ------------------------------ | ------------------------------- |
-| `--team <key\|name>`           | Filter by team                  |
-| `--status <name>`              | Filter by workflow state        |
-| `--assignee <name\|email\|id>` | Filter by assignee              |
-| `--priority <level>`           | none, urgent, high, medium, low |
-| `--label <name>`               | Filter by label                 |
-| `--cycle <id>`                 | Filter by cycle                 |
-| `--project <name\|id>`         | Filter by project               |
-| `--limit <n>`                  | Max results per page            |
-| `--cursor <token>`             | Pagination cursor               |
+| Flag                           | Description                           |
+| ------------------------------ | ------------------------------------- |
+| `--team <key\|name>`           | Filter by team                        |
+| `--status <name>`              | Filter by workflow state              |
+| `--assignee <name\|email\|id>` | Filter by assignee                    |
+| `--priority <level>`           | none, urgent, high, medium, low       |
+| `--label <name>`               | Filter by label                       |
+| `--cycle <id>`                 | Filter by cycle                       |
+| `--project <name\|slug\|id>`   | Filter by project (ID, slug, or name) |
+| `--limit <n>`                  | Max results per page                  |
+| `--cursor <token>`             | Pagination cursor                     |

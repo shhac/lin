@@ -20,6 +20,7 @@ async function mapIssueSummary(i: {
   id: string;
   identifier: string;
   title: string;
+  branchName: string;
   priority: number;
   priorityLabel: string;
   state: Promise<{ name: string; type: string } | undefined>;
@@ -31,6 +32,7 @@ async function mapIssueSummary(i: {
     id: i.id,
     identifier: i.identifier,
     title: i.title,
+    branchName: i.branchName,
     status: state ? state.name : null,
     statusType: state ? state.type : null,
     assignee: assignee ? assignee.name : null,
@@ -48,7 +50,7 @@ export function registerIssueCommand({ program }: { program: Command }): void {
     .command("search")
     .description("Full-text search for issues")
     .argument("<text>", "Search text")
-    .option("--project <project>", "Filter by project")
+    .option("--project <project>", "Filter by project ID, slug, or name")
     .option("--team <team>", "Filter by team")
     .option("--assignee <user>", "Filter by assignee")
     .option("--status <status>", "Filter by status")
@@ -80,7 +82,7 @@ export function registerIssueCommand({ program }: { program: Command }): void {
   issue
     .command("list")
     .description("List issues")
-    .option("--project <project>", "Filter by project")
+    .option("--project <project>", "Filter by project ID, slug, or name")
     .option("--team <team>", "Filter by team")
     .option("--assignee <user>", "Filter by assignee")
     .option("--status <status>", "Filter by status")
@@ -120,27 +122,37 @@ export function registerIssueCommand({ program }: { program: Command }): void {
       try {
         const client = getClient();
         const i = await client.issue(id);
-        const [assignee, state, labels, parent, team, project] = await Promise.all([
-          i.assignee,
-          i.state,
-          i.labels(),
-          i.parent,
-          i.team,
-          i.project,
-        ]);
+        const [assignee, state, labels, parent, team, project, comments, attachments] =
+          await Promise.all([
+            i.assignee,
+            i.state,
+            i.labels(),
+            i.parent,
+            i.team,
+            i.project,
+            i.comments(),
+            i.attachments(),
+          ]);
         printJson({
           id: i.id,
           identifier: i.identifier,
           url: i.url,
           title: i.title,
           description: i.description,
+          branchName: i.branchName,
           status: state ? { id: state.id, name: state.name, type: state.type } : null,
           assignee: assignee ? { id: assignee.id, name: assignee.name } : null,
           team: team ? { id: team.id, key: team.key, name: team.name } : null,
           project: project ? { id: project.id, name: project.name } : null,
           priority: i.priority,
           priorityLabel: i.priorityLabel,
+          commentCount: comments.nodes.length,
           labels: labels.nodes.map((l) => ({ id: l.id, name: l.name })),
+          attachments: attachments.nodes.map((a) => ({
+            title: a.title,
+            url: a.url,
+            sourceType: a.sourceType,
+          })),
           parent: parent ? { id: parent.id, identifier: parent.identifier } : null,
           estimate: i.estimate,
           dueDate: i.dueDate,
@@ -184,7 +196,7 @@ export function registerIssueCommand({ program }: { program: Command }): void {
     .description("Create a new issue")
     .argument("<title>", "Issue title")
     .requiredOption("--team <team>", "Team ID or key")
-    .option("--project <project>", "Project ID")
+    .option("--project <project>", "Project ID, slug, or name")
     .option("--assignee <user>", "Assignee user ID")
     .option("--priority <priority>", "Priority: none|urgent|high|medium|low")
     .option("--status <status>", "Status name")

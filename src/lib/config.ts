@@ -18,8 +18,16 @@ function ensureConfigDir(): string {
   return dir;
 }
 
+type Workspace = {
+  api_key: string;
+  name?: string;
+  urlKey?: string;
+};
+
 type Config = {
   api_key?: string;
+  default_workspace?: string;
+  workspaces?: Record<string, Workspace>;
 };
 
 function readConfig(): Config {
@@ -44,7 +52,13 @@ export function getApiKey(): string | undefined {
   if (envKey) {
     return envKey;
   }
-  return readConfig().api_key;
+
+  const config = readConfig();
+  const ws = config.default_workspace ? config.workspaces?.[config.default_workspace] : undefined;
+  if (ws) {
+    return ws.api_key;
+  }
+  return config.api_key;
 }
 
 export function storeApiKey(key: string): void {
@@ -57,4 +71,71 @@ export function clearApiKey(): void {
   const config = readConfig();
   delete config.api_key;
   writeConfig(config);
+}
+
+export function getWorkspaces(): Record<string, Workspace> {
+  return readConfig().workspaces ?? {};
+}
+
+export function getDefaultWorkspace(): string | undefined {
+  return readConfig().default_workspace;
+}
+
+export function storeWorkspace(alias: string, workspace: Workspace): void {
+  const config = readConfig();
+  config.workspaces = config.workspaces ?? {};
+  config.workspaces[alias] = workspace;
+  if (!config.default_workspace) {
+    config.default_workspace = alias;
+  }
+  writeConfig(config);
+}
+
+/**
+ * Store a workspace login. The workspace entry is the single source of truth
+ * for the API key — the legacy top-level `api_key` field is not written.
+ * Clears legacy `api_key` if present to avoid stale fallback.
+ */
+export function storeLogin(alias: string, workspace: Workspace): void {
+  const config = readConfig();
+  delete config.api_key;
+  config.workspaces = config.workspaces ?? {};
+  config.workspaces[alias] = workspace;
+  if (!config.default_workspace) {
+    config.default_workspace = alias;
+  }
+  writeConfig(config);
+}
+
+export function setDefaultWorkspace(alias: string): void {
+  const config = readConfig();
+  if (!config.workspaces?.[alias]) {
+    throw new Error(
+      `Unknown workspace: ${alias}. Valid: ${Object.keys(config.workspaces ?? {}).join(", ") || "(none)"}`,
+    );
+  }
+  config.default_workspace = alias;
+  writeConfig(config);
+}
+
+export function removeWorkspace(alias: string): void {
+  const config = readConfig();
+  if (!config.workspaces?.[alias]) {
+    throw new Error(
+      `Unknown workspace: ${alias}. Valid: ${Object.keys(config.workspaces ?? {}).join(", ") || "(none)"}`,
+    );
+  }
+  delete config.workspaces[alias];
+  if (config.default_workspace === alias) {
+    const remaining = Object.keys(config.workspaces);
+    config.default_workspace = remaining.length > 0 ? remaining[0] : undefined;
+  }
+  if (Object.keys(config.workspaces).length === 0) {
+    delete config.workspaces;
+  }
+  writeConfig(config);
+}
+
+export function clearAll(): void {
+  writeConfig({});
 }

@@ -17,7 +17,13 @@ export function buildIssueFilter(
   const filter: Record<string, unknown> = {};
 
   if (opts.project) {
-    filter.project = { id: { eq: opts.project } };
+    filter.project = {
+      or: [
+        { id: { eq: opts.project } },
+        { slugId: { eq: opts.project } },
+        { name: { eqIgnoreCase: opts.project } },
+      ],
+    };
   }
 
   if (opts.team) {

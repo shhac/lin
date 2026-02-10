@@ -13,6 +13,14 @@ Linear CLI for humans and LLMs.
 brew install shhac/tap/lin
 ```
 
+### Claude Code / AI agent skill
+
+```bash
+npx skills add shhac/lin
+```
+
+This installs the `lin` skill so Claude Code (and other AI agents) can discover and use `lin` automatically. See [skills.sh](https://skills.sh) for details.
+
 ## Authentication
 
 Generate a personal API key at **Settings > Account > Security > [Personal API Keys](https://linear.app/settings/account/security)**.
@@ -35,8 +43,10 @@ lin auth status
 ```text
 lin
 ├── auth
-│   ├── login <api-key>
-│   └── status
+│   ├── login <api-key> [--alias <name>]
+│   ├── logout [--all]
+│   ├── status
+│   └── workspace list|switch|remove
 ├── project
 │   ├── search <text>
 │   ├── list

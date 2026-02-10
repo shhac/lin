@@ -3,6 +3,7 @@ import type { LinearDocument } from "@linear/sdk";
 import { getClient } from "../lib/client.ts";
 import { buildIssueFilter } from "../lib/filters.ts";
 import { printError, printJson, printPaginated } from "../lib/output.ts";
+import { resolveProject } from "../lib/resolvers.ts";
 
 export function registerProjectCommand({ program }: { program: Command }): void {
   const project = program.command("project").description("Project operations");
@@ -82,11 +83,11 @@ export function registerProjectCommand({ program }: { program: Command }): void 
   get
     .command("overview")
     .description("Project summary: status, progress, lead, dates, milestones")
-    .argument("<id>", "Project ID or name")
+    .argument("<id>", "Project ID, slug, or name")
     .action(async (id: string) => {
       try {
         const client = getClient();
-        const p = await client.project(id);
+        const p = await resolveProject(client, id);
         const lead = await p.lead;
         const milestones = await p.projectMilestones();
         printJson({
@@ -114,11 +115,11 @@ export function registerProjectCommand({ program }: { program: Command }): void 
   get
     .command("details")
     .description("Full project description/content (markdown body)")
-    .argument("<id>", "Project ID or name")
+    .argument("<id>", "Project ID, slug, or name")
     .action(async (id: string) => {
       try {
         const client = getClient();
-        const p = await client.project(id);
+        const p = await resolveProject(client, id);
         printJson({
           id: p.id,
           name: p.name,
@@ -134,7 +135,7 @@ export function registerProjectCommand({ program }: { program: Command }): void 
   get
     .command("issues")
     .description("List issues within a project")
-    .argument("<id>", "Project ID or name")
+    .argument("<id>", "Project ID, slug, or name")
     .option("--status <status>", "Filter by status")
     .option("--assignee <user>", "Filter by assignee")
     .option("--priority <priority>", "Filter by priority")
@@ -153,7 +154,7 @@ export function registerProjectCommand({ program }: { program: Command }): void 
       ) => {
         try {
           const client = getClient();
-          const p = await client.project(id);
+          const p = await resolveProject(client, id);
           const filter = buildIssueFilter(opts);
           const issues = await p.issues({
             first: parseInt(opts.limit, 10),
@@ -187,12 +188,13 @@ export function registerProjectCommand({ program }: { program: Command }): void 
   update
     .command("title")
     .description("Update project title")
-    .argument("<id>", "Project ID")
+    .argument("<id>", "Project ID, slug, or name")
     .argument("<new-title>", "New title")
     .action(async (id: string, newTitle: string) => {
       try {
         const client = getClient();
-        const payload = await client.updateProject(id, { name: newTitle });
+        const resolved = await resolveProject(client, id);
+        const payload = await client.updateProject(resolved.id, { name: newTitle });
         const p = await payload.project;
         printJson({ id: p?.id, name: p?.name, updated: payload.success });
       } catch (err) {
@@ -203,7 +205,7 @@ export function registerProjectCommand({ program }: { program: Command }): void 
   update
     .command("status")
     .description("Update project status")
-    .argument("<id>", "Project ID")
+    .argument("<id>", "Project ID, slug, or name")
     .argument("<new-status>", "New status")
     .action(async (id: string, newStatus: string) => {
       try {
@@ -215,7 +217,8 @@ export function registerProjectCommand({ program }: { program: Command }): void 
           return;
         }
         const client = getClient();
-        const payload = await client.updateProject(id, { state: newStatus.toLowerCase() });
+        const p = await resolveProject(client, id);
+        const payload = await client.updateProject(p.id, { state: newStatus.toLowerCase() });
         printJson({ updated: payload.success });
       } catch (err) {
         printError(err instanceof Error ? err.message : "Update failed");
@@ -225,12 +228,13 @@ export function registerProjectCommand({ program }: { program: Command }): void 
   update
     .command("description")
     .description("Update project description")
-    .argument("<id>", "Project ID")
+    .argument("<id>", "Project ID, slug, or name")
     .argument("<description>", "New description")
     .action(async (id: string, description: string) => {
       try {
         const client = getClient();
-        const payload = await client.updateProject(id, { description });
+        const p = await resolveProject(client, id);
+        const payload = await client.updateProject(p.id, { description });
         printJson({ updated: payload.success });
       } catch (err) {
         printError(err instanceof Error ? err.message : "Update failed");
@@ -240,12 +244,13 @@ export function registerProjectCommand({ program }: { program: Command }): void 
   update
     .command("lead")
     .description("Update project lead")
-    .argument("<id>", "Project ID")
+    .argument("<id>", "Project ID, slug, or name")
     .argument("<user-id>", "New lead user ID")
     .action(async (id: string, userId: string) => {
       try {
         const client = getClient();
-        const payload = await client.updateProject(id, { leadId: userId });
+        const p = await resolveProject(client, id);
+        const payload = await client.updateProject(p.id, { leadId: userId });
         printJson({ updated: payload.success });
       } catch (err) {
         printError(err instanceof Error ? err.message : "Update failed");
