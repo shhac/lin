@@ -7,7 +7,7 @@ describe("getPackageVersion", () => {
     expect(version).toMatch(/^\d+\.\d+\.\d+/);
   });
 
-  test("returns 0.2.0 for current package", () => {
-    expect(getPackageVersion()).toBe("0.2.0");
+  test("returns 0.2.1 for current package", () => {
+    expect(getPackageVersion()).toBe("0.2.1");
   });
 });
