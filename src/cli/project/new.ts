@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
+import { PROJECT_STATUSES, PROJECT_STATUS_VALUES } from "../../lib/project-statuses.ts";
 import { resolveUser } from "../../lib/resolvers.ts";
 
 export function registerNew(project: Command): void {
@@ -33,17 +34,9 @@ export function registerNew(project: Command): void {
 
           // Validate status early
           if (opts.status) {
-            const validStatuses = [
-              "backlog",
-              "planned",
-              "started",
-              "paused",
-              "completed",
-              "canceled",
-            ];
-            if (!validStatuses.includes(opts.status.toLowerCase())) {
+            if (!PROJECT_STATUSES.includes(opts.status.toLowerCase())) {
               printError(
-                `Invalid project status: "${opts.status}". Valid values: ${validStatuses.join(" | ")}`,
+                `Invalid project status: "${opts.status}". Valid values: ${PROJECT_STATUS_VALUES}`,
               );
               return;
             }

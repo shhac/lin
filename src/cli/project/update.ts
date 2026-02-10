@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
+import { PROJECT_STATUSES, PROJECT_STATUS_VALUES } from "../../lib/project-statuses.ts";
 import { resolveProject } from "../../lib/resolvers.ts";
 
 export function registerUpdate(project: Command): void {
@@ -30,10 +31,9 @@ export function registerUpdate(project: Command): void {
     .argument("<new-status>", "New status")
     .action(async (id: string, newStatus: string) => {
       try {
-        const validStatuses = ["backlog", "planned", "started", "paused", "completed", "canceled"];
-        if (!validStatuses.includes(newStatus.toLowerCase())) {
+        if (!PROJECT_STATUSES.includes(newStatus.toLowerCase())) {
           printError(
-            `Invalid project status: "${newStatus}". Valid values: ${validStatuses.join(" | ")}`,
+            `Invalid project status: "${newStatus}". Valid values: ${PROJECT_STATUS_VALUES}`,
           );
           return;
         }
