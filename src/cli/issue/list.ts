@@ -1,0 +1,41 @@
+import type { Command } from "commander";
+import type { LinearDocument } from "@linear/sdk";
+import { getClient } from "../../lib/client.ts";
+import { buildIssueFilter } from "../../lib/filters.ts";
+import { printError, printPaginated } from "../../lib/output.ts";
+import { mapIssueSummary } from "./map-issue-summary.ts";
+
+export function registerList(issue: Command): void {
+  issue
+    .command("list")
+    .description("List issues")
+    .option("--project <project>", "Filter by project ID, slug, or name")
+    .option("--team <team>", "Filter by team")
+    .option("--assignee <user>", "Filter by assignee")
+    .option("--status <status>", "Filter by status")
+    .option("--priority <priority>", "Filter by priority")
+    .option("--label <label>", "Filter by label")
+    .option("--cycle <cycle>", "Filter by cycle")
+    .option("--limit <n>", "Limit results", "50")
+    .option("--cursor <token>", "Pagination cursor for next page")
+    .action(async (opts: Record<string, string | undefined>) => {
+      try {
+        const client = getClient();
+        const filter = buildIssueFilter(opts);
+        const results = await client.issues({
+          first: parseInt(opts.limit ?? "50", 10),
+          after: opts.cursor,
+          filter:
+            Object.keys(filter).length > 0 ? (filter as LinearDocument.IssueFilter) : undefined,
+        });
+        const items = await Promise.all(
+          results.nodes.map((i) =>
+            mapIssueSummary(i as unknown as Parameters<typeof mapIssueSummary>[0]),
+          ),
+        );
+        printPaginated(items, results.pageInfo);
+      } catch (err) {
+        printError(err instanceof Error ? err.message : "List failed");
+      }
+    });
+}

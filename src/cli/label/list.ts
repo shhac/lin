@@ -1,10 +1,8 @@
 import type { Command } from "commander";
-import { getClient } from "../lib/client.ts";
-import { printError, printJson } from "../lib/output.ts";
+import { getClient } from "../../lib/client.ts";
+import { printError, printJson } from "../../lib/output.ts";
 
-export function registerLabelCommand({ program }: { program: Command }): void {
-  const label = program.command("label").description("Label operations");
-
+export function registerList(label: Command): void {
   label
     .command("list")
     .description("List labels")

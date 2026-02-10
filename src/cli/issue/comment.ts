@@ -1,8 +1,8 @@
 import type { Command } from "commander";
-import { getClient } from "../lib/client.ts";
-import { printError, printJson } from "../lib/output.ts";
+import { getClient } from "../../lib/client.ts";
+import { printError, printJson } from "../../lib/output.ts";
 
-export function registerCommentSubcommands(issue: Command): void {
+export function registerComment(issue: Command): void {
   const comment = issue.command("comment").description("Comment operations");
 
   comment
