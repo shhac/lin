@@ -49,24 +49,33 @@ lin
 │   └── workspace list|switch|remove
 ├── project
 │   ├── search <text>
-│   ├── list
-│   ├── get overview <id>
-│   ├── get details <id>
-│   ├── get issues <id>
+│   ├── list [--team] [--status]
+│   ├── get overview|details|issues <id>
+│   ├── new <name> --team <teams>
 │   └── update title|status|description|lead <id> <value>
+├── roadmap
+│   ├── list
+│   └── get overview|projects <id>
+├── document
+│   ├── search <text>
+│   ├── list [--project] [--creator]
+│   ├── get <id>
+│   ├── new <title> [--project] [--content]
+│   └── update title|content|project <id> <value>
 ├── issue
 │   ├── search <text>
-│   ├── list
-│   ├── get overview <id>
-│   ├── get comments <id>
+│   ├── list [filters]
+│   ├── get overview|comments <id>
 │   ├── new <title> --team <team>
-│   ├── update title|status|assignee|priority|project|labels|description <id> <value>
-│   ├── comment new <issue-id> <body>
-│   ├── comment get <comment-id>
-│   └── comment edit <comment-id> <body>
+│   ├── update title|status|assignee|priority|project|labels|estimate|description <id> <value>
+│   ├── comment new|get|edit <id> [<body>]
+│   ├── relation list|add|remove
+│   ├── archive|unarchive|delete <id>
+│   └── attachment list|add|remove
 ├── team
 │   ├── list
-│   └── get <id>
+│   ├── get <id>
+│   └── states <team>
 ├── user
 │   ├── list
 │   └── me
