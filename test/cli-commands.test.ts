@@ -118,10 +118,9 @@ describe("CLI command registration", () => {
 });
 
 describe("CLI nested command registration", () => {
-  test("project get --help shows overview, details, issues", () => {
+  test("project get --help shows overview and issues", () => {
     const output = runCli("project get --help");
     expect(output).toContain("overview");
-    expect(output).toContain("details");
     expect(output).toContain("issues");
   });
 

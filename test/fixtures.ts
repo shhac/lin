@@ -178,17 +178,6 @@ export const projectOverview = {
   ],
 };
 
-// ── project get details ──────────────────────────────────────────────
-
-export const projectDetails = {
-  id: "ffffffff-1111-2222-3333-444444444444",
-  name: "Project Alpha",
-  url: "https://linear.app/example/project/project-alpha-aaa111bbb222",
-  description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-  content:
-    "## tl;dr\n\nLorem ipsum dolor sit amet.\n\n## Why?\n\n* Reason one\n* Reason two\n\n## Scope\n\n### MVP\n\n- [ ] Task one\n- [ ] Task two\n\n### Future\n\n* Follow-up work",
-};
-
 // ── project get issues ───────────────────────────────────────────────
 
 export const projectIssues = [

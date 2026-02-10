@@ -50,7 +50,7 @@ lin
 ├── project
 │   ├── search <text>
 │   ├── list [--team] [--status]
-│   ├── get overview|details|issues <id>
+│   ├── get overview|issues <id>
 │   ├── new <name> --team <teams>
 │   └── update title|status|description|lead <id> <value>
 ├── roadmap

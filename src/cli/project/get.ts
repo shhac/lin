@@ -42,26 +42,6 @@ export function registerGet(project: Command): void {
     });
 
   get
-    .command("details")
-    .description("Full project description/content (markdown body)")
-    .argument("<id>", "Project ID, slug, or name")
-    .action(async (id: string) => {
-      try {
-        const client = getClient();
-        const p = await resolveProject(client, id);
-        printJson({
-          id: p.id,
-          name: p.name,
-          url: p.url,
-          description: p.description,
-          content: p.content,
-        });
-      } catch (err) {
-        printError(err instanceof Error ? err.message : "Get details failed");
-      }
-    });
-
-  get
     .command("issues")
     .description("List issues within a project")
     .argument("<id>", "Project ID, slug, or name")

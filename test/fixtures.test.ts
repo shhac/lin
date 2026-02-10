@@ -140,15 +140,6 @@ describe("fixture: project", () => {
     }
   });
 
-  test("projectDetails includes content markdown", () => {
-    const d = fixtures.projectDetails;
-    expectUuid(d.id);
-    expectNonEmptyString(d.name);
-    expectNonEmptyString(d.description);
-    expectNonEmptyString(d.content);
-    expect(d.content).toContain("##"); // markdown headers
-  });
-
   test("projectIssues items have issue shape", () => {
     for (const i of fixtures.projectIssues) {
       expectUuid(i.id);

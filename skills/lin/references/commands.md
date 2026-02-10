@@ -17,7 +17,6 @@ Run `lin usage` for concise LLM-optimized docs.
 - `lin project search <text>` — search projects by name
 - `lin project list [--team] [--status] [--limit] [--cursor]` — list projects
 - `lin project get overview <id>` — project summary with lead, milestones, url, and content (markdown body, truncated by default)
-- `lin project get details <id>` — full project content (markdown body)
 - `lin project get issues <id> [filters]` — issues in a project
 - `lin project update title <id> <value>`
 - `lin project update status <id> <value>` — backlog | planned | started | paused | completed | canceled
