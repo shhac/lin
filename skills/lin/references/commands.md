@@ -46,10 +46,29 @@ Run `lin usage` for concise LLM-optimized docs.
 - `lin issue comment get <comment-id>` — get a specific comment
 - `lin issue comment edit <comment-id> <body>` — edit a comment
 
+## Issue Relations
+
+- `lin issue relation list <issue-id>` — list all relations (both directions, includes blocked_by)
+- `lin issue relation add <issue-id> --type <type> --related <related-id>` — type: blocks | duplicate | related
+- `lin issue relation remove <relation-id>` — delete a relation
+
+## Issue Lifecycle
+
+- `lin issue archive <id>` — archive an issue
+- `lin issue unarchive <id>` — unarchive an issue
+- `lin issue delete <id>` — delete issue (move to trash)
+
+## Issue Attachments
+
+- `lin issue attachment list <issue-id>` — list attachments
+- `lin issue attachment add <issue-id> --url <url> --title <title> [--subtitle <text>]` — add URL attachment
+- `lin issue attachment remove <attachment-id>` — remove attachment
+
 ## Teams
 
 - `lin team list` — list teams (id, name, key)
 - `lin team get <id>` — team details + members + estimate config (type, valid values)
+- `lin team states <team>` — list workflow states (id, name, type, color, position)
 
 ## Users
 

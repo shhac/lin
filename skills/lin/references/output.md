@@ -84,6 +84,38 @@ Includes comment count, branch name, and attachments (e.g., linked GitHub PRs):
 
 Use `project get details <id>` for the full markdown body.
 
+## Issue relations (`issue relation list`)
+
+```json
+[
+  { "id": "...", "type": "blocks", "relatedIssue": "ENG-124" },
+  { "id": "...", "type": "blocked_by", "relatedIssue": "ENG-122" },
+  { "id": "...", "type": "duplicate", "relatedIssue": "ENG-100" }
+]
+```
+
+`blocked_by` is displayed for inverse "blocks" relations. Relation types: `blocks`, `duplicate`, `related`.
+
+## Workflow states (`team states`)
+
+```json
+[
+  { "id": "...", "name": "Todo", "type": "unstarted", "color": "#e2e2e2", "position": 0 },
+  { "id": "...", "name": "In Progress", "type": "started", "color": "#5e6ad2", "position": 1 },
+  { "id": "...", "name": "Done", "type": "completed", "color": "#5e6ad2", "position": 2 }
+]
+```
+
+State types: `triage` | `backlog` | `unstarted` | `started` | `completed` | `canceled`
+
+## Issue attachments (`issue attachment list`)
+
+```json
+[
+  { "id": "...", "title": "PR #456", "url": "https://github.com/...", "subtitle": "Fixes login bug", "sourceType": "github" }
+]
+```
+
 ## Priority values
 
 | Value    | Meaning         |

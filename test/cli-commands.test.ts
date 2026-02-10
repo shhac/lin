@@ -24,7 +24,7 @@ describe("CLI command registration", () => {
   test("root shows help with all top-level commands", () => {
     const output = runCli("--help");
     // All resource commands should be listed
-    for (const cmd of ["auth", "project", "issue", "team", "user", "label", "cycle", "usage"]) {
+    for (const cmd of ["auth", "project", "roadmap", "issue", "team", "user", "label", "cycle", "usage"]) {
       expect(output).toContain(cmd);
     }
   });
@@ -40,28 +40,36 @@ describe("CLI command registration", () => {
     expect(output).toContain("status");
   });
 
-  test("project --help shows search, list, get, update subcommands", () => {
+  test("project --help shows search, list, get, new, update subcommands", () => {
     const output = runCli("project --help");
-    expect(output).toContain("search");
-    expect(output).toContain("list");
-    expect(output).toContain("get");
-    expect(output).toContain("update");
-  });
-
-  test("issue --help shows search, list, get, new, update, comment subcommands", () => {
-    const output = runCli("issue --help");
     expect(output).toContain("search");
     expect(output).toContain("list");
     expect(output).toContain("get");
     expect(output).toContain("new");
     expect(output).toContain("update");
-    expect(output).toContain("comment");
   });
 
-  test("team --help shows list and get subcommands", () => {
+  test("roadmap --help shows list and get subcommands", () => {
+    const output = runCli("roadmap --help");
+    expect(output).toContain("list");
+    expect(output).toContain("get");
+  });
+
+  test("issue --help shows all subcommands", () => {
+    const output = runCli("issue --help");
+    for (const cmd of [
+      "search", "list", "get", "new", "update", "comment",
+      "relation", "archive", "unarchive", "delete", "attachment",
+    ]) {
+      expect(output).toContain(cmd);
+    }
+  });
+
+  test("team --help shows list, get, and states subcommands", () => {
     const output = runCli("team --help");
     expect(output).toContain("list");
     expect(output).toContain("get");
+    expect(output).toContain("states");
   });
 
   test("user --help shows list and me subcommands", () => {
@@ -116,9 +124,31 @@ describe("CLI nested command registration", () => {
     expect(output).toContain("description");
   });
 
-  test("issue comment --help shows new subcommand", () => {
+  test("issue comment --help shows new, get, edit subcommands", () => {
     const output = runCli("issue comment --help");
     expect(output).toContain("new");
+    expect(output).toContain("get");
+    expect(output).toContain("edit");
+  });
+
+  test("issue relation --help shows list, add, remove subcommands", () => {
+    const output = runCli("issue relation --help");
+    expect(output).toContain("list");
+    expect(output).toContain("add");
+    expect(output).toContain("remove");
+  });
+
+  test("issue attachment --help shows list, add, remove subcommands", () => {
+    const output = runCli("issue attachment --help");
+    expect(output).toContain("list");
+    expect(output).toContain("add");
+    expect(output).toContain("remove");
+  });
+
+  test("roadmap get --help shows overview and projects", () => {
+    const output = runCli("roadmap get --help");
+    expect(output).toContain("overview");
+    expect(output).toContain("projects");
   });
 });
 
@@ -164,5 +194,15 @@ describe("CLI option registration", () => {
     expect(output).toContain("--team");
     expect(output).toContain("--status");
     expect(output).toContain("--limit");
+  });
+
+  test("project new --help shows required --team and optional flags", () => {
+    const output = runCli("project new --help");
+    expect(output).toContain("--team");
+    expect(output).toContain("--description");
+    expect(output).toContain("--lead");
+    expect(output).toContain("--start-date");
+    expect(output).toContain("--target-date");
+    expect(output).toContain("--status");
   });
 });

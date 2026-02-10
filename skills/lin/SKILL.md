@@ -59,6 +59,25 @@ lin issue comment get <comment-id>
 lin issue comment edit <comment-id> "Updated analysis"
 ```
 
+## Issue relations and lifecycle
+
+```bash
+# Relations (blocks, duplicate, related)
+lin issue relation list ENG-123
+lin issue relation add ENG-123 --type blocks --related ENG-124
+lin issue relation remove <relation-id>
+
+# Archive and delete
+lin issue archive ENG-123
+lin issue unarchive ENG-123
+lin issue delete ENG-123                  # moves to trash
+
+# Attachments (link PRs, docs, etc.)
+lin issue attachment list ENG-123
+lin issue attachment add ENG-123 --url "https://github.com/org/repo/pull/456" --title "PR #456" --subtitle "Fixes login bug"
+lin issue attachment remove <attachment-id>
+```
+
 ## Projects
 
 Project commands accept UUID, slug ID, or name.
@@ -79,6 +98,7 @@ The `--project` filter on issue commands also accepts slug or name.
 ```bash
 lin team list
 lin team get ENG                         # includes estimate config + valid values
+lin team states ENG                      # workflow states (discover valid status values)
 lin user me
 lin user list --team ENG
 lin label list --team ENG

@@ -5,6 +5,9 @@ import { registerGet } from "./get.ts";
 import { registerNew } from "./new.ts";
 import { registerUpdate } from "./update.ts";
 import { registerComment } from "./comment.ts";
+import { registerRelation } from "./relation.ts";
+import { registerArchive } from "./archive.ts";
+import { registerAttachment } from "./attachment.ts";
 
 export function registerIssueCommand({ program }: { program: Command }): void {
   const issue = program.command("issue").description("Issue operations");
@@ -14,4 +17,7 @@ export function registerIssueCommand({ program }: { program: Command }): void {
   registerNew(issue);
   registerUpdate(issue);
   registerComment(issue);
+  registerRelation(issue);
+  registerArchive(issue);
+  registerAttachment(issue);
 }
