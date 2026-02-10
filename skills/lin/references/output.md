@@ -1,0 +1,84 @@
+# Output format (reference)
+
+## General
+
+All commands print JSON to stdout. Errors print `{ "error": "..." }` to stderr with non-zero exit.
+
+Empty/null fields are pruned automatically — missing keys mean no value, not `null`.
+
+Error messages include valid values when input is invalid (e.g., unknown status names list all valid states).
+
+## List output
+
+List commands return:
+
+```json
+{
+  "items": [ ... ],
+  "pagination": {
+    "hasMore": true,
+    "nextCursor": "abc123"
+  }
+}
+```
+
+When there are no more pages, the `pagination` key is omitted entirely.
+
+## Single item output
+
+Single-item commands (e.g., `issue get overview`, `team get`) return the object directly:
+
+```json
+{
+  "id": "...",
+  "title": "...",
+  "status": "In Progress"
+}
+```
+
+## Issue list items
+
+Issues in list output include inline context to reduce follow-up calls:
+
+```json
+{
+  "id": "...",
+  "identifier": "ENG-123",
+  "title": "Fix login redirect",
+  "status": "In Progress",
+  "priority": "high",
+  "assignee": "Alice Example",
+  "team": "Engineering",
+  "url": "https://linear.app/..."
+}
+```
+
+## Project list items
+
+```json
+{
+  "id": "...",
+  "slugId": "shipstation-integration-d0f95990a8f1",
+  "name": "Shipstation Integration",
+  "description": "One-liner project summary",
+  "status": "started",
+  "progress": 0.45,
+  "url": "https://linear.app/.../project/..."
+}
+```
+
+Use `project get details <id>` for the full markdown body.
+
+## Priority values
+
+| Value    | Meaning         |
+| -------- | --------------- |
+| `none`   | No priority set |
+| `urgent` | P0 — immediate  |
+| `high`   | P1              |
+| `medium` | P2              |
+| `low`    | P3              |
+
+## Project status values
+
+`backlog` | `planned` | `started` | `paused` | `completed` | `canceled`
