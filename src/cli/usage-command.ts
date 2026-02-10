@@ -8,8 +8,9 @@ COMMANDS:
 
   project search <text>                   Search projects
   project list [--team] [--status]        List projects
-  project get overview <id>               Project details
-  project get issues <id>                 Issues in a project
+  project get overview <id>               Project summary + milestones
+  project get details <id>               Full project content (markdown)
+  project get issues <id>                Issues in a project
   project update title <id> <value>       Update title
   project update status <id> <value>      Update status
   project update description <id> <value> Update description

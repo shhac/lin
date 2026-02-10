@@ -15,6 +15,8 @@ brew install shhac/tap/lin
 
 ## Authentication
 
+Generate a personal API key at **Settings > Account > Security > [Personal API Keys](https://linear.app/settings/account/security)**.
+
 Set an env var (recommended for CI / agent use):
 
 ```bash
@@ -39,6 +41,7 @@ lin
 │   ├── search <text>
 │   ├── list
 │   ├── get overview <id>
+│   ├── get details <id>
 │   ├── get issues <id>
 │   └── update title|status|description|lead <id> <value>
 ├── issue

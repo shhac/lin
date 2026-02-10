@@ -18,7 +18,10 @@ export function registerProjectCommand({ program }: { program: Command }): void 
         printJson(
           results.nodes.map((p) => ({
             id: p.id,
+            slugId: p.slugId,
+            url: p.url,
             name: p.name,
+            description: p.description,
             status: p.state,
             progress: p.progress,
           })),
@@ -43,7 +46,10 @@ export function registerProjectCommand({ program }: { program: Command }): void 
         printJson(
           results.nodes.map((p) => ({
             id: p.id,
+            slugId: p.slugId,
+            url: p.url,
             name: p.name,
+            description: p.description,
             status: p.state,
             progress: p.progress,
             startDate: p.startDate,
@@ -59,7 +65,7 @@ export function registerProjectCommand({ program }: { program: Command }): void 
 
   get
     .command("overview")
-    .description("Project details: status, progress, lead, dates, milestones")
+    .description("Project summary: status, progress, lead, dates, milestones")
     .argument("<id>", "Project ID or name")
     .action(async (id: string) => {
       try {
@@ -69,6 +75,8 @@ export function registerProjectCommand({ program }: { program: Command }): void 
         const milestones = await p.projectMilestones();
         printJson({
           id: p.id,
+          slugId: p.slugId,
+          url: p.url,
           name: p.name,
           description: p.description,
           status: p.state,
@@ -84,6 +92,26 @@ export function registerProjectCommand({ program }: { program: Command }): void 
         });
       } catch (err) {
         printError(err instanceof Error ? err.message : "Get failed");
+      }
+    });
+
+  get
+    .command("details")
+    .description("Full project description/content (markdown body)")
+    .argument("<id>", "Project ID or name")
+    .action(async (id: string) => {
+      try {
+        const client = getClient();
+        const p = await client.project(id);
+        printJson({
+          id: p.id,
+          name: p.name,
+          url: p.url,
+          description: p.description,
+          content: p.content,
+        });
+      } catch (err) {
+        printError(err instanceof Error ? err.message : "Get details failed");
       }
     });
 
