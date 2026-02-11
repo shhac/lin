@@ -11,7 +11,7 @@ import { registerProjectCommand } from "./cli/project/index.ts";
 import { registerRoadmapCommand } from "./cli/roadmap/index.ts";
 import { registerTeamCommand } from "./cli/team/index.ts";
 import { registerConfigCommand } from "./cli/config/index.ts";
-import { registerUsageCommand } from "./cli/usage-command.ts";
+import { registerUsageCommand } from "./cli/usage/index.ts";
 import { registerUserCommand } from "./cli/user/index.ts";
 
 const program = new Command();
