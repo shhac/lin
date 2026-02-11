@@ -99,6 +99,7 @@ Read the SHA256 checksums from `release/checksums-sha256.txt` and update the for
 ### Step 6: Report
 
 Show the user:
+
 - New version number
 - GitHub release URL
 - Homebrew tap commit
