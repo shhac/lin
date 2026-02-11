@@ -24,10 +24,19 @@ type Workspace = {
   urlKey?: string;
 };
 
+export type TruncationSettings = {
+  maxLength?: number;
+};
+
+export type Settings = {
+  truncation?: TruncationSettings;
+};
+
 type Config = {
   api_key?: string;
   default_workspace?: string;
   workspaces?: Record<string, Workspace>;
+  settings?: Settings;
 };
 
 function readConfig(): Config {
@@ -133,6 +142,22 @@ export function removeWorkspace(alias: string): void {
   if (Object.keys(config.workspaces).length === 0) {
     delete config.workspaces;
   }
+  writeConfig(config);
+}
+
+export function getSettings(): Settings {
+  return readConfig().settings ?? {};
+}
+
+export function updateSettings(partial: Settings): void {
+  const config = readConfig();
+  config.settings = { ...config.settings, ...partial };
+  writeConfig(config);
+}
+
+export function resetSettings(): void {
+  const config = readConfig();
+  delete config.settings;
   writeConfig(config);
 }
 

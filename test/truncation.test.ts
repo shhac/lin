@@ -7,21 +7,21 @@ describe("applyTruncation", () => {
   test("truncates description over 200 chars", () => {
     const long = "a".repeat(300);
     const result = applyTruncation({ description: long }) as Record<string, unknown>;
-    expect(result.description).toBe(`${"a".repeat(200)}...`);
+    expect(result.description).toBe(`${"a".repeat(200)}\u2026`);
     expect(result.descriptionLength).toBe(300);
   });
 
   test("truncates body over 200 chars", () => {
     const long = "b".repeat(250);
     const result = applyTruncation({ body: long }) as Record<string, unknown>;
-    expect(result.body).toBe(`${"b".repeat(200)}...`);
+    expect(result.body).toBe(`${"b".repeat(200)}\u2026`);
     expect(result.bodyLength).toBe(250);
   });
 
   test("truncates content over 200 chars", () => {
     const long = "c".repeat(500);
     const result = applyTruncation({ content: long }) as Record<string, unknown>;
-    expect(result.content).toBe(`${"c".repeat(200)}...`);
+    expect(result.content).toBe(`${"c".repeat(200)}\u2026`);
     expect(result.contentLength).toBe(500);
   });
 
@@ -50,7 +50,7 @@ describe("applyTruncation", () => {
     const data = { project: { description: "d".repeat(300), name: "Test" } };
     const result = applyTruncation(data) as Record<string, unknown>;
     const project = result.project as Record<string, unknown>;
-    expect(project.description).toBe(`${"d".repeat(200)}...`);
+    expect(project.description).toBe(`${"d".repeat(200)}\u2026`);
     expect(project.descriptionLength).toBe(300);
     expect(project.name).toBe("Test");
   });
@@ -61,7 +61,7 @@ describe("applyTruncation", () => {
       { id: "2", body: "short" },
     ];
     const result = applyTruncation(data) as Record<string, unknown>[];
-    expect(result[0]!.body).toBe(`${"b".repeat(200)}...`);
+    expect(result[0]!.body).toBe(`${"b".repeat(200)}\u2026`);
     expect(result[0]!.bodyLength).toBe(300);
     expect(result[1]!.body).toBe("short");
     expect(result[1]!.bodyLength).toBe(5);
@@ -108,7 +108,7 @@ describe("configureTruncation --expand", () => {
     const result = applyTruncation({ description: long, body: long }) as Record<string, unknown>;
     expect(result.description).toBe(long); // expanded
     expect(result.descriptionLength).toBe(300);
-    expect(result.body).toBe(`${"a".repeat(200)}...`); // still truncated
+    expect(result.body).toBe(`${"a".repeat(200)}\u2026`); // still truncated
     expect(result.bodyLength).toBe(300);
   });
 
@@ -122,7 +122,7 @@ describe("configureTruncation --expand", () => {
     }) as Record<string, unknown>;
     expect(result.description).toBe(long);
     expect(result.body).toBe(long);
-    expect(result.content).toBe(`${"a".repeat(200)}...`);
+    expect(result.content).toBe(`${"a".repeat(200)}\u2026`);
   });
 
   test("handles whitespace in expand list", () => {
@@ -147,6 +147,6 @@ describe("configureTruncation reset", () => {
     configureTruncation({});
     const long = "a".repeat(300);
     const result = applyTruncation({ description: long }) as Record<string, unknown>;
-    expect(result.description).toBe(`${"a".repeat(200)}...`);
+    expect(result.description).toBe(`${"a".repeat(200)}\u2026`);
   });
 });

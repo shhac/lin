@@ -7,12 +7,17 @@
 
 const TRUNCATABLE_FIELDS = new Set(["description", "body", "content"]);
 const DEFAULT_MAX_LENGTH = 200;
-const ELLIPSIS = "...";
+const ELLIPSIS = "\u2026";
 
 // Module-level state, configured once per CLI invocation
 let expandedFields: Set<string> | "all" = new Set();
+let configuredMaxLength: number = DEFAULT_MAX_LENGTH;
 
-export function configureTruncation(opts: { expand?: string; full?: boolean }): void {
+export function configureTruncation(opts: {
+  expand?: string;
+  full?: boolean;
+  maxLength?: number;
+}): void {
   if (opts.full) {
     expandedFields = "all";
   } else if (opts.expand) {
@@ -20,6 +25,7 @@ export function configureTruncation(opts: { expand?: string; full?: boolean }): 
   } else {
     expandedFields = new Set();
   }
+  configuredMaxLength = opts.maxLength ?? DEFAULT_MAX_LENGTH;
 }
 
 function shouldExpand(fieldName: string): boolean {
@@ -53,7 +59,7 @@ export function applyTruncation(data: unknown): unknown {
     for (const [key, value] of Object.entries(obj)) {
       if (TRUNCATABLE_FIELDS.has(key) && typeof value === "string") {
         result[`${key}Length`] = value.length;
-        result[key] = shouldExpand(key) ? value : truncateString(value, DEFAULT_MAX_LENGTH);
+        result[key] = shouldExpand(key) ? value : truncateString(value, configuredMaxLength);
       } else if (typeof value === "object" && value !== null) {
         result[key] = applyTruncation(value);
       } else {
