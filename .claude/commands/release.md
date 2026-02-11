@@ -79,9 +79,19 @@ Verify the release was created: `gh release view v<NEW_VERSION>`. If the upload 
 
 ### Step 5: Update Homebrew tap
 
-Read the SHA256 checksums from `release/checksums-sha256.txt` and update the formula:
+The Homebrew formula lives in the `homebrew-tap` sibling repo (`../homebrew-tap` relative to this repo's root).
 
-1. Read `/Users/paul/projects-personal/homebrew-tap/Formula/lin.rb`
+First, check if the sibling repo exists:
+
+```bash
+ls ../homebrew-tap/Formula/lin.rb
+```
+
+**If it doesn't exist:** Skip this step and tell the user: "Homebrew tap not found at `../homebrew-tap`. Update the formula manually or clone the `shhac/homebrew-tap` repo as a sibling directory."
+
+**If it exists:** Read the SHA256 checksums from `release/checksums-sha256.txt` and update the formula:
+
+1. Read `../homebrew-tap/Formula/lin.rb`
 2. Update:
    - `version` to the new version (bare number, no `v` prefix, e.g., `"0.4.1"`)
    - All `url` lines to use `v<NEW_VERSION>`
@@ -90,7 +100,7 @@ Read the SHA256 checksums from `release/checksums-sha256.txt` and update the for
 3. Write the updated formula
 4. Commit and push:
    ```bash
-   cd /Users/paul/projects-personal/homebrew-tap
+   cd ../homebrew-tap
    git add Formula/lin.rb
    git commit -m "lin <NEW_VERSION>"
    git push
