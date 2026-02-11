@@ -5,17 +5,16 @@ import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts
 export function registerSearch(project: Command): void {
   project
     .command("search")
-    .description("Search projects by name/description")
+    .description("Full-text search for projects")
     .argument("<text>", "Search text")
     .option("--limit <n>", "Limit results")
     .option("--cursor <token>", "Pagination cursor for next page")
     .action(async (text: string, opts: Record<string, string | undefined>) => {
       try {
         const client = getClient();
-        const results = await client.projects({
+        const results = await client.searchProjects(text, {
           first: resolvePageSize(opts),
           after: opts.cursor,
-          filter: { name: { containsIgnoreCase: text } },
         });
         printPaginated(
           results.nodes.map((p) => ({
