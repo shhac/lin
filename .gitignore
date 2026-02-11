@@ -23,7 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # claude
-.claude/
+.claude/*.local.json
 CLAUDE.local.md
 
 # design docs
