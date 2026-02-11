@@ -76,6 +76,8 @@ ESTIMATES: Team-specific (fibonacci|linear|exponential|tShirt). Use "team get <i
 
 AUTH: Set LINEAR_API_KEY env var, or: lin auth login <key>
   Multiple workspaces supported. Switch: lin auth workspace switch <alias>
+
+DETAIL: Run "<command> usage" for detailed command documentation (e.g. "issue usage").
 `;
 
 export function registerUsageCommand({ program }: { program: Command }): void {

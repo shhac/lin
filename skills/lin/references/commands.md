@@ -2,6 +2,7 @@
 
 Run `lin --help` (or `lin <command> --help`) for the full option list.
 Run `lin usage` for concise LLM-optimized docs.
+Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`).
 
 ## Auth
 
@@ -102,7 +103,14 @@ Run `lin usage` for concise LLM-optimized docs.
 
 ## Usage
 
-- `lin usage` — print concise LLM-optimized docs (~1000 tokens)
+- `lin usage` — print concise LLM-optimized top-level docs (~1000 tokens)
+- `lin <command> usage` — print detailed docs for a specific command domain:
+  - `lin issue usage` — issue search, list, create, update, comment, relation, archive, attachment
+  - `lin project usage` — project + roadmap commands
+  - `lin document usage` — document search, list, create, update
+  - `lin team usage` — team, user, label, cycle commands
+  - `lin auth usage` — authentication + workspace management
+  - `lin config usage` — CLI settings (keys, defaults, validation rules)
 
 ## Common filters (list/search commands)
 

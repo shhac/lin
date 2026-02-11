@@ -3,6 +3,7 @@ import { registerLogin } from "./login.ts";
 import { registerLogout } from "./logout.ts";
 import { registerStatus } from "./status.ts";
 import { registerWorkspace } from "./workspace.ts";
+import { registerUsage } from "./usage.ts";
 
 export function registerAuthCommand({ program }: { program: Command }): void {
   const auth = program.command("auth").description("Authentication management");
@@ -10,4 +11,5 @@ export function registerAuthCommand({ program }: { program: Command }): void {
   registerStatus(auth);
   registerLogout(auth);
   registerWorkspace(auth);
+  registerUsage(auth);
 }

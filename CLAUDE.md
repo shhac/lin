@@ -33,10 +33,11 @@ src/
 - **Filters**: `lib/filters.ts` builds Linear SDK `IssueFilter` objects from CLI flags (`--team`, `--status`, `--assignee`, etc.)
 - **Auth**: `LINEAR_API_KEY` env var takes precedence, otherwise stored in `~/.config/lin/config.json`
 - **Error messages**: Include valid values so LLMs can self-correct (e.g., `"Unknown status: X. Valid values: ..."`)
+- **Usage subcommands**: Each command has a `usage` subcommand (`src/cli/*/usage.ts`) providing LLM-friendly docs. When modifying a command's behavior, options, or flags, update its usage text too. Sub-usage texts are tested to stay under 500 tokens each.
 
 ## Commands
 
-Run `bun run dev -- usage` for the full command reference.
+Run `bun run dev -- usage` for the full command reference. Each command also supports `<command> usage` for detailed per-command docs.
 
 ## Development
 

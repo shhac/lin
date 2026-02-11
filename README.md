@@ -52,16 +52,19 @@ lin
 │   ├── list [--team] [--status]
 │   ├── get overview|issues <id>
 │   ├── new <name> --team <teams>
-│   └── update title|status|description|lead <id> <value>
+│   ├── update title|status|description|lead <id> <value>
+│   └── usage
 ├── roadmap
 │   ├── list
-│   └── get overview|projects <id>
+│   ├── get overview|projects <id>
+│   └── usage
 ├── document
 │   ├── search <text>
 │   ├── list [--project] [--creator]
 │   ├── get <id>
 │   ├── new <title> [--project] [--content]
-│   └── update title|content|project <id> <value>
+│   ├── update title|content|project <id> <value>
+│   └── usage
 ├── issue
 │   ├── search <text>
 │   ├── list [filters]
@@ -71,21 +74,32 @@ lin
 │   ├── comment new|get|edit <id> [<body>]
 │   ├── relation list|add|remove
 │   ├── archive|unarchive|delete <id>
-│   └── attachment list|add|remove
+│   ├── attachment list|add|remove
+│   └── usage
 ├── team
 │   ├── list
 │   ├── get <id>
-│   └── states <team>
+│   ├── states <team>
+│   └── usage
 ├── user
 │   ├── list
-│   └── me
+│   ├── me
+│   └── usage
 ├── label
-│   └── list
+│   ├── list
+│   └── usage
 ├── cycle
 │   ├── list --team <team>
-│   └── get <id>
+│   ├── get <id>
+│   └── usage
+├── auth
+│   └── usage
+├── config
+│   └── usage
 └── usage                          # LLM-optimized docs (<1k tokens)
 ```
+
+Each top-level command also has a `usage` subcommand for detailed, LLM-friendly documentation (e.g., `lin issue usage`, `lin project usage`). The top-level `lin usage` gives a broad overview; per-command usage gives full detail on flags, valid values, and return fields.
 
 ## Output
 

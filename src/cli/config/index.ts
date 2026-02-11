@@ -4,6 +4,7 @@ import { registerGet } from "./get.ts";
 import { registerSet } from "./set.ts";
 import { registerReset } from "./reset.ts";
 import { registerListKeys } from "./list-keys.ts";
+import { registerUsage } from "./usage.ts";
 
 export type SettingDef = {
   path: [keyof Settings, string];
@@ -54,4 +55,5 @@ export function registerConfigCommand({ program }: { program: Command }): void {
   registerSet(config);
   registerReset(config);
   registerListKeys(config);
+  registerUsage(config);
 }

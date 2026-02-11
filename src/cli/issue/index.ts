@@ -8,6 +8,7 @@ import { registerComment } from "./comment.ts";
 import { registerRelation } from "./relation.ts";
 import { registerArchive } from "./archive.ts";
 import { registerAttachment } from "./attachment.ts";
+import { registerUsage } from "./usage.ts";
 
 export function registerIssueCommand({ program }: { program: Command }): void {
   const issue = program.command("issue").description("Issue operations");
@@ -20,4 +21,5 @@ export function registerIssueCommand({ program }: { program: Command }): void {
   registerRelation(issue);
   registerArchive(issue);
   registerAttachment(issue);
+  registerUsage(issue);
 }

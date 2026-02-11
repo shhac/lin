@@ -157,6 +157,22 @@ List commands return `{ "items": [...], "pagination"?: { "hasMore": true, "nextC
 
 Use `--limit <n>` and `--cursor <token>` to paginate.
 
+## Per-command usage docs
+
+Every top-level command has a `usage` subcommand with detailed, LLM-optimized docs:
+
+```bash
+lin issue usage          # all issue subcommands, flags, valid values
+lin project usage        # project + roadmap commands
+lin document usage       # document commands
+lin team usage           # team, user, label, cycle commands
+lin auth usage           # auth + workspace management
+lin config usage         # CLI settings keys, defaults, validation
+lin usage                # top-level overview (~1000 tokens)
+```
+
+Use `lin <command> usage` when you need deep detail on a specific domain before acting.
+
 ## References
 
 - [references/commands.md](references/commands.md): full command map + all flags
