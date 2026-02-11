@@ -46,6 +46,7 @@ COMMANDS:
   team get <id>                           Team details + members + estimate config
   team states <team>                      List workflow states (valid status values)
 
+  user search <text>                      Search by name, email, or display name
   user list [--team]                      List users
   user me                                 Current user
 
