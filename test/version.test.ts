@@ -7,7 +7,8 @@ describe("getPackageVersion", () => {
     expect(version).toMatch(/^\d+\.\d+\.\d+/);
   });
 
-  test("returns 0.3.3 for current package", () => {
-    expect(getPackageVersion()).toBe("0.3.3");
+  test("matches version from package.json", async () => {
+    const pkg = await Bun.file("package.json").json();
+    expect(getPackageVersion()).toBe(pkg.version);
   });
 });

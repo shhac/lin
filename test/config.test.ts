@@ -20,6 +20,9 @@ const {
   getDefaultWorkspace,
   setDefaultWorkspace,
   removeWorkspace,
+  getSettings,
+  updateSettings,
+  resetSettings,
 } = await import("../src/lib/config.ts");
 
 describe("config", () => {
@@ -259,5 +262,60 @@ describe("clearAll (logout --all)", () => {
     clearAll();
     expect(getApiKey()).toBeUndefined();
     expect(getWorkspaces()).toEqual({});
+  });
+});
+
+describe("settings", () => {
+  beforeAll(() => {
+    process.env.XDG_CONFIG_HOME = TEST_CONFIG_DIR;
+    mkdirSync(join(TEST_CONFIG_DIR, "lin"), { recursive: true });
+    clearAll();
+  });
+
+  afterAll(() => {
+    rmSync(TEST_CONFIG_DIR, { recursive: true, force: true });
+    delete process.env.XDG_CONFIG_HOME;
+  });
+
+  test("getSettings returns empty object when no settings stored", () => {
+    expect(getSettings()).toEqual({});
+  });
+
+  test("updateSettings persists truncation.maxLength", () => {
+    updateSettings({ truncation: { maxLength: 300 } });
+    expect(getSettings()).toEqual({ truncation: { maxLength: 300 } });
+  });
+
+  test("updateSettings persists pagination.defaultPageSize", () => {
+    clearAll();
+    updateSettings({ pagination: { defaultPageSize: 25 } });
+    expect(getSettings()).toEqual({ pagination: { defaultPageSize: 25 } });
+  });
+
+  test("deep merge: setting truncation does not clobber pagination", () => {
+    clearAll();
+    updateSettings({ truncation: { maxLength: 500 } });
+    updateSettings({ pagination: { defaultPageSize: 50 } });
+    expect(getSettings()).toEqual({
+      truncation: { maxLength: 500 },
+      pagination: { defaultPageSize: 50 },
+    });
+  });
+
+  test("resetSettings clears all settings", () => {
+    updateSettings({ truncation: { maxLength: 100 } });
+    resetSettings();
+    expect(getSettings()).toEqual({});
+  });
+
+  test("settings isolation: updateSettings does not touch auth data", () => {
+    clearAll();
+    storeApiKey("auth_key_123");
+    updateSettings({ truncation: { maxLength: 200 } });
+    expect(getApiKey()).toBe("auth_key_123");
+    const configPath = join(TEST_CONFIG_DIR, "lin", "config.json");
+    const raw = JSON.parse(readFileSync(configPath, "utf8"));
+    expect(raw.api_key).toBe("auth_key_123");
+    expect(raw.settings).toEqual({ truncation: { maxLength: 200 } });
   });
 });
