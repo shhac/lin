@@ -1,4 +1,7 @@
 import { applyTruncation } from "./truncation.ts";
+import { getSettings } from "./config.ts";
+
+const DEFAULT_PAGE_SIZE = 50;
 
 export function pruneEmpty<T>(value: T): T {
   const pruned = pruneEmptyInternal(value);
@@ -67,4 +70,12 @@ export function printPaginated(
 export function printError(message: string): void {
   console.error(JSON.stringify({ error: message }));
   process.exitCode = 1;
+}
+
+export function resolvePageSize(opts: { limit?: string }): number {
+  if (opts.limit !== undefined) {
+    return parseInt(opts.limit, 10);
+  }
+  const settings = getSettings();
+  return settings.pagination?.defaultPageSize ?? DEFAULT_PAGE_SIZE;
 }

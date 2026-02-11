@@ -28,8 +28,13 @@ export type TruncationSettings = {
   maxLength?: number;
 };
 
+export type PaginationSettings = {
+  defaultPageSize?: number;
+};
+
 export type Settings = {
   truncation?: TruncationSettings;
+  pagination?: PaginationSettings;
 };
 
 type Config = {

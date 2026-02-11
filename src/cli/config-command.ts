@@ -21,6 +21,17 @@ const SETTING_DEFS: Record<string, SettingDef> = {
     },
     description: "Max characters before truncating description/body/content fields (default: 200)",
   },
+  "pagination.defaultPageSize": {
+    path: ["pagination", "defaultPageSize"],
+    parse: (v) => {
+      const n = Number(v);
+      if (!Number.isInteger(n) || n < 1 || n > 250) {
+        throw new Error(`Invalid value: ${v}. Must be an integer between 1 and 250.`);
+      }
+      return n;
+    },
+    description: "Default number of results for list/search commands (default: 50)",
+  },
 };
 
 const VALID_KEYS = Object.keys(SETTING_DEFS);

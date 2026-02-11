@@ -53,7 +53,7 @@ COMMANDS:
   cycle list --team <team>                List cycles
   cycle get <id>                          Cycle details
 
-  config get|set|reset|list-keys           Persistent settings (truncation.maxLength)
+  config get|set|reset|list-keys           Persistent settings
 
 IDS: Issue keys (ENG-123), UUIDs, or slugs. --team accepts key (ENG) or name.
      Project/roadmap/document <id> accept UUID, slug ID, or name.
@@ -68,7 +68,7 @@ OUTPUT: JSON to stdout. Errors: { "error": "..." } to stderr with valid values.
 
 TRUNCATION: description/body/content truncated to ~200 chars + companion *Length field.
   --expand <field,...>  Expand specific    --full  Expand all
-  Default limit: config set truncation.maxLength <n>
+  Defaults: config set truncation.maxLength|pagination.defaultPageSize <n>
 
 PRIORITY: none|urgent|high|medium|low
 PROJECT STATUS: backlog|planned|started|paused|completed|canceled

@@ -1,7 +1,7 @@
 import type { Command } from "commander";
 import type { LinearDocument } from "@linear/sdk";
 import { getClient } from "../../lib/client.ts";
-import { printError, printPaginated } from "../../lib/output.ts";
+import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
 import { mapDocSummary } from "./map-doc-summary.ts";
 
 export function registerList(document: Command): void {
@@ -11,7 +11,7 @@ export function registerList(document: Command): void {
     .option("--project <project>", "Filter by project ID, slug, or name")
     .option("--creator <user>", "Filter by creator ID, name, or email")
     .option("--include-archived", "Include archived documents")
-    .option("--limit <n>", "Limit results", "50")
+    .option("--limit <n>", "Limit results")
     .option("--cursor <token>", "Pagination cursor for next page")
     .action(async (opts: Record<string, string | undefined>) => {
       try {
@@ -40,7 +40,7 @@ export function registerList(document: Command): void {
         }
 
         const results = await client.documents({
-          first: parseInt(opts.limit ?? "50", 10),
+          first: resolvePageSize(opts),
           after: opts.cursor,
           filter:
             Object.keys(filter).length > 0 ? (filter as LinearDocument.DocumentFilter) : undefined,

@@ -1,18 +1,18 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
-import { printError, printPaginated } from "../../lib/output.ts";
+import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
 
 export function registerList(roadmap: Command): void {
   roadmap
     .command("list")
     .description("List roadmaps")
-    .option("--limit <n>", "Limit results", "50")
+    .option("--limit <n>", "Limit results")
     .option("--cursor <token>", "Pagination cursor for next page")
-    .action(async (opts: { limit: string; cursor?: string }) => {
+    .action(async (opts: { limit?: string; cursor?: string }) => {
       try {
         const client = getClient();
         const results = await client.roadmaps({
-          first: parseInt(opts.limit, 10),
+          first: resolvePageSize(opts),
           after: opts.cursor,
         });
         const items = await Promise.all(

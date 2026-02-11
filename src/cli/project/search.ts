@@ -1,19 +1,19 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
-import { printError, printPaginated } from "../../lib/output.ts";
+import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
 
 export function registerSearch(project: Command): void {
   project
     .command("search")
     .description("Search projects by name/description")
     .argument("<text>", "Search text")
-    .option("--limit <n>", "Limit results", "50")
+    .option("--limit <n>", "Limit results")
     .option("--cursor <token>", "Pagination cursor for next page")
     .action(async (text: string, opts: Record<string, string | undefined>) => {
       try {
         const client = getClient();
         const results = await client.projects({
-          first: parseInt(opts.limit ?? "50", 10),
+          first: resolvePageSize(opts),
           after: opts.cursor,
           filter: { name: { containsIgnoreCase: text } },
         });

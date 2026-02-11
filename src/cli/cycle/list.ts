@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
-import { printError, printJson, printPaginated } from "../../lib/output.ts";
+import { printError, printJson, printPaginated, resolvePageSize } from "../../lib/output.ts";
 import { resolveTeam } from "../../lib/resolvers.ts";
 
 export function registerList(cycle: Command): void {
@@ -11,7 +11,7 @@ export function registerList(cycle: Command): void {
     .option("--current", "Show only current cycle")
     .option("--next", "Show only next cycle")
     .option("--previous", "Show only previous cycle")
-    .option("--limit <n>", "Limit results", "50")
+    .option("--limit <n>", "Limit results")
     .option("--cursor <token>", "Pagination cursor for next page")
     .action(
       async (opts: {
@@ -19,7 +19,7 @@ export function registerList(cycle: Command): void {
         current?: boolean;
         next?: boolean;
         previous?: boolean;
-        limit: string;
+        limit?: string;
         cursor?: string;
       }) => {
         try {
@@ -45,7 +45,7 @@ export function registerList(cycle: Command): void {
           }
 
           const cycles = await team.cycles({
-            first: parseInt(opts.limit, 10),
+            first: resolvePageSize(opts),
             after: opts.cursor,
           });
           const now = new Date();

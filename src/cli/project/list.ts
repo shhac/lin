@@ -1,7 +1,7 @@
 import type { Command } from "commander";
 import type { LinearDocument } from "@linear/sdk";
 import { getClient } from "../../lib/client.ts";
-import { printError, printPaginated } from "../../lib/output.ts";
+import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
 
 export function registerList(project: Command): void {
   project
@@ -9,9 +9,9 @@ export function registerList(project: Command): void {
     .description("List all projects")
     .option("--team <team>", "Filter by team name or ID")
     .option("--status <status>", "Filter by status")
-    .option("--limit <n>", "Limit results", "50")
+    .option("--limit <n>", "Limit results")
     .option("--cursor <token>", "Pagination cursor for next page")
-    .action(async (opts: { team?: string; status?: string; limit: string; cursor?: string }) => {
+    .action(async (opts: { team?: string; status?: string; limit?: string; cursor?: string }) => {
       try {
         const client = getClient();
         const filter: LinearDocument.ProjectFilter = {};
@@ -22,7 +22,7 @@ export function registerList(project: Command): void {
           filter.state = { eqIgnoreCase: opts.status };
         }
         const results = await client.projects({
-          first: parseInt(opts.limit, 10),
+          first: resolvePageSize(opts),
           after: opts.cursor,
           filter: Object.keys(filter).length > 0 ? filter : undefined,
         });
