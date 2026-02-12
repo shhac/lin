@@ -1,7 +1,10 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import { tmpdir } from "node:os";
+import { tmpdir, platform } from "node:os";
+
+const IS_MACOS = platform() === "darwin";
+const KEYCHAIN_PLACEHOLDER = "__KEYCHAIN__";
 
 const TEST_CONFIG_DIR = join(tmpdir(), `lin-config-test-${Date.now()}`);
 
@@ -170,8 +173,10 @@ describe("storeLogin (atomic write)", () => {
     });
     expect(getApiKey()).toBe("test_key_1");
     expect(getDefaultWorkspace()).toBe("test-org");
+    // On macOS the real key goes to Keychain; config holds a placeholder
+    const expectedFileKey = IS_MACOS ? KEYCHAIN_PLACEHOLDER : "test_key_1";
     expect(getWorkspaces()).toEqual({
-      "test-org": { api_key: "test_key_1", name: "Test Org", urlKey: "test-org" },
+      "test-org": { api_key: expectedFileKey, name: "Test Org", urlKey: "test-org" },
     });
     // Legacy api_key should NOT be set — workspace is the sole source of truth
     const configPath = join(TEST_CONFIG_DIR, "lin", "config.json");
@@ -202,15 +207,17 @@ describe("storeLogin (atomic write)", () => {
     });
     // Default stays as first workspace
     expect(getDefaultWorkspace()).toBe("test-org");
-    // Both workspaces present
+    // Both workspaces present — config holds placeholder on macOS
     const ws = getWorkspaces();
-    expect(ws["test-org"]?.api_key).toBe("test_key_1");
-    expect(ws["other-org"]?.api_key).toBe("test_key_2");
+    const expectedFileKey1 = IS_MACOS ? KEYCHAIN_PLACEHOLDER : "test_key_1";
+    const expectedFileKey2 = IS_MACOS ? KEYCHAIN_PLACEHOLDER : "test_key_2";
+    expect(ws["test-org"]?.api_key).toBe(expectedFileKey1);
+    expect(ws["other-org"]?.api_key).toBe(expectedFileKey2);
     // No legacy api_key in config
     const configPath = join(TEST_CONFIG_DIR, "lin", "config.json");
     const raw = JSON.parse(readFileSync(configPath, "utf8"));
     expect(raw.api_key).toBeUndefined();
-    // getApiKey returns default workspace key
+    // getApiKey returns default workspace key (from keychain on macOS)
     expect(getApiKey()).toBe("test_key_1");
   });
 

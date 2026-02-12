@@ -1,6 +1,15 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
+import {
+  keychainGet,
+  keychainSet,
+  keychainDelete,
+  keychainDeleteAll,
+  KEYCHAIN_SERVICE,
+} from "./keychain.ts";
+
+const KEYCHAIN_PLACEHOLDER = "__KEYCHAIN__";
 
 function getConfigDir(): string {
   const xdg = process.env.XDG_CONFIG_HOME?.trim();
@@ -58,21 +67,45 @@ function readConfig(): Config {
 
 function writeConfig(config: Config): void {
   const dir = ensureConfigDir();
-  writeFileSync(join(dir, "config.json"), JSON.stringify(config, null, 2), "utf8");
+  writeFileSync(join(dir, "config.json"), JSON.stringify(config, null, 2), {
+    encoding: "utf8",
+    mode: 0o600,
+  });
 }
 
-export function getApiKey(): string | undefined {
+type ApiKeySource = "environment" | "keychain" | "config";
+
+function resolveApiKey(): { key: string; source: ApiKeySource } | undefined {
   const envKey = process.env.LINEAR_API_KEY?.trim();
   if (envKey) {
-    return envKey;
+    return { key: envKey, source: "environment" };
   }
 
   const config = readConfig();
-  const ws = config.default_workspace ? config.workspaces?.[config.default_workspace] : undefined;
-  if (ws) {
-    return ws.api_key;
+  const alias = config.default_workspace;
+  if (alias) {
+    const keychainKey = keychainGet(`api_key:${alias}`, KEYCHAIN_SERVICE);
+    if (keychainKey) {
+      return { key: keychainKey, source: "keychain" };
+    }
+    const ws = config.workspaces?.[alias];
+    if (ws && ws.api_key !== KEYCHAIN_PLACEHOLDER) {
+      return { key: ws.api_key, source: "config" };
+    }
   }
-  return config.api_key;
+  const legacyKey = config.api_key;
+  if (legacyKey && legacyKey !== KEYCHAIN_PLACEHOLDER) {
+    return { key: legacyKey, source: "config" };
+  }
+  return undefined;
+}
+
+export function getApiKey(): string | undefined {
+  return resolveApiKey()?.key;
+}
+
+export function getApiKeySource(): ApiKeySource | undefined {
+  return resolveApiKey()?.source;
 }
 
 export function storeApiKey(key: string): void {
@@ -106,15 +139,24 @@ export function storeWorkspace(alias: string, workspace: Workspace): void {
 }
 
 /**
- * Store a workspace login. The workspace entry is the single source of truth
- * for the API key — the legacy top-level `api_key` field is not written.
- * Clears legacy `api_key` if present to avoid stale fallback.
+ * Store a workspace login. Attempts to store the API key in the macOS
+ * Keychain; on success the config file holds a placeholder instead of the
+ * real secret. Falls back to plaintext config on non-macOS or keychain error.
+ * Clears legacy top-level `api_key` if present to avoid stale fallback.
  */
 export function storeLogin(alias: string, workspace: Workspace): void {
   const config = readConfig();
   delete config.api_key;
   config.workspaces = config.workspaces ?? {};
-  config.workspaces[alias] = workspace;
+  const stored = keychainSet({
+    account: `api_key:${alias}`,
+    value: workspace.api_key,
+    service: KEYCHAIN_SERVICE,
+  });
+  config.workspaces[alias] = {
+    ...workspace,
+    api_key: stored ? KEYCHAIN_PLACEHOLDER : workspace.api_key,
+  };
   if (!config.default_workspace) {
     config.default_workspace = alias;
   }
@@ -139,6 +181,7 @@ export function removeWorkspace(alias: string): void {
       `Unknown workspace: ${alias}. Valid: ${Object.keys(config.workspaces ?? {}).join(", ") || "(none)"}`,
     );
   }
+  keychainDelete(`api_key:${alias}`, KEYCHAIN_SERVICE);
   delete config.workspaces[alias];
   if (config.default_workspace === alias) {
     const remaining = Object.keys(config.workspaces);
@@ -167,5 +210,6 @@ export function resetSettings(): void {
 }
 
 export function clearAll(): void {
+  keychainDeleteAll(KEYCHAIN_SERVICE);
   writeConfig({});
 }

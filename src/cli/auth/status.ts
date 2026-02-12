@@ -1,6 +1,11 @@
 import type { Command } from "commander";
 import { LinearClient } from "@linear/sdk";
-import { getApiKey, getWorkspaces, getDefaultWorkspace } from "../../lib/config.ts";
+import {
+  getApiKey,
+  getApiKeySource,
+  getWorkspaces,
+  getDefaultWorkspace,
+} from "../../lib/config.ts";
 import { printError, printJson } from "../../lib/output.ts";
 
 export function registerStatus(auth: Command): void {
@@ -26,7 +31,7 @@ export function registerStatus(auth: Command): void {
 
         printJson({
           authenticated: true,
-          source: process.env.LINEAR_API_KEY ? "environment" : "config",
+          source: getApiKeySource(),
           user: { id: viewer.id, name: viewer.name, email: viewer.email },
           organization: { id: org.id, name: org.name, urlKey: org.urlKey },
           activeWorkspace: defaultWs,

@@ -12,7 +12,8 @@ SUBCOMMANDS:
 
 AUTH SOURCES (checked in order):
   1. LINEAR_API_KEY environment variable (takes precedence)
-  2. Stored config (~/.config/lin/config.json)
+  2. macOS Keychain (service: app.paulie.lin)
+  3. Stored config (~/.config/lin/config.json)
 
 LOGIN:
   Validates the API key against the Linear API, auto-detects org name/urlKey.
@@ -25,7 +26,7 @@ LOGOUT:
 
 STATUS:
   Returns { authenticated, source, user, organization, activeWorkspace, otherWorkspaces }.
-  source is "environment" if LINEAR_API_KEY is set, "config" otherwise.
+  source is "environment", "keychain", or "config".
 
 WORKSPACE:
   list — shows all stored workspaces with alias, name, urlKey, and which is default.

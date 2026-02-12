@@ -10,7 +10,11 @@ export function getClient(): LinearClient {
 
   const apiKey = getApiKey();
   if (!apiKey) {
-    console.error(JSON.stringify({ error: "Not authenticated. Run: lin auth login <api-key>" }));
+    console.error(
+      JSON.stringify({
+        error: "Not authenticated. Run `lin auth login` to connect your Linear workspace.",
+      }),
+    );
     process.exit(1);
   }
 
