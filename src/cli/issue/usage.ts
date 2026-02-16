@@ -22,15 +22,16 @@ UPDATE (each is a subcommand):
   labels: comma-separated label IDs
   estimate: validated against team scale
 
-COMMENTS:
-  issue comment new <issue-id> <body>      Add comment (markdown)
-  issue comment get <comment-id>           Get with author + issue ref
-  issue comment edit <comment-id> <body>   Edit body
+COMMENTS (--file repeatable, --parent 1 level):
+  issue comment new <id> <body> [--parent <cid>] [--file <path>]
+  issue comment edit <cid> <body> [--file <path>]
+  issue comment get <cid>      Author, issue, parent, childCount
+  issue comment replies <cid> List replies
 
 RELATIONS:
-  issue relation list <issue-id>           Both directions (blocks, blocked_by, duplicate, related)
-  issue relation add <id> --type <t> --related <id>   Types: blocks|duplicate|related
-  issue relation remove <relation-id>
+  issue relation list <id>      Both directions (blocks, blocked_by, duplicate, related)
+  issue relation add <id> --type <t> --related <id>  Types: blocks|duplicate|related
+  issue relation remove <id>
 
 LIFECYCLE:
   issue archive|unarchive|delete <id>      Archive, restore, or trash
@@ -38,7 +39,7 @@ LIFECYCLE:
 ATTACHMENTS:
   issue attachment list <issue-id>
   issue attachment add <id> --url <u> --title <t> [--subtitle <s>]
-  issue attachment remove <attachment-id>
+  issue attachment remove <id>
 
 IDS: Issue keys (ENG-123) or UUIDs. Comment/relation/attachment IDs are UUIDs.
 ASSIGNEE FILTER: name, email, user ID, or "me". PRIORITY: none|urgent|high|medium|low

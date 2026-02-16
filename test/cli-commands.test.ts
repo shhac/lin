@@ -150,11 +150,12 @@ describe("CLI nested command registration", () => {
     expect(output).toContain("description");
   });
 
-  test("issue comment --help shows new, get, edit subcommands", () => {
+  test("issue comment --help shows new, get, edit, replies subcommands", () => {
     const output = runCli("issue comment --help");
     expect(output).toContain("new");
     expect(output).toContain("get");
     expect(output).toContain("edit");
+    expect(output).toContain("replies");
   });
 
   test("issue relation --help shows list, add, remove subcommands", () => {
