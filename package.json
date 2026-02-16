@@ -1,6 +1,6 @@
 {
   "name": "lin",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Linear CLI for humans and LLMs",
   "license": "MIT",
   "type": "module",
