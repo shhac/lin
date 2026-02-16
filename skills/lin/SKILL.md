@@ -5,9 +5,9 @@ description: |
   - Looking up Linear issues, projects, documents, cycles, or teams
   - Searching Linear issues, projects, or documents by text
   - Creating or updating Linear issues or documents
-  - Adding comments to Linear issues
+  - Adding comments to Linear issues (with threaded replies and file attachments)
   - Checking project status, milestones, or team members
-  Triggers: "linear issue", "linear project", "linear document", "linear ticket", "linear search", "create issue", "create document", "update issue", "update document", "linear team", "linear cycle"
+  Triggers: "linear issue", "linear project", "linear document", "linear ticket", "linear search", "create issue", "create document", "update issue", "update document", "linear team", "linear cycle", "linear comment", "reply to comment", "attach file", "upload file"
 ---
 
 # Linear automation with `lin`
@@ -55,8 +55,11 @@ lin issue update assignee ENG-123 "alice@example.com"
 lin issue update priority ENG-123 urgent
 lin issue update estimate ENG-123 5      # validated against team's estimate scale
 lin issue comment new ENG-123 "Started investigating"
-lin issue comment get <comment-id>
-lin issue comment edit <comment-id> "Updated analysis"
+lin issue comment new ENG-123 "Replying" --parent <comment-id>   # threaded reply (1 level max)
+lin issue comment new ENG-123 "See attached" --file ./screenshot.png  # upload file(s)
+lin issue comment get <comment-id>           # includes parent, childCount
+lin issue comment edit <comment-id> "Updated" --file ./report.pdf
+lin issue comment replies <comment-id>       # list replies (paginated)
 ```
 
 ## Issue relations and lifecycle

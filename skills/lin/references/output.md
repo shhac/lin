@@ -191,6 +191,48 @@ Use `project get overview <id>` with `--expand content` or `--full` for the full
 }
 ```
 
+## Comment detail (`issue comment get`)
+
+Includes parent reference (if threaded reply) and child count:
+
+```json
+{
+  "id": "...",
+  "body": "Started investigating",
+  "user": { "id": "...", "name": "Alice Example" },
+  "issue": { "id": "...", "identifier": "ENG-123" },
+  "parent": { "id": "..." },
+  "childCount": 2,
+  "createdAt": "2025-01-15T10:30:00.000Z",
+  "updatedAt": "2025-01-15T10:30:00.000Z"
+}
+```
+
+`parent` is only present for threaded replies. `childCount` is pruned when 0.
+
+## Comment replies (`issue comment replies`)
+
+Paginated list of replies:
+
+```json
+{
+  "id": "...",
+  "body": "Reply text",
+  "user": { "id": "...", "name": "Bob Example" },
+  "createdAt": "2025-01-15T11:00:00.000Z",
+  "updatedAt": "2025-01-15T11:00:00.000Z"
+}
+```
+
+## File uploads in comments
+
+When `--file` is used with `comment new` or `comment edit`, files are uploaded to Linear's CDN and embedded in the comment body as markdown:
+
+- Images: `![filename](https://uploads.linear.app/...)`
+- Other files: `[filename](https://uploads.linear.app/...)`
+
+Local file paths never appear in the output. The `--file` flag is repeatable for multiple attachments.
+
 ## Issue relations (`issue relation list`)
 
 ```json

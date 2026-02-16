@@ -59,9 +59,10 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 
 ## Comments
 
-- `lin issue comment new <issue-id> <body>` — add comment
-- `lin issue comment get <comment-id>` — get a specific comment
-- `lin issue comment edit <comment-id> <body>` — edit a comment
+- `lin issue comment new <issue-id> <body> [--parent <comment-id>] [--file <path>]` — add comment (--parent for threaded reply, 1 level max; --file repeatable for uploads)
+- `lin issue comment get <comment-id>` — get comment with author, issue ref, parent ref, and childCount
+- `lin issue comment edit <comment-id> <body> [--file <path>]` — edit a comment (--file repeatable)
+- `lin issue comment replies <comment-id> [--limit] [--cursor]` — list replies to a comment (paginated)
 
 ## Issue Relations
 
