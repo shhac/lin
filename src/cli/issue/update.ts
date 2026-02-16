@@ -31,7 +31,13 @@ export function registerUpdate(issue: Command): void {
     .action(async (id: string, newStatus: string) => {
       try {
         const client = getClient();
-        const state = await resolveWorkflowState(client, newStatus);
+        const issue = await client.issue(id);
+        const team = await issue.team;
+        if (!team) {
+          printError("Could not resolve team for this issue.");
+          return;
+        }
+        const state = await resolveWorkflowState(client, newStatus, team.id);
         const payload = await client.updateIssue(id, { stateId: state.id });
         printJson({ updated: payload.success });
       } catch (err) {

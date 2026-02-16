@@ -45,8 +45,11 @@ export async function resolveProject(client: LinearClient, input: string): Promi
 export async function resolveWorkflowState(
   client: LinearClient,
   name: string,
+  teamId: string,
 ): Promise<WorkflowState> {
-  const states = await client.workflowStates();
+  const states = await client.workflowStates({
+    filter: { team: { id: { eq: teamId } } },
+  });
   const state = states.nodes.find((s) => s.name.toLowerCase() === name.toLowerCase());
   if (!state) {
     const validNames = [...new Set(states.nodes.map((s) => s.name))];

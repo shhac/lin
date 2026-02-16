@@ -11,13 +11,13 @@ GET:
   issue get comments <id>    Comments with author, body, timestamps
 
 CREATE:
-  issue new <title> --team <team>    --team required
-    [--project] [--assignee] [--priority] [--status] [--labels <ids>]
-    [--description <md>] [--cycle] [--parent <id>] [--estimate <n>]
+  issue new <title> --team <key|name|UUID>    --team required
+    [--project <name|slug|UUID>] [--assignee] [--priority] [--status]
+    [--labels <ids>] [--description <md>] [--cycle] [--parent <id>] [--estimate <n>]
 
 UPDATE (each is a subcommand):
   issue update title|status|assignee|priority|project|labels|description|estimate <id> <value>
-  status: team-specific name ("team states <team>" for values)
+  status: team-scoped name (use "team states <team>")
   assignee: name, email, or user ID
   labels: comma-separated label IDs
   estimate: validated against team scale

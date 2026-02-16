@@ -2,7 +2,12 @@ import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
 import { PRIORITY_MAP, PRIORITY_VALUES } from "../../lib/priorities.ts";
-import { resolveUser, resolveWorkflowState } from "../../lib/resolvers.ts";
+import {
+  resolveProject,
+  resolveTeam,
+  resolveUser,
+  resolveWorkflowState,
+} from "../../lib/resolvers.ts";
 
 export function registerNew(issue: Command): void {
   issue
@@ -33,10 +38,13 @@ export function registerNew(issue: Command): void {
           }
         }
 
-        // Resolve status name to state ID
+        // Resolve team key/name/UUID to team object
+        const team = await resolveTeam(client, opts.team!);
+
+        // Resolve status name to state ID (scoped to team)
         let stateId: string | undefined;
         if (opts.status) {
-          const state = await resolveWorkflowState(client, opts.status);
+          const state = await resolveWorkflowState(client, opts.status, team.id);
           stateId = state.id;
         }
 
@@ -47,10 +55,17 @@ export function registerNew(issue: Command): void {
           assigneeId = user.id;
         }
 
+        // Resolve project name/slug/UUID to project ID
+        let projectId: string | undefined;
+        if (opts.project) {
+          const project = await resolveProject(client, opts.project);
+          projectId = project.id;
+        }
+
         const payload = await client.createIssue({
           title,
-          teamId: opts.team!,
-          projectId: opts.project,
+          teamId: team.id,
+          projectId,
           assigneeId,
           stateId,
           priority,
