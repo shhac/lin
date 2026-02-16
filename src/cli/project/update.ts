@@ -2,7 +2,7 @@ import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
 import { PROJECT_STATUSES, PROJECT_STATUS_VALUES } from "../../lib/project-statuses.ts";
-import { resolveProject } from "../../lib/resolvers.ts";
+import { resolveProject, resolveUser } from "../../lib/resolvers.ts";
 
 export function registerUpdate(project: Command): void {
   const update = project.command("update").description("Update project fields");
@@ -66,12 +66,13 @@ export function registerUpdate(project: Command): void {
     .command("lead")
     .description("Update project lead")
     .argument("<id>", "Project ID, slug, or name")
-    .argument("<user-id>", "New lead user ID")
-    .action(async (id: string, userId: string) => {
+    .argument("<user>", "New lead: name, email, or user ID")
+    .action(async (id: string, userInput: string) => {
       try {
         const client = getClient();
         const p = await resolveProject(client, id);
-        const payload = await client.updateProject(p.id, { leadId: userId });
+        const user = await resolveUser(client, userInput);
+        const payload = await client.updateProject(p.id, { leadId: user.id });
         printJson({ updated: payload.success });
       } catch (err) {
         printError(err instanceof Error ? err.message : "Update failed");

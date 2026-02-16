@@ -2,7 +2,7 @@ import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
 import { PROJECT_STATUSES, PROJECT_STATUS_VALUES } from "../../lib/project-statuses.ts";
-import { resolveUser } from "../../lib/resolvers.ts";
+import { resolveTeam, resolveUser } from "../../lib/resolvers.ts";
 
 export function registerNew(project: Command): void {
   project
@@ -49,7 +49,10 @@ export function registerNew(project: Command): void {
             leadId = user.id;
           }
 
-          const teamIds = opts.team.split(",").map((t) => t.trim());
+          const teams = await Promise.all(
+            opts.team.split(",").map((t) => resolveTeam(client, t.trim())),
+          );
+          const teamIds = teams.map((t) => t.id);
 
           const payload = await client.createProject({
             name,

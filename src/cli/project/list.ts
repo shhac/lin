@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import type { LinearDocument } from "@linear/sdk";
 import { getClient } from "../../lib/client.ts";
 import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
+import { buildTeamFilter } from "../../lib/resolvers.ts";
 
 export function registerList(project: Command): void {
   project
@@ -16,7 +17,7 @@ export function registerList(project: Command): void {
         const client = getClient();
         const filter: LinearDocument.ProjectFilter = {};
         if (opts.team) {
-          filter.accessibleTeams = { some: { name: { eqIgnoreCase: opts.team } } };
+          filter.accessibleTeams = { some: buildTeamFilter(opts.team) };
         }
         if (opts.status) {
           filter.state = { eqIgnoreCase: opts.status };

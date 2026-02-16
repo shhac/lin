@@ -23,11 +23,11 @@ UPDATE (each is a subcommand):
   project update title <id> <new-title>
   project update status <id> <new-status>
   project update description <id> <description>
-  project update lead <id> <user-id>
+  project update lead <id> <user>
 
 IDS: <id> accepts UUID, slug ID, or project name.
-TEAM: Team key (ENG) or team name.
-LEAD: Name, email, or user ID (on create). User ID only (on update).
+TEAM: Team key (ENG), name, or UUID.
+LEAD: Name, email, or user ID.
 PROJECT STATUS: backlog|planned|started|paused|completed|canceled
 PAGINATION: --limit <n> --cursor <token> on search, list, and get issues.
 `;
