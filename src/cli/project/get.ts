@@ -2,11 +2,12 @@ import type { Command } from "commander";
 import type { LinearDocument } from "@linear/sdk";
 import { getClient } from "../../lib/client.ts";
 import { buildIssueFilter } from "../../lib/filters.ts";
-import { printError, printJson, printPaginated } from "../../lib/output.ts";
+import { handleUnknownCommand, printError, printJson, printPaginated } from "../../lib/output.ts";
 import { resolveProject } from "../../lib/resolvers.ts";
 
 export function registerGet(project: Command): void {
   const get = project.command("get").description("Get project details");
+  handleUnknownCommand(get, "Example: lin project get overview <id>");
 
   get
     .command("overview")

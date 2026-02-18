@@ -1,9 +1,10 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
-import { printError, printJson } from "../../lib/output.ts";
+import { handleUnknownCommand, printError, printJson } from "../../lib/output.ts";
 
 export function registerGet(issue: Command): void {
   const get = issue.command("get").description("Get issue details");
+  handleUnknownCommand(get, "Example: lin issue get overview <id>");
 
   get
     .command("overview")

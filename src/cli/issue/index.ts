@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { handleUnknownCommand } from "../../lib/output.ts";
 import { registerSearch } from "./search.ts";
 import { registerList } from "./list.ts";
 import { registerGet } from "./get.ts";
@@ -22,4 +23,5 @@ export function registerIssueCommand({ program }: { program: Command }): void {
   registerArchive(issue);
   registerAttachment(issue);
   registerUsage(issue);
+  handleUnknownCommand(issue, "To view an issue: lin issue get overview <id>");
 }

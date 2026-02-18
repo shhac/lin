@@ -1,3 +1,4 @@
+import type { Command } from "commander";
 import { applyTruncation } from "./truncation.ts";
 import { getSettings } from "./config.ts";
 
@@ -70,6 +71,22 @@ export function printPaginated(
 export function printError(message: string): void {
   console.error(JSON.stringify({ error: message }));
   process.exitCode = 1;
+}
+
+/**
+ * Add a handler for unknown subcommands on a parent command.
+ * Prints a JSON error with valid subcommands and an optional hint.
+ * Uses commander's `command:*` event to replace the default unhelpful error.
+ */
+export function handleUnknownCommand(cmd: Command, hint?: string): void {
+  cmd.on("command:*", (operands: string[]) => {
+    const subcmds = cmd.commands.map((c) => c.name()).filter((n) => n !== "usage");
+    const parts = [`Unknown subcommand: "${operands[0]}". Valid: ${subcmds.join(", ")}.`];
+    if (hint) {
+      parts.push(hint);
+    }
+    printError(parts.join(" "));
+  });
 }
 
 export function resolvePageSize(opts: { limit?: string }): number {

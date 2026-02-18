@@ -1,10 +1,11 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
-import { printError, printJson, printPaginated } from "../../lib/output.ts";
+import { handleUnknownCommand, printError, printJson, printPaginated } from "../../lib/output.ts";
 import { resolveRoadmap } from "../../lib/resolvers.ts";
 
 export function registerGet(roadmap: Command): void {
   const get = roadmap.command("get").description("Get roadmap details");
+  handleUnknownCommand(get, "Example: lin roadmap get overview <id>");
 
   get
     .command("overview")
