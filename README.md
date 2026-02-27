@@ -7,6 +7,8 @@ Linear CLI for humans and LLMs.
 - **Zero runtime deps** — single compiled binary via `bun build --compile`
 - **Smart IDs** — accepts issue keys (`ENG-123`), UUIDs, or URL fragments
 
+**Website:** [lin.paulie.app](https://lin.paulie.app/)
+
 ## Installation
 
 ```bash
