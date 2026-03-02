@@ -41,6 +41,22 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 - `lin document update content <id> <value>`
 - `lin document update project <id> <project>` — project ID, slug, or name
 
+## Files
+
+- `lin file upload <paths...>` — upload one or more files to Linear's CDN, returns `[{ filename, assetUrl, contentType }]`
+- `lin file download <url-or-path> [--output <path>] [--output-dir <dir>] [--stdout] [--force]` — download a file from Linear's CDN
+
+URL formats for download (all equivalent):
+- Full URL: `https://uploads.linear.app/<org>/<uuid>/<uuid>`
+- Domain + path: `uploads.linear.app/<org>/<uuid>/<uuid>`
+- With org: `<org>/<uuid>/<uuid>`
+- Without org: `<uuid>/<uuid>` (org inferred from auth)
+- Single UUID: `<uuid>` (org inferred from auth)
+
+Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without `--force`, download refuses to overwrite existing files.
+
+> **Prefer `--file` on comments** when attaching files to issues — `lin issue comment new ENG-123 "text" --file ./image.png` uploads and embeds in one step. Use `lin file upload` when you need a standalone asset URL.
+
 ## Issues
 
 - `lin issue search <text> [filters]` — full-text search
@@ -111,6 +127,7 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
   - `lin document usage` — document search, list, create, update
   - `lin team usage` — team, user, label, cycle commands
   - `lin auth usage` — authentication + workspace management
+  - `lin file usage` — file upload + download commands
   - `lin config usage` — CLI settings (keys, defaults, validation rules)
 
 ## Common filters (list/search commands)

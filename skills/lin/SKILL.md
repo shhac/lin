@@ -7,7 +7,7 @@ description: |
   - Creating or updating Linear issues or documents
   - Adding comments to Linear issues (with threaded replies and file attachments)
   - Checking project status, milestones, or team members
-  Triggers: "linear issue", "linear project", "linear document", "linear ticket", "linear search", "create issue", "create document", "update issue", "update document", "linear team", "linear cycle", "linear comment", "reply to comment", "attach file", "upload file"
+  Triggers: "linear issue", "linear project", "linear document", "linear ticket", "linear search", "create issue", "create document", "update issue", "update document", "linear team", "linear cycle", "linear comment", "reply to comment", "attach file", "upload file", "download file", "linear file", "linear download"
 ---
 
 # Linear automation with `lin`
@@ -61,6 +61,24 @@ lin issue comment get <comment-id>           # includes parent, childCount
 lin issue comment edit <comment-id> "Updated" --file ./report.pdf
 lin issue comment replies <comment-id>       # list replies (paginated)
 ```
+
+## Files (upload and download)
+
+```bash
+# Upload files to Linear's CDN — returns asset URLs
+lin file upload ./screenshot.png ./report.pdf
+
+# Download files from Linear's CDN
+lin file download https://uploads.linear.app/<org>/<uuid>/<uuid>
+lin file download <uuid>/<uuid>              # org inferred from auth
+lin file download <uuid>                      # single UUID
+lin file download <uuid>/<uuid> --output ./report.pdf
+lin file download <uuid>/<uuid> --output-dir ./downloads
+lin file download <uuid>/<uuid> --stdout | cat > file.bin
+lin file download <uuid>/<uuid> --force       # overwrite existing
+```
+
+> **Prefer `--file` on comments** when attaching files to issues. `lin issue comment new ENG-123 "See attached" --file ./screenshot.png` uploads and embeds the file in a single step. Use `lin file upload` only when you need a standalone asset URL (e.g., for issue descriptions or documents).
 
 ## Issue relations and lifecycle
 
@@ -170,6 +188,7 @@ lin project usage        # project + roadmap commands
 lin document usage       # document commands
 lin team usage           # team, user, label, cycle commands
 lin auth usage           # auth + workspace management
+lin file usage           # file upload + download commands
 lin config usage         # CLI settings keys, defaults, validation
 lin usage                # top-level overview (~1000 tokens)
 ```

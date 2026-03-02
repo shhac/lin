@@ -68,6 +68,7 @@ describe("sub-command usage", () => {
     { cmd: "cycle", mustContain: ["cycle list", "cycle get"] },
     { cmd: "auth", mustContain: ["auth login", "auth status"] },
     { cmd: "config", mustContain: ["config get", "config set"] },
+    { cmd: "file", mustContain: ["file upload", "file download"] },
   ] as const;
 
   for (const { cmd, mustContain } of subCommands) {

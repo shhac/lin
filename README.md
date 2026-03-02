@@ -67,6 +67,10 @@ lin
 │   ├── new <title> [--project] [--content]
 │   ├── update title|content|project <id> <value>
 │   └── usage
+├── file
+│   ├── download <url-or-path> [--output] [--output-dir] [--stdout] [--force]
+│   ├── upload <paths...>
+│   └── usage
 ├── issue
 │   ├── search <text>
 │   ├── list [filters]

@@ -233,6 +233,30 @@ When `--file` is used with `comment new` or `comment edit`, files are uploaded t
 
 Local file paths never appear in the output. The `--file` flag is repeatable for multiple attachments.
 
+## File upload (`file upload`)
+
+```json
+[
+  { "filename": "screenshot.png", "assetUrl": "https://uploads.linear.app/...", "contentType": "image/png" },
+  { "filename": "report.pdf", "assetUrl": "https://uploads.linear.app/...", "contentType": "application/pdf" }
+]
+```
+
+## File download (`file download`)
+
+```json
+{
+  "filename": "screenshot.png",
+  "path": "/absolute/path/to/screenshot.png",
+  "size": 45678,
+  "contentType": "image/png"
+}
+```
+
+With `--stdout`, binary content goes to stdout and the metadata JSON goes to stderr.
+
+Filename is inferred from `Content-Disposition` header, then `Content-Type` MIME mapping, then falls back to `"download"`.
+
 ## Issue relations (`issue relation list`)
 
 ```json
