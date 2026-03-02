@@ -191,6 +191,22 @@ Use `project get <id>` with `--expand content` or `--full` for the full markdown
 }
 ```
 
+## Comment list items (`issue comment list`)
+
+```json
+{
+  "id": "...",
+  "body": "Started investigating",
+  "user": { "id": "...", "name": "Alice Example" },
+  "parent": { "id": "..." },
+  "childCount": 2,
+  "createdAt": "2025-01-15T10:30:00.000Z",
+  "updatedAt": "2025-01-15T10:30:00.000Z"
+}
+```
+
+`parent` is only present for threaded replies. `childCount` is pruned when 0.
+
 ## Comment detail (`issue comment get`)
 
 Includes parent reference (if threaded reply) and child count:

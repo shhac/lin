@@ -97,7 +97,7 @@ lin
 │   ├── list
 │   └── usage
 ├── cycle
-│   ├── list --team <team>
+│   ├── list <team>
 │   ├── get <id>
 │   └── usage
 ├── auth

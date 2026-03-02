@@ -232,9 +232,9 @@ describe("CLI option registration", () => {
     expect(output).toContain("--team");
   });
 
-  test("cycle list --help shows --team required option", () => {
+  test("cycle list --help shows team positional arg", () => {
     const output = runCli("cycle list --help");
-    expect(output).toContain("--team");
+    expect(output).toContain("<team>");
   });
 
   test("document list --help shows filter options", () => {

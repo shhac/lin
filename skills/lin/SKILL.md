@@ -145,7 +145,7 @@ lin team states ENG                      # workflow states (discover valid statu
 lin user me
 lin user list --team ENG
 lin label list --team ENG
-lin cycle list --team ENG --current
+lin cycle list ENG --current
 lin cycle get <id>
 ```
 

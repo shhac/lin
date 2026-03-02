@@ -22,7 +22,7 @@ UPDATE (each is a subcommand):
   estimate: validated against team scale
 
 COMMENTS (--file repeatable, --parent 1 level):
-  issue comment list <id> [--limit] [--cursor]  List comments
+  issue comment list <id> [--limit] [--cursor]  List +parent,childCount
   issue comment new <id> <body> [--parent <cid>] [--file <path>]
   issue comment edit <cid> <body> [--file <path>]
   issue comment get <cid>      Author, issue, parent, childCount

@@ -75,7 +75,7 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 
 ## Comments
 
-- `lin issue comment list <issue-id> [--limit] [--cursor]` — list comments with authors (paginated)
+- `lin issue comment list <issue-id> [--limit] [--cursor]` — list comments with authors, parent ref, childCount (paginated)
 - `lin issue comment new <issue-id> <body> [--parent <comment-id>] [--file <path>]` — add comment (--parent for threaded reply, 1 level max; --file repeatable for uploads)
 - `lin issue comment get <comment-id>` — get comment with author, issue ref, parent ref, and childCount
 - `lin issue comment edit <comment-id> <body> [--file <path>]` — edit a comment (--file repeatable)
@@ -116,7 +116,7 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 
 ## Cycles
 
-- `lin cycle list --team <team> [--current] [--next] [--previous]` — list cycles
+- `lin cycle list <team> [--current] [--next] [--previous]` — list cycles
 - `lin cycle get <id>` — cycle details + issues
 
 ## Usage

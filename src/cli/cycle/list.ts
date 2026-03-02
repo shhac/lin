@@ -7,24 +7,26 @@ export function registerList(cycle: Command): void {
   cycle
     .command("list")
     .description("List cycles")
-    .requiredOption("--team <team>", "Team ID or key")
+    .argument("<team>", "Team ID or key")
     .option("--current", "Show only current cycle")
     .option("--next", "Show only next cycle")
     .option("--previous", "Show only previous cycle")
     .option("--limit <n>", "Limit results")
     .option("--cursor <token>", "Pagination cursor for next page")
     .action(
-      async (opts: {
-        team: string;
-        current?: boolean;
-        next?: boolean;
-        previous?: boolean;
-        limit?: string;
-        cursor?: string;
-      }) => {
+      async (
+        teamId: string,
+        opts: {
+          current?: boolean;
+          next?: boolean;
+          previous?: boolean;
+          limit?: string;
+          cursor?: string;
+        },
+      ) => {
         try {
           const client = getClient();
-          const team = await resolveTeam(client, opts.team);
+          const team = await resolveTeam(client, teamId);
 
           if (opts.current) {
             const c = await team.activeCycle;

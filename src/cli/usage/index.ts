@@ -51,7 +51,7 @@ COMMANDS:
   user me                                 Current user
 
   label list [--team]                     List labels
-  cycle list --team <team>                List cycles
+  cycle list <team>                       List cycles
   cycle get <id>                          Cycle details
 
   config get|set|reset|list-keys           Persistent settings

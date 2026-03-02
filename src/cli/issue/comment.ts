@@ -28,11 +28,17 @@ export function registerComment(issue: Command): void {
       });
       const mapped = await Promise.all(
         comments.nodes.map(async (c) => {
-          const user = await c.user;
+          const [user, parent, children] = await Promise.all([
+            c.user,
+            c.parent,
+            c.children(),
+          ]);
           return {
             id: c.id,
             body: c.body,
             user: user ? { id: user.id, name: user.name } : null,
+            parent: parent ? { id: parent.id } : null,
+            childCount: children.nodes.length,
             createdAt: c.createdAt,
             updatedAt: c.updatedAt,
           };
