@@ -48,12 +48,13 @@ bun run typecheck            # tsc --noEmit
 bun test                     # bun:test
 bun run lint                 # oxlint
 bun run format               # oxfmt
+bun run check                # lint + format check + typecheck + tests
 ```
 
 ## Release
 
 ```bash
-bun run release patch        # bumps version, commits, tags, pushes
+bun run release patch        # bumps version, commits, tags, pushes (runs `check` first)
 bun run build:release        # cross-platform binaries in release/
 ```
 
@@ -65,5 +66,5 @@ Then create GitHub release, update homebrew-tap formula at `shhac/homebrew-tap` 
 - `type` over `interface` (enforced by oxlint)
 - kebab-case filenames (enforced by oxlint)
 - Max 350 lines per file, max 2 params per function (oxlint warnings)
-- Pre-commit hook: oxlint fix + oxfmt
+- No pre-commit hooks — lint/format checked by `bun run check` and enforced in the release script
 - Tests: bun:test, no mocking libraries, inline fixtures, pure functions preferred

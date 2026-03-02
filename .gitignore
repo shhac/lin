@@ -24,6 +24,7 @@ yarn-error.log*
 
 # claude
 .claude/*.local.json
+.claude/skills/release/
 CLAUDE.local.md
 
 # design docs

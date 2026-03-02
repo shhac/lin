@@ -85,6 +85,11 @@ if ! git diff --quiet || ! git diff --cached --quiet; then
   exit 1
 fi
 
+# Run lint, format, typecheck, and tests
+print_step "Running checks (lint, format, typecheck, tests)..."
+bun run check
+print_success "All checks passed"
+
 # Check if tag already exists
 if git rev-parse "$tag" >/dev/null 2>&1; then
   print_error "tag $tag already exists"
