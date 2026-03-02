@@ -44,7 +44,7 @@ export function registerNew(issue: Command): void {
         // Resolve status name to state ID (scoped to team)
         let stateId: string | undefined;
         if (opts.status) {
-          const state = await resolveWorkflowState(client, opts.status, team.id);
+          const state = await resolveWorkflowState(client, { name: opts.status, teamId: team.id });
           stateId = state.id;
         }
 

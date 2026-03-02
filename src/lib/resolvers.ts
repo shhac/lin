@@ -44,8 +44,7 @@ export async function resolveProject(client: LinearClient, input: string): Promi
 
 export async function resolveWorkflowState(
   client: LinearClient,
-  name: string,
-  teamId: string,
+  { name, teamId }: { name: string; teamId: string },
 ): Promise<WorkflowState> {
   const states = await client.workflowStates({
     filter: { team: { id: { eq: teamId } } },
