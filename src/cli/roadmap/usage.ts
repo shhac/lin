@@ -8,15 +8,15 @@ LIST:
     Returns per item: id, slugId, url, name, description, owner
 
 GET:
-  roadmap get overview <id>    Roadmap summary: id, slugId, url, name, description,
+  roadmap get <id>             Roadmap summary: id, slugId, url, name, description,
                                owner, creator, createdAt
-  roadmap get projects <id>    Projects linked to a roadmap
+  roadmap projects <id>        Projects linked to a roadmap
     [--limit] [--cursor]
     Returns per item: id, slugId, url, name, status, progress,
     lead, startDate, targetDate
 
 IDS: <id> accepts UUID, slug ID, or roadmap name.
-PAGINATION: --limit <n> --cursor <token> on list and get projects.
+PAGINATION: --limit <n> --cursor <token> on list and projects.
 
 NOTE: Roadmaps are read-only. Use "project" commands to modify projects in a roadmap.
 `;

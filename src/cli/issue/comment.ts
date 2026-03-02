@@ -11,6 +11,39 @@ function collect(val: string, prev: string[]): string[] {
 export function registerComment(issue: Command): void {
   const comment = issue.command("comment").description("Comment operations");
 
+  const listCmd = comment
+    .command("list")
+    .description("List comments on an issue")
+    .argument("<issue-id>", "Issue ID or key")
+    .option("--limit <n>", "Limit results")
+    .option("--cursor <token>", "Pagination cursor for next page");
+  listCmd.action(async (issueId: string) => {
+    try {
+      const client = getClient();
+      const opts = listCmd.opts<{ limit?: string; cursor?: string }>();
+      const i = await client.issue(issueId);
+      const comments = await i.comments({
+        first: resolvePageSize(opts),
+        after: opts.cursor,
+      });
+      const mapped = await Promise.all(
+        comments.nodes.map(async (c) => {
+          const user = await c.user;
+          return {
+            id: c.id,
+            body: c.body,
+            user: user ? { id: user.id, name: user.name } : null,
+            createdAt: c.createdAt,
+            updatedAt: c.updatedAt,
+          };
+        }),
+      );
+      printPaginated(mapped, comments.pageInfo);
+    } catch (err) {
+      printError(err instanceof Error ? err.message : "List comments failed");
+    }
+  });
+
   const newCmd = comment
     .command("new")
     .description("Add comment to issue")

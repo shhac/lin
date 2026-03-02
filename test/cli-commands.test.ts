@@ -118,10 +118,15 @@ describe("CLI command registration", () => {
 });
 
 describe("CLI nested command registration", () => {
-  test("project get --help shows overview and issues", () => {
-    const output = runCli("project get --help");
-    expect(output).toContain("overview");
+  test("project --help shows get and issues as separate subcommands", () => {
+    const output = runCli("project --help");
+    expect(output).toContain("get");
     expect(output).toContain("issues");
+  });
+
+  test("project get --help shows id argument", () => {
+    const output = runCli("project get --help");
+    expect(output).toContain("id");
   });
 
   test("project update --help shows title, status, description, lead", () => {
@@ -132,10 +137,14 @@ describe("CLI nested command registration", () => {
     expect(output).toContain("lead");
   });
 
-  test("issue get --help shows overview and comments", () => {
+  test("issue get --help shows id argument", () => {
     const output = runCli("issue get --help");
-    expect(output).toContain("overview");
-    expect(output).toContain("comments");
+    expect(output).toContain("id");
+  });
+
+  test("issue comment --help shows list subcommand", () => {
+    const output = runCli("issue comment --help");
+    expect(output).toContain("list");
   });
 
   test("issue update --help shows title, status, assignee, priority, project, labels, estimate, description", () => {
@@ -179,10 +188,15 @@ describe("CLI nested command registration", () => {
     expect(output).toContain("project");
   });
 
-  test("roadmap get --help shows overview and projects", () => {
-    const output = runCli("roadmap get --help");
-    expect(output).toContain("overview");
+  test("roadmap --help shows get and projects as separate subcommands", () => {
+    const output = runCli("roadmap --help");
+    expect(output).toContain("get");
     expect(output).toContain("projects");
+  });
+
+  test("roadmap get --help shows id argument", () => {
+    const output = runCli("roadmap get --help");
+    expect(output).toContain("id");
   });
 });
 

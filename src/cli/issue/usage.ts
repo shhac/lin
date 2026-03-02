@@ -7,8 +7,7 @@ SEARCH & LIST:
   issue list [--project] [--team] [--assignee] [--status] [--priority] [--label] [--cycle]
 
 GET:
-  issue get overview <id>    Full details + labels, attachments, branchName, commentCount
-  issue get comments <id>    Comments with author, body, timestamps
+  issue get <id>             Full details + labels, attachments, branchName, commentCount
 
 CREATE:
   issue new <title> --team <key|name|UUID>    --team required
@@ -23,6 +22,7 @@ UPDATE (each is a subcommand):
   estimate: validated against team scale
 
 COMMENTS (--file repeatable, --parent 1 level):
+  issue comment list <id> [--limit] [--cursor]  List comments
   issue comment new <id> <body> [--parent <cid>] [--file <path>]
   issue comment edit <cid> <body> [--file <path>]
   issue comment get <cid>      Author, issue, parent, childCount

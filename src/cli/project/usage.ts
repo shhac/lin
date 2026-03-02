@@ -9,9 +9,9 @@ SEARCH & LIST:
     [--team <team>] [--status <status>] [--limit] [--cursor]
 
 GET:
-  project get overview <id>    Project summary: id, slugId, url, name, description, content,
+  project get <id>             Project summary: id, slugId, url, name, description, content,
                                status, progress, lead, startDate, targetDate, milestones[]
-  project get issues <id>      Issues in a project
+  project issues <id>          Issues in a project
     [--status] [--assignee] [--priority] [--limit] [--cursor]
 
 CREATE:
@@ -29,7 +29,7 @@ IDS: <id> accepts UUID, slug ID, or project name.
 TEAM: Team key (ENG), name, or UUID.
 LEAD: Name, email, or user ID.
 PROJECT STATUS: backlog|planned|started|paused|completed|canceled
-PAGINATION: --limit <n> --cursor <token> on search, list, and get issues.
+PAGINATION: --limit <n> --cursor <token> on search, list, and issues.
 `;
 
 export function registerUsage(project: Command): void {

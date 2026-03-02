@@ -1,14 +1,11 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
-import { handleUnknownCommand, printError, printJson } from "../../lib/output.ts";
+import { printError, printJson } from "../../lib/output.ts";
 
 export function registerGet(issue: Command): void {
-  const get = issue.command("get").description("Get issue details");
-  handleUnknownCommand(get, "Example: lin issue get overview <id>");
-
-  get
-    .command("overview")
-    .description("Issue details: title, description, status, assignee, labels, relationships")
+  issue
+    .command("get")
+    .description("Get issue details: title, description, status, assignee, labels, relationships")
     .argument("<id>", "Issue ID or key (e.g. ENG-123)")
     .action(async (id: string) => {
       try {
@@ -53,33 +50,6 @@ export function registerGet(issue: Command): void {
         });
       } catch (err) {
         printError(err instanceof Error ? err.message : "Get failed");
-      }
-    });
-
-  get
-    .command("comments")
-    .description("List comments on an issue")
-    .argument("<id>", "Issue ID or key")
-    .action(async (id: string) => {
-      try {
-        const client = getClient();
-        const i = await client.issue(id);
-        const comments = await i.comments();
-        const mapped = await Promise.all(
-          comments.nodes.map(async (c) => {
-            const user = await c.user;
-            return {
-              id: c.id,
-              body: c.body,
-              user: user ? { id: user.id, name: user.name } : null,
-              createdAt: c.createdAt,
-              updatedAt: c.updatedAt,
-            };
-          }),
-        );
-        printJson(mapped);
-      } catch (err) {
-        printError(err instanceof Error ? err.message : "Get comments failed");
       }
     });
 }

@@ -17,8 +17,8 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 
 - `lin project search <text>` — search projects by name
 - `lin project list [--team] [--status] [--limit] [--cursor]` — list projects
-- `lin project get overview <id>` — project summary with lead, milestones, url, and content (markdown body, truncated by default)
-- `lin project get issues <id> [filters]` — issues in a project
+- `lin project get <id>` — project summary with lead, milestones, url, and content (markdown body, truncated by default)
+- `lin project issues <id> [filters]` — issues in a project
 - `lin project update title <id> <value>`
 - `lin project update status <id> <value>` — backlog | planned | started | paused | completed | canceled
 - `lin project update description <id> <value>`
@@ -28,8 +28,8 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 ## Roadmaps
 
 - `lin roadmap list [--limit] [--cursor]` — list roadmaps
-- `lin roadmap get overview <id>` — roadmap summary with owner, creator, url
-- `lin roadmap get projects <id> [--limit] [--cursor]` — projects linked to a roadmap
+- `lin roadmap get <id>` — roadmap summary with owner, creator, url
+- `lin roadmap projects <id> [--limit] [--cursor]` — projects linked to a roadmap
 
 ## Documents
 
@@ -47,6 +47,7 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 - `lin file download <url-or-path> [--output <path>] [--output-dir <dir>] [--stdout] [--force]` — download a file from Linear's CDN
 
 URL formats for download (all equivalent):
+
 - Full URL: `https://uploads.linear.app/<org>/<uuid>/<uuid>`
 - Domain + path: `uploads.linear.app/<org>/<uuid>/<uuid>`
 - With org: `<org>/<uuid>/<uuid>`
@@ -61,8 +62,7 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 
 - `lin issue search <text> [filters]` — full-text search
 - `lin issue list [filters]` — list issues (returns status, assignee, team, branchName)
-- `lin issue get overview <id>` — full issue details with commentCount, branchName, attachments (PR links)
-- `lin issue get comments <id>` — list comments with authors
+- `lin issue get <id>` — full issue details with commentCount, branchName, attachments (PR links)
 - `lin issue new <title> --team <team> [--priority <p>] [--status <s>] [--assignee <name|email|id>] [--project <p>] [--label <l>]`
 - `lin issue update title <id> <value>`
 - `lin issue update status <id> <value>` — team-specific workflow state names
@@ -75,6 +75,7 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 
 ## Comments
 
+- `lin issue comment list <issue-id> [--limit] [--cursor]` — list comments with authors (paginated)
 - `lin issue comment new <issue-id> <body> [--parent <comment-id>] [--file <path>]` — add comment (--parent for threaded reply, 1 level max; --file repeatable for uploads)
 - `lin issue comment get <comment-id>` — get comment with author, issue ref, parent ref, and childCount
 - `lin issue comment edit <comment-id> <body> [--file <path>]` — edit a comment (--file repeatable)

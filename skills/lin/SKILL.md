@@ -42,8 +42,8 @@ Generate a personal API key at **Settings > Account > Security > Personal API Ke
 ```bash
 lin issue search "auth bug"
 lin issue list --team ENG --status "In Progress" --assignee "alice@example.com"
-lin issue get overview ENG-123    # includes branchName, commentCount, attachments (PR links)
-lin issue get comments ENG-123
+lin issue get ENG-123             # includes branchName, commentCount, attachments (PR links)
+lin issue comment list ENG-123
 ```
 
 ## Creating and updating issues
@@ -106,8 +106,8 @@ Project commands accept UUID, slug ID, or name.
 ```bash
 lin project search "migration"
 lin project list --status started
-lin project get overview "CRM Actions"   # accepts UUID, slug, or name — includes content (markdown body)
-lin project get issues <id>
+lin project get "CRM Actions"            # accepts UUID, slug, or name — includes content (markdown body)
+lin project issues <id>
 lin project new "New Feature" --team ENG --status planned --lead "alice@example.com"
 lin project update status <id> completed
 ```
@@ -118,8 +118,8 @@ The `--project` filter on issue commands also accepts slug or name.
 
 ```bash
 lin roadmap list
-lin roadmap get overview <id>            # roadmap summary + owner
-lin roadmap get projects <id>            # projects linked to a roadmap
+lin roadmap get <id>                    # roadmap summary + owner
+lin roadmap projects <id>               # projects linked to a roadmap
 ```
 
 ## Documents
@@ -156,9 +156,9 @@ Long text fields (`description`, `body`, `content`) are truncated to ~200 charac
 To see full content, use `--expand` or `--full`:
 
 ```bash
-lin --full issue get overview ENG-123                    # expand all fields
-lin --expand description issue get overview ENG-123      # expand specific field
-lin --expand description,content project get overview <id>  # expand multiple
+lin --full issue get ENG-123                             # expand all fields
+lin --expand description issue get ENG-123               # expand specific field
+lin --expand description,content project get <id>        # expand multiple
 ```
 
 These are global flags — place them before the command or after it.

@@ -148,7 +148,7 @@ export const projectSearch = [
   },
 ];
 
-// ── project get overview ─────────────────────────────────────────────
+// ── project get ──────────────────────────────────────────────────────
 
 export const projectOverview = {
   id: "ffffffff-1111-2222-3333-444444444444",
@@ -178,7 +178,7 @@ export const projectOverview = {
   ],
 };
 
-// ── project get issues ───────────────────────────────────────────────
+// ── project issues ───────────────────────────────────────────────────
 
 export const projectIssues = [
   {
@@ -235,7 +235,7 @@ export const issueSearch = [
   },
 ];
 
-// ── issue get overview ───────────────────────────────────────────────
+// ── issue get ────────────────────────────────────────────────────────
 
 export const issueOverviewMinimal = {
   id: "22222222-aaaa-bbbb-cccc-dddddddddddd",
@@ -282,7 +282,7 @@ export const issueOverviewFull = {
   updatedAt: "2026-02-10T14:30:00.000Z",
 };
 
-// ── issue get comments ───────────────────────────────────────────────
+// ── issue comment list ───────────────────────────────────────────────
 
 export const issueComments = [
   {

@@ -23,5 +23,5 @@ export function registerIssueCommand({ program }: { program: Command }): void {
   registerArchive(issue);
   registerAttachment(issue);
   registerUsage(issue);
-  handleUnknownCommand(issue, "To view an issue: lin issue get overview <id>");
+  handleUnknownCommand(issue, "To view an issue: lin issue get <id>");
 }

@@ -52,13 +52,15 @@ lin
 ├── project
 │   ├── search <text>
 │   ├── list [--team] [--status]
-│   ├── get overview|issues <id>
+│   ├── get <id>
+│   ├── issues <id> [filters]
 │   ├── new <name> --team <teams>
 │   ├── update title|status|description|lead <id> <value>
 │   └── usage
 ├── roadmap
 │   ├── list
-│   ├── get overview|projects <id>
+│   ├── get <id>
+│   ├── projects <id>
 │   └── usage
 ├── document
 │   ├── search <text>
@@ -74,10 +76,10 @@ lin
 ├── issue
 │   ├── search <text>
 │   ├── list [filters]
-│   ├── get overview|comments <id>
+│   ├── get <id>
 │   ├── new <title> --team <team>
 │   ├── update title|status|assignee|priority|project|labels|estimate|description <id> <value>
-│   ├── comment new|get|edit <id> [<body>]
+│   ├── comment list|new|get|edit|replies <id> [<body>]
 │   ├── relation list|add|remove
 │   ├── archive|unarchive|delete <id>
 │   ├── attachment list|add|remove

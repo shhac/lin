@@ -10,7 +10,7 @@ describe("usage command", () => {
     expect(output).toContain("lin");
     expect(output).toContain("auth login");
     expect(output).toContain("issue search");
-    expect(output).toContain("project get overview");
+    expect(output).toContain("project get");
   });
 
   test("includes all resource commands", () => {

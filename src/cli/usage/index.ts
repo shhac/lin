@@ -10,14 +10,14 @@ COMMANDS:
 
   project search <text>                   Search projects
   project list [--team] [--status]        List projects
-  project get overview <id>               Project summary + milestones + content
-  project get issues <id>                 Issues in a project
+  project get <id>                        Project summary + milestones + content
+  project issues <id>                     Issues in a project
   project update <field> <id> <value>     Update (title|status|description|lead)
   project new <name> --team <t> [options]  Create project
 
   roadmap list                            List roadmaps
-  roadmap get overview <id>               Roadmap summary + owner
-  roadmap get projects <id>               Projects in a roadmap
+  roadmap get <id>                        Roadmap summary + owner
+  roadmap projects <id>                   Projects in a roadmap
 
   document search <text>                  Full-text search
   document list [--project] [--creator]   List documents
@@ -27,10 +27,10 @@ COMMANDS:
 
   issue search <text>                     Full-text search
   issue list [filters]                    List issues (status, assignee, team, branchName)
-  issue get overview <id>                 Full details + commentCount, attachments, branchName
-  issue get comments <id>                 List comments with authors
+  issue get <id>                          Full details + commentCount, attachments, branchName
   issue new <title> --team <t> [options]  Create issue
   issue update <field> <id> <value>       Update (title|status|assignee|priority|project|labels|estimate|description)
+  issue comment list <issue-id>           List comments with authors
   issue comment new <issue-id> <body>     Add comment
   issue comment get <comment-id>          Get a specific comment
   issue comment edit <comment-id> <body>  Edit a comment

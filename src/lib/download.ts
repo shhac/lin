@@ -63,9 +63,7 @@ export function parseFileUrl(input: string, defaultOrgId?: string): ParsedFileUr
   if (input.startsWith("https://")) {
     const url = new URL(input);
     if (url.hostname !== UPLOAD_HOST) {
-      throw new Error(
-        `Invalid host: "${url.hostname}". Only ${UPLOAD_HOST} URLs are supported.`,
-      );
+      throw new Error(`Invalid host: "${url.hostname}". Only ${UPLOAD_HOST} URLs are supported.`);
     }
     ({ pathname } = url);
   } else if (input.startsWith(`${UPLOAD_HOST}/`)) {
@@ -77,9 +75,7 @@ export function parseFileUrl(input: string, defaultOrgId?: string): ParsedFileUr
   const segments = pathname.split("/").filter(Boolean);
 
   if (segments.length === 0 || segments.length > 3) {
-    throw new Error(
-      `Cannot parse file URL: "${input}". Expected 1-3 UUID path segments.`,
-    );
+    throw new Error(`Cannot parse file URL: "${input}". Expected 1-3 UUID path segments.`);
   }
 
   for (const seg of segments) {
@@ -241,9 +237,7 @@ function resolveDestPath(
   }
 
   if (!opts.force && existsSync(destPath)) {
-    throw new Error(
-      `File already exists: "${destPath}". Use --force to overwrite.`,
-    );
+    throw new Error(`File already exists: "${destPath}". Use --force to overwrite.`);
   }
 
   return destPath;

@@ -17,7 +17,10 @@ export function registerDownload(file: Command): void {
     .description("Download a file from Linear")
     .argument("<url-or-path>", "File URL or path segments (e.g. full URL, org/file UUIDs)")
     .addOption(
-      new Option("--output <path>", "Save to specific file path").conflicts(["outputDir", "stdout"]),
+      new Option("--output <path>", "Save to specific file path").conflicts([
+        "outputDir",
+        "stdout",
+      ]),
     )
     .addOption(
       new Option("--output-dir <dir>", "Save to directory (default: current directory)").conflicts([
@@ -25,7 +28,9 @@ export function registerDownload(file: Command): void {
         "stdout",
       ]),
     )
-    .addOption(new Option("--stdout", "Write file content to stdout").conflicts(["output", "outputDir"]))
+    .addOption(
+      new Option("--stdout", "Write file content to stdout").conflicts(["output", "outputDir"]),
+    )
     .option("--force", "Overwrite existing files")
     .action(async (urlOrPath: string, opts: DownloadCmdOpts) => {
       try {
