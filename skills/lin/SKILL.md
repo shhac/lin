@@ -54,6 +54,9 @@ lin issue update status ENG-123 "In Progress"
 lin issue update assignee ENG-123 "alice@example.com"
 lin issue update priority ENG-123 urgent
 lin issue update estimate ENG-123 5      # validated against team's estimate scale
+lin issue update due-date ENG-123 2025-03-15
+lin issue update cycle ENG-123 <cycle-uuid>
+lin issue update parent ENG-123 ENG-100  # make sub-issue
 lin issue comment new ENG-123 "Started investigating"
 lin issue comment new ENG-123 "Replying" --parent <comment-id>   # threaded reply (1 level max)
 lin issue comment new ENG-123 "See attached" --file ./screenshot.png  # upload file(s)
@@ -110,6 +113,10 @@ lin project get "CRM Actions"            # accepts UUID, slug, or name — inclu
 lin project issues <id>
 lin project new "New Feature" --team ENG --status planned --lead "alice@example.com"
 lin project update status <id> completed
+lin project update content <id> "# Updated body content"
+lin project update start-date <id> 2025-01-15
+lin project update target-date <id> 2025-03-31
+lin project update priority <id> high
 ```
 
 The `--project` filter on issue commands also accepts slug or name.

@@ -16,34 +16,29 @@ CREATE:
 
 UPDATE (each is a subcommand):
   issue update title|status|assignee|priority|project|labels|description|estimate <id> <value>
-  status: team-scoped name (use "team states <team>")
-  assignee: name, email, or user ID
-  labels: comma-separated label IDs
-  estimate: validated against team scale
+  issue update due-date <id> <YYYY-MM-DD>
+  issue update cycle <id> <cycle-id>  |  parent <id> <parent-id>
+  status: team-scoped (use "team states <team>"). labels: comma-separated IDs.
+  estimate: validated against team scale. assignee: name/email/ID.
 
 COMMENTS (--file repeatable, --parent 1 level):
-  issue comment list <id> [--limit] [--cursor]  List +parent,childCount
+  issue comment list <id> [--limit] [--cursor]
   issue comment new <id> <body> [--parent <cid>] [--file <path>]
   issue comment edit <cid> <body> [--file <path>]
-  issue comment get <cid>      Author, issue, parent, childCount
-  issue comment replies <cid> List replies
+  issue comment get <cid>  |  replies <cid>
 
 RELATIONS:
   issue relation list <id>      Both directions (blocks, blocked_by, duplicate, related)
   issue relation add <id> --type <t> --related <id>  Types: blocks|duplicate|related
   issue relation remove <id>
 
-LIFECYCLE:
-  issue archive|unarchive|delete <id>      Archive, restore, or trash
+LIFECYCLE:  issue archive|unarchive|delete <id>
 
 ATTACHMENTS:
-  issue attachment list <issue-id>
+  issue attachment list|remove <id>
   issue attachment add <id> --url <u> --title <t> [--subtitle <s>]
-  issue attachment remove <id>
 
-IDS: Issue keys (ENG-123) or UUIDs. Comment/relation/attachment IDs are UUIDs.
-ASSIGNEE FILTER: name, email, user ID, or "me". PRIORITY: none|urgent|high|medium|low
-ESTIMATES: Team-specific (fibonacci|linear|exponential|tShirt). Run "team get <id>".
+IDS: Issue keys (ENG-123) or UUIDs. PRIORITY: none|urgent|high|medium|low
 PAGINATION: --limit <n> --cursor <token> on search and list.
 `;
 

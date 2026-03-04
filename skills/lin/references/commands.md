@@ -22,7 +22,13 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 - `lin project update title <id> <value>`
 - `lin project update status <id> <value>` — backlog | planned | started | paused | completed | canceled
 - `lin project update description <id> <value>`
+- `lin project update content <id> <value>` — update the project's markdown body
 - `lin project update lead <id> <user-id>`
+- `lin project update start-date <id> <YYYY-MM-DD>`
+- `lin project update target-date <id> <YYYY-MM-DD>`
+- `lin project update priority <id> <value>` — none | urgent | high | medium | low
+- `lin project update icon <id> <emoji>`
+- `lin project update color <id> <hex>`
 - `lin project new <name> [--team <keys>] [--description <text>] [--lead <user>] [--start-date <YYYY-MM-DD>] [--target-date <YYYY-MM-DD>] [--status <status>] [--content <markdown>]`
 
 ## Roadmaps
@@ -40,6 +46,8 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 - `lin document update title <id> <value>`
 - `lin document update content <id> <value>`
 - `lin document update project <id> <project>` — project ID, slug, or name
+- `lin document update icon <id> <emoji>`
+- `lin document update color <id> <hex>`
 
 ## Files
 
@@ -72,6 +80,9 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 - `lin issue update estimate <id> <value>` — validated against team estimate scale
 - `lin issue update labels <id> <label1,label2,...>`
 - `lin issue update description <id> <value>`
+- `lin issue update due-date <id> <YYYY-MM-DD>`
+- `lin issue update cycle <id> <cycle-id>` — move issue to a cycle (UUID)
+- `lin issue update parent <id> <parent-id>` — set parent issue (make sub-issue)
 
 ## Comments
 

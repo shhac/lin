@@ -51,4 +51,34 @@ export function registerUpdate(document: Command): void {
         printError(err instanceof Error ? err.message : "Update failed");
       }
     });
+
+  update
+    .command("icon")
+    .description("Update document icon")
+    .argument("<id>", "Document ID")
+    .argument("<icon>", "Icon (emoji)")
+    .action(async (id: string, icon: string) => {
+      try {
+        const client = getClient();
+        const payload = await client.updateDocument(id, { icon });
+        printJson({ updated: payload.success });
+      } catch (err) {
+        printError(err instanceof Error ? err.message : "Update failed");
+      }
+    });
+
+  update
+    .command("color")
+    .description("Update document color")
+    .argument("<id>", "Document ID")
+    .argument("<color>", "Color (hex, e.g. #5e6ad2)")
+    .action(async (id: string, color: string) => {
+      try {
+        const client = getClient();
+        const payload = await client.updateDocument(id, { color });
+        printJson({ updated: payload.success });
+      } catch (err) {
+        printError(err instanceof Error ? err.message : "Update failed");
+      }
+    });
 }

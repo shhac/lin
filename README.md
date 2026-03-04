@@ -55,7 +55,7 @@ lin
 │   ├── get <id>
 │   ├── issues <id> [filters]
 │   ├── new <name> --team <teams>
-│   ├── update title|status|description|lead <id> <value>
+│   ├── update title|status|description|content|lead|start-date|target-date|priority|icon|color <id> <value>
 │   └── usage
 ├── roadmap
 │   ├── list
@@ -67,7 +67,7 @@ lin
 │   ├── list [--project] [--creator]
 │   ├── get <id>
 │   ├── new <title> [--project] [--content]
-│   ├── update title|content|project <id> <value>
+│   ├── update title|content|project|icon|color <id> <value>
 │   └── usage
 ├── file
 │   ├── download <url-or-path> [--output] [--output-dir] [--stdout] [--force]
@@ -78,7 +78,7 @@ lin
 │   ├── list [filters]
 │   ├── get <id>
 │   ├── new <title> --team <team>
-│   ├── update title|status|assignee|priority|project|labels|estimate|description <id> <value>
+│   ├── update title|status|assignee|priority|project|labels|estimate|description|due-date|cycle|parent <id> <value>
 │   ├── comment list|new|get|edit|replies <id> [<body>]
 │   ├── relation list|add|remove
 │   ├── archive|unarchive|delete <id>

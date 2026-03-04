@@ -128,6 +128,51 @@ export function registerUpdate(issue: Command): void {
     });
 
   update
+    .command("due-date")
+    .description("Update issue due date")
+    .argument("<id>", "Issue ID or key")
+    .argument("<date>", "Due date (YYYY-MM-DD)")
+    .action(async (id: string, date: string) => {
+      try {
+        const client = getClient();
+        const payload = await client.updateIssue(id, { dueDate: date });
+        printJson({ updated: payload.success });
+      } catch (err) {
+        printError(err instanceof Error ? err.message : "Update failed");
+      }
+    });
+
+  update
+    .command("cycle")
+    .description("Move issue to a cycle")
+    .argument("<id>", "Issue ID or key")
+    .argument("<cycle-id>", "Cycle ID (UUID)")
+    .action(async (id: string, cycleId: string) => {
+      try {
+        const client = getClient();
+        const payload = await client.updateIssue(id, { cycleId });
+        printJson({ updated: payload.success });
+      } catch (err) {
+        printError(err instanceof Error ? err.message : "Update failed");
+      }
+    });
+
+  update
+    .command("parent")
+    .description("Set parent issue (make sub-issue)")
+    .argument("<id>", "Issue ID or key")
+    .argument("<parent-id>", "Parent issue ID or key")
+    .action(async (id: string, parentId: string) => {
+      try {
+        const client = getClient();
+        const payload = await client.updateIssue(id, { parentId });
+        printJson({ updated: payload.success });
+      } catch (err) {
+        printError(err instanceof Error ? err.message : "Update failed");
+      }
+    });
+
+  update
     .command("estimate")
     .description("Update issue estimate (validated against team scale)")
     .argument("<id>", "Issue ID or key")

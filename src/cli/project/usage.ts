@@ -23,7 +23,13 @@ UPDATE (each is a subcommand):
   project update title <id> <new-title>
   project update status <id> <new-status>
   project update description <id> <description>
+  project update content <id> <markdown>
   project update lead <id> <user>
+  project update start-date <id> <YYYY-MM-DD>
+  project update target-date <id> <YYYY-MM-DD>
+  project update priority <id> <priority>    none|urgent|high|medium|low
+  project update icon <id> <emoji>
+  project update color <id> <hex>
 
 IDS: <id> accepts UUID, slug ID, or project name.
 TEAM: Team key (ENG), name, or UUID.

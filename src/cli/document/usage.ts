@@ -22,6 +22,8 @@ UPDATE (each is a subcommand):
   document update title <id> <new-title>
   document update content <id> <markdown>
   document update project <id> <project>    Move to project
+  document update icon <id> <emoji>
+  document update color <id> <hex>
 
 IDS: UUID or slug ID (shown as "slugId" in output). "get" accepts either format.
 PROJECT: Accepts UUID, slug ID, or name (case-insensitive).
