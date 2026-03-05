@@ -8,6 +8,17 @@ function collect(val: string, prev: string[]): string[] {
   return prev;
 }
 
+async function fetchOrNull<T>(p: Promise<T>): Promise<T | null> {
+  try {
+    return await p;
+  } catch (err) {
+    if (err instanceof Error && err.message.includes("Entity not found")) {
+      return null;
+    }
+    throw err;
+  }
+}
+
 export function registerComment(issue: Command): void {
   const comment = issue.command("comment").description("Comment operations");
 
@@ -28,13 +39,17 @@ export function registerComment(issue: Command): void {
       });
       const mapped = await Promise.all(
         comments.nodes.map(async (c) => {
-          const [user, parent, children] = await Promise.all([c.user, c.parent, c.children()]);
+          const [user, parent, children] = await Promise.all([
+            c.user,
+            c.parent,
+            fetchOrNull(c.children()),
+          ]);
           return {
             id: c.id,
             body: c.body,
             user: user ? { id: user.id, name: user.name } : null,
             parent: parent ? { id: parent.id } : null,
-            childCount: children.nodes.length,
+            childCount: children?.nodes.length ?? 0,
             createdAt: c.createdAt,
             updatedAt: c.updatedAt,
           };
@@ -87,7 +102,7 @@ export function registerComment(issue: Command): void {
           c.user,
           c.issue,
           c.parent,
-          c.children(),
+          fetchOrNull(c.children()),
         ]);
         printJson({
           id: c.id,
@@ -95,7 +110,7 @@ export function registerComment(issue: Command): void {
           user: user ? { id: user.id, name: user.name } : null,
           issue: issue ? { id: issue.id, identifier: issue.identifier } : null,
           parent: parent ? { id: parent.id } : null,
-          childCount: children.nodes.length,
+          childCount: children?.nodes.length ?? 0,
           createdAt: c.createdAt,
           updatedAt: c.updatedAt,
         });
