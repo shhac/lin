@@ -122,7 +122,7 @@ export async function downloadFile(
   opts: DownloadOpts & { apiKey: string },
 ): Promise<DownloadResult> {
   const res = await fetch(url, {
-    headers: { Authorization: `Bearer ${opts.apiKey}` },
+    headers: { Authorization: opts.apiKey },
     redirect: "follow",
   });
 
