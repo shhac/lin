@@ -68,6 +68,7 @@ lin
 │   ├── get <id>
 │   ├── new <title> [--project] [--content]
 │   ├── update title|content|project|icon|color <id> <value>
+│   ├── history <id>
 │   └── usage
 ├── file
 │   ├── download <url-or-path> [--output] [--output-dir] [--stdout] [--force]
@@ -83,6 +84,7 @@ lin
 │   ├── relation list|add|remove
 │   ├── archive|unarchive|delete <id>
 │   ├── attachment list|add|remove
+│   ├── history <id> [--limit] [--cursor]
 │   └── usage
 ├── team
 │   ├── list

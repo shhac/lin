@@ -49,6 +49,10 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 - `lin document update icon <id> <emoji>`
 - `lin document update color <id> <hex>`
 
+## Document History
+
+- `lin document history <id>` — content edit history (actor IDs + timestamps, not paginated)
+
 ## Files
 
 - `lin file upload <paths...>` — upload one or more files to Linear's CDN, returns `[{ filename, assetUrl, contentType }]`
@@ -97,6 +101,10 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 - `lin issue relation list <issue-id>` — list all relations (both directions, includes blocked_by)
 - `lin issue relation add <issue-id> --type <type> --related <related-id>` — type: blocks | duplicate | related
 - `lin issue relation remove <relation-id>` — delete a relation
+
+## Issue History
+
+- `lin issue history <issue-id> [--limit] [--cursor]` — activity log: status changes, assignee changes, priority, labels, estimate, title, project, due date, archive/trash (paginated)
 
 ## Issue Lifecycle
 

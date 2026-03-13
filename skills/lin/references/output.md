@@ -240,6 +240,58 @@ Paginated list of replies:
 }
 ```
 
+## Issue history (`issue history`)
+
+Activity log entries for an issue. Empty/null fields are pruned — only changed fields appear per entry.
+
+```json
+{
+  "id": "...",
+  "actor": { "id": "...", "name": "Alice Example" },
+  "fromState": { "id": "...", "name": "Todo" },
+  "toState": { "id": "...", "name": "In Progress" },
+  "fromAssignee": { "id": "...", "name": "Bob Example" },
+  "toAssignee": { "id": "...", "name": "Alice Example" },
+  "fromPriority": 3,
+  "toPriority": 1,
+  "fromEstimate": 3,
+  "toEstimate": 5,
+  "fromTitle": "Old title",
+  "toTitle": "New title",
+  "fromDueDate": "2025-01-15",
+  "toDueDate": "2025-02-01",
+  "fromProject": { "id": "...", "name": "Old Project" },
+  "toProject": { "id": "...", "name": "New Project" },
+  "addedLabels": [{ "id": "...", "name": "bug" }],
+  "removedLabels": [{ "id": "...", "name": "triage" }],
+  "updatedDescription": true,
+  "archived": true,
+  "trashed": false,
+  "createdAt": "2025-01-15T10:30:00.000Z"
+}
+```
+
+Priority values are numeric: 0 (none), 1 (urgent), 2 (high), 3 (medium), 4 (low).
+
+## Document content history (`document history`)
+
+Content edit history entries for a document:
+
+```json
+{
+  "items": [
+    {
+      "id": "...",
+      "actorIds": ["user-uuid-1", "user-uuid-2"],
+      "contentDataSnapshotAt": "2025-01-15T10:30:00.000Z",
+      "createdAt": "2025-01-15T10:30:00.000Z"
+    }
+  ]
+}
+```
+
+Not paginated. Actor IDs are user UUIDs (resolve with `lin user list`).
+
 ## File uploads in comments
 
 When `--file` is used with `comment new` or `comment edit`, files are uploaded to Linear's CDN and embedded in the comment body as markdown:

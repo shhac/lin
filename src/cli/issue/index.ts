@@ -9,6 +9,7 @@ import { registerComment } from "./comment.ts";
 import { registerRelation } from "./relation.ts";
 import { registerArchive } from "./archive.ts";
 import { registerAttachment } from "./attachment.ts";
+import { registerHistory } from "./history.ts";
 import { registerUsage } from "./usage.ts";
 
 export function registerIssueCommand({ program }: { program: Command }): void {
@@ -22,6 +23,7 @@ export function registerIssueCommand({ program }: { program: Command }): void {
   registerRelation(issue);
   registerArchive(issue);
   registerAttachment(issue);
+  registerHistory(issue);
   registerUsage(issue);
   handleUnknownCommand(issue, "To view an issue: lin issue get <id>");
 }

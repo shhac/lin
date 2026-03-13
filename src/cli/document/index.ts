@@ -4,6 +4,7 @@ import { registerList } from "./list.ts";
 import { registerGet } from "./get.ts";
 import { registerNew } from "./new.ts";
 import { registerUpdate } from "./update.ts";
+import { registerHistory } from "./history.ts";
 import { registerUsage } from "./usage.ts";
 
 export function registerDocumentCommand({ program }: { program: Command }): void {
@@ -13,5 +14,6 @@ export function registerDocumentCommand({ program }: { program: Command }): void
   registerGet(document);
   registerNew(document);
   registerUpdate(document);
+  registerHistory(document);
   registerUsage(document);
 }

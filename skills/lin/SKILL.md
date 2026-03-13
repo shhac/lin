@@ -83,6 +83,13 @@ lin file download <uuid>/<uuid> --force       # overwrite existing
 
 > **Prefer `--file` on comments** when attaching files to issues. `lin issue comment new ENG-123 "See attached" --file ./screenshot.png` uploads and embeds the file in a single step. Use `lin file upload` only when you need a standalone asset URL (e.g., for issue descriptions or documents).
 
+## Issue history
+
+```bash
+lin issue history ENG-123                    # activity log (status, assignee, labels, etc.)
+lin issue history ENG-123 --limit 10         # last 10 changes
+```
+
 ## Issue relations and lifecycle
 
 ```bash
@@ -141,6 +148,7 @@ lin document new "API Design Doc" --project "CRM Actions" --content "# Overview\
 lin document update title <id> "New Title"
 lin document update content <id> "# Updated content"
 lin document update project <id> "Other Project"
+lin document history <id>                # content edit history (actor IDs + timestamps)
 ```
 
 ## Teams, users, labels, cycles

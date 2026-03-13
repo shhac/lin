@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 
-const USAGE_TEXT = `lin issue — Issue operations (search, list, create, update, comment, relate, archive, attach)
+const USAGE_TEXT = `lin issue — Issue operations (search, list, create, update, comment, relate, archive, attach, history)
 
 SEARCH & LIST:
   issue search <text> [--project] [--team] [--assignee] [--status] [--priority]
@@ -31,6 +31,9 @@ RELATIONS:
   issue relation list <id>      Both directions (blocks, blocked_by, duplicate, related)
   issue relation add <id> --type <t> --related <id>  Types: blocks|duplicate|related
   issue relation remove <id>
+
+HISTORY:
+  issue history <id> [--limit] [--cursor]     Activity log (status, assignee, priority, labels, etc.)
 
 LIFECYCLE:  issue archive|unarchive|delete <id>
 
