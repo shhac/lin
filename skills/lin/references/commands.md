@@ -150,6 +150,10 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
   - `lin file usage` — file upload + download commands
   - `lin config usage` — CLI settings (keys, defaults, validation rules)
 
+## API (raw GraphQL)
+
+- `lin api query <graphql> [--variables <json>]` — execute raw GraphQL query (escape hatch for unsupported operations)
+
 ## Common filters (list/search commands)
 
 | Flag                           | Description                           |

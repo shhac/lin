@@ -56,6 +56,8 @@ COMMANDS:
 
   config get|set|reset|list-keys           Persistent settings
 
+  api query <graphql> [--variables <json>] Raw GraphQL query (escape hatch)
+
 IDS: Issue keys (ENG-123), UUIDs, or slugs. --team accepts key (ENG) or name.
      Project/roadmap/document <id> accept UUID, slug ID, or name.
 

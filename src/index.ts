@@ -2,6 +2,7 @@ import { Command } from "commander";
 import { getPackageVersion } from "./lib/version.ts";
 import { configureTruncation } from "./lib/truncation.ts";
 import { getSettings } from "./lib/config.ts";
+import { registerApiCommand } from "./cli/api/index.ts";
 import { registerAuthCommand } from "./cli/auth/index.ts";
 import { registerCycleCommand } from "./cli/cycle/index.ts";
 import { registerDocumentCommand } from "./cli/document/index.ts";
@@ -32,6 +33,7 @@ program.hook("preAction", (thisCommand) => {
   });
 });
 
+registerApiCommand({ program });
 registerAuthCommand({ program });
 registerProjectCommand({ program });
 registerRoadmapCommand({ program });
@@ -44,6 +46,18 @@ registerLabelCommand({ program });
 registerCycleCommand({ program });
 registerConfigCommand({ program });
 registerUsageCommand({ program });
+
+const HELP_HINT =
+  "\nRun 'lin usage' for detailed docs. Run 'lin <command> usage' for per-command details.";
+const SUBCMD_HELP_HINT = (name: string) =>
+  `\nRun 'lin ${name} usage' for detailed docs including all fields, valid values, and examples.`;
+
+program.addHelpText("after", HELP_HINT);
+for (const cmd of program.commands) {
+  if (cmd.commands.some((c) => c.name() === "usage")) {
+    cmd.addHelpText("after", SUBCMD_HELP_HINT(cmd.name()));
+  }
+}
 
 program.parse(process.argv);
 if (!process.argv.slice(2).length) {

@@ -16,6 +16,15 @@ description: |
 
 All output is JSON to stdout. Errors go to stderr as `{ "error": "..." }` with non-zero exit.
 
+## IMPORTANT: Never access the Linear API directly
+
+**NEVER retrieve, read, or use the Linear API key directly.** Do not `curl` the Linear API. Do not use environment variables to extract credentials. `lin` handles all authentication internally.
+
+If a specific `lin` command doesn't exist for what you need:
+
+1. Check `lin <command> usage` — the command may exist but not be obvious from `--help`
+2. Use `lin api query '<graphql>'` as a last resort — it runs raw GraphQL through `lin`'s auth
+
 ## Quick start (auth)
 
 Set an env var (recommended):
@@ -209,6 +218,18 @@ lin usage                # top-level overview (~1000 tokens)
 ```
 
 Use `lin <command> usage` when you need deep detail on a specific domain before acting.
+
+## Raw GraphQL (escape hatch)
+
+When no structured command covers your needs, use `lin api query` instead of accessing the API directly:
+
+```bash
+lin api query '{ viewer { id name email } }'
+lin api query '{ issue(id: "ENG-123") { id title createdAt completedAt } }'
+lin api query 'query($id: String!) { issue(id: $id) { id title } }' --variables '{"id":"ENG-123"}'
+```
+
+Always prefer structured commands first — they handle pagination, ID resolution, and formatting.
 
 ## References
 

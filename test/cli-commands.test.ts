@@ -25,6 +25,7 @@ describe("CLI command registration", () => {
     const output = runCli("--help");
     // All resource commands should be listed
     for (const cmd of [
+      "api",
       "auth",
       "project",
       "roadmap",
@@ -115,6 +116,12 @@ describe("CLI command registration", () => {
     expect(output).toContain("list");
     expect(output).toContain("get");
   });
+
+  test("api --help shows query subcommand", () => {
+    const output = runCli("api --help");
+    expect(output).toContain("query");
+    expect(output).toContain("usage");
+  });
 });
 
 describe("CLI nested command registration", () => {
@@ -197,6 +204,27 @@ describe("CLI nested command registration", () => {
   test("roadmap get --help shows id argument", () => {
     const output = runCli("roadmap get --help");
     expect(output).toContain("id");
+  });
+
+  test("api query --help shows graphql argument and variables option", () => {
+    const output = runCli("api query --help");
+    expect(output).toContain("graphql");
+    expect(output).toContain("--variables");
+  });
+});
+
+describe("CLI help text hints", () => {
+  test("root --help includes usage discovery hint", () => {
+    const output = runCli("--help");
+    expect(output).toContain("lin usage");
+    expect(output).toContain("lin <command> usage");
+  });
+
+  test("subcommand --help includes per-command usage hint", () => {
+    for (const cmd of ["issue", "project", "team", "document"]) {
+      const output = runCli(`${cmd} --help`);
+      expect(output).toContain(`lin ${cmd} usage`);
+    }
   });
 });
 

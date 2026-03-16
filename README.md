@@ -104,6 +104,9 @@ lin
 │   └── usage
 ├── auth
 │   └── usage
+├── api
+│   ├── query <graphql> [--variables <json>]
+│   └── usage
 ├── config
 │   └── usage
 └── usage                          # LLM-optimized docs (<1k tokens)
