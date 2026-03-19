@@ -1,4 +1,12 @@
-import type { LinearClient, Project, Roadmap, Team, User, WorkflowState } from "@linear/sdk";
+import type {
+  Document,
+  LinearClient,
+  Project,
+  Roadmap,
+  Team,
+  User,
+  WorkflowState,
+} from "@linear/sdk";
 
 export async function resolveUser(client: LinearClient, input: string): Promise<User> {
   const results = await client.users();
@@ -21,6 +29,23 @@ export async function resolveUser(client: LinearClient, input: string): Promise<
   throw new Error(
     `Ambiguous user: "${input}" matches ${matches.length} users: ${ambiguous}. Use a unique name, email, or ID.`,
   );
+}
+
+export async function resolveDocument(client: LinearClient, input: string): Promise<Document> {
+  // Try direct lookup first (works for UUIDs)
+  try {
+    return await client.document(input);
+  } catch {
+    // Fall back to search by slug ID
+    const results = await client.documents({
+      filter: { slugId: { eq: input } },
+    });
+    const [doc] = results.nodes;
+    if (!doc) {
+      throw new Error(`Document not found: "${input}". Provide a UUID or slug ID.`);
+    }
+    return doc;
+  }
 }
 
 export async function resolveProject(client: LinearClient, input: string): Promise<Project> {

@@ -28,7 +28,7 @@ UPDATE (each is a subcommand):
 HISTORY:
   document history <id>                       Content edit history (actor IDs + timestamps)
 
-IDS: UUID or slug ID (shown as "slugId" in output). "get" accepts either format.
+IDS: UUID or slug ID (shown as "slugId" in output). All commands accept either format.
 PROJECT: Accepts UUID, slug ID, or name (case-insensitive).
 CREATOR: Filter by user ID, name, display name, or email.
 CONTENT: Markdown format. Full content returned by "get"; truncated in list/search.

@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
+import { resolveDocument } from "../../lib/resolvers.ts";
 
 export function registerGet(document: Command): void {
   document
@@ -11,20 +12,7 @@ export function registerGet(document: Command): void {
       try {
         const client = getClient();
 
-        let d;
-        try {
-          d = await client.document(id);
-        } catch {
-          const results = await client.documents({
-            filter: { slugId: { eq: id } },
-          });
-          const [found] = results.nodes;
-          if (!found) {
-            printError(`Document not found: "${id}". Provide a UUID or slug ID.`);
-            return;
-          }
-          d = found;
-        }
+        const d = await resolveDocument(client, id);
 
         const [creator, project, updatedBy] = await Promise.all([
           d.creator,
