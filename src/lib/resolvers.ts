@@ -1,5 +1,6 @@
 import type {
   Document,
+  IssueLabel,
   LinearClient,
   Project,
   Roadmap,
@@ -106,6 +107,71 @@ export async function resolveTeam(client: LinearClient, input: string): Promise<
     }
     return team;
   }
+}
+
+/**
+ * Resolve comma-separated label names or IDs to an array of label IDs.
+ * When teamId is provided, only team-scoped + workspace labels are searched,
+ * reducing ambiguity from identically-named labels across teams.
+ */
+export async function resolveLabels(
+  client: LinearClient,
+  opts: { input: string; teamId?: string },
+): Promise<string[]> {
+  const inputs = opts.input
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const labels = opts.teamId
+    ? await fetchTeamAndWorkspaceLabels(client, opts.teamId)
+    : (await client.issueLabels()).nodes;
+
+  const ids: string[] = [];
+  for (const raw of inputs) {
+    ids.push(resolveOneLabel(raw, { labels, teamScoped: !!opts.teamId }).id);
+  }
+  return ids;
+}
+
+async function fetchTeamAndWorkspaceLabels(
+  client: LinearClient,
+  teamId: string,
+): Promise<IssueLabel[]> {
+  const team = await client.team(teamId);
+  const teamLabels = await team.labels();
+  const allLabels = await client.issueLabels();
+  const workspaceLabels = allLabels.nodes.filter(
+    (l) => !teamLabels.nodes.some((tl) => tl.id === l.id),
+  );
+  return [...teamLabels.nodes, ...workspaceLabels];
+}
+
+function resolveOneLabel(
+  input: string,
+  ctx: { labels: IssueLabel[]; teamScoped: boolean },
+): IssueLabel {
+  const exact = ctx.labels.find((l) => l.id === input);
+  if (exact) {
+    return exact;
+  }
+
+  const lower = input.toLowerCase();
+  const matches = ctx.labels.filter((l) => l.name.toLowerCase() === lower);
+
+  if (matches.length === 1) {
+    return matches[0]!;
+  }
+
+  if (matches.length === 0) {
+    const names = ctx.labels.map((l) => l.name).join(", ");
+    throw new Error(`Label not found: "${input}". Available labels: ${names}`);
+  }
+
+  const ambiguous = matches.map((l) => `${l.name} (${l.id})`).join(", ");
+  const hint = ctx.teamScoped ? "" : " Tip: use --team to narrow scope.";
+  throw new Error(
+    `Ambiguous label: "${input}" matches ${matches.length} labels: ${ambiguous}. Use the label ID to disambiguate.${hint}`,
+  );
 }
 
 export async function resolveRoadmap(client: LinearClient, input: string): Promise<Roadmap> {

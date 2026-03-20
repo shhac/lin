@@ -12,13 +12,13 @@ GET:
 CREATE:
   issue new <title> --team <key|name|UUID>    --team required
     [--project <name|slug|UUID>] [--assignee] [--priority] [--status]
-    [--labels <ids>] [--description <md>] [--cycle] [--parent <id>] [--estimate <n>]
+    [--labels <names|ids>] [--description <md>] [--cycle] [--parent <id>] [--estimate <n>]
 
 UPDATE (each is a subcommand):
   issue update title|status|assignee|priority|project|labels|description|estimate <id> <value>
   issue update due-date <id> <YYYY-MM-DD>
   issue update cycle <id> <cycle-id>  |  parent <id> <parent-id>
-  status: team-scoped (use "team states <team>"). labels: comma-separated IDs.
+  status: team-scoped (use "team states <team>"). labels: comma-separated names or IDs.
   estimate: validated against team scale. assignee: name/email/ID.
 
 COMMENTS (--file repeatable, --parent 1 level):

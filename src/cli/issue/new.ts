@@ -3,6 +3,7 @@ import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
 import { PRIORITY_MAP, PRIORITY_VALUES } from "../../lib/priorities.ts";
 import {
+  resolveLabels,
   resolveProject,
   resolveTeam,
   resolveUser,
@@ -19,7 +20,7 @@ export function registerNew(issue: Command): void {
     .option("--assignee <user>", "Assignee: name, email, or user ID")
     .option("--priority <priority>", "Priority: none|urgent|high|medium|low")
     .option("--status <status>", "Status name")
-    .option("--labels <labels>", "Comma-separated label IDs")
+    .option("--labels <labels>", "Comma-separated label names or IDs")
     .option("--description <desc>", "Issue description (markdown)")
     .option("--cycle <cycle>", "Cycle ID")
     .option("--parent <parent>", "Parent issue ID")
@@ -62,6 +63,12 @@ export function registerNew(issue: Command): void {
           projectId = project.id;
         }
 
+        // Resolve label names/IDs (scoped to team for disambiguation)
+        let labelIds: string[] | undefined;
+        if (opts.labels) {
+          labelIds = await resolveLabels(client, { input: opts.labels, teamId: team.id });
+        }
+
         const payload = await client.createIssue({
           title,
           teamId: team.id,
@@ -73,7 +80,7 @@ export function registerNew(issue: Command): void {
           cycleId: opts.cycle,
           parentId: opts.parent,
           estimate: opts.estimate ? parseInt(opts.estimate, 10) : undefined,
-          labelIds: opts.labels ? opts.labels.split(",") : undefined,
+          labelIds,
         });
         const created = await payload.issue;
         printJson({

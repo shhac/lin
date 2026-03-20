@@ -3,7 +3,12 @@ import { getClient } from "../../lib/client.ts";
 import { formatEstimateScale, getValidEstimates } from "../../lib/estimates.ts";
 import { printError, printJson } from "../../lib/output.ts";
 import { PRIORITY_MAP, PRIORITY_VALUES } from "../../lib/priorities.ts";
-import { resolveProject, resolveUser, resolveWorkflowState } from "../../lib/resolvers.ts";
+import {
+  resolveLabels,
+  resolveProject,
+  resolveUser,
+  resolveWorkflowState,
+} from "../../lib/resolvers.ts";
 
 export function registerUpdate(issue: Command): void {
   const update = issue.command("update").description("Update issue fields");
@@ -101,11 +106,14 @@ export function registerUpdate(issue: Command): void {
     .command("labels")
     .description("Set issue labels")
     .argument("<id>", "Issue ID or key")
-    .argument("<labels>", "Comma-separated label IDs")
+    .argument("<labels>", "Comma-separated label names or IDs")
     .action(async (id: string, labels: string) => {
       try {
         const client = getClient();
-        const payload = await client.updateIssue(id, { labelIds: labels.split(",") });
+        const issue = await client.issue(id);
+        const team = await issue.team;
+        const labelIds = await resolveLabels(client, { input: labels, teamId: team?.id });
+        const payload = await client.updateIssue(id, { labelIds });
         printJson({ updated: payload.success });
       } catch (err) {
         printError(err instanceof Error ? err.message : "Update failed");

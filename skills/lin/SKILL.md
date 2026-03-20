@@ -58,7 +58,7 @@ lin issue comment list ENG-123
 ## Creating and updating issues
 
 ```bash
-lin issue new "Fix login redirect" --team ENG --priority high --status "Todo"
+lin issue new "Fix login redirect" --team ENG --priority high --status "Todo" --labels "Bug"
 lin issue update status ENG-123 "In Progress"
 lin issue update assignee ENG-123 "alice@example.com"
 lin issue update priority ENG-123 urgent

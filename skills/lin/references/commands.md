@@ -75,14 +75,14 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 - `lin issue search <text> [filters]` — full-text search
 - `lin issue list [filters]` — list issues (returns status, assignee, team, branchName)
 - `lin issue get <id>` — full issue details with commentCount, branchName, attachments (PR links)
-- `lin issue new <title> --team <team> [--priority <p>] [--status <s>] [--assignee <name|email|id>] [--project <p>] [--label <l>]`
+- `lin issue new <title> --team <team> [--priority <p>] [--status <s>] [--assignee <name|email|id>] [--project <p>] [--labels <names|ids>]`
 - `lin issue update title <id> <value>`
 - `lin issue update status <id> <value>` — team-specific workflow state names
 - `lin issue update assignee <id> <user>` — accepts name, email, or user ID
 - `lin issue update priority <id> <priority>` — none | urgent | high | medium | low
 - `lin issue update project <id> <project>` — project ID, slug, or name
 - `lin issue update estimate <id> <value>` — validated against team estimate scale
-- `lin issue update labels <id> <label1,label2,...>`
+- `lin issue update labels <id> <name1,name2,...>` — accepts label names or IDs
 - `lin issue update description <id> <value>`
 - `lin issue update due-date <id> <YYYY-MM-DD>`
 - `lin issue update cycle <id> <cycle-id>` — move issue to a cycle (UUID)
