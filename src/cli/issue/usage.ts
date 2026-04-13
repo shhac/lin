@@ -5,6 +5,7 @@ const USAGE_TEXT = `lin issue — Issue operations (search, list, create, update
 SEARCH & LIST:
   issue search <text> [--project] [--team] [--assignee] [--status] [--priority]
   issue list [--project] [--team] [--assignee] [--status] [--priority] [--label] [--cycle]
+    [--updated-after|before] [--created-after|before] (YYYY-MM-DD)
 
 GET:
   issue get <id>             Full details + labels, attachments, branchName, commentCount

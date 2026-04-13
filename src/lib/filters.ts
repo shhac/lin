@@ -60,5 +60,27 @@ export function buildIssueFilter(
     filter.cycle = { id: { eq: opts.cycle } };
   }
 
+  const updatedAt: Record<string, string> = {};
+  if (opts["updated-after"]) {
+    updatedAt.gte = opts["updated-after"];
+  }
+  if (opts["updated-before"]) {
+    updatedAt.lte = opts["updated-before"];
+  }
+  if (Object.keys(updatedAt).length > 0) {
+    filter.updatedAt = updatedAt;
+  }
+
+  const createdAt: Record<string, string> = {};
+  if (opts["created-after"]) {
+    createdAt.gte = opts["created-after"];
+  }
+  if (opts["created-before"]) {
+    createdAt.lte = opts["created-before"];
+  }
+  if (Object.keys(createdAt).length > 0) {
+    filter.createdAt = createdAt;
+  }
+
   return filter;
 }

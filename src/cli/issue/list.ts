@@ -16,6 +16,10 @@ export function registerList(issue: Command): void {
     .option("--priority <priority>", "Filter by priority")
     .option("--label <label>", "Filter by label")
     .option("--cycle <cycle>", "Filter by cycle")
+    .option("--updated-after <date>", "Updated after date (YYYY-MM-DD)")
+    .option("--updated-before <date>", "Updated before date (YYYY-MM-DD)")
+    .option("--created-after <date>", "Created after date (YYYY-MM-DD)")
+    .option("--created-before <date>", "Created before date (YYYY-MM-DD)")
     .option("--limit <n>", "Limit results")
     .option("--cursor <token>", "Pagination cursor for next page")
     .action(async (opts: Record<string, string | undefined>) => {

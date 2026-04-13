@@ -74,6 +74,7 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 
 - `lin issue search <text> [filters]` — full-text search
 - `lin issue list [filters]` — list issues (returns status, assignee, team, branchName)
+  - Date filters: `--updated-after`, `--updated-before`, `--created-after`, `--created-before` (YYYY-MM-DD)
 - `lin issue get <id>` — full issue details with commentCount, branchName, attachments (PR links)
 - `lin issue new <title> --team <team> [--priority <p>] [--status <s>] [--assignee <name|email|id>] [--project <p>] [--labels <names|ids>]`
 - `lin issue update title <id> <value>`
