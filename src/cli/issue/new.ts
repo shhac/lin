@@ -1,7 +1,7 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
-import { PRIORITY_MAP, PRIORITY_VALUES } from "../../lib/priorities.ts";
+import { PRIORITY_VALUES, resolvePriority } from "../../lib/priorities.ts";
 import {
   resolveLabels,
   resolveProject,
@@ -29,7 +29,7 @@ export function registerNew(issue: Command): void {
       try {
         const client = getClient();
 
-        const priority = opts.priority ? PRIORITY_MAP[opts.priority.toLowerCase()] : undefined;
+        const priority = opts.priority ? resolvePriority(opts.priority) : undefined;
         if (opts.priority && priority === undefined) {
           printError(`Invalid priority: "${opts.priority}". Valid values: ${PRIORITY_VALUES}`);
           return;

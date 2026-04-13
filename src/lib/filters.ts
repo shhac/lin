@@ -1,4 +1,4 @@
-import { PRIORITY_MAP } from "./priorities.ts";
+import { resolvePriority } from "./priorities.ts";
 import { buildTeamFilter } from "./resolvers.ts";
 
 /**
@@ -46,7 +46,7 @@ export function buildIssueFilter(
   }
 
   if (opts.priority) {
-    const p = PRIORITY_MAP[opts.priority.toLowerCase()];
+    const p = resolvePriority(opts.priority);
     if (p !== undefined) {
       filter.priority = { eq: p };
     }

@@ -2,7 +2,7 @@ import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
 import { PROJECT_STATUSES, PROJECT_STATUS_VALUES } from "../../lib/project-statuses.ts";
-import { PRIORITY_MAP, PRIORITY_VALUES } from "../../lib/priorities.ts";
+import { PRIORITY_VALUES, resolvePriority } from "../../lib/priorities.ts";
 import { resolveProject, resolveUser } from "../../lib/resolvers.ts";
 
 export function registerUpdate(project: Command): void {
@@ -135,7 +135,7 @@ export function registerUpdate(project: Command): void {
     .argument("<priority>", "Priority: none|urgent|high|medium|low")
     .action(async (id: string, priority: string) => {
       try {
-        const p = PRIORITY_MAP[priority.toLowerCase()];
+        const p = resolvePriority(priority);
         if (p === undefined) {
           printError(`Invalid priority: "${priority}". Valid values: ${PRIORITY_VALUES}`);
           return;
