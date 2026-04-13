@@ -204,22 +204,22 @@ function mimeToExt(mime: string): string | null {
 }
 
 function sanitizeFilename(name: string): string {
-  let clean = name.replace(/^.*[/\\]/, "");
-  clean = clean.replace(UNSAFE_FILENAME_RE, "_");
-  if (clean.length > 255) {
-    clean = clean.slice(0, 255);
+  const clean = name.replace(/^.*[/\\]/, "").replace(UNSAFE_FILENAME_RE, "_");
+  return (clean.length > 255 ? clean.slice(0, 255) : clean) || "download";
+}
+
+function checkOverwrite(destPath: string, force?: boolean): void {
+  if (!force && existsSync(destPath)) {
+    throw new Error(`File already exists: "${destPath}". Use --force to overwrite.`);
   }
-  return clean || "download";
 }
 
 function resolveDestPath(
   filename: string,
   { opts, contentType }: { opts: DownloadOpts; contentType: string },
 ): string {
-  let destPath: string;
-
   if (opts.output) {
-    destPath = resolve(opts.output);
+    const destPath = resolve(opts.output);
     const outputExt = extname(destPath).toLowerCase();
     const expectedExt = mimeToExt(contentType);
     if (expectedExt && outputExt && outputExt !== expectedExt) {
@@ -227,18 +227,20 @@ function resolveDestPath(
         `Warning: output extension "${outputExt}" does not match Content-Type "${contentType}" (expected "${expectedExt}")`,
       );
     }
-  } else if (opts.outputDir) {
+    checkOverwrite(destPath, opts.force);
+    return destPath;
+  }
+
+  if (opts.outputDir) {
     if (!existsSync(opts.outputDir)) {
       throw new Error(`Output directory does not exist: "${opts.outputDir}"`);
     }
-    destPath = join(opts.outputDir, filename);
-  } else {
-    destPath = join(process.cwd(), filename);
+    const destPath = join(opts.outputDir, filename);
+    checkOverwrite(destPath, opts.force);
+    return destPath;
   }
 
-  if (!opts.force && existsSync(destPath)) {
-    throw new Error(`File already exists: "${destPath}". Use --force to overwrite.`);
-  }
-
+  const destPath = join(process.cwd(), filename);
+  checkOverwrite(destPath, opts.force);
   return destPath;
 }
