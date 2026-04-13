@@ -175,7 +175,7 @@ function inferFilename({ headers, url, contentType }: FetchResult): string {
   return "download";
 }
 
-function parseContentDispositionFilename(header: string): string | null {
+export function parseContentDispositionFilename(header: string): string | null {
   const rfc5987 = header.match(/filename\*\s*=\s*UTF-8''([^\s;]+)/i);
   if (rfc5987?.[1]) {
     try {
@@ -203,7 +203,7 @@ function mimeToExt(mime: string): string | null {
   return MIME_TO_EXT[base] ?? null;
 }
 
-function sanitizeFilename(name: string): string {
+export function sanitizeFilename(name: string): string {
   const clean = name.replace(/^.*[/\\]/, "").replace(UNSAFE_FILENAME_RE, "_");
   return (clean.length > 255 ? clean.slice(0, 255) : clean) || "download";
 }
