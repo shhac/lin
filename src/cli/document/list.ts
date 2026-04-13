@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import type { LinearDocument } from "@linear/sdk";
 import { getClient } from "../../lib/client.ts";
+import { buildProjectFilter } from "../../lib/filters.ts";
 import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
 import { mapDocSummary } from "./map-doc-summary.ts";
 
@@ -19,13 +20,7 @@ export function registerList(document: Command): void {
         const filter: Record<string, unknown> = {};
 
         if (opts.project) {
-          filter.project = {
-            or: [
-              { id: { eq: opts.project } },
-              { slugId: { eq: opts.project } },
-              { name: { eqIgnoreCase: opts.project } },
-            ],
-          };
+          filter.project = buildProjectFilter(opts.project);
         }
 
         if (opts.creator) {

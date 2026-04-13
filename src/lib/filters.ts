@@ -7,6 +7,13 @@ export function buildTeamFilter(input: string): Record<string, unknown> {
   };
 }
 
+/** Build a project filter that matches by ID, slugId, or name. */
+export function buildProjectFilter(input: string): Record<string, unknown> {
+  return {
+    or: [{ id: { eq: input } }, { slugId: { eq: input } }, { name: { eqIgnoreCase: input } }],
+  };
+}
+
 /**
  * Build an IssueFilter from CLI options.
  * Accepts the common filter flags: --project, --team, --assignee, --status, --priority, --label, --cycle.
@@ -18,13 +25,7 @@ export function buildIssueFilter(
   const filter: Record<string, unknown> = {};
 
   if (opts.project) {
-    filter.project = {
-      or: [
-        { id: { eq: opts.project } },
-        { slugId: { eq: opts.project } },
-        { name: { eqIgnoreCase: opts.project } },
-      ],
-    };
+    filter.project = buildProjectFilter(opts.project);
   }
 
   if (opts.team) {
