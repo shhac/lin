@@ -1,5 +1,11 @@
 import { resolvePriority } from "./priorities.ts";
-import { buildTeamFilter } from "./resolvers.ts";
+
+/** Build a team filter that matches by key (e.g. "ENG") or name. */
+export function buildTeamFilter(input: string): Record<string, unknown> {
+  return {
+    or: [{ key: { eqIgnoreCase: input } }, { name: { eqIgnoreCase: input } }],
+  };
+}
 
 /**
  * Build an IssueFilter from CLI options.

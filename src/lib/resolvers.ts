@@ -8,6 +8,7 @@ import type {
   User,
   WorkflowState,
 } from "@linear/sdk";
+import { buildTeamFilter } from "./filters.ts";
 
 export async function resolveUser(client: LinearClient, input: string): Promise<User> {
   const results = await client.users();
@@ -81,13 +82,6 @@ export async function resolveWorkflowState(
     throw new Error(`Unknown status: "${name}". Valid values: ${validNames.join(" | ")}`);
   }
   return state;
-}
-
-/** Build a team filter that matches by key (e.g. "ENG") or name. */
-export function buildTeamFilter(input: string): Record<string, unknown> {
-  return {
-    or: [{ key: { eqIgnoreCase: input } }, { name: { eqIgnoreCase: input } }],
-  };
 }
 
 export async function resolveTeam(client: LinearClient, input: string): Promise<Team> {

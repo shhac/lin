@@ -2,7 +2,7 @@ import type { Command } from "commander";
 import type { LinearDocument } from "@linear/sdk";
 import { getClient } from "../../lib/client.ts";
 import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
-import { buildTeamFilter } from "../../lib/resolvers.ts";
+import { buildTeamFilter } from "../../lib/filters.ts";
 import { mapProjectSummary } from "./map-project-summary.ts";
 
 export function registerList(project: Command): void {

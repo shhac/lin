@@ -1,7 +1,7 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson } from "../../lib/output.ts";
-import { buildTeamFilter } from "../../lib/resolvers.ts";
+import { buildTeamFilter } from "../../lib/filters.ts";
 
 export function registerStates(team: Command): void {
   team
