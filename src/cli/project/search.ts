@@ -1,6 +1,7 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
+import { mapProjectSummary } from "./map-project-summary.ts";
 
 export function registerSearch(project: Command): void {
   project
@@ -16,17 +17,12 @@ export function registerSearch(project: Command): void {
           first: resolvePageSize(opts),
           after: opts.cursor,
         });
-        printPaginated(
-          results.nodes.map((p) => ({
-            id: p.id,
-            slugId: p.slugId,
-            url: p.url,
-            name: p.name,
-            status: p.state,
-            progress: p.progress,
-          })),
-          results.pageInfo,
+        const items = await Promise.all(
+          results.nodes.map((p) =>
+            mapProjectSummary(p as unknown as Parameters<typeof mapProjectSummary>[0]),
+          ),
         );
+        printPaginated(items, results.pageInfo);
       } catch (err) {
         printError(err instanceof Error ? err.message : "Search failed");
       }

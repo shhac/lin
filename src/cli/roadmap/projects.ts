@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
 import { resolveRoadmap } from "../../lib/resolvers.ts";
+import { mapProjectSummary } from "../project/map-project-summary.ts";
 
 export function registerProjects(roadmap: Command): void {
   roadmap
@@ -19,20 +20,9 @@ export function registerProjects(roadmap: Command): void {
           after: opts.cursor,
         });
         const items = await Promise.all(
-          projects.nodes.map(async (p) => {
-            const lead = await p.lead;
-            return {
-              id: p.id,
-              slugId: p.slugId,
-              url: p.url,
-              name: p.name,
-              status: p.state,
-              progress: p.progress,
-              lead: lead ? lead.name : null,
-              startDate: p.startDate,
-              targetDate: p.targetDate,
-            };
-          }),
+          projects.nodes.map((p) =>
+            mapProjectSummary(p as unknown as Parameters<typeof mapProjectSummary>[0]),
+          ),
         );
         printPaginated(items, projects.pageInfo);
       } catch (err) {

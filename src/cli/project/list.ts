@@ -3,6 +3,7 @@ import type { LinearDocument } from "@linear/sdk";
 import { getClient } from "../../lib/client.ts";
 import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
 import { buildTeamFilter } from "../../lib/resolvers.ts";
+import { mapProjectSummary } from "./map-project-summary.ts";
 
 export function registerList(project: Command): void {
   project
@@ -28,20 +29,9 @@ export function registerList(project: Command): void {
           filter: Object.keys(filter).length > 0 ? filter : undefined,
         });
         const items = await Promise.all(
-          results.nodes.map(async (p) => {
-            const lead = await p.lead;
-            return {
-              id: p.id,
-              slugId: p.slugId,
-              url: p.url,
-              name: p.name,
-              status: p.state,
-              progress: p.progress,
-              lead: lead ? lead.name : null,
-              startDate: p.startDate,
-              targetDate: p.targetDate,
-            };
-          }),
+          results.nodes.map((p) =>
+            mapProjectSummary(p as unknown as Parameters<typeof mapProjectSummary>[0]),
+          ),
         );
         printPaginated(items, results.pageInfo);
       } catch (err) {

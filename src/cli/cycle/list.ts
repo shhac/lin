@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printJson, printPaginated, resolvePageSize } from "../../lib/output.ts";
 import { resolveTeam } from "../../lib/resolvers.ts";
+import { mapCycleSummary } from "./map-cycle-summary.ts";
 
 export function registerList(cycle: Command): void {
   cycle
@@ -34,15 +35,7 @@ export function registerList(cycle: Command): void {
               printJson([]);
               return;
             }
-            printJson([
-              {
-                id: c.id,
-                number: c.number,
-                name: c.name,
-                startsAt: c.startsAt,
-                endsAt: c.endsAt,
-              },
-            ]);
+            printJson([mapCycleSummary(c)]);
             return;
           }
 
@@ -56,19 +49,7 @@ export function registerList(cycle: Command): void {
             const [next] = cycles.nodes
               .filter((c) => new Date(c.startsAt) > now)
               .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime());
-            printJson(
-              next
-                ? [
-                    {
-                      id: next.id,
-                      number: next.number,
-                      name: next.name,
-                      startsAt: next.startsAt,
-                      endsAt: next.endsAt,
-                    },
-                  ]
-                : [],
-            );
+            printJson(next ? [mapCycleSummary(next)] : []);
             return;
           }
 
@@ -76,30 +57,11 @@ export function registerList(cycle: Command): void {
             const [prev] = cycles.nodes
               .filter((c) => new Date(c.endsAt) < now)
               .sort((a, b) => new Date(b.endsAt).getTime() - new Date(a.endsAt).getTime());
-            printJson(
-              prev
-                ? [
-                    {
-                      id: prev.id,
-                      number: prev.number,
-                      name: prev.name,
-                      startsAt: prev.startsAt,
-                      endsAt: prev.endsAt,
-                    },
-                  ]
-                : [],
-            );
+            printJson(prev ? [mapCycleSummary(prev)] : []);
             return;
           }
 
-          const items = cycles.nodes.map((c) => ({
-            id: c.id,
-            number: c.number,
-            name: c.name,
-            startsAt: c.startsAt,
-            endsAt: c.endsAt,
-          }));
-          printPaginated(items, cycles.pageInfo);
+          printPaginated(cycles.nodes.map(mapCycleSummary), cycles.pageInfo);
         } catch (err) {
           printError(err instanceof Error ? err.message : "List failed");
         }

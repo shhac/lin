@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
 import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
 import { resolveTeam } from "../../lib/resolvers.ts";
+import { mapUserSummary } from "./map-user-summary.ts";
 
 export function registerList(user: Command): void {
   user
@@ -18,22 +19,10 @@ export function registerList(user: Command): void {
         if (opts.team) {
           const team = await resolveTeam(client, opts.team);
           const members = await team.members({ first, after });
-          const items = members.nodes.map((u) => ({
-            id: u.id,
-            name: u.name,
-            email: u.email,
-            displayName: u.displayName,
-          }));
-          printPaginated(items, members.pageInfo);
+          printPaginated(members.nodes.map(mapUserSummary), members.pageInfo);
         } else {
           const results = await client.users({ first, after });
-          const items = results.nodes.map((u) => ({
-            id: u.id,
-            name: u.name,
-            email: u.email,
-            displayName: u.displayName,
-          }));
-          printPaginated(items, results.pageInfo);
+          printPaginated(results.nodes.map(mapUserSummary), results.pageInfo);
         }
       } catch (err) {
         printError(err instanceof Error ? err.message : "List failed");

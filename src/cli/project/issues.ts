@@ -4,6 +4,7 @@ import { getClient } from "../../lib/client.ts";
 import { buildIssueFilter } from "../../lib/filters.ts";
 import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
 import { resolveProject } from "../../lib/resolvers.ts";
+import { mapIssueSummary } from "../issue/map-issue-summary.ts";
 
 export function registerIssues(project: Command): void {
   project
@@ -37,18 +38,9 @@ export function registerIssues(project: Command): void {
               Object.keys(filter).length > 0 ? (filter as LinearDocument.IssueFilter) : undefined,
           });
           const items = await Promise.all(
-            issues.nodes.map(async (i) => {
-              const [state, assignee] = await Promise.all([i.state, i.assignee]);
-              return {
-                id: i.id,
-                identifier: i.identifier,
-                title: i.title,
-                status: state ? state.name : null,
-                assignee: assignee ? assignee.name : null,
-                priority: i.priority,
-                priorityLabel: i.priorityLabel,
-              };
-            }),
+            issues.nodes.map((i) =>
+              mapIssueSummary(i as unknown as Parameters<typeof mapIssueSummary>[0]),
+            ),
           );
           printPaginated(items, issues.pageInfo);
         } catch (err) {

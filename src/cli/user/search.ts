@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import type { LinearDocument } from "@linear/sdk";
 import { getClient } from "../../lib/client.ts";
 import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
+import { mapUserSummary } from "./map-user-summary.ts";
 
 export function registerSearch(user: Command): void {
   user
@@ -25,13 +26,7 @@ export function registerSearch(user: Command): void {
           first: resolvePageSize(opts),
           after: opts.cursor,
         });
-        const items = results.nodes.map((u) => ({
-          id: u.id,
-          name: u.name,
-          email: u.email,
-          displayName: u.displayName,
-        }));
-        printPaginated(items, results.pageInfo);
+        printPaginated(results.nodes.map(mapUserSummary), results.pageInfo);
       } catch (err) {
         printError(err instanceof Error ? err.message : "Search failed");
       }
