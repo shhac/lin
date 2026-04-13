@@ -29,45 +29,25 @@ export function registerNew(issue: Command): void {
       try {
         const client = getClient();
 
-        // Validate priority early
-        let priority: number | undefined;
-        if (opts.priority) {
-          priority = PRIORITY_MAP[opts.priority.toLowerCase()];
-          if (priority === undefined) {
-            printError(`Invalid priority: "${opts.priority}". Valid values: ${PRIORITY_VALUES}`);
-            return;
-          }
+        const priority = opts.priority ? PRIORITY_MAP[opts.priority.toLowerCase()] : undefined;
+        if (opts.priority && priority === undefined) {
+          printError(`Invalid priority: "${opts.priority}". Valid values: ${PRIORITY_VALUES}`);
+          return;
         }
 
-        // Resolve team key/name/UUID to team object
         const team = await resolveTeam(client, opts.team!);
-
-        // Resolve status name to state ID (scoped to team)
-        let stateId: string | undefined;
-        if (opts.status) {
-          const state = await resolveWorkflowState(client, { name: opts.status, teamId: team.id });
-          stateId = state.id;
-        }
-
-        // Resolve assignee name/email to user ID
-        let assigneeId: string | undefined;
-        if (opts.assignee) {
-          const user = await resolveUser(client, opts.assignee);
-          assigneeId = user.id;
-        }
-
-        // Resolve project name/slug/UUID to project ID
-        let projectId: string | undefined;
-        if (opts.project) {
-          const project = await resolveProject(client, opts.project);
-          projectId = project.id;
-        }
-
-        // Resolve label names/IDs (scoped to team for disambiguation)
-        let labelIds: string[] | undefined;
-        if (opts.labels) {
-          labelIds = await resolveLabels(client, { input: opts.labels, teamId: team.id });
-        }
+        const stateId = opts.status
+          ? (await resolveWorkflowState(client, { name: opts.status, teamId: team.id })).id
+          : undefined;
+        const assigneeId = opts.assignee
+          ? (await resolveUser(client, opts.assignee)).id
+          : undefined;
+        const projectId = opts.project
+          ? (await resolveProject(client, opts.project)).id
+          : undefined;
+        const labelIds = opts.labels
+          ? await resolveLabels(client, { input: opts.labels, teamId: team.id })
+          : undefined;
 
         const payload = await client.createIssue({
           title,
