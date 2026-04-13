@@ -1,6 +1,10 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
-import { formatEstimateScale, getValidEstimates } from "../../lib/estimates.ts";
+import {
+  buildEstimateConfig,
+  formatEstimateScale,
+  getValidEstimates,
+} from "../../lib/estimates.ts";
 import { printError, printJson } from "../../lib/output.ts";
 import { resolveTeam } from "../../lib/resolvers.ts";
 
@@ -14,13 +18,8 @@ export function registerGet(team: Command): void {
         const client = getClient();
         const t = await resolveTeam(client, id);
         const members = await t.members();
-        const estimateConfig = {
-          type: t.issueEstimationType,
-          allowZero: t.issueEstimationAllowZero,
-          extended: t.issueEstimationExtended,
-        };
         const validEstimates =
-          t.issueEstimationType !== "notUsed" ? getValidEstimates(estimateConfig) : null;
+          t.issueEstimationType !== "notUsed" ? getValidEstimates(buildEstimateConfig(t)) : null;
         printJson({
           id: t.id,
           name: t.name,

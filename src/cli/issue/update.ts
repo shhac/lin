@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { getClient } from "../../lib/client.ts";
-import { formatEstimateScale, getValidEstimates } from "../../lib/estimates.ts";
+import { validateEstimate } from "../../lib/estimates.ts";
 import { printError, printJson } from "../../lib/output.ts";
 import { PRIORITY_MAP, PRIORITY_VALUES } from "../../lib/priorities.ts";
 import {
@@ -199,21 +199,9 @@ export function registerUpdate(issue: Command): void {
           printError("Could not resolve team for this issue.");
           return;
         }
-        if (team.issueEstimationType === "notUsed") {
-          printError(`Team "${team.key}" does not use estimates.`);
-          return;
-        }
-        const estimateConfig = {
-          type: team.issueEstimationType,
-          allowZero: team.issueEstimationAllowZero,
-          extended: team.issueEstimationExtended,
-        };
-        const valid = getValidEstimates(estimateConfig);
-        if (!valid.includes(estimate)) {
-          const scale = formatEstimateScale(team.issueEstimationType, valid);
-          printError(
-            `Invalid estimate: ${estimate}. Team "${team.key}" uses ${team.issueEstimationType} scale. Valid values: ${scale}`,
-          );
+        const error = validateEstimate(team, estimate);
+        if (error) {
+          printError(error);
           return;
         }
         const payload = await client.updateIssue(id, { estimate });
