@@ -1,7 +1,6 @@
 import type { Command } from "commander";
-import type { LinearDocument } from "@linear/sdk";
 import { getClient } from "../../lib/client.ts";
-import { buildIssueFilter } from "../../lib/filters.ts";
+import { buildIssueFilter, nonEmptyFilter } from "../../lib/filters.ts";
 import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
 import { mapIssueSummary } from "./map-issue-summary.ts";
 
@@ -24,8 +23,7 @@ export function registerSearch(issue: Command): void {
         const results = await client.searchIssues(text, {
           first: resolvePageSize(opts),
           after: opts.cursor,
-          filter:
-            Object.keys(filter).length > 0 ? (filter as LinearDocument.IssueFilter) : undefined,
+          filter: nonEmptyFilter(filter),
         });
         const items = await Promise.all(
           results.nodes.map((i) =>

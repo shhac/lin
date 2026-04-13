@@ -1,5 +1,10 @@
 import { resolvePriority } from "./priorities.ts";
 
+/** Return the filter object if non-empty, otherwise undefined. */
+export function nonEmptyFilter<T>(filter: Record<string, unknown>): T | undefined {
+  return Object.keys(filter).length > 0 ? (filter as T) : undefined;
+}
+
 /** Build a team filter that matches by key (e.g. "ENG") or name. */
 export function buildTeamFilter(input: string): Record<string, unknown> {
   return {

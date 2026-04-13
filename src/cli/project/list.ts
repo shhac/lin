@@ -1,8 +1,7 @@
 import type { Command } from "commander";
-import type { LinearDocument } from "@linear/sdk";
 import { getClient } from "../../lib/client.ts";
+import { buildTeamFilter, nonEmptyFilter } from "../../lib/filters.ts";
 import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
-import { buildTeamFilter } from "../../lib/filters.ts";
 import { mapProjectSummary } from "./map-project-summary.ts";
 
 export function registerList(project: Command): void {
@@ -16,7 +15,7 @@ export function registerList(project: Command): void {
     .action(async (opts: { team?: string; status?: string; limit?: string; cursor?: string }) => {
       try {
         const client = getClient();
-        const filter: LinearDocument.ProjectFilter = {};
+        const filter: Record<string, unknown> = {};
         if (opts.team) {
           filter.accessibleTeams = { some: buildTeamFilter(opts.team) };
         }
@@ -26,7 +25,7 @@ export function registerList(project: Command): void {
         const results = await client.projects({
           first: resolvePageSize(opts),
           after: opts.cursor,
-          filter: Object.keys(filter).length > 0 ? filter : undefined,
+          filter: nonEmptyFilter(filter),
         });
         const items = await Promise.all(
           results.nodes.map((p) =>

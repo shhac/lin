@@ -1,7 +1,6 @@
 import type { Command } from "commander";
-import type { LinearDocument } from "@linear/sdk";
 import { getClient } from "../../lib/client.ts";
-import { buildProjectFilter } from "../../lib/filters.ts";
+import { buildProjectFilter, nonEmptyFilter } from "../../lib/filters.ts";
 import { printError, printPaginated, resolvePageSize } from "../../lib/output.ts";
 import { mapDocSummary } from "./map-doc-summary.ts";
 
@@ -37,8 +36,7 @@ export function registerList(document: Command): void {
         const results = await client.documents({
           first: resolvePageSize(opts),
           after: opts.cursor,
-          filter:
-            Object.keys(filter).length > 0 ? (filter as LinearDocument.DocumentFilter) : undefined,
+          filter: nonEmptyFilter(filter),
           includeArchived: opts.includeArchived !== undefined ? true : undefined,
         });
         const items = await Promise.all(
