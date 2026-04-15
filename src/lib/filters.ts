@@ -1,5 +1,7 @@
 import { resolvePriority } from "./priorities.ts";
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /** Return the filter object if non-empty, otherwise undefined. */
 export function nonEmptyFilter<T>(filter: Record<string, unknown>): T | undefined {
   return Object.keys(filter).length > 0 ? (filter as T) : undefined;
@@ -14,9 +16,14 @@ export function buildTeamFilter(input: string): Record<string, unknown> {
 
 /** Build a project filter that matches by ID, slugId, or name. */
 export function buildProjectFilter(input: string): Record<string, unknown> {
-  return {
-    or: [{ id: { eq: input } }, { slugId: { eq: input } }, { name: { eqIgnoreCase: input } }],
-  };
+  const branches: Record<string, unknown>[] = [
+    { slugId: { eq: input } },
+    { name: { eqIgnoreCase: input } },
+  ];
+  if (UUID_RE.test(input)) {
+    branches.unshift({ id: { eq: input } });
+  }
+  return { or: branches };
 }
 
 /**
@@ -41,15 +48,15 @@ export function buildIssueFilter(
     if (opts.assignee.toLowerCase() === "me") {
       filter.assignee = { isMe: { eq: true } };
     } else {
-      // Accept user ID, name, display name, or email
-      filter.assignee = {
-        or: [
-          { id: { eq: opts.assignee } },
-          { name: { eqIgnoreCase: opts.assignee } },
-          { displayName: { eqIgnoreCase: opts.assignee } },
-          { email: { eqIgnoreCase: opts.assignee } },
-        ],
-      };
+      const branches: Record<string, unknown>[] = [
+        { name: { eqIgnoreCase: opts.assignee } },
+        { displayName: { eqIgnoreCase: opts.assignee } },
+        { email: { eqIgnoreCase: opts.assignee } },
+      ];
+      if (UUID_RE.test(opts.assignee)) {
+        branches.unshift({ id: { eq: opts.assignee } });
+      }
+      filter.assignee = { or: branches };
     }
   }
 

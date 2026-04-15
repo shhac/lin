@@ -27,13 +27,20 @@ describe("buildTeamFilter", () => {
 });
 
 describe("buildProjectFilter", () => {
-  test("matches by id, slugId, or name", () => {
+  test("matches by slugId or name when input is not a UUID", () => {
     const result = buildProjectFilter("my-project");
     expect(result).toEqual({
+      or: [{ slugId: { eq: "my-project" } }, { name: { eqIgnoreCase: "my-project" } }],
+    });
+  });
+
+  test("includes id branch when input is a UUID", () => {
+    const result = buildProjectFilter("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
+    expect(result).toEqual({
       or: [
-        { id: { eq: "my-project" } },
-        { slugId: { eq: "my-project" } },
-        { name: { eqIgnoreCase: "my-project" } },
+        { id: { eq: "a1b2c3d4-e5f6-7890-abcd-ef1234567890" } },
+        { slugId: { eq: "a1b2c3d4-e5f6-7890-abcd-ef1234567890" } },
+        { name: { eqIgnoreCase: "a1b2c3d4-e5f6-7890-abcd-ef1234567890" } },
       ],
     });
   });
@@ -64,14 +71,26 @@ describe("buildIssueFilter", () => {
     expect(result.assignee).toEqual({ isMe: { eq: true } });
   });
 
-  test("handles assignee by name/email/id", () => {
+  test("handles assignee by name/email (no id branch for non-UUID)", () => {
     const result = buildIssueFilter({ assignee: "alice@example.com" });
     expect(result.assignee).toEqual({
       or: [
-        { id: { eq: "alice@example.com" } },
         { name: { eqIgnoreCase: "alice@example.com" } },
         { displayName: { eqIgnoreCase: "alice@example.com" } },
         { email: { eqIgnoreCase: "alice@example.com" } },
+      ],
+    });
+  });
+
+  test("includes id branch for assignee when input is a UUID", () => {
+    const uuid = "a1b2c3d4-e5f6-7890-abcd-ef1234567890";
+    const result = buildIssueFilter({ assignee: uuid });
+    expect(result.assignee).toEqual({
+      or: [
+        { id: { eq: uuid } },
+        { name: { eqIgnoreCase: uuid } },
+        { displayName: { eqIgnoreCase: uuid } },
+        { email: { eqIgnoreCase: uuid } },
       ],
     });
   });
