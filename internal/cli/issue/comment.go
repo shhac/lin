@@ -7,6 +7,7 @@ import (
 
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/upload"
 )
 
 func registerComment(parent *cobra.Command) {
@@ -80,7 +81,10 @@ func registerCommentList(parent *cobra.Command) {
 }
 
 func registerCommentNew(parent *cobra.Command) {
-	var parentComment string
+	var (
+		parentComment string
+		files         []string
+	)
 
 	cmd := &cobra.Command{
 		Use:   "new <issue-id> <body>",
@@ -92,6 +96,14 @@ func registerCommentNew(parent *cobra.Command) {
 
 			issueID := args[0]
 			body := args[1]
+
+			if len(files) > 0 {
+				uploaded, err := upload.UploadFiles(client, files)
+				if err != nil {
+					output.PrintError(err.Error())
+				}
+				body = body + "\n\n" + upload.FormatFileMarkdown(uploaded)
+			}
 
 			input := linear.CommentCreateInput{
 				IssueId: &issueID,
@@ -115,6 +127,7 @@ func registerCommentNew(parent *cobra.Command) {
 	}
 
 	cmd.Flags().StringVar(&parentComment, "parent", "", "Parent comment ID (threaded reply)")
+	cmd.Flags().StringArrayVar(&files, "file", nil, "Attach file (repeatable)")
 	parent.AddCommand(cmd)
 }
 
@@ -155,7 +168,9 @@ func registerCommentGet(parent *cobra.Command) {
 }
 
 func registerCommentEdit(parent *cobra.Command) {
-	parent.AddCommand(&cobra.Command{
+	var files []string
+
+	cmd := &cobra.Command{
 		Use:   "edit <comment-id> <body>",
 		Short: "Edit a comment",
 		Args:  cobra.ExactArgs(2),
@@ -164,6 +179,15 @@ func registerCommentEdit(parent *cobra.Command) {
 			ctx := context.Background()
 
 			body := args[1]
+
+			if len(files) > 0 {
+				uploaded, err := upload.UploadFiles(client, files)
+				if err != nil {
+					output.PrintError(err.Error())
+				}
+				body = body + "\n\n" + upload.FormatFileMarkdown(uploaded)
+			}
+
 			resp, err := linear.CommentUpdate(ctx, client, args[0], linear.CommentUpdateInput{Body: &body})
 			if err != nil {
 				output.PrintError(err.Error())
@@ -171,7 +195,10 @@ func registerCommentEdit(parent *cobra.Command) {
 
 			output.PrintJSON(map[string]any{"updated": resp.CommentUpdate.Success})
 		},
-	})
+	}
+
+	cmd.Flags().StringArrayVar(&files, "file", nil, "Attach file (repeatable)")
+	parent.AddCommand(cmd)
 }
 
 func registerCommentReplies(parent *cobra.Command) {

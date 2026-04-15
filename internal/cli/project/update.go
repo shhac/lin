@@ -133,7 +133,7 @@ func registerUpdateDescription(parent *cobra.Command) {
 
 func registerUpdateContent(parent *cobra.Command) {
 	cmd := &cobra.Command{
-		Use:   "content <id> <markdown>",
+		Use:   "content <id> <content>",
 		Short: "Update project content (markdown body)",
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {

@@ -11,6 +11,7 @@ import (
 	"github.com/shhac/lin/internal/cli/configcmd"
 	"github.com/shhac/lin/internal/cli/cycle"
 	"github.com/shhac/lin/internal/cli/document"
+	"github.com/shhac/lin/internal/cli/file"
 	"github.com/shhac/lin/internal/cli/issue"
 	"github.com/shhac/lin/internal/cli/label"
 	"github.com/shhac/lin/internal/cli/project"
@@ -56,6 +57,7 @@ func newRootCmd(version string) *cobra.Command {
 	project.Register(root)
 	roadmap.Register(root)
 	document.Register(root)
+	file.Register(root)
 	issue.Register(root)
 	team.Register(root)
 	user.Register(root)
