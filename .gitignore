@@ -1,15 +1,17 @@
 .DS_Store
-node_modules
 .env
 .env.*
 
-# bun
-bun.lockb
+# bun (legacy, under bun/)
+node_modules
+bun/bun.lockb
+bun/dist
+bun/release
+bun/*.bun-build
 
-# build
-dist
-release
-*.bun-build
+# go
+lin
+release/
 
 # local
 .cache
