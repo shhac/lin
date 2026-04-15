@@ -21,10 +21,13 @@ fmt:
 vet:
 	go vet ./...
 
+generate:
+	go generate ./internal/linear/...
+
 dev:
 	go run ./cmd/lin $(ARGS)
 
 clean:
 	rm -f $(BINARY)
 
-.PHONY: build test test-short lint fmt vet dev clean
+.PHONY: build test test-short lint fmt vet generate dev clean

@@ -1,0 +1,44 @@
+query RoadmapGet($id: String!) {
+  roadmap(id: $id) {
+    id
+    slugId
+    url
+    name
+    description
+    createdAt
+    owner { id name }
+    creator { id name }
+  }
+}
+
+query RoadmapList(
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  roadmaps(first: $first, after: $after) {
+    nodes {
+      id
+      slugId
+      url
+      name
+      description
+      owner { name }
+    }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query RoadmapProjects(
+  $id: String!,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  roadmap(id: $id) {
+    projects(first: $first, after: $after) {
+      nodes { ...ProjectSummaryFields }
+      pageInfo { ...PageInfoFields }
+    }
+  }
+}

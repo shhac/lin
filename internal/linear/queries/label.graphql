@@ -1,0 +1,14 @@
+query LabelList(
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  issueLabels(first: $first, after: $after) {
+    nodes {
+      id
+      name
+      color
+    }
+    pageInfo { ...PageInfoFields }
+  }
+}

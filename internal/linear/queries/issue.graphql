@@ -1,0 +1,194 @@
+# --- Queries ---
+
+query IssueGet($id: String!) {
+  issue(id: $id) {
+    id
+    identifier
+    url
+    title
+    description
+    branchName
+    priority
+    priorityLabel
+    estimate
+    dueDate
+    createdAt
+    updatedAt
+    assignee { id name }
+    state { id name type }
+    labels { nodes { id name } }
+    parent { id identifier }
+    team { id key name }
+    project { id name }
+  }
+}
+
+query IssueList(
+  # @genqlient(omitempty: true)
+  $filter: IssueFilter,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  issues(filter: $filter, first: $first, after: $after) {
+    nodes { ...IssueSummaryFields }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query IssueSearch(
+  $term: String!,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+  # @genqlient(omitempty: true)
+  $filter: IssueFilter,
+) {
+  searchIssues(term: $term, first: $first, after: $after, filter: $filter) {
+    nodes { ...IssueSearchSummaryFields }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query IssueTeam($id: String!) {
+  issue(id: $id) {
+    team { id }
+  }
+}
+
+query IssueLabels($id: String!) {
+  issue(id: $id) {
+    labels { nodes { id name } }
+  }
+}
+
+query IssueComments(
+  $id: String!,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  issue(id: $id) {
+    comments(first: $first, after: $after) {
+      nodes {
+        id
+        body
+        createdAt
+        updatedAt
+        user { id name }
+        parent { id }
+      }
+      pageInfo { ...PageInfoFields }
+    }
+  }
+}
+
+query IssueRelations($id: String!) {
+  issue(id: $id) {
+    relations {
+      nodes {
+        id
+        type
+        relatedIssue { identifier }
+      }
+    }
+    inverseRelations {
+      nodes {
+        id
+        type
+        issue { identifier }
+      }
+    }
+  }
+}
+
+query IssueAttachments($id: String!) {
+  issue(id: $id) {
+    attachments {
+      nodes {
+        id
+        title
+        url
+        subtitle
+        sourceType
+      }
+    }
+  }
+}
+
+query IssueHistory(
+  $id: String!,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  issue(id: $id) {
+    history(first: $first, after: $after) {
+      nodes {
+        id
+        createdAt
+        fromPriority
+        toPriority
+        fromEstimate
+        toEstimate
+        fromTitle
+        toTitle
+        fromDueDate
+        toDueDate
+        updatedDescription
+        archived
+        trashed
+        autoArchived
+        autoClosed
+        actor { id name }
+        fromState { id name }
+        toState { id name }
+        fromAssignee { id name }
+        toAssignee { id name }
+        fromProject { id name }
+        toProject { id name }
+        addedLabels { id name }
+        removedLabels { id name }
+      }
+      pageInfo { ...PageInfoFields }
+    }
+  }
+}
+
+# --- Mutations ---
+
+mutation IssueCreate($input: IssueCreateInput!) {
+  issueCreate(input: $input) {
+    success
+    issue {
+      id
+      identifier
+      url
+      title
+    }
+  }
+}
+
+mutation IssueUpdate($id: String!, $input: IssueUpdateInput!) {
+  issueUpdate(id: $id, input: $input) {
+    success
+  }
+}
+
+mutation IssueArchive($id: String!) {
+  issueArchive(id: $id) {
+    success
+  }
+}
+
+mutation IssueUnarchive($id: String!) {
+  issueUnarchive(id: $id) {
+    success
+  }
+}
+
+mutation IssueDelete($id: String!) {
+  issueDelete(id: $id) {
+    success
+  }
+}

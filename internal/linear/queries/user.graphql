@@ -1,0 +1,31 @@
+query UserList(
+  # @genqlient(omitempty: true)
+  $filter: UserFilter,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  users(filter: $filter, first: $first, after: $after) {
+    nodes {
+      id
+      name
+      email
+      displayName
+    }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query Viewer {
+  viewer {
+    id
+    name
+    email
+    displayName
+    organization {
+      id
+      name
+      urlKey
+    }
+  }
+}
