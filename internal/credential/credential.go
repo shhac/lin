@@ -15,26 +15,59 @@ const keychainPlaceholder = "__KEYCHAIN__"
 // 3. Config file plaintext
 // 4. Legacy top-level api_key field
 func Resolve() string {
+	r := resolve()
+	if r == nil {
+		return ""
+	}
+	return r.key
+}
+
+// Source returns the source of the resolved API key ("environment", "keychain", or "config").
+// Returns empty string if no key is found.
+func Source() string {
+	r := resolve()
+	if r == nil {
+		return ""
+	}
+	return r.source
+}
+
+type resolved struct {
+	key    string
+	source string
+}
+
+func resolve() *resolved {
 	if key := os.Getenv("LINEAR_API_KEY"); key != "" {
-		return key
+		return &resolved{key: key, source: "environment"}
 	}
 
 	cfg := config.Read()
 	ws := cfg.DefaultWorkspace
 	if ws == "" {
-		return cfg.LegacyAPIKey
+		if cfg.LegacyAPIKey != "" {
+			return &resolved{key: cfg.LegacyAPIKey, source: "config"}
+		}
+		return nil
 	}
 
 	workspace, ok := cfg.Workspaces[ws]
 	if !ok {
-		return cfg.LegacyAPIKey
+		if cfg.LegacyAPIKey != "" {
+			return &resolved{key: cfg.LegacyAPIKey, source: "config"}
+		}
+		return nil
 	}
 
 	if workspace.APIKey == keychainPlaceholder {
 		if key, err := keychain.Get(ws); err == nil && key != "" {
-			return key
+			return &resolved{key: key, source: "keychain"}
 		}
 	}
 
-	return workspace.APIKey
+	if workspace.APIKey != "" && workspace.APIKey != keychainPlaceholder {
+		return &resolved{key: workspace.APIKey, source: "config"}
+	}
+
+	return nil
 }

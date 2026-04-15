@@ -4,7 +4,16 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
+	"strings"
+
+	"github.com/spf13/cobra"
+
+	"github.com/shhac/lin/internal/config"
+	"github.com/shhac/lin/internal/truncation"
 )
+
+const DefaultPageSize = 50
 
 type Pagination struct {
 	HasMore    bool   `json:"hasMore"`
@@ -25,7 +34,7 @@ func PrintJSON(data any) {
 	if err := json.Unmarshal(b, &decoded); err != nil {
 		return
 	}
-	decoded = pruneEmpty(decoded)
+	decoded = truncation.Apply(pruneEmpty(decoded))
 	enc := json.NewEncoder(os.Stdout)
 	enc.SetIndent("", "  ")
 	enc.SetEscapeHTML(false)
@@ -33,11 +42,32 @@ func PrintJSON(data any) {
 }
 
 func PrintPaginated(items any, pageInfo *Pagination) {
-	result := PaginatedResult{Items: items}
-	if pageInfo != nil && pageInfo.HasMore {
-		result.Pagination = pageInfo
+	b, err := json.Marshal(items)
+	if err != nil {
+		return
 	}
-	PrintJSON(result)
+	var decoded any
+	if err := json.Unmarshal(b, &decoded); err != nil {
+		return
+	}
+	// Prune and truncate each item individually
+	if arr, ok := decoded.([]any); ok {
+		for i, item := range arr {
+			arr[i] = truncation.Apply(pruneEmpty(item))
+		}
+		decoded = arr
+	}
+	result := map[string]any{"items": decoded}
+	if pageInfo != nil && pageInfo.HasMore {
+		result["pagination"] = map[string]any{
+			"hasMore":    true,
+			"nextCursor": pageInfo.NextCursor,
+		}
+	}
+	enc := json.NewEncoder(os.Stdout)
+	enc.SetIndent("", "  ")
+	enc.SetEscapeHTML(false)
+	_ = enc.Encode(result)
 }
 
 func PrintError(msg string) {
@@ -51,7 +81,45 @@ func PrintErrorf(format string, args ...any) {
 	PrintError(fmt.Sprintf(format, args...))
 }
 
+// ResolvePageSize returns the page size from --limit flag, config, or default.
+func ResolvePageSize(limit string) int {
+	if limit != "" {
+		n, err := strconv.Atoi(limit)
+		if err == nil && n > 0 {
+			return n
+		}
+	}
+	cfg := config.Read()
+	if cfg.Settings != nil && cfg.Settings.Pagination != nil && cfg.Settings.Pagination.DefaultPageSize != nil {
+		return *cfg.Settings.Pagination.DefaultPageSize
+	}
+	return DefaultPageSize
+}
+
+// HandleUnknownCommand registers a handler for unknown subcommands on a cobra command.
+func HandleUnknownCommand(cmd *cobra.Command, hint string) {
+	cmd.RunE = func(cmd *cobra.Command, args []string) error {
+		if len(args) > 0 {
+			var names []string
+			for _, sub := range cmd.Commands() {
+				if sub.Name() != "usage" && sub.Name() != "help" {
+					names = append(names, sub.Name())
+				}
+			}
+			msg := fmt.Sprintf("Unknown command: %q. Valid commands: %s", args[0], strings.Join(names, ", "))
+			if hint != "" {
+				msg += ". " + hint
+			}
+			PrintError(msg)
+		}
+		return cmd.Help()
+	}
+}
+
 func pruneEmpty(v any) any {
+	if v == nil {
+		return nil
+	}
 	switch val := v.(type) {
 	case map[string]any:
 		out := make(map[string]any, len(val))
@@ -72,11 +140,14 @@ func pruneEmpty(v any) any {
 	case []any:
 		out := make([]any, 0, len(val))
 		for _, v := range val {
-			out = append(out, pruneEmpty(v))
+			pruned := pruneEmpty(v)
+			if pruned != nil {
+				out = append(out, pruned)
+			}
 		}
 		return out
 	case string:
-		if val == "" {
+		if strings.TrimSpace(val) == "" {
 			return nil
 		}
 		return val
@@ -90,7 +161,7 @@ func isEmpty(v any) bool {
 	case nil:
 		return true
 	case string:
-		return val == ""
+		return strings.TrimSpace(val) == ""
 	case map[string]any:
 		return len(val) == 0
 	case []any:

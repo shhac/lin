@@ -1,0 +1,116 @@
+package issue
+
+import (
+	"context"
+
+	"github.com/spf13/cobra"
+
+	"github.com/shhac/lin/internal/filters"
+	"github.com/shhac/lin/internal/linear"
+	"github.com/shhac/lin/internal/output"
+)
+
+func registerList(parent *cobra.Command) {
+	var (
+		project       string
+		team          string
+		assignee      string
+		status        string
+		priority      string
+		label         string
+		cycle         string
+		updatedAfter  string
+		updatedBefore string
+		createdAfter  string
+		createdBefore string
+		limit         string
+		cursor        string
+	)
+
+	cmd := &cobra.Command{
+		Use:   "list",
+		Short: "List issues",
+		Args:  cobra.NoArgs,
+		Run: func(cmd *cobra.Command, args []string) {
+			client := linear.GetClient()
+			ctx := context.Background()
+
+			filter := filters.BuildIssueFilter(filters.IssueFilterOpts{
+				Project:       project,
+				Team:          team,
+				Assignee:      assignee,
+				Status:        status,
+				Priority:      priority,
+				Label:         label,
+				Cycle:         cycle,
+				UpdatedAfter:  updatedAfter,
+				UpdatedBefore: updatedBefore,
+				CreatedAfter:  createdAfter,
+				CreatedBefore: createdBefore,
+			})
+
+			pageSize := output.ResolvePageSize(limit)
+			var afterPtr *string
+			if cursor != "" {
+				afterPtr = &cursor
+			}
+
+			resp, err := linear.IssueList(ctx, client, filter, pageSize, afterPtr)
+			if err != nil {
+				output.PrintError(err.Error())
+			}
+
+			items := make([]any, len(resp.Issues.Nodes))
+			for i, n := range resp.Issues.Nodes {
+				items[i] = mapListSummary(n.IssueSummaryFields)
+			}
+
+			pi := resp.Issues.PageInfo
+			output.PrintPaginated(items, &output.Pagination{
+				HasMore:    pi.HasNextPage,
+				NextCursor: derefStr(pi.EndCursor),
+			})
+		},
+	}
+
+	cmd.Flags().StringVar(&project, "project", "", "Filter by project ID, slug, or name")
+	cmd.Flags().StringVar(&team, "team", "", "Filter by team")
+	cmd.Flags().StringVar(&assignee, "assignee", "", "Filter by assignee")
+	cmd.Flags().StringVar(&status, "status", "", "Filter by status")
+	cmd.Flags().StringVar(&priority, "priority", "", "Filter by priority")
+	cmd.Flags().StringVar(&label, "label", "", "Filter by label")
+	cmd.Flags().StringVar(&cycle, "cycle", "", "Filter by cycle")
+	cmd.Flags().StringVar(&updatedAfter, "updated-after", "", "Updated after date (YYYY-MM-DD)")
+	cmd.Flags().StringVar(&updatedBefore, "updated-before", "", "Updated before date (YYYY-MM-DD)")
+	cmd.Flags().StringVar(&createdAfter, "created-after", "", "Created after date (YYYY-MM-DD)")
+	cmd.Flags().StringVar(&createdBefore, "created-before", "", "Created before date (YYYY-MM-DD)")
+	cmd.Flags().StringVar(&limit, "limit", "", "Limit results")
+	cmd.Flags().StringVar(&cursor, "cursor", "", "Pagination cursor for next page")
+	parent.AddCommand(cmd)
+}
+
+func mapListSummary(f linear.IssueSummaryFields) map[string]any {
+	m := map[string]any{
+		"id":            f.Id,
+		"identifier":    f.Identifier,
+		"title":         f.Title,
+		"branchName":    f.BranchName,
+		"status":        f.State.Name,
+		"statusType":    f.State.Type,
+		"team":          f.Team.Key,
+		"priority":      f.Priority,
+		"priorityLabel": f.PriorityLabel,
+	}
+	if f.Assignee != nil {
+		m["assignee"] = f.Assignee.Name
+		m["assigneeId"] = f.Assignee.Id
+	}
+	return m
+}
+
+func derefStr(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}

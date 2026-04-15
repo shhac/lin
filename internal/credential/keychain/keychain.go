@@ -38,3 +38,16 @@ func Delete(account string) error {
 	return exec.Command("security", "delete-generic-password",
 		"-s", service, "-a", account).Run()
 }
+
+// DeleteAll removes all keychain entries for the service. macOS only; no-op on other platforms.
+func DeleteAll() {
+	if runtime.GOOS != "darwin" {
+		return
+	}
+	for {
+		err := exec.Command("security", "delete-generic-password", "-s", service).Run()
+		if err != nil {
+			break
+		}
+	}
+}
