@@ -42,5 +42,5 @@ func ResolveTeam(client graphql.Client, input string) (ResolvedTeam, error) {
 	if len(keys) > 0 {
 		hint = strings.Join(keys, ", ")
 	}
-	return ResolvedTeam{}, fmt.Errorf("Team not found: %q. Known teams: %s. Provide a UUID, key, or exact name.", input, hint)
+	return ResolvedTeam{}, fmt.Errorf("team not found: %q, known teams: %s, provide a UUID, key, or exact name", input, hint)
 }

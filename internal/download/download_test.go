@@ -77,7 +77,7 @@ func TestParseFileURL_WrongHost(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for wrong host")
 	}
-	if !strings.Contains(err.Error(), "Invalid host") {
+	if !strings.Contains(err.Error(), "invalid host") {
 		t.Errorf("unexpected error: %v", err)
 	}
 }
@@ -88,7 +88,7 @@ func TestParseFileURL_NonUUIDSegments(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for non-UUID segments")
 	}
-	if !strings.Contains(err.Error(), "Invalid UUID segment") {
+	if !strings.Contains(err.Error(), "invalid UUID segment") {
 		t.Errorf("unexpected error: %v", err)
 	}
 }

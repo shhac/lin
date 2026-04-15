@@ -25,7 +25,7 @@ var settingDefs = map[string]settingDef{
 		parse: func(v string) (any, error) {
 			n, err := strconv.Atoi(v)
 			if err != nil || n < 0 {
-				return nil, fmt.Errorf("Invalid value: %s. Must be a non-negative integer.", v)
+				return nil, fmt.Errorf("invalid value: %s, must be a non-negative integer", v)
 			}
 			return n, nil
 		},
@@ -37,7 +37,7 @@ var settingDefs = map[string]settingDef{
 		parse: func(v string) (any, error) {
 			n, err := strconv.Atoi(v)
 			if err != nil || n < 1 || n > 250 {
-				return nil, fmt.Errorf("Invalid value: %s. Must be an integer between 1 and 250.", v)
+				return nil, fmt.Errorf("invalid value: %s, must be an integer between 1 and 250", v)
 			}
 			return n, nil
 		},

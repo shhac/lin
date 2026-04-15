@@ -26,7 +26,7 @@ func TestRawQuery(t *testing.T) {
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(graphQLResponse{
+		_ = json.NewEncoder(w).Encode(graphQLResponse{
 			Data: json.RawMessage(`{"viewer":{"id":"user-123"}}`),
 		})
 	}))
@@ -60,7 +60,7 @@ func TestRawQuery(t *testing.T) {
 func TestGraphQLErrors(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(graphQLResponse{
+		_ = json.NewEncoder(w).Encode(graphQLResponse{
 			Errors: []graphQLError{{Message: "Entity not found"}},
 		})
 	}))

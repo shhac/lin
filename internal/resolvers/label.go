@@ -86,7 +86,7 @@ func resolveOneLabel(input string, labels []ResolvedLabel, teamScoped bool) (Res
 		for _, l := range labels {
 			names = append(names, l.Name)
 		}
-		return ResolvedLabel{}, fmt.Errorf("Label not found: %q. Available labels: %s", input, strings.Join(names, ", "))
+		return ResolvedLabel{}, fmt.Errorf("label not found: %q, available labels: %s", input, strings.Join(names, ", "))
 	}
 	var ambiguous []string
 	for _, l := range matches {
@@ -94,7 +94,7 @@ func resolveOneLabel(input string, labels []ResolvedLabel, teamScoped bool) (Res
 	}
 	hint := ""
 	if !teamScoped {
-		hint = " Tip: use --team to narrow scope."
+		hint = ", tip: use --team to narrow scope"
 	}
-	return ResolvedLabel{}, fmt.Errorf("Ambiguous label: %q matches %d labels: %s. Use the label ID to disambiguate.%s", input, len(matches), strings.Join(ambiguous, ", "), hint)
+	return ResolvedLabel{}, fmt.Errorf("ambiguous label: %q matches %d labels: %s, use the label ID to disambiguate%s", input, len(matches), strings.Join(ambiguous, ", "), hint)
 }

@@ -52,7 +52,7 @@ func TestValidate_Invalid(t *testing.T) {
 			if err == nil {
 				t.Fatalf("Validate(%q) expected error", input)
 			}
-			if !strings.Contains(err.Error(), "Unknown project status") {
+			if !strings.Contains(err.Error(), "unknown project status") {
 				t.Errorf("unexpected error message: %v", err)
 			}
 			if !strings.Contains(err.Error(), Values) {

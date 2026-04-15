@@ -36,8 +36,7 @@ func registerGet(parent *cobra.Command) {
 
 			i := resp.Issue
 
-			var statusObj map[string]any
-			statusObj = map[string]any{
+			statusObj := map[string]any{
 				"id":   i.State.Id,
 				"name": i.State.Name,
 				"type": i.State.Type,

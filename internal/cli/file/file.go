@@ -89,7 +89,7 @@ func registerDownload(parent *cobra.Command) {
 				// Metadata to stderr when content goes to stdout
 				enc := json.NewEncoder(os.Stderr)
 				enc.SetEscapeHTML(false)
-				enc.Encode(result)
+				_ = enc.Encode(result)
 			} else {
 				output.PrintJSON(result)
 			}

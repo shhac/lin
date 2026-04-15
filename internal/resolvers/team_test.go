@@ -76,7 +76,7 @@ func TestResolveTeam_NotFound(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for not found")
 	}
-	if !strings.Contains(err.Error(), "Team not found") {
+	if !strings.Contains(err.Error(), "team not found") {
 		t.Errorf("unexpected error: %v", err)
 	}
 }

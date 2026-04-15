@@ -37,5 +37,5 @@ func ResolveWorkflowState(client graphql.Client, name, teamID string) (ResolvedW
 			validNames = append(validNames, s.Name)
 		}
 	}
-	return ResolvedWorkflowState{}, fmt.Errorf("Unknown status: %q. Valid values: %s", name, strings.Join(validNames, " | "))
+	return ResolvedWorkflowState{}, fmt.Errorf("unknown status: %q, valid values: %s", name, strings.Join(validNames, " | "))
 }

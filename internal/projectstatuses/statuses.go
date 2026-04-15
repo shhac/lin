@@ -18,5 +18,5 @@ func Validate(input string) (string, error) {
 			return s, nil
 		}
 	}
-	return "", fmt.Errorf("Unknown project status: %q. Valid values: %s", input, Values)
+	return "", fmt.Errorf("unknown project status: %q, valid values: %s", input, Values)
 }

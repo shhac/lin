@@ -28,7 +28,7 @@ func ResolveProject(client graphql.Client, input string) (ResolvedProject, error
 		return ResolvedProject{}, err
 	}
 	if len(listResp.Projects.Nodes) == 0 {
-		return ResolvedProject{}, fmt.Errorf("Project not found: %q. Provide a UUID, slug ID, or exact name.", input)
+		return ResolvedProject{}, fmt.Errorf("project not found: %q, provide a UUID, slug ID, or exact name", input)
 	}
 	p := listResp.Projects.Nodes[0]
 	return ResolvedProject{ID: p.Id, Name: p.Name, SlugId: p.SlugId}, nil

@@ -40,5 +40,5 @@ func ResolveRoadmap(client graphql.Client, input string) (ResolvedRoadmap, error
 	if len(names) > 0 {
 		hint = strings.Join(names, ", ")
 	}
-	return ResolvedRoadmap{}, fmt.Errorf("Roadmap not found: %q. Known roadmaps: %s. Provide a UUID, slug ID, or exact name.", input, hint)
+	return ResolvedRoadmap{}, fmt.Errorf("roadmap not found: %q, known roadmaps: %s, provide a UUID, slug ID, or exact name", input, hint)
 }

@@ -63,16 +63,16 @@ func ParseFileURL(input string, defaultOrgID string) (ParsedFileURL, error) {
 	var pathname string
 
 	if strings.HasPrefix(input, "http://") {
-		return ParsedFileURL{}, fmt.Errorf("Refusing http:// URL — only https:// is allowed for file downloads.")
+		return ParsedFileURL{}, fmt.Errorf("refusing http:// URL — only https:// is allowed for file downloads")
 	}
 
 	if strings.HasPrefix(input, "https://") {
 		u, err := url.Parse(input)
 		if err != nil {
-			return ParsedFileURL{}, fmt.Errorf("Invalid URL: %v", err)
+			return ParsedFileURL{}, fmt.Errorf("invalid URL: %v", err)
 		}
 		if u.Hostname() != uploadHost {
-			return ParsedFileURL{}, fmt.Errorf("Invalid host: %q. Only %s URLs are supported.", u.Hostname(), uploadHost)
+			return ParsedFileURL{}, fmt.Errorf("invalid host: %q, only %s URLs are supported", u.Hostname(), uploadHost)
 		}
 		pathname = u.Path
 	} else if strings.HasPrefix(input, uploadHost+"/") {
@@ -89,12 +89,12 @@ func ParseFileURL(input string, defaultOrgID string) (ParsedFileURL, error) {
 	}
 
 	if len(segments) == 0 || len(segments) > 3 {
-		return ParsedFileURL{}, fmt.Errorf("Cannot parse file URL: %q. Expected 1-3 UUID path segments.", input)
+		return ParsedFileURL{}, fmt.Errorf("cannot parse file URL: %q, expected 1-3 UUID path segments", input)
 	}
 
 	for _, seg := range segments {
 		if !uuidRE.MatchString(seg) {
-			return ParsedFileURL{}, fmt.Errorf("Invalid UUID segment: %q. Expected format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", seg)
+			return ParsedFileURL{}, fmt.Errorf("invalid UUID segment: %q, expected format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", seg)
 		}
 	}
 
@@ -106,7 +106,7 @@ func ParseFileURL(input string, defaultOrgID string) (ParsedFileURL, error) {
 		fileSegments = segments[1:]
 	} else {
 		if defaultOrgID == "" {
-			return ParsedFileURL{}, fmt.Errorf("Cannot infer organization ID. Provide a full URL with org segment, or authenticate first.")
+			return ParsedFileURL{}, fmt.Errorf("cannot infer organization ID, provide a full URL with org segment, or authenticate first")
 		}
 		orgID = defaultOrgID
 		fileSegments = segments
@@ -135,17 +135,17 @@ func DownloadFile(fileURL string, opts DownloadOpts) (DownloadResult, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return DownloadResult{}, fmt.Errorf("Download failed: %v", err)
+		return DownloadResult{}, fmt.Errorf("download failed: %v", err)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode >= 400 {
-		return DownloadResult{}, fmt.Errorf("Download failed: %d %s", resp.StatusCode, resp.Status)
+		return DownloadResult{}, fmt.Errorf("download failed: %d %s", resp.StatusCode, resp.Status)
 	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return DownloadResult{}, fmt.Errorf("Download failed: %v", err)
+		return DownloadResult{}, fmt.Errorf("download failed: %v", err)
 	}
 
 	contentType := resp.Header.Get("Content-Type")
@@ -155,7 +155,7 @@ func DownloadFile(fileURL string, opts DownloadOpts) (DownloadResult, error) {
 	filename := inferFilename(resp.Header, fileURL, contentType)
 
 	if opts.Stdout {
-		os.Stdout.Write(data)
+		_, _ = os.Stdout.Write(data)
 		return DownloadResult{
 			Filename:    filename,
 			Path:        "<stdout>",
@@ -276,7 +276,7 @@ func resolveDestPath(filename string, opts DownloadOpts, contentType string) (st
 
 	if opts.OutputDir != "" {
 		if _, err := os.Stat(opts.OutputDir); os.IsNotExist(err) {
-			return "", fmt.Errorf("Output directory does not exist: %q", opts.OutputDir)
+			return "", fmt.Errorf("output directory does not exist: %q", opts.OutputDir)
 		}
 		destPath := filepath.Join(opts.OutputDir, filename)
 		if err := checkOverwrite(destPath, opts.Force); err != nil {
@@ -296,7 +296,7 @@ func resolveDestPath(filename string, opts DownloadOpts, contentType string) (st
 func checkOverwrite(path string, force bool) error {
 	if !force {
 		if _, err := os.Stat(path); err == nil {
-			return fmt.Errorf("File already exists: %q. Use --force to overwrite.", path)
+			return fmt.Errorf("file already exists: %q, use --force to overwrite", path)
 		}
 	}
 	return nil

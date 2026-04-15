@@ -41,11 +41,11 @@ func ResolveUser(client graphql.Client, input string) (ResolvedUser, error) {
 		for _, u := range resp.Users.Nodes {
 			names = append(names, fmt.Sprintf("%s <%s>", u.Name, u.Email))
 		}
-		return ResolvedUser{}, fmt.Errorf("User not found: %q. Known users: %s", input, strings.Join(names, ", "))
+		return ResolvedUser{}, fmt.Errorf("user not found: %q, known users: %s", input, strings.Join(names, ", "))
 	}
 	var ambiguous []string
 	for _, u := range matches {
 		ambiguous = append(ambiguous, fmt.Sprintf("%s <%s> (%s)", u.Name, u.Email, u.ID))
 	}
-	return ResolvedUser{}, fmt.Errorf("Ambiguous user: %q matches %d users: %s. Use a unique name, email, or ID.", input, len(matches), strings.Join(ambiguous, ", "))
+	return ResolvedUser{}, fmt.Errorf("ambiguous user: %q matches %d users: %s, use a unique name, email, or ID", input, len(matches), strings.Join(ambiguous, ", "))
 }

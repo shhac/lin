@@ -30,7 +30,7 @@ func ResolveDocument(client graphql.Client, input string) (ResolvedDocument, err
 		return ResolvedDocument{}, err
 	}
 	if len(listResp.Documents.Nodes) == 0 {
-		return ResolvedDocument{}, fmt.Errorf("Document not found: %q. Provide a UUID or slug ID.", input)
+		return ResolvedDocument{}, fmt.Errorf("document not found: %q, provide a UUID or slug ID", input)
 	}
 	d := listResp.Documents.Nodes[0]
 	return ResolvedDocument{ID: d.Id, SlugId: d.SlugId, Title: d.Title}, nil

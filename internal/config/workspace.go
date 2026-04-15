@@ -39,7 +39,7 @@ func SetDefaultWorkspace(alias string) error {
 		if len(keys) > 0 {
 			valid = joinKeys(keys)
 		}
-		return fmt.Errorf("Unknown workspace: %s. Valid: %s", alias, valid)
+		return fmt.Errorf("unknown workspace: %s, valid: %s", alias, valid)
 	}
 	cfg.DefaultWorkspace = alias
 	return Write(cfg)
@@ -54,7 +54,7 @@ func RemoveWorkspace(alias string) error {
 		if len(keys) > 0 {
 			valid = joinKeys(keys)
 		}
-		return fmt.Errorf("Unknown workspace: %s. Valid: %s", alias, valid)
+		return fmt.Errorf("unknown workspace: %s, valid: %s", alias, valid)
 	}
 	_ = keychain.Delete(alias)
 	delete(cfg.Workspaces, alias)

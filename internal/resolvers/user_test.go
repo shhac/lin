@@ -118,7 +118,7 @@ func TestResolveUser_NotFound(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for not found")
 	}
-	if !strings.Contains(err.Error(), "User not found") {
+	if !strings.Contains(err.Error(), "user not found") {
 		t.Errorf("unexpected error: %v", err)
 	}
 	if !strings.Contains(err.Error(), "Ada Lovelace") {
@@ -145,7 +145,7 @@ func TestResolveUser_Ambiguous(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for ambiguous match")
 	}
-	if !strings.Contains(err.Error(), "Ambiguous user") {
+	if !strings.Contains(err.Error(), "ambiguous user") {
 		t.Errorf("unexpected error: %v", err)
 	}
 	if !strings.Contains(err.Error(), "2 users") {

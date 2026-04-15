@@ -75,7 +75,7 @@ func TestResolveWorkflowState_NotFound(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for not found status")
 	}
-	if !strings.Contains(err.Error(), "Unknown status") {
+	if !strings.Contains(err.Error(), "unknown status") {
 		t.Errorf("unexpected error: %v", err)
 	}
 	if !strings.Contains(err.Error(), "Backlog") || !strings.Contains(err.Error(), "Done") {

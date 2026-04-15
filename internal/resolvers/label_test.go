@@ -99,7 +99,7 @@ func TestResolveLabels_NotFound(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for not found label")
 	}
-	if !strings.Contains(err.Error(), "Label not found") {
+	if !strings.Contains(err.Error(), "label not found") {
 		t.Errorf("unexpected error: %v", err)
 	}
 	if !strings.Contains(err.Error(), "Bug") {
@@ -125,10 +125,10 @@ func TestResolveLabels_Ambiguous(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected error for ambiguous label")
 	}
-	if !strings.Contains(err.Error(), "Ambiguous label") {
+	if !strings.Contains(err.Error(), "ambiguous label") {
 		t.Errorf("unexpected error: %v", err)
 	}
-	if !strings.Contains(err.Error(), "Tip: use --team") {
+	if !strings.Contains(err.Error(), "tip: use --team") {
 		t.Error("error should include team hint when not team-scoped")
 	}
 }

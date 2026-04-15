@@ -26,7 +26,7 @@ func UploadFiles(client graphql.Client, paths []string) ([]UploadedFile, error) 
 	for _, filePath := range paths {
 		info, err := os.Stat(filePath)
 		if err != nil {
-			return nil, fmt.Errorf("File not found: %s", filepath.Base(filePath))
+			return nil, fmt.Errorf("file not found: %s", filepath.Base(filePath))
 		}
 
 		filename := filepath.Base(filePath)
@@ -35,10 +35,10 @@ func UploadFiles(client graphql.Client, paths []string) ([]UploadedFile, error) 
 
 		resp, err := linear.FileUpload(context.Background(), client, contentType, filename, size)
 		if err != nil {
-			return nil, fmt.Errorf("Upload failed for %s: %v", filename, err)
+			return nil, fmt.Errorf("upload failed for %s: %v", filename, err)
 		}
 		if resp.FileUpload.UploadFile == nil {
-			return nil, fmt.Errorf("Upload failed for %s: no upload URL returned", filename)
+			return nil, fmt.Errorf("upload failed for %s: no upload URL returned", filename)
 		}
 
 		uf := resp.FileUpload.UploadFile
@@ -50,7 +50,7 @@ func UploadFiles(client graphql.Client, paths []string) ([]UploadedFile, error) 
 
 		req, err := http.NewRequest("PUT", uf.UploadUrl, f)
 		if err != nil {
-			f.Close()
+			_ = f.Close()
 			return nil, err
 		}
 		for _, h := range uf.Headers {
@@ -59,14 +59,14 @@ func UploadFiles(client graphql.Client, paths []string) ([]UploadedFile, error) 
 		req.ContentLength = int64(size)
 
 		putResp, err := http.DefaultClient.Do(req)
-		f.Close()
+		_ = f.Close()
 		if err != nil {
-			return nil, fmt.Errorf("Upload failed for %s: %v", filename, err)
+			return nil, fmt.Errorf("upload failed for %s: %v", filename, err)
 		}
-		io.Copy(io.Discard, putResp.Body)
-		putResp.Body.Close()
+		_, _ = io.Copy(io.Discard, putResp.Body)
+		_ = putResp.Body.Close()
 		if putResp.StatusCode >= 300 {
-			return nil, fmt.Errorf("Upload failed for %s: %d %s", filename, putResp.StatusCode, putResp.Status)
+			return nil, fmt.Errorf("upload failed for %s: %d %s", filename, putResp.StatusCode, putResp.Status)
 		}
 
 		results = append(results, UploadedFile{
