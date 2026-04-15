@@ -7,6 +7,7 @@ import (
 
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerList(roadmap *cobra.Command) {
@@ -21,10 +22,7 @@ func registerList(roadmap *cobra.Command) {
 			client := linear.GetClient()
 			pageSize := output.ResolvePageSize(limit)
 
-			var after *string
-			if cursor != "" {
-				after = &cursor
-			}
+			after := output.ResolveCursor(cursor)
 
 			resp, err := linear.RoadmapList(context.Background(), client, pageSize, after)
 			if err != nil {
@@ -50,7 +48,7 @@ func registerList(roadmap *cobra.Command) {
 			pi := resp.Roadmaps.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: deref(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
@@ -60,9 +58,3 @@ func registerList(roadmap *cobra.Command) {
 	roadmap.AddCommand(cmd)
 }
 
-func deref(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
-}

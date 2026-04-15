@@ -81,6 +81,14 @@ func PrintErrorf(format string, args ...any) {
 	PrintError(fmt.Sprintf(format, args...))
 }
 
+// ResolveCursor returns a *string for pagination, or nil if empty.
+func ResolveCursor(cursor string) *string {
+	if cursor == "" {
+		return nil
+	}
+	return &cursor
+}
+
 // ResolvePageSize returns the page size from --limit flag, config, or default.
 func ResolvePageSize(limit string) int {
 	if limit != "" {

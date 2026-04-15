@@ -7,6 +7,7 @@ import (
 
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 	"github.com/shhac/lin/internal/resolvers"
 )
 
@@ -24,10 +25,7 @@ func registerList(user *cobra.Command) {
 			ctx := context.Background()
 			pageSize := output.ResolvePageSize(limit)
 
-			var after *string
-			if cursor != "" {
-				after = &cursor
-			}
+			after := output.ResolveCursor(cursor)
 
 			if teamFlag != "" {
 				resolved, err := resolvers.ResolveTeam(client, teamFlag)
@@ -48,7 +46,7 @@ func registerList(user *cobra.Command) {
 				pi := resp.Team.Members.PageInfo
 				output.PrintPaginated(items, &output.Pagination{
 					HasMore:    pi.HasNextPage,
-					NextCursor: deref(pi.EndCursor),
+					NextCursor: ptr.Deref(pi.EndCursor),
 				})
 				return
 			}
@@ -66,7 +64,7 @@ func registerList(user *cobra.Command) {
 			pi := resp.Users.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: deref(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
@@ -94,9 +92,3 @@ func mapTeamMember(m linear.TeamMembersTeamMembersUserConnectionNodesUser) map[s
 	}
 }
 
-func deref(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
-}

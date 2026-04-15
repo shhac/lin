@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/shhac/lin/internal/linear"
+	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
 )
 
@@ -26,22 +27,22 @@ func registerGet(cycle *cobra.Command) {
 			issues := make([]map[string]any, len(c.Issues.Nodes))
 			for i, issue := range c.Issues.Nodes {
 				f := issue.IssueSummaryFields
-				entry := map[string]any{
-					"id":            f.Id,
-					"identifier":    f.Identifier,
-					"title":         f.Title,
-					"branchName":    f.BranchName,
-					"status":        f.State.Name,
-					"statusType":    f.State.Type,
-					"priority":      f.Priority,
-					"priorityLabel": f.PriorityLabel,
-					"team":          f.Team.Key,
+				input := mappers.IssueSummaryInput{
+					ID:            f.Id,
+					Identifier:    f.Identifier,
+					Title:         f.Title,
+					BranchName:    f.BranchName,
+					Priority:      f.Priority,
+					PriorityLabel: f.PriorityLabel,
+					StateName:     f.State.Name,
+					StateType:     f.State.Type,
+					TeamKey:       f.Team.Key,
 				}
 				if f.Assignee != nil {
-					entry["assignee"] = f.Assignee.Name
-					entry["assigneeId"] = f.Assignee.Id
+					input.AssigneeID = f.Assignee.Id
+					input.AssigneeName = f.Assignee.Name
 				}
-				issues[i] = entry
+				issues[i] = mappers.MapIssueSummary(input)
 			}
 
 			result := mapCycleSummary(c.Id, c.Number, c.Name, c.StartsAt, c.EndsAt)

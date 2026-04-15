@@ -7,6 +7,7 @@ import (
 
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerSearch(user *cobra.Command) {
@@ -22,10 +23,7 @@ func registerSearch(user *cobra.Command) {
 			client := linear.GetClient()
 			pageSize := output.ResolvePageSize(limit)
 
-			var after *string
-			if cursor != "" {
-				after = &cursor
-			}
+			after := output.ResolveCursor(cursor)
 
 			filter := &linear.UserFilter{
 				Or: []linear.UserFilter{
@@ -48,7 +46,7 @@ func registerSearch(user *cobra.Command) {
 			pi := resp.Users.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: deref(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
@@ -59,7 +57,5 @@ func registerSearch(user *cobra.Command) {
 }
 
 func containsIgnoreCase(s string) *linear.StringComparator {
-	return &linear.StringComparator{ContainsIgnoreCase: strPtr(s)}
+	return &linear.StringComparator{ContainsIgnoreCase: ptr.To(s)}
 }
-
-func strPtr(s string) *string { return &s }

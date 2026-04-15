@@ -7,6 +7,7 @@ import (
 
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 	"github.com/shhac/lin/internal/resolvers"
 )
 
@@ -24,10 +25,7 @@ func registerList(label *cobra.Command) {
 			ctx := context.Background()
 			pageSize := output.ResolvePageSize(limit)
 
-			var after *string
-			if cursor != "" {
-				after = &cursor
-			}
+			after := output.ResolveCursor(cursor)
 
 			if teamFlag != "" {
 				resolved, err := resolvers.ResolveTeam(client, teamFlag)
@@ -52,7 +50,7 @@ func registerList(label *cobra.Command) {
 				pi := resp.Team.Labels.PageInfo
 				output.PrintPaginated(items, &output.Pagination{
 					HasMore:    pi.HasNextPage,
-					NextCursor: deref(pi.EndCursor),
+					NextCursor: ptr.Deref(pi.EndCursor),
 				})
 				return
 			}
@@ -74,7 +72,7 @@ func registerList(label *cobra.Command) {
 			pi := resp.IssueLabels.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: deref(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
@@ -83,11 +81,4 @@ func registerList(label *cobra.Command) {
 	cmd.Flags().StringVar(&limit, "limit", "", "Limit results")
 	cmd.Flags().StringVar(&cursor, "cursor", "", "Pagination cursor for next page")
 	label.AddCommand(cmd)
-}
-
-func deref(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
 }

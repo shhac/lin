@@ -7,7 +7,9 @@ import (
 
 	"github.com/shhac/lin/internal/filters"
 	"github.com/shhac/lin/internal/linear"
+	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 	"github.com/shhac/lin/internal/resolvers"
 )
 
@@ -40,10 +42,7 @@ func registerIssues(parent *cobra.Command) {
 			})
 
 			pageSize := output.ResolvePageSize(limit)
-			var afterPtr *string
-			if cursor != "" {
-				afterPtr = &cursor
-			}
+			afterPtr := output.ResolveCursor(cursor)
 
 			resp, err := linear.ProjectIssues(ctx, client, resolved.ID, filter, pageSize, afterPtr)
 			if err != nil {
@@ -52,13 +51,29 @@ func registerIssues(parent *cobra.Command) {
 
 			items := make([]any, len(resp.Project.Issues.Nodes))
 			for i, n := range resp.Project.Issues.Nodes {
-				items[i] = mapIssueSummary(n.IssueSummaryFields)
+				f := n.IssueSummaryFields
+				input := mappers.IssueSummaryInput{
+					ID:            f.Id,
+					Identifier:    f.Identifier,
+					Title:         f.Title,
+					BranchName:    f.BranchName,
+					Priority:      f.Priority,
+					PriorityLabel: f.PriorityLabel,
+					StateName:     f.State.Name,
+					StateType:     f.State.Type,
+					TeamKey:       f.Team.Key,
+				}
+				if f.Assignee != nil {
+					input.AssigneeID = f.Assignee.Id
+					input.AssigneeName = f.Assignee.Name
+				}
+				items[i] = mappers.MapIssueSummary(input)
 			}
 
 			pi := resp.Project.Issues.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: derefStr(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
@@ -71,21 +86,3 @@ func registerIssues(parent *cobra.Command) {
 	parent.AddCommand(cmd)
 }
 
-func mapIssueSummary(f linear.IssueSummaryFields) map[string]any {
-	m := map[string]any{
-		"id":            f.Id,
-		"identifier":    f.Identifier,
-		"title":         f.Title,
-		"branchName":    f.BranchName,
-		"status":        f.State.Name,
-		"statusType":    f.State.Type,
-		"team":          f.Team.Key,
-		"priority":      f.Priority,
-		"priorityLabel": f.PriorityLabel,
-	}
-	if f.Assignee != nil {
-		m["assignee"] = f.Assignee.Name
-		m["assigneeId"] = f.Assignee.Id
-	}
-	return m
-}

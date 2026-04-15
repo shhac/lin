@@ -33,16 +33,11 @@ func registerNew(parent *cobra.Command) {
 			name := args[0]
 
 			if status != "" {
-				valid := false
-				for _, s := range projectstatuses.List {
-					if strings.EqualFold(s, status) {
-						valid = true
-						break
-					}
+				normalized, err := projectstatuses.Validate(status)
+				if err != nil {
+					output.PrintError(err.Error())
 				}
-				if !valid {
-					output.PrintErrorf("Invalid project status: %q. Valid values: %s", status, projectstatuses.Values)
-				}
+				status = normalized
 			}
 
 			var leadId *string
@@ -85,8 +80,7 @@ func registerNew(parent *cobra.Command) {
 				input.TargetDate = &targetDate
 			}
 			if status != "" {
-				lower := strings.ToLower(status)
-				input.State = &lower
+				input.State = &status
 			}
 			if content != "" {
 				input.Content = &content

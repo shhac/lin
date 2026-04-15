@@ -9,6 +9,7 @@ import (
 
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 	"github.com/shhac/lin/internal/resolvers"
 )
 
@@ -47,10 +48,7 @@ func registerList(cycle *cobra.Command) {
 			}
 
 			pageSize := output.ResolvePageSize(limit)
-			var after *string
-			if cursor != "" {
-				after = &cursor
-			}
+			after := output.ResolveCursor(cursor)
 
 			resp, err := linear.TeamCycles(ctx, client, resolved.ID, pageSize, after)
 			if err != nil {
@@ -122,7 +120,7 @@ func registerList(cycle *cobra.Command) {
 			pi := resp.Team.Cycles.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: deref(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
@@ -145,9 +143,3 @@ func mapCycleSummary(id string, number float64, name *string, startsAt, endsAt s
 	}
 }
 
-func deref(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
-}

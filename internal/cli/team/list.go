@@ -7,6 +7,7 @@ import (
 
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerList(team *cobra.Command) {
@@ -21,10 +22,7 @@ func registerList(team *cobra.Command) {
 			client := linear.GetClient()
 			pageSize := output.ResolvePageSize(limit)
 
-			var after *string
-			if cursor != "" {
-				after = &cursor
-			}
+			after := output.ResolveCursor(cursor)
 
 			resp, err := linear.TeamList(context.Background(), client, nil, pageSize, after)
 			if err != nil {
@@ -43,7 +41,7 @@ func registerList(team *cobra.Command) {
 			pi := resp.Teams.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: deref(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
@@ -53,9 +51,3 @@ func registerList(team *cobra.Command) {
 	team.AddCommand(cmd)
 }
 
-func deref(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
-}

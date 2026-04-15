@@ -2,7 +2,6 @@ package project
 
 import (
 	"context"
-	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -10,6 +9,7 @@ import (
 	"github.com/shhac/lin/internal/output"
 	"github.com/shhac/lin/internal/priorities"
 	"github.com/shhac/lin/internal/projectstatuses"
+	"github.com/shhac/lin/internal/ptr"
 	"github.com/shhac/lin/internal/resolvers"
 )
 
@@ -22,15 +22,47 @@ func registerUpdate(parent *cobra.Command) {
 
 	registerUpdateTitle(update)
 	registerUpdateStatus(update)
-	registerUpdateDescription(update)
-	registerUpdateContent(update)
 	registerUpdateLead(update)
-	registerUpdateStartDate(update)
-	registerUpdateTargetDate(update)
 	registerUpdatePriority(update)
-	registerUpdateIcon(update)
-	registerUpdateColor(update)
+
+	registerSimpleProjectUpdate(update, "description <id> <description>", "Update project description",
+		func(v string) linear.ProjectUpdateInput { return linear.ProjectUpdateInput{Description: &v} })
+	registerSimpleProjectUpdate(update, "content <id> <content>", "Update project content (markdown body)",
+		func(v string) linear.ProjectUpdateInput { return linear.ProjectUpdateInput{Content: &v} })
+	registerSimpleProjectUpdate(update, "start-date <id> <date>", "Update project start date",
+		func(v string) linear.ProjectUpdateInput { return linear.ProjectUpdateInput{StartDate: &v} })
+	registerSimpleProjectUpdate(update, "target-date <id> <date>", "Update project target date",
+		func(v string) linear.ProjectUpdateInput { return linear.ProjectUpdateInput{TargetDate: &v} })
+	registerSimpleProjectUpdate(update, "icon <id> <icon>", "Update project icon",
+		func(v string) linear.ProjectUpdateInput { return linear.ProjectUpdateInput{Icon: &v} })
+	registerSimpleProjectUpdate(update, "color <id> <color>", "Update project color",
+		func(v string) linear.ProjectUpdateInput { return linear.ProjectUpdateInput{Color: &v} })
+
 	output.HandleUnknownCommand(update, "Run `lin project usage` for available update subcommands")
+}
+
+func registerSimpleProjectUpdate(parent *cobra.Command, use, short string, buildInput func(string) linear.ProjectUpdateInput) {
+	parent.AddCommand(&cobra.Command{
+		Use:   use,
+		Short: short,
+		Args:  cobra.ExactArgs(2),
+		Run: func(cmd *cobra.Command, args []string) {
+			client := linear.GetClient()
+			ctx := context.Background()
+
+			resolved, err := resolvers.ResolveProject(client, args[0])
+			if err != nil {
+				output.PrintError(err.Error())
+			}
+
+			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, buildInput(args[1]))
+			if err != nil {
+				output.PrintError(err.Error())
+			}
+
+			output.PrintJSON(map[string]any{"updated": resp.ProjectUpdate.Success})
+		},
+	})
 }
 
 func registerUpdateTitle(parent *cobra.Command) {
@@ -70,16 +102,9 @@ func registerUpdateStatus(parent *cobra.Command) {
 		Short: "Update project status",
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
-			newStatus := args[1]
-			valid := false
-			for _, s := range projectstatuses.List {
-				if strings.EqualFold(s, newStatus) {
-					valid = true
-					break
-				}
-			}
-			if !valid {
-				output.PrintErrorf("Invalid project status: %q. Valid values: %s", newStatus, projectstatuses.Values)
+			normalized, err := projectstatuses.Validate(args[1])
+			if err != nil {
+				output.PrintError(err.Error())
 			}
 
 			client := linear.GetClient()
@@ -90,63 +115,8 @@ func registerUpdateStatus(parent *cobra.Command) {
 				output.PrintError(err.Error())
 			}
 
-			lower := strings.ToLower(newStatus)
 			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, linear.ProjectUpdateInput{
-				State: &lower,
-			})
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			output.PrintJSON(map[string]any{"updated": resp.ProjectUpdate.Success})
-		},
-	}
-	parent.AddCommand(cmd)
-}
-
-func registerUpdateDescription(parent *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "description <id> <description>",
-		Short: "Update project description",
-		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-
-			resolved, err := resolvers.ResolveProject(client, args[0])
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, linear.ProjectUpdateInput{
-				Description: &args[1],
-			})
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			output.PrintJSON(map[string]any{"updated": resp.ProjectUpdate.Success})
-		},
-	}
-	parent.AddCommand(cmd)
-}
-
-func registerUpdateContent(parent *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "content <id> <content>",
-		Short: "Update project content (markdown body)",
-		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-
-			resolved, err := resolvers.ResolveProject(client, args[0])
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, linear.ProjectUpdateInput{
-				Content: &args[1],
+				State: &normalized,
 			})
 			if err != nil {
 				output.PrintError(err.Error())
@@ -190,60 +160,6 @@ func registerUpdateLead(parent *cobra.Command) {
 	parent.AddCommand(cmd)
 }
 
-func registerUpdateStartDate(parent *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "start-date <id> <date>",
-		Short: "Update project start date",
-		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-
-			resolved, err := resolvers.ResolveProject(client, args[0])
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, linear.ProjectUpdateInput{
-				StartDate: &args[1],
-			})
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			output.PrintJSON(map[string]any{"updated": resp.ProjectUpdate.Success})
-		},
-	}
-	parent.AddCommand(cmd)
-}
-
-func registerUpdateTargetDate(parent *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "target-date <id> <date>",
-		Short: "Update project target date",
-		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-
-			resolved, err := resolvers.ResolveProject(client, args[0])
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, linear.ProjectUpdateInput{
-				TargetDate: &args[1],
-			})
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			output.PrintJSON(map[string]any{"updated": resp.ProjectUpdate.Success})
-		},
-	}
-	parent.AddCommand(cmd)
-}
-
 func registerUpdatePriority(parent *cobra.Command) {
 	cmd := &cobra.Command{
 		Use:   "priority <id> <priority>",
@@ -264,61 +180,7 @@ func registerUpdatePriority(parent *cobra.Command) {
 			}
 
 			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, linear.ProjectUpdateInput{
-				Priority: intPtr(p),
-			})
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			output.PrintJSON(map[string]any{"updated": resp.ProjectUpdate.Success})
-		},
-	}
-	parent.AddCommand(cmd)
-}
-
-func registerUpdateIcon(parent *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "icon <id> <icon>",
-		Short: "Update project icon",
-		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-
-			resolved, err := resolvers.ResolveProject(client, args[0])
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, linear.ProjectUpdateInput{
-				Icon: &args[1],
-			})
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			output.PrintJSON(map[string]any{"updated": resp.ProjectUpdate.Success})
-		},
-	}
-	parent.AddCommand(cmd)
-}
-
-func registerUpdateColor(parent *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "color <id> <color>",
-		Short: "Update project color",
-		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-
-			resolved, err := resolvers.ResolveProject(client, args[0])
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, linear.ProjectUpdateInput{
-				Color: &args[1],
+				Priority: ptr.To(p),
 			})
 			if err != nil {
 				output.PrintError(err.Error())

@@ -20,28 +20,35 @@ func registerUpdate(parent *cobra.Command) {
 	}
 	parent.AddCommand(update)
 
-	registerUpdateTitle(update)
 	registerUpdateStatus(update)
 	registerUpdateAssignee(update)
 	registerUpdatePriority(update)
 	registerUpdateProject(update)
 	registerUpdateLabels(update)
-	registerUpdateDescription(update)
-	registerUpdateDueDate(update)
-	registerUpdateCycle(update)
-	registerUpdateParent(update)
 	registerUpdateEstimate(update)
+
+	registerSimpleIssueUpdate(update, "title <id> <new-title>", "Update issue title",
+		func(v string) linear.IssueUpdateInput { return linear.IssueUpdateInput{Title: &v} })
+	registerSimpleIssueUpdate(update, "description <id> <description>", "Update issue description",
+		func(v string) linear.IssueUpdateInput { return linear.IssueUpdateInput{Description: &v} })
+	registerSimpleIssueUpdate(update, "due-date <id> <date>", "Update issue due date",
+		func(v string) linear.IssueUpdateInput { return linear.IssueUpdateInput{DueDate: &v} })
+	registerSimpleIssueUpdate(update, "cycle <id> <cycle-id>", "Move issue to a cycle",
+		func(v string) linear.IssueUpdateInput { return linear.IssueUpdateInput{CycleId: &v} })
+	registerSimpleIssueUpdate(update, "parent <id> <parent-id>", "Set parent issue (make sub-issue)",
+		func(v string) linear.IssueUpdateInput { return linear.IssueUpdateInput{ParentId: &v} })
 }
 
-func registerUpdateTitle(parent *cobra.Command) {
+func registerSimpleIssueUpdate(parent *cobra.Command, use, short string, buildInput func(string) linear.IssueUpdateInput) {
 	parent.AddCommand(&cobra.Command{
-		Use:   "title <id> <new-title>",
-		Short: "Update issue title",
+		Use:   use,
+		Short: short,
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
 			client := linear.GetClient()
 			ctx := context.Background()
-			resp, err := linear.IssueUpdate(ctx, client, args[0], linear.IssueUpdateInput{Title: &args[1]})
+
+			resp, err := linear.IssueUpdate(ctx, client, args[0], buildInput(args[1]))
 			if err != nil {
 				output.PrintError(err.Error())
 			}
@@ -171,78 +178,6 @@ func registerUpdateLabels(parent *cobra.Command) {
 			}
 
 			resp, err := linear.IssueUpdate(ctx, client, args[0], linear.IssueUpdateInput{LabelIds: labelIds})
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-			output.PrintJSON(map[string]any{"updated": resp.IssueUpdate.Success})
-		},
-	})
-}
-
-func registerUpdateDescription(parent *cobra.Command) {
-	parent.AddCommand(&cobra.Command{
-		Use:   "description <id> <description>",
-		Short: "Update issue description",
-		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-
-			resp, err := linear.IssueUpdate(ctx, client, args[0], linear.IssueUpdateInput{Description: &args[1]})
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-			output.PrintJSON(map[string]any{"updated": resp.IssueUpdate.Success})
-		},
-	})
-}
-
-func registerUpdateDueDate(parent *cobra.Command) {
-	parent.AddCommand(&cobra.Command{
-		Use:   "due-date <id> <date>",
-		Short: "Update issue due date",
-		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-
-			resp, err := linear.IssueUpdate(ctx, client, args[0], linear.IssueUpdateInput{DueDate: &args[1]})
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-			output.PrintJSON(map[string]any{"updated": resp.IssueUpdate.Success})
-		},
-	})
-}
-
-func registerUpdateCycle(parent *cobra.Command) {
-	parent.AddCommand(&cobra.Command{
-		Use:   "cycle <id> <cycle-id>",
-		Short: "Move issue to a cycle",
-		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-
-			resp, err := linear.IssueUpdate(ctx, client, args[0], linear.IssueUpdateInput{CycleId: &args[1]})
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-			output.PrintJSON(map[string]any{"updated": resp.IssueUpdate.Success})
-		},
-	})
-}
-
-func registerUpdateParent(parent *cobra.Command) {
-	parent.AddCommand(&cobra.Command{
-		Use:   "parent <id> <parent-id>",
-		Short: "Set parent issue (make sub-issue)",
-		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-
-			resp, err := linear.IssueUpdate(ctx, client, args[0], linear.IssueUpdateInput{ParentId: &args[1]})
 			if err != nil {
 				output.PrintError(err.Error())
 			}

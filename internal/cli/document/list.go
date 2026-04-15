@@ -7,7 +7,9 @@ import (
 
 	"github.com/shhac/lin/internal/filters"
 	"github.com/shhac/lin/internal/linear"
+	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerList(parent *cobra.Command) {
@@ -36,20 +38,17 @@ func registerList(parent *cobra.Command) {
 				if creator != "" {
 					filter.Creator = &linear.UserFilter{
 						Or: []linear.UserFilter{
-							{Id: &linear.IDComparator{Eq: strPtr(creator)}},
-							{Name: &linear.StringComparator{EqIgnoreCase: strPtr(creator)}},
-							{DisplayName: &linear.StringComparator{EqIgnoreCase: strPtr(creator)}},
-							{Email: &linear.StringComparator{EqIgnoreCase: strPtr(creator)}},
+							{Id: &linear.IDComparator{Eq: ptr.To(creator)}},
+							{Name: &linear.StringComparator{EqIgnoreCase: ptr.To(creator)}},
+							{DisplayName: &linear.StringComparator{EqIgnoreCase: ptr.To(creator)}},
+							{Email: &linear.StringComparator{EqIgnoreCase: ptr.To(creator)}},
 						},
 					}
 				}
 			}
 
 			pageSize := output.ResolvePageSize(limit)
-			var afterPtr *string
-			if cursor != "" {
-				afterPtr = &cursor
-			}
+			afterPtr := output.ResolveCursor(cursor)
 
 			var includeArchivedPtr *bool
 			if includeArchived {
@@ -63,13 +62,13 @@ func registerList(parent *cobra.Command) {
 
 			items := make([]any, len(resp.Documents.Nodes))
 			for i, n := range resp.Documents.Nodes {
-				items[i] = mapListSummary(n.DocSummaryFields)
+				items[i] = docSummaryFromFields(n.DocSummaryFields)
 			}
 
 			pi := resp.Documents.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: derefStr(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
@@ -82,22 +81,21 @@ func registerList(parent *cobra.Command) {
 	parent.AddCommand(cmd)
 }
 
-func mapListSummary(f linear.DocSummaryFields) map[string]any {
-	m := map[string]any{
-		"id":        f.Id,
-		"slugId":    f.SlugId,
-		"title":     f.Title,
-		"url":       f.Url,
-		"updatedAt": f.UpdatedAt,
-	}
-	if f.Project != nil {
-		m["project"] = map[string]any{
-			"id":   f.Project.Id,
-			"name": f.Project.Name,
-		}
+func docSummaryFromFields(f linear.DocSummaryFields) map[string]any {
+	input := mappers.DocSummaryInput{
+		ID:        f.Id,
+		SlugId:    f.SlugId,
+		Title:     f.Title,
+		URL:       f.Url,
+		UpdatedAt: f.UpdatedAt,
 	}
 	if f.Creator != nil {
-		m["creator"] = f.Creator.Name
+		input.CreatorID = f.Creator.Id
+		input.CreatorName = f.Creator.Name
 	}
-	return m
+	if f.Project != nil {
+		input.ProjectID = f.Project.Id
+		input.ProjectName = f.Project.Name
+	}
+	return mappers.MapDocSummary(input)
 }

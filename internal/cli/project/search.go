@@ -6,7 +6,9 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/shhac/lin/internal/linear"
+	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerSearch(parent *cobra.Command) {
@@ -24,10 +26,7 @@ func registerSearch(parent *cobra.Command) {
 			ctx := context.Background()
 
 			pageSize := output.ResolvePageSize(limit)
-			var afterPtr *string
-			if cursor != "" {
-				afterPtr = &cursor
-			}
+			afterPtr := output.ResolveCursor(cursor)
 
 			resp, err := linear.ProjectSearch(ctx, client, args[0], pageSize, afterPtr)
 			if err != nil {
@@ -36,13 +35,27 @@ func registerSearch(parent *cobra.Command) {
 
 			items := make([]any, len(resp.SearchProjects.Nodes))
 			for i, n := range resp.SearchProjects.Nodes {
-				items[i] = mapSearchSummary(n.ProjectSearchSummaryFields)
+				f := n.ProjectSearchSummaryFields
+				input := mappers.ProjectSummaryInput{
+					ID:         f.Id,
+					SlugId:     f.SlugId,
+					URL:        f.Url,
+					Name:       f.Name,
+					State:      f.State,
+					Progress:   f.Progress,
+					StartDate:  ptr.Deref(f.StartDate),
+					TargetDate: ptr.Deref(f.TargetDate),
+				}
+				if f.Lead != nil {
+					input.LeadName = f.Lead.Name
+				}
+				items[i] = mappers.MapProjectSummary(input)
 			}
 
 			pi := resp.SearchProjects.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: derefStr(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
@@ -52,23 +65,3 @@ func registerSearch(parent *cobra.Command) {
 	parent.AddCommand(cmd)
 }
 
-func mapSearchSummary(f linear.ProjectSearchSummaryFields) map[string]any {
-	m := map[string]any{
-		"id":       f.Id,
-		"slugId":   f.SlugId,
-		"url":      f.Url,
-		"name":     f.Name,
-		"status":   f.State,
-		"progress": f.Progress,
-	}
-	if f.Lead != nil {
-		m["lead"] = f.Lead.Name
-	}
-	if f.StartDate != nil {
-		m["startDate"] = *f.StartDate
-	}
-	if f.TargetDate != nil {
-		m["targetDate"] = *f.TargetDate
-	}
-	return m
-}

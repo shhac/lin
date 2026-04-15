@@ -7,7 +7,9 @@ import (
 
 	"github.com/shhac/lin/internal/filters"
 	"github.com/shhac/lin/internal/linear"
+	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerList(parent *cobra.Command) {
@@ -50,10 +52,7 @@ func registerList(parent *cobra.Command) {
 			})
 
 			pageSize := output.ResolvePageSize(limit)
-			var afterPtr *string
-			if cursor != "" {
-				afterPtr = &cursor
-			}
+			afterPtr := output.ResolveCursor(cursor)
 
 			resp, err := linear.IssueList(ctx, client, filter, pageSize, afterPtr)
 			if err != nil {
@@ -62,13 +61,13 @@ func registerList(parent *cobra.Command) {
 
 			items := make([]any, len(resp.Issues.Nodes))
 			for i, n := range resp.Issues.Nodes {
-				items[i] = mapListSummary(n.IssueSummaryFields)
+				items[i] = issueSummaryFromFields(n.IssueSummaryFields)
 			}
 
 			pi := resp.Issues.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: derefStr(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
@@ -89,28 +88,22 @@ func registerList(parent *cobra.Command) {
 	parent.AddCommand(cmd)
 }
 
-func mapListSummary(f linear.IssueSummaryFields) map[string]any {
-	m := map[string]any{
-		"id":            f.Id,
-		"identifier":    f.Identifier,
-		"title":         f.Title,
-		"branchName":    f.BranchName,
-		"status":        f.State.Name,
-		"statusType":    f.State.Type,
-		"team":          f.Team.Key,
-		"priority":      f.Priority,
-		"priorityLabel": f.PriorityLabel,
+func issueSummaryFromFields(f linear.IssueSummaryFields) map[string]any {
+	input := mappers.IssueSummaryInput{
+		ID:            f.Id,
+		Identifier:    f.Identifier,
+		Title:         f.Title,
+		BranchName:    f.BranchName,
+		Priority:      f.Priority,
+		PriorityLabel: f.PriorityLabel,
+		StateName:     f.State.Name,
+		StateType:     f.State.Type,
+		TeamKey:       f.Team.Key,
 	}
 	if f.Assignee != nil {
-		m["assignee"] = f.Assignee.Name
-		m["assigneeId"] = f.Assignee.Id
+		input.AssigneeID = f.Assignee.Id
+		input.AssigneeName = f.Assignee.Name
 	}
-	return m
+	return mappers.MapIssueSummary(input)
 }
 
-func derefStr(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
-}

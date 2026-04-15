@@ -7,7 +7,9 @@ import (
 
 	"github.com/shhac/lin/internal/filters"
 	"github.com/shhac/lin/internal/linear"
+	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerList(parent *cobra.Command) {
@@ -35,15 +37,12 @@ func registerList(parent *cobra.Command) {
 					}
 				}
 				if status != "" {
-					filter.State = &linear.StringComparator{EqIgnoreCase: strPtr(status)}
+					filter.State = &linear.StringComparator{EqIgnoreCase: ptr.To(status)}
 				}
 			}
 
 			pageSize := output.ResolvePageSize(limit)
-			var afterPtr *string
-			if cursor != "" {
-				afterPtr = &cursor
-			}
+			afterPtr := output.ResolveCursor(cursor)
 
 			resp, err := linear.ProjectList(ctx, client, filter, pageSize, afterPtr)
 			if err != nil {
@@ -52,13 +51,13 @@ func registerList(parent *cobra.Command) {
 
 			items := make([]any, len(resp.Projects.Nodes))
 			for i, n := range resp.Projects.Nodes {
-				items[i] = mapListSummary(n.ProjectSummaryFields)
+				items[i] = projectSummaryFromFields(n.ProjectSummaryFields)
 			}
 
 			pi := resp.Projects.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: derefStr(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
@@ -70,23 +69,19 @@ func registerList(parent *cobra.Command) {
 	parent.AddCommand(cmd)
 }
 
-func mapListSummary(f linear.ProjectSummaryFields) map[string]any {
-	m := map[string]any{
-		"id":       f.Id,
-		"slugId":   f.SlugId,
-		"url":      f.Url,
-		"name":     f.Name,
-		"status":   f.State,
-		"progress": f.Progress,
+func projectSummaryFromFields(f linear.ProjectSummaryFields) map[string]any {
+	input := mappers.ProjectSummaryInput{
+		ID:         f.Id,
+		SlugId:     f.SlugId,
+		URL:        f.Url,
+		Name:       f.Name,
+		State:      f.State,
+		Progress:   f.Progress,
+		StartDate:  ptr.Deref(f.StartDate),
+		TargetDate: ptr.Deref(f.TargetDate),
 	}
 	if f.Lead != nil {
-		m["lead"] = f.Lead.Name
+		input.LeadName = f.Lead.Name
 	}
-	if f.StartDate != nil {
-		m["startDate"] = *f.StartDate
-	}
-	if f.TargetDate != nil {
-		m["targetDate"] = *f.TargetDate
-	}
-	return m
+	return mappers.MapProjectSummary(input)
 }

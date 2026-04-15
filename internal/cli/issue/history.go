@@ -7,6 +7,7 @@ import (
 
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerHistory(parent *cobra.Command) {
@@ -24,10 +25,7 @@ func registerHistory(parent *cobra.Command) {
 			ctx := context.Background()
 
 			pageSize := output.ResolvePageSize(limit)
-			var afterPtr *string
-			if cursor != "" {
-				afterPtr = &cursor
-			}
+			afterPtr := output.ResolveCursor(cursor)
 
 			resp, err := linear.IssueHistory(ctx, client, args[0], pageSize, afterPtr)
 			if err != nil {
@@ -94,7 +92,7 @@ func registerHistory(parent *cobra.Command) {
 			pi := resp.Issue.History.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: derefStr(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}

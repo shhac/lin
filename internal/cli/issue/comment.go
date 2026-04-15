@@ -7,6 +7,7 @@ import (
 
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 	"github.com/shhac/lin/internal/upload"
 )
 
@@ -39,10 +40,7 @@ func registerCommentList(parent *cobra.Command) {
 			ctx := context.Background()
 
 			pageSize := output.ResolvePageSize(limit)
-			var afterPtr *string
-			if cursor != "" {
-				afterPtr = &cursor
-			}
+			afterPtr := output.ResolveCursor(cursor)
 
 			resp, err := linear.IssueComments(ctx, client, args[0], pageSize, afterPtr)
 			if err != nil {
@@ -70,7 +68,7 @@ func registerCommentList(parent *cobra.Command) {
 			pi := resp.Issue.Comments.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: derefStr(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
@@ -216,10 +214,7 @@ func registerCommentReplies(parent *cobra.Command) {
 			ctx := context.Background()
 
 			pageSize := output.ResolvePageSize(limit)
-			var afterPtr *string
-			if cursor != "" {
-				afterPtr = &cursor
-			}
+			afterPtr := output.ResolveCursor(cursor)
 
 			resp, err := linear.CommentReplies(ctx, client, args[0], pageSize, afterPtr)
 			if err != nil {
@@ -243,7 +238,7 @@ func registerCommentReplies(parent *cobra.Command) {
 			pi := resp.Comment.Children.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: derefStr(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}

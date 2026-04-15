@@ -23,13 +23,3 @@ func Register(parent *cobra.Command) {
 	output.HandleUnknownCommand(project, "To view a project: lin project get <id>")
 }
 
-func strPtr(s string) *string { return &s }
-
-func derefStr(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
-}
-
-func intPtr(i int) *int { return &i }

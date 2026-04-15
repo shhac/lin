@@ -6,7 +6,9 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/shhac/lin/internal/linear"
+	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
 	"github.com/shhac/lin/internal/resolvers"
 )
 
@@ -27,10 +29,7 @@ func registerProjects(roadmap *cobra.Command) {
 				output.PrintError(err.Error())
 			}
 
-			var after *string
-			if cursor != "" {
-				after = &cursor
-			}
+			after := output.ResolveCursor(cursor)
 
 			resp, err := linear.RoadmapProjects(context.Background(), client, resolved.ID, pageSize, after)
 			if err != nil {
@@ -40,26 +39,26 @@ func registerProjects(roadmap *cobra.Command) {
 			items := make([]map[string]any, len(resp.Roadmap.Projects.Nodes))
 			for i, p := range resp.Roadmap.Projects.Nodes {
 				f := p.ProjectSummaryFields
-				entry := map[string]any{
-					"id":         f.Id,
-					"slugId":     f.SlugId,
-					"url":        f.Url,
-					"name":       f.Name,
-					"status":     f.State,
-					"progress":   f.Progress,
-					"startDate":  f.StartDate,
-					"targetDate": f.TargetDate,
+				input := mappers.ProjectSummaryInput{
+					ID:         f.Id,
+					SlugId:     f.SlugId,
+					URL:        f.Url,
+					Name:       f.Name,
+					State:      f.State,
+					Progress:   f.Progress,
+					StartDate:  ptr.Deref(f.StartDate),
+					TargetDate: ptr.Deref(f.TargetDate),
 				}
 				if f.Lead != nil {
-					entry["lead"] = f.Lead.Name
+					input.LeadName = f.Lead.Name
 				}
-				items[i] = entry
+				items[i] = mappers.MapProjectSummary(input)
 			}
 
 			pi := resp.Roadmap.Projects.PageInfo
 			output.PrintPaginated(items, &output.Pagination{
 				HasMore:    pi.HasNextPage,
-				NextCursor: deref(pi.EndCursor),
+				NextCursor: ptr.Deref(pi.EndCursor),
 			})
 		},
 	}
