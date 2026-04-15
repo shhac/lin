@@ -10,7 +10,7 @@ bun/release
 bun/*.bun-build
 
 # go
-lin
+/lin
 release/
 
 # local
