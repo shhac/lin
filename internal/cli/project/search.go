@@ -30,7 +30,7 @@ func registerSearch(parent *cobra.Command) {
 
 			resp, err := linear.ProjectSearch(ctx, client, args[0], pageSize, afterPtr)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]any, len(resp.SearchProjects.Nodes))

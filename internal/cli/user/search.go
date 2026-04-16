@@ -35,7 +35,7 @@ func registerSearch(user *cobra.Command) {
 
 			resp, err := linear.UserList(context.Background(), client, filter, pageSize, after)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]map[string]any, len(resp.Users.Nodes))

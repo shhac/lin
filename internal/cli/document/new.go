@@ -50,7 +50,7 @@ func registerNew(parent *cobra.Command) {
 
 			resp, err := linear.DocumentCreate(ctx, client, input)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			d := resp.DocumentCreate.Document

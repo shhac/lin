@@ -35,7 +35,7 @@ func registerList(label *cobra.Command) {
 
 				resp, err := linear.TeamLabels(ctx, client, resolved.ID, pageSize, after)
 				if err != nil {
-					output.PrintError(err.Error())
+					output.HandleGraphQLError(err)
 				}
 
 				items := make([]map[string]any, len(resp.Team.Labels.Nodes))
@@ -57,7 +57,7 @@ func registerList(label *cobra.Command) {
 
 			resp, err := linear.LabelList(ctx, client, pageSize, after)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]map[string]any, len(resp.IssueLabels.Nodes))

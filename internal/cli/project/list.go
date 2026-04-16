@@ -46,7 +46,7 @@ func registerList(parent *cobra.Command) {
 
 			resp, err := linear.ProjectList(ctx, client, filter, pageSize, afterPtr)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]any, len(resp.Projects.Nodes))

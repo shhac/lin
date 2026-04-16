@@ -19,7 +19,7 @@ func registerMe(user *cobra.Command) {
 
 			resp, err := linear.Viewer(context.Background(), client)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			v := resp.Viewer

@@ -36,7 +36,7 @@ func registerList(cycle *cobra.Command) {
 			if current {
 				resp, err := linear.TeamActiveCycle(ctx, client, resolved.ID)
 				if err != nil {
-					output.PrintError(err.Error())
+					output.HandleGraphQLError(err)
 				}
 				c := resp.Team.ActiveCycle
 				if c == nil {
@@ -52,7 +52,7 @@ func registerList(cycle *cobra.Command) {
 
 			resp, err := linear.TeamCycles(ctx, client, resolved.ID, pageSize, after)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			nodes := resp.Team.Cycles.Nodes

@@ -26,7 +26,7 @@ func registerGet(parent *cobra.Command) {
 
 			resp, err := linear.DocumentGet(ctx, client, resolved.ID)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			d := resp.Document

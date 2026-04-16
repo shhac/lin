@@ -33,7 +33,7 @@ func registerProjects(roadmap *cobra.Command) {
 
 			resp, err := linear.RoadmapProjects(context.Background(), client, resolved.ID, pageSize, after)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]map[string]any, len(resp.Roadmap.Projects.Nodes))

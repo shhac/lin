@@ -25,7 +25,7 @@ func registerGet(roadmap *cobra.Command) {
 
 			resp, err := linear.RoadmapGet(context.Background(), client, resolved.ID)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			r := resp.Roadmap

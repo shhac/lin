@@ -26,7 +26,7 @@ func registerList(team *cobra.Command) {
 
 			resp, err := linear.TeamList(context.Background(), client, nil, pageSize, after)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]map[string]any, len(resp.Teams.Nodes))

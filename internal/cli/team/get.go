@@ -27,13 +27,13 @@ func registerGet(team *cobra.Command) {
 
 			resp, err := linear.TeamGet(ctx, client, resolved.ID)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 			t := resp.Team
 
 			membersResp, err := linear.TeamMembers(ctx, client, resolved.ID, 250, nil)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			var validValues []int

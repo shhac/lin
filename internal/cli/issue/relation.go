@@ -41,7 +41,7 @@ func registerRelationList(parent *cobra.Command) {
 
 			resp, err := linear.IssueRelations(ctx, client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			var mapped []any
@@ -95,7 +95,7 @@ func registerRelationAdd(parent *cobra.Command) {
 				Type:           enumVal,
 			})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			rel := resp.IssueRelationCreate.IssueRelation
@@ -127,7 +127,7 @@ func registerRelationRemove(parent *cobra.Command) {
 
 			resp, err := linear.IssueRelationDelete(ctx, client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{"deleted": resp.IssueRelationDelete.Success})

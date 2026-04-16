@@ -88,7 +88,7 @@ func registerNew(parent *cobra.Command) {
 
 			resp, err := linear.ProjectCreate(ctx, client, input)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			result := map[string]any{

@@ -46,7 +46,7 @@ func registerIssues(parent *cobra.Command) {
 
 			resp, err := linear.ProjectIssues(ctx, client, resolved.ID, filter, pageSize, afterPtr)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]any, len(resp.Project.Issues.Nodes))

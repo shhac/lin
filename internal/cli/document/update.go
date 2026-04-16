@@ -47,7 +47,7 @@ func registerSimpleDocumentUpdate(parent *cobra.Command, use, short string, buil
 
 			resp, err := linear.DocumentUpdate(ctx, client, doc.ID, buildInput(args[1]))
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{"updated": resp.DocumentUpdate.Success})
@@ -78,7 +78,7 @@ func registerUpdateProject(parent *cobra.Command) {
 				ProjectId: &resolved.ID,
 			})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{"updated": resp.DocumentUpdate.Success})

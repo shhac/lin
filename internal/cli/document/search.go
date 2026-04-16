@@ -41,7 +41,7 @@ func registerSearch(parent *cobra.Command) {
 
 			resp, err := linear.DocumentSearch(ctx, client, args[0], pageSize, afterPtr, includeCommentsPtr, includeArchivedPtr)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]any, len(resp.SearchDocuments.Nodes))

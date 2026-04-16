@@ -57,7 +57,7 @@ func registerList(parent *cobra.Command) {
 
 			resp, err := linear.DocumentList(ctx, client, filter, pageSize, afterPtr, includeArchivedPtr)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]any, len(resp.Documents.Nodes))

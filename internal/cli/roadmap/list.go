@@ -26,7 +26,7 @@ func registerList(roadmap *cobra.Command) {
 
 			resp, err := linear.RoadmapList(context.Background(), client, pageSize, after)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]map[string]any, len(resp.Roadmaps.Nodes))

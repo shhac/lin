@@ -32,7 +32,7 @@ func registerAttachmentList(parent *cobra.Command) {
 
 			resp, err := linear.IssueAttachments(ctx, client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]any, len(resp.Issue.Attachments.Nodes))
@@ -77,7 +77,7 @@ func registerAttachmentAdd(parent *cobra.Command) {
 
 			resp, err := linear.AttachmentCreate(ctx, client, input)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			a := resp.AttachmentCreate.Attachment
@@ -109,7 +109,7 @@ func registerAttachmentRemove(parent *cobra.Command) {
 
 			resp, err := linear.AttachmentDelete(ctx, client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{"deleted": resp.AttachmentDelete.Success})

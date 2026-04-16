@@ -26,7 +26,7 @@ func registerHistory(parent *cobra.Command) {
 
 			resp, err := linear.DocumentContentHistory(ctx, client, doc.ID)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			history := resp.DocumentContentHistory.History

@@ -57,7 +57,7 @@ func registerSimpleProjectUpdate(parent *cobra.Command, use, short string, build
 
 			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, buildInput(args[1]))
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{"updated": resp.ProjectUpdate.Success})
@@ -83,7 +83,7 @@ func registerUpdateTitle(parent *cobra.Command) {
 				Name: &args[1],
 			})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{
@@ -119,7 +119,7 @@ func registerUpdateStatus(parent *cobra.Command) {
 				State: &normalized,
 			})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{"updated": resp.ProjectUpdate.Success})
@@ -151,7 +151,7 @@ func registerUpdateLead(parent *cobra.Command) {
 				LeadId: &user.ID,
 			})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{"updated": resp.ProjectUpdate.Success})
@@ -183,7 +183,7 @@ func registerUpdatePriority(parent *cobra.Command) {
 				Priority: ptr.To(p),
 			})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{"updated": resp.ProjectUpdate.Success})

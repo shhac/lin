@@ -20,7 +20,7 @@ func registerGet(cycle *cobra.Command) {
 
 			resp, err := linear.CycleGet(context.Background(), client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			c := resp.Cycle

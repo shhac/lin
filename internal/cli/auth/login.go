@@ -37,8 +37,7 @@ func registerLogin(auth *cobra.Command) {
 			ctx := context.Background()
 			resp, err := linear.Viewer(ctx, client)
 			if err != nil {
-				output.PrintError(err.Error())
-				return
+				output.HandleGraphQLError(err)
 			}
 
 			viewer := resp.Viewer

@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/shhac/lin/internal/config"
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/truncation"
 )
 
@@ -79,6 +80,33 @@ func PrintError(msg string) {
 
 func PrintErrorf(format string, args ...any) {
 	PrintError(fmt.Sprintf(format, args...))
+}
+
+// WriteError writes a structured error to stderr and exits.
+// If err is an *apierrors.APIError, includes fixable_by and hint.
+// Otherwise wraps as fixable_by: "agent".
+func WriteError(err error) {
+	var aerr *apierrors.APIError
+	if !apierrors.As(err, &aerr) {
+		aerr = apierrors.Wrap(err, apierrors.FixableByAgent)
+	}
+	payload := map[string]any{
+		"error":      aerr.Message,
+		"fixable_by": string(aerr.FixableBy),
+	}
+	if aerr.Hint != "" {
+		payload["hint"] = aerr.Hint
+	}
+	enc := json.NewEncoder(os.Stderr)
+	enc.SetEscapeHTML(false)
+	_ = enc.Encode(payload)
+	os.Exit(1)
+}
+
+// HandleGraphQLError classifies a genqlient error and writes it as a
+// structured error to stderr. Use this for errors from Linear API calls.
+func HandleGraphQLError(err error) {
+	WriteError(apierrors.ClassifyGraphQLError(err))
 }
 
 // ResolveCursor returns a *string for pagination, or nil if empty.

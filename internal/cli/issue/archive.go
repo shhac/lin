@@ -20,7 +20,7 @@ func registerArchive(parent *cobra.Command) {
 
 			resp, err := linear.IssueArchive(ctx, client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{"archived": resp.IssueArchive.Success})
@@ -37,7 +37,7 @@ func registerArchive(parent *cobra.Command) {
 
 			resp, err := linear.IssueUnarchive(ctx, client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{"unarchived": resp.IssueUnarchive.Success})
@@ -54,7 +54,7 @@ func registerArchive(parent *cobra.Command) {
 
 			resp, err := linear.IssueDelete(ctx, client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{"deleted": resp.IssueDelete.Success})

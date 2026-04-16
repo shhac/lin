@@ -29,7 +29,7 @@ func registerHistory(parent *cobra.Command) {
 
 			resp, err := linear.IssueHistory(ctx, client, args[0], pageSize, afterPtr)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]any, len(resp.Issue.History.Nodes))

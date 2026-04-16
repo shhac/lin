@@ -45,7 +45,7 @@ func registerSearch(parent *cobra.Command) {
 
 			resp, err := linear.IssueSearch(ctx, client, text, pageSize, afterPtr, filter)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]any, len(resp.SearchIssues.Nodes))

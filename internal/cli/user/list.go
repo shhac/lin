@@ -35,7 +35,7 @@ func registerList(user *cobra.Command) {
 
 				resp, err := linear.TeamMembers(ctx, client, resolved.ID, pageSize, after)
 				if err != nil {
-					output.PrintError(err.Error())
+					output.HandleGraphQLError(err)
 				}
 
 				items := make([]map[string]any, len(resp.Team.Members.Nodes))
@@ -53,7 +53,7 @@ func registerList(user *cobra.Command) {
 
 			resp, err := linear.UserList(ctx, client, nil, pageSize, after)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]map[string]any, len(resp.Users.Nodes))

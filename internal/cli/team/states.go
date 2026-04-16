@@ -32,7 +32,7 @@ func registerStates(team *cobra.Command) {
 			}
 			resp, err := linear.WorkflowStates(context.Background(), client, filter)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			nodes := resp.WorkflowStates.Nodes

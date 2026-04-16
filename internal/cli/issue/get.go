@@ -21,17 +21,17 @@ func registerGet(parent *cobra.Command) {
 
 			resp, err := linear.IssueGet(ctx, client, id)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			commentsResp, err := linear.IssueComments(ctx, client, id, 250, nil)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			attachResp, err := linear.IssueAttachments(ctx, client, id)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			i := resp.Issue

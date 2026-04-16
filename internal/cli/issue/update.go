@@ -50,7 +50,7 @@ func registerSimpleIssueUpdate(parent *cobra.Command, use, short string, buildIn
 
 			resp, err := linear.IssueUpdate(ctx, client, args[0], buildInput(args[1]))
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 			output.PrintJSON(map[string]any{"updated": resp.IssueUpdate.Success})
 		},
@@ -68,7 +68,7 @@ func registerUpdateStatus(parent *cobra.Command) {
 
 			teamResp, err := linear.IssueTeam(ctx, client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 			teamID := teamResp.Issue.Team.Id
 			if teamID == "" {
@@ -82,7 +82,7 @@ func registerUpdateStatus(parent *cobra.Command) {
 
 			resp, err := linear.IssueUpdate(ctx, client, args[0], linear.IssueUpdateInput{StateId: &state.ID})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 			output.PrintJSON(map[string]any{"updated": resp.IssueUpdate.Success})
 		},
@@ -105,7 +105,7 @@ func registerUpdateAssignee(parent *cobra.Command) {
 
 			resp, err := linear.IssueUpdate(ctx, client, args[0], linear.IssueUpdateInput{AssigneeId: &user.ID})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 			output.PrintJSON(map[string]any{"updated": resp.IssueUpdate.Success})
 		},
@@ -128,7 +128,7 @@ func registerUpdatePriority(parent *cobra.Command) {
 
 			resp, err := linear.IssueUpdate(ctx, client, args[0], linear.IssueUpdateInput{Priority: &p})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 			output.PrintJSON(map[string]any{"updated": resp.IssueUpdate.Success})
 		},
@@ -151,7 +151,7 @@ func registerUpdateProject(parent *cobra.Command) {
 
 			resp, err := linear.IssueUpdate(ctx, client, args[0], linear.IssueUpdateInput{ProjectId: &proj.ID})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 			output.PrintJSON(map[string]any{"updated": resp.IssueUpdate.Success})
 		},
@@ -169,7 +169,7 @@ func registerUpdateLabels(parent *cobra.Command) {
 
 			teamResp, err := linear.IssueTeam(ctx, client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			labelIds, err := resolvers.ResolveLabels(client, args[1], teamResp.Issue.Team.Id)
@@ -179,7 +179,7 @@ func registerUpdateLabels(parent *cobra.Command) {
 
 			resp, err := linear.IssueUpdate(ctx, client, args[0], linear.IssueUpdateInput{LabelIds: labelIds})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 			output.PrintJSON(map[string]any{"updated": resp.IssueUpdate.Success})
 		},
@@ -202,7 +202,7 @@ func registerUpdateEstimate(parent *cobra.Command) {
 
 			teamResp, err := linear.IssueTeam(ctx, client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 			teamID := teamResp.Issue.Team.Id
 			if teamID == "" {
@@ -211,7 +211,7 @@ func registerUpdateEstimate(parent *cobra.Command) {
 
 			teamDetail, err := linear.TeamGet(ctx, client, teamID)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			cfg := estimates.BuildConfig(
@@ -225,7 +225,7 @@ func registerUpdateEstimate(parent *cobra.Command) {
 
 			resp, err := linear.IssueUpdate(ctx, client, args[0], linear.IssueUpdateInput{Estimate: &est})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 			output.PrintJSON(map[string]any{"updated": resp.IssueUpdate.Success})
 		},

@@ -26,7 +26,7 @@ func registerGet(parent *cobra.Command) {
 
 			resp, err := linear.ProjectGet(ctx, client, resolved.ID)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			p := resp.Project

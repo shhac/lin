@@ -44,7 +44,7 @@ func registerCommentList(parent *cobra.Command) {
 
 			resp, err := linear.IssueComments(ctx, client, args[0], pageSize, afterPtr)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]any, len(resp.Issue.Comments.Nodes))
@@ -113,7 +113,7 @@ func registerCommentNew(parent *cobra.Command) {
 
 			resp, err := linear.CommentCreate(ctx, client, input)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{
@@ -140,7 +140,7 @@ func registerCommentGet(parent *cobra.Command) {
 
 			resp, err := linear.CommentGet(ctx, client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			c := resp.Comment
@@ -188,7 +188,7 @@ func registerCommentEdit(parent *cobra.Command) {
 
 			resp, err := linear.CommentUpdate(ctx, client, args[0], linear.CommentUpdateInput{Body: &body})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			output.PrintJSON(map[string]any{"updated": resp.CommentUpdate.Success})
@@ -218,7 +218,7 @@ func registerCommentReplies(parent *cobra.Command) {
 
 			resp, err := linear.CommentReplies(ctx, client, args[0], pageSize, afterPtr)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			items := make([]any, len(resp.Comment.Children.Nodes))
