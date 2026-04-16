@@ -24,4 +24,7 @@ release:
 changelog:
   sort: asc
   filters:
-    exclude: [''^chore:'', ''^docs:'', ''^test:'']
+    exclude:
+      - "^chore:"
+      - "^docs:"
+      - "^test:"
