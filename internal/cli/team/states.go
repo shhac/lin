@@ -7,9 +7,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/shhac/lin/internal/filters"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/ptr"
+	"github.com/shhac/lin/internal/resolvers"
 )
 
 func registerStates(team *cobra.Command) {
@@ -21,8 +22,13 @@ func registerStates(team *cobra.Command) {
 			teamInput := args[0]
 			client := linear.GetClient()
 
+			team, err := resolvers.ResolveTeam(client, teamInput)
+			if err != nil {
+				output.PrintError(err.Error())
+			}
+
 			filter := &linear.WorkflowStateFilter{
-				Team: filters.BuildTeamFilter(teamInput),
+				Team: &linear.TeamFilter{Id: &linear.IDComparator{Eq: ptr.To(team.ID)}},
 			}
 			resp, err := linear.WorkflowStates(context.Background(), client, filter)
 			if err != nil {

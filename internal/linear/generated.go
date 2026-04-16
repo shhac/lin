@@ -12,23 +12,23 @@ import (
 // Activity collection filtering options.
 type ActivityCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Filters that the activity's user must satisfy.
-	User *UserFilter `json:"user"`
+	User *UserFilter `json:"user,omitempty"`
 	// Compound filters, all of which need to be matched by the activity.
-	And []ActivityCollectionFilter `json:"and"`
+	And []ActivityCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the activity.
-	Or []ActivityCollectionFilter `json:"or"`
+	Or []ActivityCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some activities.
-	Some *ActivityFilter `json:"some"`
+	Some *ActivityFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all activities.
-	Every *ActivityFilter `json:"every"`
+	Every *ActivityFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns ActivityCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -61,17 +61,17 @@ func (v *ActivityCollectionFilter) GetLength() *NumberComparator { return v.Leng
 // Activity filtering options.
 type ActivityFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Filters that the activity's user must satisfy.
-	User *UserFilter `json:"user"`
+	User *UserFilter `json:"user,omitempty"`
 	// Compound filters, all of which need to be matched by the activity.
-	And []ActivityFilter `json:"and"`
+	And []ActivityFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the activity.
-	Or []ActivityFilter `json:"or"`
+	Or []ActivityFilter `json:"or,omitempty"`
 }
 
 // GetId returns ActivityFilter.Id, and is useful for accessing the field via an interface.
@@ -95,31 +95,31 @@ func (v *ActivityFilter) GetOr() []ActivityFilter { return v.Or }
 // Attachment collection filtering options.
 type AttachmentCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the title.
-	Title *StringComparator `json:"title"`
+	Title *StringComparator `json:"title,omitempty"`
 	// Comparator for the subtitle.
-	Subtitle *NullableStringComparator `json:"subtitle"`
+	Subtitle *NullableStringComparator `json:"subtitle,omitempty"`
 	// Comparator for the url.
-	Url *StringComparator `json:"url"`
+	Url *StringComparator `json:"url,omitempty"`
 	// Filters that the attachments creator must satisfy.
-	Creator *NullableUserFilter `json:"creator"`
+	Creator *NullableUserFilter `json:"creator,omitempty"`
 	// Comparator for the source type.
-	SourceType *SourceTypeComparator `json:"sourceType"`
+	SourceType *SourceTypeComparator `json:"sourceType,omitempty"`
 	// Compound filters, all of which need to be matched by the attachment.
-	And []AttachmentCollectionFilter `json:"and"`
+	And []AttachmentCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the attachment.
-	Or []AttachmentCollectionFilter `json:"or"`
+	Or []AttachmentCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some attachments.
-	Some *AttachmentFilter `json:"some"`
+	Some *AttachmentFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all attachments.
-	Every *AttachmentFilter `json:"every"`
+	Every *AttachmentFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns AttachmentCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -207,27 +207,27 @@ func (v *AttachmentCreateAttachmentCreateAttachmentPayloadAttachment) GetUrl() s
 // Input for creating a new issue attachment.
 type AttachmentCreateInput struct {
 	// The identifier in UUID v4 format. If none is provided, the backend will generate one.
-	Id *string `json:"id"`
+	Id *string `json:"id,omitempty"`
 	// The attachment title.
 	Title string `json:"title"`
 	// The attachment subtitle.
-	Subtitle *string `json:"subtitle"`
+	Subtitle *string `json:"subtitle,omitempty"`
 	// Attachment location which is also used as an unique identifier for the attachment. If another attachment is created with the same `url` value, existing record is updated instead.
 	Url string `json:"url"`
 	// The issue to associate the attachment with. Can be a UUID or issue identifier (e.g., 'LIN-123').
 	IssueId string `json:"issueId"`
 	// An icon url to display with the attachment. Should be of jpg or png format. Maximum of 1MB in size. Dimensions should be 20x20px for optimal display quality.
-	IconUrl *string `json:"iconUrl"`
+	IconUrl *string `json:"iconUrl,omitempty"`
 	// Attachment metadata object with string and number values.
 	Metadata *map[string]interface{} `json:"metadata"`
 	// Indicates if attachments for the same source application should be grouped in the Linear UI.
-	GroupBySource *bool `json:"groupBySource"`
+	GroupBySource *bool `json:"groupBySource,omitempty"`
 	// Create a linked comment with markdown body.
-	CommentBody *string `json:"commentBody"`
+	CommentBody *string `json:"commentBody,omitempty"`
 	// [Internal] Create a linked comment with Prosemirror body. Please use `commentBody` instead.
 	CommentBodyData *map[string]interface{} `json:"commentBodyData"`
 	// Create attachment as a user with the provided name. This option is only available to OAuth applications creating attachments in `actor=application` mode.
-	CreateAsUser *string `json:"createAsUser"`
+	CreateAsUser *string `json:"createAsUser,omitempty"`
 }
 
 // GetId returns AttachmentCreateInput.Id, and is useful for accessing the field via an interface.
@@ -302,25 +302,25 @@ func (v *AttachmentDeleteResponse) GetAttachmentDelete() AttachmentDeleteAttachm
 // Attachment filtering options.
 type AttachmentFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the title.
-	Title *StringComparator `json:"title"`
+	Title *StringComparator `json:"title,omitempty"`
 	// Comparator for the subtitle.
-	Subtitle *NullableStringComparator `json:"subtitle"`
+	Subtitle *NullableStringComparator `json:"subtitle,omitempty"`
 	// Comparator for the url.
-	Url *StringComparator `json:"url"`
+	Url *StringComparator `json:"url,omitempty"`
 	// Filters that the attachments creator must satisfy.
-	Creator *NullableUserFilter `json:"creator"`
+	Creator *NullableUserFilter `json:"creator,omitempty"`
 	// Comparator for the source type.
-	SourceType *SourceTypeComparator `json:"sourceType"`
+	SourceType *SourceTypeComparator `json:"sourceType,omitempty"`
 	// Compound filters, all of which need to be matched by the attachment.
-	And []AttachmentFilter `json:"and"`
+	And []AttachmentFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the attachment.
-	Or []AttachmentFilter `json:"or"`
+	Or []AttachmentFilter `json:"or,omitempty"`
 }
 
 // GetId returns AttachmentFilter.Id, and is useful for accessing the field via an interface.
@@ -356,9 +356,9 @@ func (v *AttachmentFilter) GetOr() []AttachmentFilter { return v.Or }
 // Comparator for booleans.
 type BooleanComparator struct {
 	// Equals constraint.
-	Eq *bool `json:"eq"`
+	Eq *bool `json:"eq,omitempty"`
 	// Not equals constraint.
-	Neq *bool `json:"neq"`
+	Neq *bool `json:"neq,omitempty"`
 }
 
 // GetEq returns BooleanComparator.Eq, and is useful for accessing the field via an interface.
@@ -370,41 +370,41 @@ func (v *BooleanComparator) GetNeq() *bool { return v.Neq }
 // Comment filtering options.
 type CommentCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the comment's body.
-	Body *StringComparator `json:"body"`
+	Body *StringComparator `json:"body,omitempty"`
 	// Filters that the comment's creator must satisfy.
-	User *UserFilter `json:"user"`
+	User *UserFilter `json:"user,omitempty"`
 	// Filters that the comment's issue must satisfy.
-	Issue *NullableIssueFilter `json:"issue"`
+	Issue *NullableIssueFilter `json:"issue,omitempty"`
 	// Filters that the comment's project update must satisfy.
-	ProjectUpdate *NullableProjectUpdateFilter `json:"projectUpdate"`
+	ProjectUpdate *NullableProjectUpdateFilter `json:"projectUpdate,omitempty"`
 	// Filters that the comment parent must satisfy.
-	Parent *NullableCommentFilter `json:"parent"`
+	Parent *NullableCommentFilter `json:"parent,omitempty"`
 	// Filters that the comment's document content must satisfy.
-	DocumentContent *NullableDocumentContentFilter `json:"documentContent"`
+	DocumentContent *NullableDocumentContentFilter `json:"documentContent,omitempty"`
 	// [Internal] Filters that the comment's project must satisfy.
-	Project *NullableProjectFilter `json:"project"`
+	Project *NullableProjectFilter `json:"project,omitempty"`
 	// [Internal] Filters that the comment's initiative must satisfy.
-	Initiative *NullableInitiativeFilter `json:"initiative"`
+	Initiative *NullableInitiativeFilter `json:"initiative,omitempty"`
 	// Filters that the comment's reactions must satisfy.
-	Reactions *ReactionCollectionFilter `json:"reactions"`
+	Reactions *ReactionCollectionFilter `json:"reactions,omitempty"`
 	// Filters that the comment's customer needs must satisfy.
-	Needs *CustomerNeedCollectionFilter `json:"needs"`
+	Needs *CustomerNeedCollectionFilter `json:"needs,omitempty"`
 	// Compound filters, all of which need to be matched by the comment.
-	And []CommentCollectionFilter `json:"and"`
+	And []CommentCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the comment.
-	Or []CommentCollectionFilter `json:"or"`
+	Or []CommentCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some comments.
-	Some *CommentFilter `json:"some"`
+	Some *CommentFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all comments.
-	Every *CommentFilter `json:"every"`
+	Every *CommentFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns CommentCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -504,41 +504,41 @@ func (v *CommentCreateCommentCreateCommentPayloadComment) GetBody() string { ret
 // Input for creating a new comment.
 type CommentCreateInput struct {
 	// The identifier in UUID v4 format. If none is provided, the backend will generate one.
-	Id *string `json:"id"`
+	Id *string `json:"id,omitempty"`
 	// The comment content in markdown format.
-	Body *string `json:"body"`
+	Body *string `json:"body,omitempty"`
 	// [Internal] The comment content as a Prosemirror document.
 	BodyData *map[string]interface{} `json:"bodyData"`
 	// The issue to associate the comment with. Can be a UUID or issue identifier (e.g., 'LIN-123').
-	IssueId *string `json:"issueId"`
+	IssueId *string `json:"issueId,omitempty"`
 	// The project update to associate the comment with.
-	ProjectUpdateId *string `json:"projectUpdateId"`
+	ProjectUpdateId *string `json:"projectUpdateId,omitempty"`
 	// The initiative update to associate the comment with.
-	InitiativeUpdateId *string `json:"initiativeUpdateId"`
+	InitiativeUpdateId *string `json:"initiativeUpdateId,omitempty"`
 	// The post to associate the comment with.
-	PostId *string `json:"postId"`
+	PostId *string `json:"postId,omitempty"`
 	// The document content to associate the comment with.
-	DocumentContentId *string `json:"documentContentId"`
+	DocumentContentId *string `json:"documentContentId,omitempty"`
 	// [Internal] The project to associate the comment with.
-	ProjectId *string `json:"projectId"`
+	ProjectId *string `json:"projectId,omitempty"`
 	// [Internal] The initiative to associate the comment with.
-	InitiativeId *string `json:"initiativeId"`
+	InitiativeId *string `json:"initiativeId,omitempty"`
 	// The parent comment under which to nest a current comment.
-	ParentId *string `json:"parentId"`
+	ParentId *string `json:"parentId,omitempty"`
 	// Create comment as a user with the provided name. This option is only available to OAuth applications creating comments in `actor=app` mode.
-	CreateAsUser *string `json:"createAsUser"`
+	CreateAsUser *string `json:"createAsUser,omitempty"`
 	// Provide an external user avatar URL. Can only be used in conjunction with the `createAsUser` options. This option is only available to OAuth applications creating comments in `actor=app` mode.
-	DisplayIconUrl *string `json:"displayIconUrl"`
+	DisplayIconUrl *string `json:"displayIconUrl,omitempty"`
 	// The time at which the comment was created (e.g. if importing from another system). Must be a time in the past. If none is provided, the backend will generate the time as now.
-	CreatedAt *string `json:"createdAt"`
+	CreatedAt *string `json:"createdAt,omitempty"`
 	// Flag to prevent auto subscription to the issue the comment is created on.
-	DoNotSubscribeToIssue *bool `json:"doNotSubscribeToIssue"`
+	DoNotSubscribeToIssue *bool `json:"doNotSubscribeToIssue,omitempty"`
 	// Flag to indicate this comment should be created on the issue's synced Slack comment thread. If no synced Slack comment thread exists, the mutation will fail. If there are multiple synced Slack threads on the issue, the oldest one will be targeted.
-	CreateOnSyncedSlackThread *bool `json:"createOnSyncedSlackThread"`
+	CreateOnSyncedSlackThread *bool `json:"createOnSyncedSlackThread,omitempty"`
 	// The text that this comment references. Only defined for inline comments.
-	QuotedText *string `json:"quotedText"`
+	QuotedText *string `json:"quotedText,omitempty"`
 	// [INTERNAL] The identifiers of the users subscribing to this comment thread.
-	SubscriberIds []string `json:"subscriberIds"`
+	SubscriberIds []string `json:"subscriberIds,omitempty"`
 }
 
 // GetId returns CommentCreateInput.Id, and is useful for accessing the field via an interface.
@@ -609,35 +609,35 @@ func (v *CommentCreateResponse) GetCommentCreate() CommentCreateCommentCreateCom
 // Comment filtering options.
 type CommentFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the comment's body.
-	Body *StringComparator `json:"body"`
+	Body *StringComparator `json:"body,omitempty"`
 	// Filters that the comment's creator must satisfy.
-	User *UserFilter `json:"user"`
+	User *UserFilter `json:"user,omitempty"`
 	// Filters that the comment's issue must satisfy.
-	Issue *NullableIssueFilter `json:"issue"`
+	Issue *NullableIssueFilter `json:"issue,omitempty"`
 	// Filters that the comment's project update must satisfy.
-	ProjectUpdate *NullableProjectUpdateFilter `json:"projectUpdate"`
+	ProjectUpdate *NullableProjectUpdateFilter `json:"projectUpdate,omitempty"`
 	// Filters that the comment parent must satisfy.
-	Parent *NullableCommentFilter `json:"parent"`
+	Parent *NullableCommentFilter `json:"parent,omitempty"`
 	// Filters that the comment's document content must satisfy.
-	DocumentContent *NullableDocumentContentFilter `json:"documentContent"`
+	DocumentContent *NullableDocumentContentFilter `json:"documentContent,omitempty"`
 	// [Internal] Filters that the comment's project must satisfy.
-	Project *NullableProjectFilter `json:"project"`
+	Project *NullableProjectFilter `json:"project,omitempty"`
 	// [Internal] Filters that the comment's initiative must satisfy.
-	Initiative *NullableInitiativeFilter `json:"initiative"`
+	Initiative *NullableInitiativeFilter `json:"initiative,omitempty"`
 	// Filters that the comment's reactions must satisfy.
-	Reactions *ReactionCollectionFilter `json:"reactions"`
+	Reactions *ReactionCollectionFilter `json:"reactions,omitempty"`
 	// Filters that the comment's customer needs must satisfy.
-	Needs *CustomerNeedCollectionFilter `json:"needs"`
+	Needs *CustomerNeedCollectionFilter `json:"needs,omitempty"`
 	// Compound filters, all of which need to be matched by the comment.
-	And []CommentFilter `json:"and"`
+	And []CommentFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the comment.
-	Or []CommentFilter `json:"or"`
+	Or []CommentFilter `json:"or,omitempty"`
 }
 
 // GetId returns CommentFilter.Id, and is useful for accessing the field via an interface.
@@ -700,11 +700,11 @@ type CommentGetComment struct {
 	// been updated after creation.
 	UpdatedAt string `json:"updatedAt"`
 	// The user who wrote the comment. Null for comments created by integrations or bots without a user association.
-	User *CommentGetCommentUser `json:"user"`
+	User *CommentGetCommentUser `json:"user,omitempty"`
 	// The issue that the comment is associated with. Null if the comment belongs to a different parent entity type.
-	Issue *CommentGetCommentIssue `json:"issue"`
+	Issue *CommentGetCommentIssue `json:"issue,omitempty"`
 	// The parent comment under which the current comment is nested. Null for top-level comments that are not replies.
-	Parent *CommentGetCommentParentComment `json:"parent"`
+	Parent *CommentGetCommentParentComment `json:"parent,omitempty"`
 }
 
 // GetId returns CommentGetComment.Id, and is useful for accessing the field via an interface.
@@ -799,7 +799,7 @@ func (v *CommentRepliesComment) GetChildren() CommentRepliesCommentChildrenComme
 
 // CommentRepliesCommentChildrenCommentConnection includes the requested fields of the GraphQL type CommentConnection.
 type CommentRepliesCommentChildrenCommentConnection struct {
-	Nodes    []CommentRepliesCommentChildrenCommentConnectionNodesComment `json:"nodes"`
+	Nodes    []CommentRepliesCommentChildrenCommentConnectionNodesComment `json:"nodes,omitempty"`
 	PageInfo CommentRepliesCommentChildrenCommentConnectionPageInfo       `json:"pageInfo"`
 }
 
@@ -828,7 +828,7 @@ type CommentRepliesCommentChildrenCommentConnectionNodesComment struct {
 	// been updated after creation.
 	UpdatedAt string `json:"updatedAt"`
 	// The user who wrote the comment. Null for comments created by integrations or bots without a user association.
-	User *CommentRepliesCommentChildrenCommentConnectionNodesCommentUser `json:"user"`
+	User *CommentRepliesCommentChildrenCommentConnectionNodesCommentUser `json:"user,omitempty"`
 }
 
 // GetId returns CommentRepliesCommentChildrenCommentConnectionNodesComment.Id, and is useful for accessing the field via an interface.
@@ -914,7 +914,7 @@ func (v *CommentRepliesCommentChildrenCommentConnectionPageInfo) UnmarshalJSON(b
 type __premarshalCommentRepliesCommentChildrenCommentConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *CommentRepliesCommentChildrenCommentConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -957,19 +957,19 @@ func (v *CommentUpdateCommentUpdateCommentPayload) GetSuccess() bool { return v.
 // Input for updating an existing comment.
 type CommentUpdateInput struct {
 	// The comment content.
-	Body *string `json:"body"`
+	Body *string `json:"body,omitempty"`
 	// [Internal] The comment content as a Prosemirror document.
 	BodyData *map[string]interface{} `json:"bodyData"`
 	// [INTERNAL] The user who resolved this thread.
-	ResolvingUserId *string `json:"resolvingUserId"`
+	ResolvingUserId *string `json:"resolvingUserId,omitempty"`
 	// [INTERNAL] The child comment that resolves this thread.
-	ResolvingCommentId *string `json:"resolvingCommentId"`
+	ResolvingCommentId *string `json:"resolvingCommentId,omitempty"`
 	// The text that this comment references. Only defined for inline comments.
-	QuotedText *string `json:"quotedText"`
+	QuotedText *string `json:"quotedText,omitempty"`
 	// [INTERNAL] The identifiers of the users subscribing to this comment.
-	SubscriberIds []string `json:"subscriberIds"`
+	SubscriberIds []string `json:"subscriberIds,omitempty"`
 	// [INTERNAL] Flag to prevent auto subscription to the issue the comment is updated on.
-	DoNotSubscribeToIssue *bool `json:"doNotSubscribeToIssue"`
+	DoNotSubscribeToIssue *bool `json:"doNotSubscribeToIssue,omitempty"`
 }
 
 // GetBody returns CommentUpdateInput.Body, and is useful for accessing the field via an interface.
@@ -1007,9 +1007,9 @@ func (v *CommentUpdateResponse) GetCommentUpdate() CommentUpdateCommentUpdateCom
 // [Internal] Comparator for content.
 type ContentComparator struct {
 	// [Internal] Contains constraint.
-	Contains *string `json:"contains"`
+	Contains *string `json:"contains,omitempty"`
 	// [Internal] Not-contains constraint.
-	NotContains *string `json:"notContains"`
+	NotContains *string `json:"notContains,omitempty"`
 }
 
 // GetContains returns ContentComparator.Contains, and is useful for accessing the field via an interface.
@@ -1021,31 +1021,31 @@ func (v *ContentComparator) GetNotContains() *string { return v.NotContains }
 // Customer needs filtering options.
 type CustomerNeedCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the customer need priority.
-	Priority *NumberComparator `json:"priority"`
+	Priority *NumberComparator `json:"priority,omitempty"`
 	// Filters that the need's project must satisfy.
-	Project *NullableProjectFilter `json:"project"`
+	Project *NullableProjectFilter `json:"project,omitempty"`
 	// Filters that the need's issue must satisfy.
-	Issue *NullableIssueFilter `json:"issue"`
+	Issue *NullableIssueFilter `json:"issue,omitempty"`
 	// Filters that the need's comment must satisfy.
-	Comment *NullableCommentFilter `json:"comment"`
+	Comment *NullableCommentFilter `json:"comment,omitempty"`
 	// Filters that the need's customer must satisfy.
-	Customer *NullableCustomerFilter `json:"customer"`
+	Customer *NullableCustomerFilter `json:"customer,omitempty"`
 	// Compound filters, all of which need to be matched by the customer needs.
-	And []CustomerNeedCollectionFilter `json:"and"`
+	And []CustomerNeedCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the customer needs.
-	Or []CustomerNeedCollectionFilter `json:"or"`
+	Or []CustomerNeedCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some customer needs.
-	Some *CustomerNeedFilter `json:"some"`
+	Some *CustomerNeedFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all customer needs.
-	Every *CustomerNeedFilter `json:"every"`
+	Every *CustomerNeedFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns CustomerNeedCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -1090,25 +1090,25 @@ func (v *CustomerNeedCollectionFilter) GetLength() *NumberComparator { return v.
 // Customer filtering options.
 type CustomerNeedFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the customer need priority.
-	Priority *NumberComparator `json:"priority"`
+	Priority *NumberComparator `json:"priority,omitempty"`
 	// Filters that the need's project must satisfy.
-	Project *NullableProjectFilter `json:"project"`
+	Project *NullableProjectFilter `json:"project,omitempty"`
 	// Filters that the need's issue must satisfy.
-	Issue *NullableIssueFilter `json:"issue"`
+	Issue *NullableIssueFilter `json:"issue,omitempty"`
 	// Filters that the need's comment must satisfy.
-	Comment *NullableCommentFilter `json:"comment"`
+	Comment *NullableCommentFilter `json:"comment,omitempty"`
 	// Filters that the need's customer must satisfy.
-	Customer *NullableCustomerFilter `json:"customer"`
+	Customer *NullableCustomerFilter `json:"customer,omitempty"`
 	// Compound filters, all of which need to be matched by the customer need.
-	And []CustomerNeedFilter `json:"and"`
+	And []CustomerNeedFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the customer need.
-	Or []CustomerNeedFilter `json:"or"`
+	Or []CustomerNeedFilter `json:"or,omitempty"`
 }
 
 // GetId returns CustomerNeedFilter.Id, and is useful for accessing the field via an interface.
@@ -1144,25 +1144,25 @@ func (v *CustomerNeedFilter) GetOr() []CustomerNeedFilter { return v.Or }
 // Customer status filtering options.
 type CustomerStatusFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the customer status name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the customer status description.
-	Description *StringComparator `json:"description"`
+	Description *StringComparator `json:"description,omitempty"`
 	// Comparator for the customer status position.
-	Position *NumberComparator `json:"position"`
+	Position *NumberComparator `json:"position,omitempty"`
 	// Comparator for the customer status type.
-	Type *StringComparator `json:"type"`
+	Type *StringComparator `json:"type,omitempty"`
 	// Comparator for the customer status color.
-	Color *StringComparator `json:"color"`
+	Color *StringComparator `json:"color,omitempty"`
 	// Compound filters, all of which need to be matched by the customer status.
-	And []CustomerStatusFilter `json:"and"`
+	And []CustomerStatusFilter `json:"and,omitempty"`
 	// Compound filters, one of which needs to be matched by the customer status.
-	Or []CustomerStatusFilter `json:"or"`
+	Or []CustomerStatusFilter `json:"or,omitempty"`
 }
 
 // GetId returns CustomerStatusFilter.Id, and is useful for accessing the field via an interface.
@@ -1198,25 +1198,25 @@ func (v *CustomerStatusFilter) GetOr() []CustomerStatusFilter { return v.Or }
 // Customer tier filtering options.
 type CustomerTierFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// [Deprecated] Comparator for the customer tier name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the customer tier display name.
-	DisplayName *StringComparator `json:"displayName"`
+	DisplayName *StringComparator `json:"displayName,omitempty"`
 	// Comparator for the customer tier description.
-	Description *StringComparator `json:"description"`
+	Description *StringComparator `json:"description,omitempty"`
 	// Comparator for the customer tier position.
-	Position *NumberComparator `json:"position"`
+	Position *NumberComparator `json:"position,omitempty"`
 	// Comparator for the customer tier color.
-	Color *StringComparator `json:"color"`
+	Color *StringComparator `json:"color,omitempty"`
 	// Compound filters, all of which need to be matched by the customer tier.
-	And []CustomerTierFilter `json:"and"`
+	And []CustomerTierFilter `json:"and,omitempty"`
 	// Compound filters, one of which needs to be matched by the customer tier.
-	Or []CustomerTierFilter `json:"or"`
+	Or []CustomerTierFilter `json:"or,omitempty"`
 }
 
 // GetId returns CustomerTierFilter.Id, and is useful for accessing the field via an interface.
@@ -1252,43 +1252,43 @@ func (v *CustomerTierFilter) GetOr() []CustomerTierFilter { return v.Or }
 // Cycle filtering options.
 type CycleFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the cycle number.
-	Number *NumberComparator `json:"number"`
+	Number *NumberComparator `json:"number,omitempty"`
 	// Comparator for the cycle name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the cycle start date.
-	StartsAt *DateComparator `json:"startsAt"`
+	StartsAt *DateComparator `json:"startsAt,omitempty"`
 	// Comparator for the cycle ends at date.
-	EndsAt *DateComparator `json:"endsAt"`
+	EndsAt *DateComparator `json:"endsAt,omitempty"`
 	// Comparator for the cycle completed at date.
-	CompletedAt *DateComparator `json:"completedAt"`
+	CompletedAt *DateComparator `json:"completedAt,omitempty"`
 	// Comparator for the filtering active cycle.
-	IsActive *BooleanComparator `json:"isActive"`
+	IsActive *BooleanComparator `json:"isActive,omitempty"`
 	// Comparator for filtering for whether the cycle is currently in cooldown.
-	IsInCooldown *BooleanComparator `json:"isInCooldown"`
+	IsInCooldown *BooleanComparator `json:"isInCooldown,omitempty"`
 	// Comparator for the filtering next cycle.
-	IsNext *BooleanComparator `json:"isNext"`
+	IsNext *BooleanComparator `json:"isNext,omitempty"`
 	// Comparator for the filtering previous cycle.
-	IsPrevious *BooleanComparator `json:"isPrevious"`
+	IsPrevious *BooleanComparator `json:"isPrevious,omitempty"`
 	// Comparator for the filtering future cycles.
-	IsFuture *BooleanComparator `json:"isFuture"`
+	IsFuture *BooleanComparator `json:"isFuture,omitempty"`
 	// Comparator for the filtering past cycles.
-	IsPast *BooleanComparator `json:"isPast"`
+	IsPast *BooleanComparator `json:"isPast,omitempty"`
 	// Filters that the cycles team must satisfy.
-	Team *TeamFilter `json:"team"`
+	Team *TeamFilter `json:"team,omitempty"`
 	// Filters that the cycles issues must satisfy.
-	Issues *IssueCollectionFilter `json:"issues"`
+	Issues *IssueCollectionFilter `json:"issues,omitempty"`
 	// Comparator for the inherited cycle ID.
-	InheritedFromId *IDComparator `json:"inheritedFromId"`
+	InheritedFromId *IDComparator `json:"inheritedFromId,omitempty"`
 	// Compound filters, all of which need to be matched by the cycle.
-	And []CycleFilter `json:"and"`
+	And []CycleFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the cycle.
-	Or []CycleFilter `json:"or"`
+	Or []CycleFilter `json:"or,omitempty"`
 }
 
 // GetId returns CycleFilter.Id, and is useful for accessing the field via an interface.
@@ -1358,7 +1358,7 @@ type CycleGetCycle struct {
 	// The auto-incrementing number of the cycle, unique within its team. This value is assigned automatically by the database and cannot be set on creation.
 	Number float64 `json:"number"`
 	// The custom name of the cycle. If not set, the cycle is displayed using its number (e.g., "Cycle 5").
-	Name *string `json:"name"`
+	Name *string `json:"name,omitempty"`
 	// The start date and time of the cycle.
 	StartsAt string `json:"startsAt"`
 	// The end date and time of the cycle. When a cycle is completed prematurely, this is updated to match the completion time. When cycles are disabled, both endsAt and completedAt are set to the current time.
@@ -1387,7 +1387,7 @@ func (v *CycleGetCycle) GetIssues() CycleGetCycleIssuesIssueConnection { return 
 
 // CycleGetCycleIssuesIssueConnection includes the requested fields of the GraphQL type IssueConnection.
 type CycleGetCycleIssuesIssueConnection struct {
-	Nodes []CycleGetCycleIssuesIssueConnectionNodesIssue `json:"nodes"`
+	Nodes []CycleGetCycleIssuesIssueConnectionNodesIssue `json:"nodes,omitempty"`
 }
 
 // GetNodes returns CycleGetCycleIssuesIssueConnection.Nodes, and is useful for accessing the field via an interface.
@@ -1486,7 +1486,7 @@ type __premarshalCycleGetCycleIssuesIssueConnectionNodesIssue struct {
 
 	State IssueSummaryFieldsStateWorkflowState `json:"state"`
 
-	Assignee *IssueSummaryFieldsAssigneeUser `json:"assignee"`
+	Assignee *IssueSummaryFieldsAssigneeUser `json:"assignee,omitempty"`
 
 	Team IssueSummaryFieldsTeam `json:"team"`
 }
@@ -1540,15 +1540,15 @@ var AllCyclePeriod = []CyclePeriod{
 // Comparator for period when issue was added to a cycle.
 type CyclePeriodComparator struct {
 	// Equals constraint.
-	Eq *CyclePeriod `json:"eq"`
+	Eq *CyclePeriod `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *CyclePeriod `json:"neq"`
+	Neq *CyclePeriod `json:"neq,omitempty"`
 	// In-array constraint.
-	In []CyclePeriod `json:"in"`
+	In []CyclePeriod `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []CyclePeriod `json:"nin"`
+	Nin []CyclePeriod `json:"nin,omitempty"`
 	// Null constraint. Matches any non-null values if the given value is false, otherwise it matches null values.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 }
 
 // GetEq returns CyclePeriodComparator.Eq, and is useful for accessing the field via an interface.
@@ -1569,21 +1569,21 @@ func (v *CyclePeriodComparator) GetNull() *bool { return v.Null }
 // Comparator for dates.
 type DateComparator struct {
 	// Equals constraint.
-	Eq *string `json:"eq"`
+	Eq *string `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *string `json:"neq"`
+	Neq *string `json:"neq,omitempty"`
 	// In-array constraint.
-	In []string `json:"in"`
+	In []string `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []string `json:"nin"`
+	Nin []string `json:"nin,omitempty"`
 	// Less-than constraint. Matches any values that are less than the given value.
-	Lt *string `json:"lt"`
+	Lt *string `json:"lt,omitempty"`
 	// Less-than-or-equal constraint. Matches any values that are less than or equal to the given value.
-	Lte *string `json:"lte"`
+	Lte *string `json:"lte,omitempty"`
 	// Greater-than constraint. Matches any values that are greater than the given value.
-	Gt *string `json:"gt"`
+	Gt *string `json:"gt,omitempty"`
 	// Greater-than-or-equal constraint. Matches any values that are greater than or equal to the given value.
-	Gte *string `json:"gte"`
+	Gte *string `json:"gte,omitempty"`
 }
 
 // GetEq returns DateComparator.Eq, and is useful for accessing the field via an interface.
@@ -1664,9 +1664,9 @@ type DocSearchSummaryFields struct {
 	// been updated after creation.
 	UpdatedAt string `json:"updatedAt"`
 	// The user who created the document. Null if the creator's account has been deleted.
-	Creator *DocSearchSummaryFieldsCreatorUser `json:"creator"`
+	Creator *DocSearchSummaryFieldsCreatorUser `json:"creator,omitempty"`
 	// The project that the document is associated with. Null if the document belongs to a different parent entity type.
-	Project *DocSearchSummaryFieldsProject `json:"project"`
+	Project *DocSearchSummaryFieldsProject `json:"project,omitempty"`
 }
 
 // GetId returns DocSearchSummaryFields.Id, and is useful for accessing the field via an interface.
@@ -1741,9 +1741,9 @@ type DocSummaryFields struct {
 	// been updated after creation.
 	UpdatedAt string `json:"updatedAt"`
 	// The user who created the document. Null if the creator's account has been deleted.
-	Creator *DocSummaryFieldsCreatorUser `json:"creator"`
+	Creator *DocSummaryFieldsCreatorUser `json:"creator,omitempty"`
 	// The project that the document is associated with. Null if the document belongs to a different parent entity type.
-	Project *DocSummaryFieldsProject `json:"project"`
+	Project *DocSummaryFieldsProject `json:"project,omitempty"`
 }
 
 // GetId returns DocSummaryFields.Id, and is useful for accessing the field via an interface.
@@ -1806,7 +1806,7 @@ type DocumentContentHistoryDocumentContentHistoryDocumentContentHistoryPayload s
 	// Whether the operation was successful.
 	Success bool `json:"success"`
 	// The document content history entries.
-	History []DocumentContentHistoryDocumentContentHistoryDocumentContentHistoryPayloadHistoryDocumentContentHistoryType `json:"history"`
+	History []DocumentContentHistoryDocumentContentHistoryDocumentContentHistoryPayloadHistoryDocumentContentHistoryType `json:"history,omitempty"`
 }
 
 // GetSuccess returns DocumentContentHistoryDocumentContentHistoryDocumentContentHistoryPayload.Success, and is useful for accessing the field via an interface.
@@ -1824,7 +1824,7 @@ type DocumentContentHistoryDocumentContentHistoryDocumentContentHistoryPayloadHi
 	// The unique identifier of the document content history entry.
 	Id string `json:"id"`
 	// IDs of users whose edits are included in this history entry.
-	ActorIds []string `json:"actorIds"`
+	ActorIds []string `json:"actorIds,omitempty"`
 	// The timestamp of the document content state when this snapshot was captured. This can differ from createdAt because the content is captured from its state at the previously known updatedAt timestamp in the case of an update. On document creation, these timestamps can be identical.
 	ContentDataSnapshotAt string `json:"contentDataSnapshotAt"`
 	// The date when this document content history entry record was created.
@@ -1911,37 +1911,37 @@ func (v *DocumentCreateDocumentCreateDocumentPayloadDocument) GetUrl() string { 
 // Input for creating a new document.
 type DocumentCreateInput struct {
 	// The identifier in UUID v4 format. If none is provided, the backend will generate one.
-	Id *string `json:"id"`
+	Id *string `json:"id,omitempty"`
 	// The title of the document.
 	Title string `json:"title"`
 	// The icon of the document.
-	Icon *string `json:"icon"`
+	Icon *string `json:"icon,omitempty"`
 	// The color of the icon.
-	Color *string `json:"color"`
+	Color *string `json:"color,omitempty"`
 	// [Internal] The document content as a Prosemirror document.
 	ContentData *map[string]interface{} `json:"contentData"`
 	// The document content as markdown.
-	Content *string `json:"content"`
+	Content *string `json:"content,omitempty"`
 	// Related project for the document.
-	ProjectId *string `json:"projectId"`
+	ProjectId *string `json:"projectId,omitempty"`
 	// [Internal] Related initiative for the document.
-	InitiativeId *string `json:"initiativeId"`
+	InitiativeId *string `json:"initiativeId,omitempty"`
 	// [Internal] Related team for the document.
-	TeamId *string `json:"teamId"`
+	TeamId *string `json:"teamId,omitempty"`
 	// Related issue for the document. Can be a UUID or issue identifier (e.g., 'LIN-123').
-	IssueId *string `json:"issueId"`
+	IssueId *string `json:"issueId,omitempty"`
 	// [Internal] Related release for the document.
-	ReleaseId *string `json:"releaseId"`
+	ReleaseId *string `json:"releaseId,omitempty"`
 	// [Internal] Related cycle for the document.
-	CycleId *string `json:"cycleId"`
+	CycleId *string `json:"cycleId,omitempty"`
 	// [Internal] The resource folder containing the document.
-	ResourceFolderId *string `json:"resourceFolderId"`
+	ResourceFolderId *string `json:"resourceFolderId,omitempty"`
 	// The ID of the last template applied to the document.
-	LastAppliedTemplateId *string `json:"lastAppliedTemplateId"`
+	LastAppliedTemplateId *string `json:"lastAppliedTemplateId,omitempty"`
 	// The order of the item in the resources list.
-	SortOrder *float64 `json:"sortOrder"`
+	SortOrder *float64 `json:"sortOrder,omitempty"`
 	// [INTERNAL] The identifiers of the users subscribing to this document.
-	SubscriberIds []string `json:"subscriberIds"`
+	SubscriberIds []string `json:"subscriberIds,omitempty"`
 }
 
 // GetId returns DocumentCreateInput.Id, and is useful for accessing the field via an interface.
@@ -2006,31 +2006,31 @@ func (v *DocumentCreateResponse) GetDocumentCreate() DocumentCreateDocumentCreat
 // Document filtering options.
 type DocumentFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the document title.
-	Title *StringComparator `json:"title"`
+	Title *StringComparator `json:"title,omitempty"`
 	// Comparator for the document slug ID.
-	SlugId *StringComparator `json:"slugId"`
+	SlugId *StringComparator `json:"slugId,omitempty"`
 	// Filters that the document's creator must satisfy.
-	Creator *UserFilter `json:"creator"`
+	Creator *UserFilter `json:"creator,omitempty"`
 	// Filters that the document's project must satisfy.
-	Project *ProjectFilter `json:"project"`
+	Project *ProjectFilter `json:"project,omitempty"`
 	// Filters that the document's issue must satisfy.
-	Issue *IssueFilter `json:"issue"`
+	Issue *IssueFilter `json:"issue,omitempty"`
 	// Filters that the document's initiative must satisfy.
-	Initiative *InitiativeFilter `json:"initiative"`
+	Initiative *InitiativeFilter `json:"initiative,omitempty"`
 	// Filters that the document's cycle must satisfy.
-	Cycle *CycleFilter `json:"cycle"`
+	Cycle *CycleFilter `json:"cycle,omitempty"`
 	// Filters that the document's release must satisfy.
-	Release *ReleaseFilter `json:"release"`
+	Release *ReleaseFilter `json:"release,omitempty"`
 	// Compound filters, all of which need to be matched by the document.
-	And []DocumentFilter `json:"and"`
+	And []DocumentFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the document.
-	Or []DocumentFilter `json:"or"`
+	Or []DocumentFilter `json:"or,omitempty"`
 }
 
 // GetId returns DocumentFilter.Id, and is useful for accessing the field via an interface.
@@ -2084,24 +2084,24 @@ type DocumentGetDocument struct {
 	// The title of the document. An empty string indicates an untitled document.
 	Title string `json:"title"`
 	// The document's content in markdown format.
-	Content *string `json:"content"`
+	Content *string `json:"content,omitempty"`
 	// The canonical url for the document.
 	Url string `json:"url"`
 	// The icon of the document, either a decorative icon type or an emoji string. Null if no icon has been set.
-	Icon *string `json:"icon"`
+	Icon *string `json:"icon,omitempty"`
 	// The hex color of the document icon. Null if no custom color has been set.
-	Color *string `json:"color"`
+	Color *string `json:"color,omitempty"`
 	// The time at which the entity was created.
 	CreatedAt string `json:"createdAt"`
 	// The last time at which the entity was meaningfully updated. This is the same as the creation time if the entity hasn't
 	// been updated after creation.
 	UpdatedAt string `json:"updatedAt"`
 	// The user who created the document. Null if the creator's account has been deleted.
-	Creator *DocumentGetDocumentCreatorUser `json:"creator"`
+	Creator *DocumentGetDocumentCreatorUser `json:"creator,omitempty"`
 	// The project that the document is associated with. Null if the document belongs to a different parent entity type.
-	Project *DocumentGetDocumentProject `json:"project"`
+	Project *DocumentGetDocumentProject `json:"project,omitempty"`
 	// The user who last updated the document. Null if the user's account has been deleted.
-	UpdatedBy *DocumentGetDocumentUpdatedByUser `json:"updatedBy"`
+	UpdatedBy *DocumentGetDocumentUpdatedByUser `json:"updatedBy,omitempty"`
 }
 
 // GetId returns DocumentGetDocument.Id, and is useful for accessing the field via an interface.
@@ -2207,7 +2207,7 @@ func (v *DocumentGetResponse) GetDocument() DocumentGetDocument { return v.Docum
 
 // DocumentListDocumentsDocumentConnection includes the requested fields of the GraphQL type DocumentConnection.
 type DocumentListDocumentsDocumentConnection struct {
-	Nodes    []DocumentListDocumentsDocumentConnectionNodesDocument `json:"nodes"`
+	Nodes    []DocumentListDocumentsDocumentConnectionNodesDocument `json:"nodes,omitempty"`
 	PageInfo DocumentListDocumentsDocumentConnectionPageInfo        `json:"pageInfo"`
 }
 
@@ -2300,9 +2300,9 @@ type __premarshalDocumentListDocumentsDocumentConnectionNodesDocument struct {
 
 	UpdatedAt string `json:"updatedAt"`
 
-	Creator *DocSummaryFieldsCreatorUser `json:"creator"`
+	Creator *DocSummaryFieldsCreatorUser `json:"creator,omitempty"`
 
-	Project *DocSummaryFieldsProject `json:"project"`
+	Project *DocSummaryFieldsProject `json:"project,omitempty"`
 }
 
 func (v *DocumentListDocumentsDocumentConnectionNodesDocument) MarshalJSON() ([]byte, error) {
@@ -2369,7 +2369,7 @@ func (v *DocumentListDocumentsDocumentConnectionPageInfo) UnmarshalJSON(b []byte
 type __premarshalDocumentListDocumentsDocumentConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *DocumentListDocumentsDocumentConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -2412,7 +2412,7 @@ func (v *DocumentSearchResponse) GetSearchDocuments() DocumentSearchSearchDocume
 
 // DocumentSearchSearchDocumentsDocumentSearchPayload includes the requested fields of the GraphQL type DocumentSearchPayload.
 type DocumentSearchSearchDocumentsDocumentSearchPayload struct {
-	Nodes    []DocumentSearchSearchDocumentsDocumentSearchPayloadNodesDocumentSearchResult `json:"nodes"`
+	Nodes    []DocumentSearchSearchDocumentsDocumentSearchPayloadNodesDocumentSearchResult `json:"nodes,omitempty"`
 	PageInfo DocumentSearchSearchDocumentsDocumentSearchPayloadPageInfo                    `json:"pageInfo"`
 }
 
@@ -2502,9 +2502,9 @@ type __premarshalDocumentSearchSearchDocumentsDocumentSearchPayloadNodesDocument
 
 	UpdatedAt string `json:"updatedAt"`
 
-	Creator *DocSearchSummaryFieldsCreatorUser `json:"creator"`
+	Creator *DocSearchSummaryFieldsCreatorUser `json:"creator,omitempty"`
 
-	Project *DocSearchSummaryFieldsProject `json:"project"`
+	Project *DocSearchSummaryFieldsProject `json:"project,omitempty"`
 }
 
 func (v *DocumentSearchSearchDocumentsDocumentSearchPayloadNodesDocumentSearchResult) MarshalJSON() ([]byte, error) {
@@ -2571,7 +2571,7 @@ func (v *DocumentSearchSearchDocumentsDocumentSearchPayloadPageInfo) UnmarshalJS
 type __premarshalDocumentSearchSearchDocumentsDocumentSearchPayloadPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *DocumentSearchSearchDocumentsDocumentSearchPayloadPageInfo) MarshalJSON() ([]byte, error) {
@@ -2605,39 +2605,39 @@ func (v *DocumentUpdateDocumentUpdateDocumentPayload) GetSuccess() bool { return
 // Input for updating an existing document.
 type DocumentUpdateInput struct {
 	// The title of the document.
-	Title *string `json:"title"`
+	Title *string `json:"title,omitempty"`
 	// The icon of the document.
-	Icon *string `json:"icon"`
+	Icon *string `json:"icon,omitempty"`
 	// The color of the icon.
-	Color *string `json:"color"`
+	Color *string `json:"color,omitempty"`
 	// [Internal] The document content as a Prosemirror document.
 	ContentData *map[string]interface{} `json:"contentData"`
 	// The document content as markdown.
-	Content *string `json:"content"`
+	Content *string `json:"content,omitempty"`
 	// Related project for the document.
-	ProjectId *string `json:"projectId"`
+	ProjectId *string `json:"projectId,omitempty"`
 	// [Internal] Related initiative for the document.
-	InitiativeId *string `json:"initiativeId"`
+	InitiativeId *string `json:"initiativeId,omitempty"`
 	// [Internal] Related team for the document.
-	TeamId *string `json:"teamId"`
+	TeamId *string `json:"teamId,omitempty"`
 	// Related issue for the document. Can be a UUID or issue identifier (e.g., 'LIN-123').
-	IssueId *string `json:"issueId"`
+	IssueId *string `json:"issueId,omitempty"`
 	// [Internal] Related release for the document.
-	ReleaseId *string `json:"releaseId"`
+	ReleaseId *string `json:"releaseId,omitempty"`
 	// [Internal] Related cycle for the document.
-	CycleId *string `json:"cycleId"`
+	CycleId *string `json:"cycleId,omitempty"`
 	// [Internal] The resource folder containing the document.
-	ResourceFolderId *string `json:"resourceFolderId"`
+	ResourceFolderId *string `json:"resourceFolderId,omitempty"`
 	// The ID of the last template applied to the document.
-	LastAppliedTemplateId *string `json:"lastAppliedTemplateId"`
+	LastAppliedTemplateId *string `json:"lastAppliedTemplateId,omitempty"`
 	// The time at which the document was hidden. Set to null to unhide.
-	HiddenAt *string `json:"hiddenAt"`
+	HiddenAt *string `json:"hiddenAt,omitempty"`
 	// The order of the item in the resources list.
-	SortOrder *float64 `json:"sortOrder"`
+	SortOrder *float64 `json:"sortOrder,omitempty"`
 	// Whether the document has been trashed. Set to true to trash, or null to restore from trash.
-	Trashed *bool `json:"trashed"`
+	Trashed *bool `json:"trashed,omitempty"`
 	// [INTERNAL] The identifiers of the users subscribing to this document.
-	SubscriberIds []string `json:"subscriberIds"`
+	SubscriberIds []string `json:"subscriberIds,omitempty"`
 }
 
 // GetTitle returns DocumentUpdateInput.Title, and is useful for accessing the field via an interface.
@@ -2705,27 +2705,27 @@ func (v *DocumentUpdateResponse) GetDocumentUpdate() DocumentUpdateDocumentUpdat
 // Comparator for estimates.
 type EstimateComparator struct {
 	// Equals constraint.
-	Eq *float64 `json:"eq"`
+	Eq *float64 `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *float64 `json:"neq"`
+	Neq *float64 `json:"neq,omitempty"`
 	// In-array constraint.
-	In []float64 `json:"in"`
+	In []float64 `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []float64 `json:"nin"`
+	Nin []float64 `json:"nin,omitempty"`
 	// Null constraint. Matches any non-null values if the given value is false, otherwise it matches null values.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Less-than constraint. Matches any values that are less than the given value.
-	Lt *float64 `json:"lt"`
+	Lt *float64 `json:"lt,omitempty"`
 	// Less-than-or-equal constraint. Matches any values that are less than or equal to the given value.
-	Lte *float64 `json:"lte"`
+	Lte *float64 `json:"lte,omitempty"`
 	// Greater-than constraint. Matches any values that are greater than the given value.
-	Gt *float64 `json:"gt"`
+	Gt *float64 `json:"gt,omitempty"`
 	// Greater-than-or-equal constraint. Matches any values that are greater than or equal to the given value.
-	Gte *float64 `json:"gte"`
+	Gte *float64 `json:"gte,omitempty"`
 	// Compound filters, all of which need to be matched by the estimate.
-	Or []NullableNumberComparator `json:"or"`
+	Or []NullableNumberComparator `json:"or,omitempty"`
 	// Compound filters, one of which need to be matched by the estimate.
-	And []NullableNumberComparator `json:"and"`
+	And []NullableNumberComparator `json:"and,omitempty"`
 }
 
 // GetEq returns EstimateComparator.Eq, and is useful for accessing the field via an interface.
@@ -2764,7 +2764,7 @@ func (v *EstimateComparator) GetAnd() []NullableNumberComparator { return v.And 
 // FileUploadFileUploadUploadPayload includes the requested fields of the GraphQL type UploadPayload.
 type FileUploadFileUploadUploadPayload struct {
 	// The upload file details including signed URL, asset URL, and required headers. Null if the upload could not be prepared.
-	UploadFile *FileUploadFileUploadUploadPayloadUploadFile `json:"uploadFile"`
+	UploadFile *FileUploadFileUploadUploadPayloadUploadFile `json:"uploadFile,omitempty"`
 }
 
 // GetUploadFile returns FileUploadFileUploadUploadPayload.UploadFile, and is useful for accessing the field via an interface.
@@ -2782,7 +2782,7 @@ type FileUploadFileUploadUploadPayloadUploadFile struct {
 	// The permanent asset URL where the file will be accessible after upload.
 	AssetUrl string `json:"assetUrl"`
 	// HTTP headers that must be included in the PUT request to the upload URL.
-	Headers []FileUploadFileUploadUploadPayloadUploadFileHeadersUploadFileHeader `json:"headers"`
+	Headers []FileUploadFileUploadUploadPayloadUploadFileHeadersUploadFileHeader `json:"headers,omitempty"`
 }
 
 // GetUploadUrl returns FileUploadFileUploadUploadPayloadUploadFile.UploadUrl, and is useful for accessing the field via an interface.
@@ -2839,13 +2839,13 @@ var AllFrequencyResolutionType = []FrequencyResolutionType{
 // Comparator for identifiers.
 type IDComparator struct {
 	// Equals constraint.
-	Eq *string `json:"eq"`
+	Eq *string `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *string `json:"neq"`
+	Neq *string `json:"neq,omitempty"`
 	// In-array constraint.
-	In []string `json:"in"`
+	In []string `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []string `json:"nin"`
+	Nin []string `json:"nin,omitempty"`
 }
 
 // GetEq returns IDComparator.Eq, and is useful for accessing the field via an interface.
@@ -2863,49 +2863,49 @@ func (v *IDComparator) GetNin() []string { return v.Nin }
 // Initiative collection filtering options.
 type InitiativeCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the initiative name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the initiative slug ID.
-	SlugId *StringComparator `json:"slugId"`
+	SlugId *StringComparator `json:"slugId,omitempty"`
 	// Filters that the initiative creator must satisfy.
-	Creator *NullableUserFilter `json:"creator"`
+	Creator *NullableUserFilter `json:"creator,omitempty"`
 	// Comparator for the initiative status: Planned, Active, Completed
-	Status *StringComparator `json:"status"`
+	Status *StringComparator `json:"status,omitempty"`
 	// Filters that the initiative teams must satisfy.
-	Teams *TeamCollectionFilter `json:"teams"`
+	Teams *TeamCollectionFilter `json:"teams,omitempty"`
 	// Filters that the initiative owner must satisfy.
-	Owner *NullableUserFilter `json:"owner"`
+	Owner *NullableUserFilter `json:"owner,omitempty"`
 	// Comparator for the initiative target date.
-	TargetDate *NullableDateComparator `json:"targetDate"`
+	TargetDate *NullableDateComparator `json:"targetDate,omitempty"`
 	// Comparator for the initiative started at date.
-	StartedAt *NullableDateComparator `json:"startedAt"`
+	StartedAt *NullableDateComparator `json:"startedAt,omitempty"`
 	// Comparator for the initiative completed at date.
-	CompletedAt *NullableDateComparator `json:"completedAt"`
+	CompletedAt *NullableDateComparator `json:"completedAt,omitempty"`
 	// Comparator for the initiative health: onTrack, atRisk, offTrack
-	Health *StringComparator `json:"health"`
+	Health *StringComparator `json:"health,omitempty"`
 	// Comparator for the initiative health (with age): onTrack, atRisk, offTrack, outdated, noUpdate
-	HealthWithAge *StringComparator `json:"healthWithAge"`
+	HealthWithAge *StringComparator `json:"healthWithAge,omitempty"`
 	// Comparator for the initiative activity type.
-	ActivityType *StringComparator `json:"activityType"`
+	ActivityType *StringComparator `json:"activityType,omitempty"`
 	// Filters that the initiative must be an ancestor of.
-	Ancestors *InitiativeCollectionFilter `json:"ancestors"`
+	Ancestors *InitiativeCollectionFilter `json:"ancestors,omitempty"`
 	// Filters that the initiative updates must satisfy.
-	InitiativeUpdates *InitiativeUpdatesCollectionFilter `json:"initiativeUpdates"`
+	InitiativeUpdates *InitiativeUpdatesCollectionFilter `json:"initiativeUpdates,omitempty"`
 	// Compound filters, all of which need to be matched by the initiative.
-	And []InitiativeCollectionFilter `json:"and"`
+	And []InitiativeCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the initiative.
-	Or []InitiativeCollectionFilter `json:"or"`
+	Or []InitiativeCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some initiatives.
-	Some *InitiativeFilter `json:"some"`
+	Some *InitiativeFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all initiatives.
-	Every *InitiativeFilter `json:"every"`
+	Every *InitiativeFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns InitiativeCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -2979,43 +2979,43 @@ func (v *InitiativeCollectionFilter) GetLength() *NumberComparator { return v.Le
 // Initiative filtering options.
 type InitiativeFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the initiative name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the initiative slug ID.
-	SlugId *StringComparator `json:"slugId"`
+	SlugId *StringComparator `json:"slugId,omitempty"`
 	// Filters that the initiative creator must satisfy.
-	Creator *NullableUserFilter `json:"creator"`
+	Creator *NullableUserFilter `json:"creator,omitempty"`
 	// Comparator for the initiative status: Planned, Active, Completed
-	Status *StringComparator `json:"status"`
+	Status *StringComparator `json:"status,omitempty"`
 	// Filters that the initiative teams must satisfy.
-	Teams *TeamCollectionFilter `json:"teams"`
+	Teams *TeamCollectionFilter `json:"teams,omitempty"`
 	// Filters that the initiative owner must satisfy.
-	Owner *NullableUserFilter `json:"owner"`
+	Owner *NullableUserFilter `json:"owner,omitempty"`
 	// Comparator for the initiative target date.
-	TargetDate *NullableDateComparator `json:"targetDate"`
+	TargetDate *NullableDateComparator `json:"targetDate,omitempty"`
 	// Comparator for the initiative started at date.
-	StartedAt *NullableDateComparator `json:"startedAt"`
+	StartedAt *NullableDateComparator `json:"startedAt,omitempty"`
 	// Comparator for the initiative completed at date.
-	CompletedAt *NullableDateComparator `json:"completedAt"`
+	CompletedAt *NullableDateComparator `json:"completedAt,omitempty"`
 	// Comparator for the initiative health: onTrack, atRisk, offTrack
-	Health *StringComparator `json:"health"`
+	Health *StringComparator `json:"health,omitempty"`
 	// Comparator for the initiative health (with age): onTrack, atRisk, offTrack, outdated, noUpdate
-	HealthWithAge *StringComparator `json:"healthWithAge"`
+	HealthWithAge *StringComparator `json:"healthWithAge,omitempty"`
 	// Comparator for the initiative activity type.
-	ActivityType *StringComparator `json:"activityType"`
+	ActivityType *StringComparator `json:"activityType,omitempty"`
 	// Filters that the initiative must be an ancestor of.
-	Ancestors *InitiativeCollectionFilter `json:"ancestors"`
+	Ancestors *InitiativeCollectionFilter `json:"ancestors,omitempty"`
 	// Filters that the initiative updates must satisfy.
-	InitiativeUpdates *InitiativeUpdatesCollectionFilter `json:"initiativeUpdates"`
+	InitiativeUpdates *InitiativeUpdatesCollectionFilter `json:"initiativeUpdates,omitempty"`
 	// Compound filters, all of which need to be matched by the initiative.
-	And []InitiativeFilter `json:"and"`
+	And []InitiativeFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the initiative.
-	Or []InitiativeFilter `json:"or"`
+	Or []InitiativeFilter `json:"or,omitempty"`
 }
 
 // GetId returns InitiativeFilter.Id, and is useful for accessing the field via an interface.
@@ -3080,21 +3080,21 @@ func (v *InitiativeFilter) GetOr() []InitiativeFilter { return v.Or }
 // Collection filtering options for filtering initiatives by initiative updates.
 type InitiativeUpdatesCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Compound filters, all of which need to be matched by the initiative update.
-	And []InitiativeUpdatesCollectionFilter `json:"and"`
+	And []InitiativeUpdatesCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the update.
-	Or []InitiativeUpdatesCollectionFilter `json:"or"`
+	Or []InitiativeUpdatesCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some initiative updates.
-	Some *InitiativeUpdatesFilter `json:"some"`
+	Some *InitiativeUpdatesFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all initiative updates.
-	Every *InitiativeUpdatesFilter `json:"every"`
+	Every *InitiativeUpdatesFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns InitiativeUpdatesCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -3126,15 +3126,15 @@ func (v *InitiativeUpdatesCollectionFilter) GetLength() *NumberComparator { retu
 // Options for filtering initiatives by initiative updates.
 type InitiativeUpdatesFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Compound filters, all of which need to be matched by the initiative updates.
-	And []InitiativeUpdatesFilter `json:"and"`
+	And []InitiativeUpdatesFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the initiative updates.
-	Or []InitiativeUpdatesFilter `json:"or"`
+	Or []InitiativeUpdatesFilter `json:"or,omitempty"`
 }
 
 // GetId returns InitiativeUpdatesFilter.Id, and is useful for accessing the field via an interface.
@@ -3191,7 +3191,7 @@ func (v *IssueAttachmentsIssue) GetAttachments() IssueAttachmentsIssueAttachment
 
 // IssueAttachmentsIssueAttachmentsAttachmentConnection includes the requested fields of the GraphQL type AttachmentConnection.
 type IssueAttachmentsIssueAttachmentsAttachmentConnection struct {
-	Nodes []IssueAttachmentsIssueAttachmentsAttachmentConnectionNodesAttachment `json:"nodes"`
+	Nodes []IssueAttachmentsIssueAttachmentsAttachmentConnectionNodesAttachment `json:"nodes,omitempty"`
 }
 
 // GetNodes returns IssueAttachmentsIssueAttachmentsAttachmentConnection.Nodes, and is useful for accessing the field via an interface.
@@ -3211,9 +3211,9 @@ type IssueAttachmentsIssueAttachmentsAttachmentConnectionNodesAttachment struct 
 	// The URL of the external resource this attachment links to. Also serves as a unique identifier for the attachment within an issue; no two attachments on the same issue can share the same URL.
 	Url string `json:"url"`
 	// Content for the subtitle line in the Linear attachment widget.
-	Subtitle *string `json:"subtitle"`
+	Subtitle *string `json:"subtitle,omitempty"`
 	// The source type of the attachment, derived from the source metadata. Returns the integration type (e.g., 'github', 'slack', 'zendesk') or 'unknown' if no source is set.
-	SourceType *string `json:"sourceType"`
+	SourceType *string `json:"sourceType,omitempty"`
 }
 
 // GetId returns IssueAttachmentsIssueAttachmentsAttachmentConnectionNodesAttachment.Id, and is useful for accessing the field via an interface.
@@ -3253,143 +3253,143 @@ func (v *IssueAttachmentsResponse) GetIssue() IssueAttachmentsIssue { return v.I
 // Issue filtering options.
 type IssueCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IssueIDComparator `json:"id"`
+	Id *IssueIDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the issues number.
-	Number *NumberComparator `json:"number"`
+	Number *NumberComparator `json:"number,omitempty"`
 	// Comparator for the issues title.
-	Title *StringComparator `json:"title"`
+	Title *StringComparator `json:"title,omitempty"`
 	// Comparator for the issues description.
-	Description *NullableStringComparator `json:"description"`
+	Description *NullableStringComparator `json:"description,omitempty"`
 	// Comparator for the issues priority. 0 = No priority, 1 = Urgent, 2 = High, 3 = Medium, 4 = Low.
-	Priority *NullableNumberComparator `json:"priority"`
+	Priority *NullableNumberComparator `json:"priority,omitempty"`
 	// Comparator for the issues estimate.
-	Estimate *EstimateComparator `json:"estimate"`
+	Estimate *EstimateComparator `json:"estimate,omitempty"`
 	// Comparator for the issues started at date.
-	StartedAt *NullableDateComparator `json:"startedAt"`
+	StartedAt *NullableDateComparator `json:"startedAt,omitempty"`
 	// Comparator for the issues triaged at date.
-	TriagedAt *NullableDateComparator `json:"triagedAt"`
+	TriagedAt *NullableDateComparator `json:"triagedAt,omitempty"`
 	// Comparator for the issues completed at date.
-	CompletedAt *NullableDateComparator `json:"completedAt"`
+	CompletedAt *NullableDateComparator `json:"completedAt,omitempty"`
 	// Comparator for the issues canceled at date.
-	CanceledAt *NullableDateComparator `json:"canceledAt"`
+	CanceledAt *NullableDateComparator `json:"canceledAt,omitempty"`
 	// Comparator for the issue's SLA breach date.
-	SlaBreachesAt *NullableDateComparator `json:"slaBreachesAt"`
+	SlaBreachesAt *NullableDateComparator `json:"slaBreachesAt,omitempty"`
 	// Comparator for the issues archived at date.
-	ArchivedAt *NullableDateComparator `json:"archivedAt"`
+	ArchivedAt *NullableDateComparator `json:"archivedAt,omitempty"`
 	// Comparator for the issues auto closed at date.
-	AutoClosedAt *NullableDateComparator `json:"autoClosedAt"`
+	AutoClosedAt *NullableDateComparator `json:"autoClosedAt,omitempty"`
 	// Comparator for the issues auto archived at date.
-	AutoArchivedAt *NullableDateComparator `json:"autoArchivedAt"`
+	AutoArchivedAt *NullableDateComparator `json:"autoArchivedAt,omitempty"`
 	// Comparator for the issues added to cycle at date.
-	AddedToCycleAt *NullableDateComparator `json:"addedToCycleAt"`
+	AddedToCycleAt *NullableDateComparator `json:"addedToCycleAt,omitempty"`
 	// Comparator for the period when issue was added to a cycle.
-	AddedToCyclePeriod *CyclePeriodComparator `json:"addedToCyclePeriod"`
+	AddedToCyclePeriod *CyclePeriodComparator `json:"addedToCyclePeriod,omitempty"`
 	// Comparator for the issues due date.
-	DueDate *NullableTimelessDateComparator `json:"dueDate"`
+	DueDate *NullableTimelessDateComparator `json:"dueDate,omitempty"`
 	// [Internal] Comparator for the issue's accumulatedStateUpdatedAt date.
-	AccumulatedStateUpdatedAt *NullableDateComparator `json:"accumulatedStateUpdatedAt"`
+	AccumulatedStateUpdatedAt *NullableDateComparator `json:"accumulatedStateUpdatedAt,omitempty"`
 	// Comparator for the issues snoozed until date.
-	SnoozedUntilAt *NullableDateComparator `json:"snoozedUntilAt"`
+	SnoozedUntilAt *NullableDateComparator `json:"snoozedUntilAt,omitempty"`
 	// Filters that the issues assignee must satisfy.
-	Assignee *NullableUserFilter `json:"assignee"`
+	Assignee *NullableUserFilter `json:"assignee,omitempty"`
 	// Filters that the issue's delegated agent must satisfy.
-	Delegate *NullableUserFilter `json:"delegate"`
+	Delegate *NullableUserFilter `json:"delegate,omitempty"`
 	// Filters that the last applied template must satisfy.
-	LastAppliedTemplate *NullableTemplateFilter `json:"lastAppliedTemplate"`
+	LastAppliedTemplate *NullableTemplateFilter `json:"lastAppliedTemplate,omitempty"`
 	// [ALPHA] Filters that the recurring issue template must satisfy.
-	RecurringIssueTemplate *NullableTemplateFilter `json:"recurringIssueTemplate"`
+	RecurringIssueTemplate *NullableTemplateFilter `json:"recurringIssueTemplate,omitempty"`
 	// Filters that the source must satisfy.
-	SourceMetadata *SourceMetadataComparator `json:"sourceMetadata"`
+	SourceMetadata *SourceMetadataComparator `json:"sourceMetadata,omitempty"`
 	// Filters that the issues creator must satisfy.
-	Creator *NullableUserFilter `json:"creator"`
+	Creator *NullableUserFilter `json:"creator,omitempty"`
 	// Filters that the issue parent must satisfy.
-	Parent *NullableIssueFilter `json:"parent"`
+	Parent *NullableIssueFilter `json:"parent,omitempty"`
 	// Filters that the issues snoozer must satisfy.
-	SnoozedBy *NullableUserFilter `json:"snoozedBy"`
+	SnoozedBy *NullableUserFilter `json:"snoozedBy,omitempty"`
 	// Filters that issue labels must satisfy.
-	Labels *IssueLabelCollectionFilter `json:"labels"`
+	Labels *IssueLabelCollectionFilter `json:"labels,omitempty"`
 	// Filters that issue subscribers must satisfy.
-	Subscribers *UserCollectionFilter `json:"subscribers"`
+	Subscribers *UserCollectionFilter `json:"subscribers,omitempty"`
 	// Comparator for filtering issues which have been shared with users outside of the team.
-	HasSharedUsers *RelationExistsComparator `json:"hasSharedUsers"`
+	HasSharedUsers *RelationExistsComparator `json:"hasSharedUsers,omitempty"`
 	// Filters that users the issue has been shared with must satisfy.
-	SharedWith *UserCollectionFilter `json:"sharedWith"`
+	SharedWith *UserCollectionFilter `json:"sharedWith,omitempty"`
 	// Filters that the issues team must satisfy.
-	Team *TeamFilter `json:"team"`
+	Team *TeamFilter `json:"team,omitempty"`
 	// Filters that the issues project milestone must satisfy.
-	ProjectMilestone *NullableProjectMilestoneFilter `json:"projectMilestone"`
+	ProjectMilestone *NullableProjectMilestoneFilter `json:"projectMilestone,omitempty"`
 	// Filters that the issues comments must satisfy.
-	Comments *CommentCollectionFilter `json:"comments"`
+	Comments *CommentCollectionFilter `json:"comments,omitempty"`
 	// Filters that the issue's activities must satisfy.
-	Activity *ActivityCollectionFilter `json:"activity"`
+	Activity *ActivityCollectionFilter `json:"activity,omitempty"`
 	// [Internal] Filters that the issue's suggestions must satisfy.
-	Suggestions *IssueSuggestionCollectionFilter `json:"suggestions"`
+	Suggestions *IssueSuggestionCollectionFilter `json:"suggestions,omitempty"`
 	// Filters that the issues cycle must satisfy.
-	Cycle *NullableCycleFilter `json:"cycle"`
+	Cycle *NullableCycleFilter `json:"cycle,omitempty"`
 	// Filters that the issues project must satisfy.
-	Project *NullableProjectFilter `json:"project"`
+	Project *NullableProjectFilter `json:"project,omitempty"`
 	// Filters that the issues state must satisfy.
-	State *WorkflowStateFilter `json:"state"`
+	State *WorkflowStateFilter `json:"state,omitempty"`
 	// Filters that the child issues must satisfy.
-	Children *IssueCollectionFilter `json:"children"`
+	Children *IssueCollectionFilter `json:"children,omitempty"`
 	// Filters that the issues attachments must satisfy.
-	Attachments *AttachmentCollectionFilter `json:"attachments"`
+	Attachments *AttachmentCollectionFilter `json:"attachments,omitempty"`
 	// [Internal] Comparator for the issues content.
-	SearchableContent *ContentComparator `json:"searchableContent"`
+	SearchableContent *ContentComparator `json:"searchableContent,omitempty"`
 	// Comparator for filtering issues with relations.
-	HasRelatedRelations *RelationExistsComparator `json:"hasRelatedRelations"`
+	HasRelatedRelations *RelationExistsComparator `json:"hasRelatedRelations,omitempty"`
 	// Comparator for filtering issues which are duplicates.
-	HasDuplicateRelations *RelationExistsComparator `json:"hasDuplicateRelations"`
+	HasDuplicateRelations *RelationExistsComparator `json:"hasDuplicateRelations,omitempty"`
 	// Comparator for filtering issues which are blocked.
-	HasBlockedByRelations *RelationExistsComparator `json:"hasBlockedByRelations"`
+	HasBlockedByRelations *RelationExistsComparator `json:"hasBlockedByRelations,omitempty"`
 	// Comparator for filtering issues which are blocking.
-	HasBlockingRelations *RelationExistsComparator `json:"hasBlockingRelations"`
+	HasBlockingRelations *RelationExistsComparator `json:"hasBlockingRelations,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested related issues.
-	HasSuggestedRelatedIssues *RelationExistsComparator `json:"hasSuggestedRelatedIssues"`
+	HasSuggestedRelatedIssues *RelationExistsComparator `json:"hasSuggestedRelatedIssues,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested similar issues.
-	HasSuggestedSimilarIssues *RelationExistsComparator `json:"hasSuggestedSimilarIssues"`
+	HasSuggestedSimilarIssues *RelationExistsComparator `json:"hasSuggestedSimilarIssues,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested assignees.
-	HasSuggestedAssignees *RelationExistsComparator `json:"hasSuggestedAssignees"`
+	HasSuggestedAssignees *RelationExistsComparator `json:"hasSuggestedAssignees,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested projects.
-	HasSuggestedProjects *RelationExistsComparator `json:"hasSuggestedProjects"`
+	HasSuggestedProjects *RelationExistsComparator `json:"hasSuggestedProjects,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested labels.
-	HasSuggestedLabels *RelationExistsComparator `json:"hasSuggestedLabels"`
+	HasSuggestedLabels *RelationExistsComparator `json:"hasSuggestedLabels,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested teams.
-	HasSuggestedTeams *RelationExistsComparator `json:"hasSuggestedTeams"`
+	HasSuggestedTeams *RelationExistsComparator `json:"hasSuggestedTeams,omitempty"`
 	// Comparator for the issues sla status.
-	SlaStatus *SlaStatusComparator `json:"slaStatus"`
+	SlaStatus *SlaStatusComparator `json:"slaStatus,omitempty"`
 	// Filters that the issues reactions must satisfy.
-	Reactions *ReactionCollectionFilter `json:"reactions"`
+	Reactions *ReactionCollectionFilter `json:"reactions,omitempty"`
 	// Filters that the issue's customer needs must satisfy.
-	Needs *CustomerNeedCollectionFilter `json:"needs"`
+	Needs *CustomerNeedCollectionFilter `json:"needs,omitempty"`
 	// [ALPHA] Filters that the issue's releases must satisfy.
-	Releases *ReleaseCollectionFilter `json:"releases"`
+	Releases *ReleaseCollectionFilter `json:"releases,omitempty"`
 	// Count of customers
-	CustomerCount *NumberComparator `json:"customerCount"`
+	CustomerCount *NumberComparator `json:"customerCount,omitempty"`
 	// Count of important customers
-	CustomerImportantCount *NumberComparator `json:"customerImportantCount"`
+	CustomerImportantCount *NumberComparator `json:"customerImportantCount,omitempty"`
 	// [Internal] Lead time (created -> completed) comparator.
-	LeadTime *NullableDurationComparator `json:"leadTime"`
+	LeadTime *NullableDurationComparator `json:"leadTime,omitempty"`
 	// [Internal] Cycle time (started -> completed) comparator.
-	CycleTime *NullableDurationComparator `json:"cycleTime"`
+	CycleTime *NullableDurationComparator `json:"cycleTime,omitempty"`
 	// [Internal] Age (created -> now) comparator, defined if the issue is still open.
-	AgeTime *NullableDurationComparator `json:"ageTime"`
+	AgeTime *NullableDurationComparator `json:"ageTime,omitempty"`
 	// [Internal] Triage time (entered triaged -> triaged) comparator.
-	TriageTime *NullableDurationComparator `json:"triageTime"`
+	TriageTime *NullableDurationComparator `json:"triageTime,omitempty"`
 	// Compound filters, all of which need to be matched by the issue.
-	And []IssueCollectionFilter `json:"and"`
+	And []IssueCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the issue.
-	Or []IssueCollectionFilter `json:"or"`
+	Or []IssueCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some issues.
-	Some *IssueFilter `json:"some"`
+	Some *IssueFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all issues.
-	Every *IssueFilter `json:"every"`
+	Every *IssueFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns IssueCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -3653,7 +3653,7 @@ func (v *IssueCommentsIssue) GetComments() IssueCommentsIssueCommentsCommentConn
 
 // IssueCommentsIssueCommentsCommentConnection includes the requested fields of the GraphQL type CommentConnection.
 type IssueCommentsIssueCommentsCommentConnection struct {
-	Nodes    []IssueCommentsIssueCommentsCommentConnectionNodesComment `json:"nodes"`
+	Nodes    []IssueCommentsIssueCommentsCommentConnectionNodesComment `json:"nodes,omitempty"`
 	PageInfo IssueCommentsIssueCommentsCommentConnectionPageInfo       `json:"pageInfo"`
 }
 
@@ -3682,9 +3682,9 @@ type IssueCommentsIssueCommentsCommentConnectionNodesComment struct {
 	// been updated after creation.
 	UpdatedAt string `json:"updatedAt"`
 	// The user who wrote the comment. Null for comments created by integrations or bots without a user association.
-	User *IssueCommentsIssueCommentsCommentConnectionNodesCommentUser `json:"user"`
+	User *IssueCommentsIssueCommentsCommentConnectionNodesCommentUser `json:"user,omitempty"`
 	// The parent comment under which the current comment is nested. Null for top-level comments that are not replies.
-	Parent *IssueCommentsIssueCommentsCommentConnectionNodesCommentParentComment `json:"parent"`
+	Parent *IssueCommentsIssueCommentsCommentConnectionNodesCommentParentComment `json:"parent,omitempty"`
 }
 
 // GetId returns IssueCommentsIssueCommentsCommentConnectionNodesComment.Id, and is useful for accessing the field via an interface.
@@ -3787,7 +3787,7 @@ func (v *IssueCommentsIssueCommentsCommentConnectionPageInfo) UnmarshalJSON(b []
 type __premarshalIssueCommentsIssueCommentsCommentConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *IssueCommentsIssueCommentsCommentConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -3818,79 +3818,79 @@ func (v *IssueCommentsResponse) GetIssue() IssueCommentsIssue { return v.Issue }
 // Input for creating a new issue. At minimum, a team must be specified. A title is required unless a template is provided. All other fields are optional and will use defaults from the team or template if not specified.
 type IssueCreateInput struct {
 	// The identifier in UUID v4 format. If none is provided, the backend will generate one.
-	Id *string `json:"id"`
+	Id *string `json:"id,omitempty"`
 	// The title of the issue.
-	Title *string `json:"title"`
+	Title *string `json:"title,omitempty"`
 	// The issue description in markdown format.
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// [Internal] The issue description as a Prosemirror document.
 	DescriptionData *map[string]interface{} `json:"descriptionData"`
 	// The identifier of the user to assign the issue to.
-	AssigneeId *string `json:"assigneeId"`
+	AssigneeId *string `json:"assigneeId,omitempty"`
 	// The identifier of the agent user to delegate the issue to.
-	DelegateId *string `json:"delegateId"`
+	DelegateId *string `json:"delegateId,omitempty"`
 	// The identifier of the parent issue. Can be a UUID or issue identifier (e.g., 'LIN-123').
-	ParentId *string `json:"parentId"`
+	ParentId *string `json:"parentId,omitempty"`
 	// The priority of the issue. 0 = No priority, 1 = Urgent, 2 = High, 3 = Medium, 4 = Low.
-	Priority *int `json:"priority"`
+	Priority *int `json:"priority,omitempty"`
 	// The estimated complexity of the issue.
-	Estimate *int `json:"estimate"`
+	Estimate *int `json:"estimate,omitempty"`
 	// The identifiers of the users subscribing to this ticket.
-	SubscriberIds []string `json:"subscriberIds"`
+	SubscriberIds []string `json:"subscriberIds,omitempty"`
 	// The identifiers of the issue labels associated with this ticket.
-	LabelIds []string `json:"labelIds"`
+	LabelIds []string `json:"labelIds,omitempty"`
 	// The identifier of the team associated with the issue.
 	TeamId string `json:"teamId"`
 	// The cycle associated with the issue.
-	CycleId *string `json:"cycleId"`
+	CycleId *string `json:"cycleId,omitempty"`
 	// The project associated with the issue.
-	ProjectId *string `json:"projectId"`
+	ProjectId *string `json:"projectId,omitempty"`
 	// The project milestone associated with the issue.
-	ProjectMilestoneId *string `json:"projectMilestoneId"`
+	ProjectMilestoneId *string `json:"projectMilestoneId,omitempty"`
 	// The ID of the last template applied to the issue.
-	LastAppliedTemplateId *string `json:"lastAppliedTemplateId"`
+	LastAppliedTemplateId *string `json:"lastAppliedTemplateId,omitempty"`
 	// The team state of the issue.
-	StateId *string `json:"stateId"`
+	StateId *string `json:"stateId,omitempty"`
 	// The comment the issue is referencing.
-	ReferenceCommentId *string `json:"referenceCommentId"`
+	ReferenceCommentId *string `json:"referenceCommentId,omitempty"`
 	// The comment the issue is created from.
-	SourceCommentId *string `json:"sourceCommentId"`
+	SourceCommentId *string `json:"sourceCommentId,omitempty"`
 	// [Internal] The pull request comment the issue is created from.
-	SourcePullRequestCommentId *string `json:"sourcePullRequestCommentId"`
+	SourcePullRequestCommentId *string `json:"sourcePullRequestCommentId,omitempty"`
 	// The position of the issue in its column on the board view.
-	BoardOrder *float64 `json:"boardOrder"`
+	BoardOrder *float64 `json:"boardOrder,omitempty"`
 	// The position of the issue related to other issues.
-	SortOrder *float64 `json:"sortOrder"`
+	SortOrder *float64 `json:"sortOrder,omitempty"`
 	// The position of the issue related to other issues, when ordered by priority.
-	PrioritySortOrder *float64 `json:"prioritySortOrder"`
+	PrioritySortOrder *float64 `json:"prioritySortOrder,omitempty"`
 	// The position of the issue in parent's sub-issue list.
-	SubIssueSortOrder *float64 `json:"subIssueSortOrder"`
+	SubIssueSortOrder *float64 `json:"subIssueSortOrder,omitempty"`
 	// The date at which the issue is due.
-	DueDate *string `json:"dueDate"`
+	DueDate *string `json:"dueDate,omitempty"`
 	// Create issue as a user with the provided name. This option is only available to OAuth applications creating issues in `actor=app` mode.
-	CreateAsUser *string `json:"createAsUser"`
+	CreateAsUser *string `json:"createAsUser,omitempty"`
 	// Provide an external user avatar URL. Can only be used in conjunction with the `createAsUser` options. This option is only available to OAuth applications creating comments in `actor=app` mode.
-	DisplayIconUrl *string `json:"displayIconUrl"`
+	DisplayIconUrl *string `json:"displayIconUrl,omitempty"`
 	// Whether the passed sort order should be preserved.
-	PreserveSortOrderOnCreate *bool `json:"preserveSortOrderOnCreate"`
+	PreserveSortOrderOnCreate *bool `json:"preserveSortOrderOnCreate,omitempty"`
 	// The time at which the issue was created (e.g. if importing from another system). Must be a time in the past. If none is provided, the backend will generate the time as now.
-	CreatedAt *string `json:"createdAt"`
+	CreatedAt *string `json:"createdAt,omitempty"`
 	// [Internal] The time at which an issue will be considered in breach of SLA.
-	SlaBreachesAt *string `json:"slaBreachesAt"`
+	SlaBreachesAt *string `json:"slaBreachesAt,omitempty"`
 	// [Internal] The time at which the issue's SLA was started.
-	SlaStartedAt *string `json:"slaStartedAt"`
+	SlaStartedAt *string `json:"slaStartedAt,omitempty"`
 	// The identifier of a template the issue should be created from. If other values are provided in the input, they will override template values.
-	TemplateId *string `json:"templateId"`
+	TemplateId *string `json:"templateId,omitempty"`
 	// The time at which the issue was completed (e.g. if importing from another system). Must be a time in the past and after createdAt. Cannot be provided with an incompatible workflow state.
-	CompletedAt *string `json:"completedAt"`
+	CompletedAt *string `json:"completedAt,omitempty"`
 	// The SLA day count type for the issue. Whether SLA should be business days only or calendar days (default).
-	SlaType *SLADayCountType `json:"slaType"`
+	SlaType *SLADayCountType `json:"slaType,omitempty"`
 	// Whether to use the default template for the team. When set to true, the default template of this team based on user's membership will be applied.
-	UseDefaultTemplate *bool `json:"useDefaultTemplate"`
+	UseDefaultTemplate *bool `json:"useDefaultTemplate,omitempty"`
 	// [ALPHA] The identifiers of the releases to associate with this issue.
-	ReleaseIds []string `json:"releaseIds"`
+	ReleaseIds []string `json:"releaseIds,omitempty"`
 	// [Internal] Whether this issue should inherit shared access from its parent issue. Set to false to opt out of automatic shared access inheritance when creating a sub-issue.
-	InheritsSharedAccess *bool `json:"inheritsSharedAccess"`
+	InheritsSharedAccess *bool `json:"inheritsSharedAccess,omitempty"`
 }
 
 // GetId returns IssueCreateInput.Id, and is useful for accessing the field via an interface.
@@ -4014,7 +4014,7 @@ type IssueCreateIssueCreateIssuePayload struct {
 	// Whether the operation was successful.
 	Success bool `json:"success"`
 	// The issue that was created or updated.
-	Issue *IssueCreateIssueCreateIssuePayloadIssue `json:"issue"`
+	Issue *IssueCreateIssueCreateIssuePayloadIssue `json:"issue,omitempty"`
 }
 
 // GetSuccess returns IssueCreateIssueCreateIssuePayload.Success, and is useful for accessing the field via an interface.
@@ -4089,137 +4089,137 @@ func (v *IssueDeleteResponse) GetIssueDelete() IssueDeleteIssueDeleteIssueArchiv
 // Issue filtering options.
 type IssueFilter struct {
 	// Comparator for the identifier.
-	Id *IssueIDComparator `json:"id"`
+	Id *IssueIDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the issues number.
-	Number *NumberComparator `json:"number"`
+	Number *NumberComparator `json:"number,omitempty"`
 	// Comparator for the issues title.
-	Title *StringComparator `json:"title"`
+	Title *StringComparator `json:"title,omitempty"`
 	// Comparator for the issues description.
-	Description *NullableStringComparator `json:"description"`
+	Description *NullableStringComparator `json:"description,omitempty"`
 	// Comparator for the issues priority. 0 = No priority, 1 = Urgent, 2 = High, 3 = Medium, 4 = Low.
-	Priority *NullableNumberComparator `json:"priority"`
+	Priority *NullableNumberComparator `json:"priority,omitempty"`
 	// Comparator for the issues estimate.
-	Estimate *EstimateComparator `json:"estimate"`
+	Estimate *EstimateComparator `json:"estimate,omitempty"`
 	// Comparator for the issues started at date.
-	StartedAt *NullableDateComparator `json:"startedAt"`
+	StartedAt *NullableDateComparator `json:"startedAt,omitempty"`
 	// Comparator for the issues triaged at date.
-	TriagedAt *NullableDateComparator `json:"triagedAt"`
+	TriagedAt *NullableDateComparator `json:"triagedAt,omitempty"`
 	// Comparator for the issues completed at date.
-	CompletedAt *NullableDateComparator `json:"completedAt"`
+	CompletedAt *NullableDateComparator `json:"completedAt,omitempty"`
 	// Comparator for the issues canceled at date.
-	CanceledAt *NullableDateComparator `json:"canceledAt"`
+	CanceledAt *NullableDateComparator `json:"canceledAt,omitempty"`
 	// Comparator for the issue's SLA breach date.
-	SlaBreachesAt *NullableDateComparator `json:"slaBreachesAt"`
+	SlaBreachesAt *NullableDateComparator `json:"slaBreachesAt,omitempty"`
 	// Comparator for the issues archived at date.
-	ArchivedAt *NullableDateComparator `json:"archivedAt"`
+	ArchivedAt *NullableDateComparator `json:"archivedAt,omitempty"`
 	// Comparator for the issues auto closed at date.
-	AutoClosedAt *NullableDateComparator `json:"autoClosedAt"`
+	AutoClosedAt *NullableDateComparator `json:"autoClosedAt,omitempty"`
 	// Comparator for the issues auto archived at date.
-	AutoArchivedAt *NullableDateComparator `json:"autoArchivedAt"`
+	AutoArchivedAt *NullableDateComparator `json:"autoArchivedAt,omitempty"`
 	// Comparator for the issues added to cycle at date.
-	AddedToCycleAt *NullableDateComparator `json:"addedToCycleAt"`
+	AddedToCycleAt *NullableDateComparator `json:"addedToCycleAt,omitempty"`
 	// Comparator for the period when issue was added to a cycle.
-	AddedToCyclePeriod *CyclePeriodComparator `json:"addedToCyclePeriod"`
+	AddedToCyclePeriod *CyclePeriodComparator `json:"addedToCyclePeriod,omitempty"`
 	// Comparator for the issues due date.
-	DueDate *NullableTimelessDateComparator `json:"dueDate"`
+	DueDate *NullableTimelessDateComparator `json:"dueDate,omitempty"`
 	// [Internal] Comparator for the issue's accumulatedStateUpdatedAt date.
-	AccumulatedStateUpdatedAt *NullableDateComparator `json:"accumulatedStateUpdatedAt"`
+	AccumulatedStateUpdatedAt *NullableDateComparator `json:"accumulatedStateUpdatedAt,omitempty"`
 	// Comparator for the issues snoozed until date.
-	SnoozedUntilAt *NullableDateComparator `json:"snoozedUntilAt"`
+	SnoozedUntilAt *NullableDateComparator `json:"snoozedUntilAt,omitempty"`
 	// Filters that the issues assignee must satisfy.
-	Assignee *NullableUserFilter `json:"assignee"`
+	Assignee *NullableUserFilter `json:"assignee,omitempty"`
 	// Filters that the issue's delegated agent must satisfy.
-	Delegate *NullableUserFilter `json:"delegate"`
+	Delegate *NullableUserFilter `json:"delegate,omitempty"`
 	// Filters that the last applied template must satisfy.
-	LastAppliedTemplate *NullableTemplateFilter `json:"lastAppliedTemplate"`
+	LastAppliedTemplate *NullableTemplateFilter `json:"lastAppliedTemplate,omitempty"`
 	// [ALPHA] Filters that the recurring issue template must satisfy.
-	RecurringIssueTemplate *NullableTemplateFilter `json:"recurringIssueTemplate"`
+	RecurringIssueTemplate *NullableTemplateFilter `json:"recurringIssueTemplate,omitempty"`
 	// Filters that the source must satisfy.
-	SourceMetadata *SourceMetadataComparator `json:"sourceMetadata"`
+	SourceMetadata *SourceMetadataComparator `json:"sourceMetadata,omitempty"`
 	// Filters that the issues creator must satisfy.
-	Creator *NullableUserFilter `json:"creator"`
+	Creator *NullableUserFilter `json:"creator,omitempty"`
 	// Filters that the issue parent must satisfy.
-	Parent *NullableIssueFilter `json:"parent"`
+	Parent *NullableIssueFilter `json:"parent,omitempty"`
 	// Filters that the issues snoozer must satisfy.
-	SnoozedBy *NullableUserFilter `json:"snoozedBy"`
+	SnoozedBy *NullableUserFilter `json:"snoozedBy,omitempty"`
 	// Filters that issue labels must satisfy.
-	Labels *IssueLabelCollectionFilter `json:"labels"`
+	Labels *IssueLabelCollectionFilter `json:"labels,omitempty"`
 	// Filters that issue subscribers must satisfy.
-	Subscribers *UserCollectionFilter `json:"subscribers"`
+	Subscribers *UserCollectionFilter `json:"subscribers,omitempty"`
 	// Comparator for filtering issues which have been shared with users outside of the team.
-	HasSharedUsers *RelationExistsComparator `json:"hasSharedUsers"`
+	HasSharedUsers *RelationExistsComparator `json:"hasSharedUsers,omitempty"`
 	// Filters that users the issue has been shared with must satisfy.
-	SharedWith *UserCollectionFilter `json:"sharedWith"`
+	SharedWith *UserCollectionFilter `json:"sharedWith,omitempty"`
 	// Filters that the issues team must satisfy.
-	Team *TeamFilter `json:"team"`
+	Team *TeamFilter `json:"team,omitempty"`
 	// Filters that the issues project milestone must satisfy.
-	ProjectMilestone *NullableProjectMilestoneFilter `json:"projectMilestone"`
+	ProjectMilestone *NullableProjectMilestoneFilter `json:"projectMilestone,omitempty"`
 	// Filters that the issues comments must satisfy.
-	Comments *CommentCollectionFilter `json:"comments"`
+	Comments *CommentCollectionFilter `json:"comments,omitempty"`
 	// Filters that the issue's activities must satisfy.
-	Activity *ActivityCollectionFilter `json:"activity"`
+	Activity *ActivityCollectionFilter `json:"activity,omitempty"`
 	// [Internal] Filters that the issue's suggestions must satisfy.
-	Suggestions *IssueSuggestionCollectionFilter `json:"suggestions"`
+	Suggestions *IssueSuggestionCollectionFilter `json:"suggestions,omitempty"`
 	// Filters that the issues cycle must satisfy.
-	Cycle *NullableCycleFilter `json:"cycle"`
+	Cycle *NullableCycleFilter `json:"cycle,omitempty"`
 	// Filters that the issues project must satisfy.
-	Project *NullableProjectFilter `json:"project"`
+	Project *NullableProjectFilter `json:"project,omitempty"`
 	// Filters that the issues state must satisfy.
-	State *WorkflowStateFilter `json:"state"`
+	State *WorkflowStateFilter `json:"state,omitempty"`
 	// Filters that the child issues must satisfy.
-	Children *IssueCollectionFilter `json:"children"`
+	Children *IssueCollectionFilter `json:"children,omitempty"`
 	// Filters that the issues attachments must satisfy.
-	Attachments *AttachmentCollectionFilter `json:"attachments"`
+	Attachments *AttachmentCollectionFilter `json:"attachments,omitempty"`
 	// [Internal] Comparator for the issues content.
-	SearchableContent *ContentComparator `json:"searchableContent"`
+	SearchableContent *ContentComparator `json:"searchableContent,omitempty"`
 	// Comparator for filtering issues with relations.
-	HasRelatedRelations *RelationExistsComparator `json:"hasRelatedRelations"`
+	HasRelatedRelations *RelationExistsComparator `json:"hasRelatedRelations,omitempty"`
 	// Comparator for filtering issues which are duplicates.
-	HasDuplicateRelations *RelationExistsComparator `json:"hasDuplicateRelations"`
+	HasDuplicateRelations *RelationExistsComparator `json:"hasDuplicateRelations,omitempty"`
 	// Comparator for filtering issues which are blocked.
-	HasBlockedByRelations *RelationExistsComparator `json:"hasBlockedByRelations"`
+	HasBlockedByRelations *RelationExistsComparator `json:"hasBlockedByRelations,omitempty"`
 	// Comparator for filtering issues which are blocking.
-	HasBlockingRelations *RelationExistsComparator `json:"hasBlockingRelations"`
+	HasBlockingRelations *RelationExistsComparator `json:"hasBlockingRelations,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested related issues.
-	HasSuggestedRelatedIssues *RelationExistsComparator `json:"hasSuggestedRelatedIssues"`
+	HasSuggestedRelatedIssues *RelationExistsComparator `json:"hasSuggestedRelatedIssues,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested similar issues.
-	HasSuggestedSimilarIssues *RelationExistsComparator `json:"hasSuggestedSimilarIssues"`
+	HasSuggestedSimilarIssues *RelationExistsComparator `json:"hasSuggestedSimilarIssues,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested assignees.
-	HasSuggestedAssignees *RelationExistsComparator `json:"hasSuggestedAssignees"`
+	HasSuggestedAssignees *RelationExistsComparator `json:"hasSuggestedAssignees,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested projects.
-	HasSuggestedProjects *RelationExistsComparator `json:"hasSuggestedProjects"`
+	HasSuggestedProjects *RelationExistsComparator `json:"hasSuggestedProjects,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested labels.
-	HasSuggestedLabels *RelationExistsComparator `json:"hasSuggestedLabels"`
+	HasSuggestedLabels *RelationExistsComparator `json:"hasSuggestedLabels,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested teams.
-	HasSuggestedTeams *RelationExistsComparator `json:"hasSuggestedTeams"`
+	HasSuggestedTeams *RelationExistsComparator `json:"hasSuggestedTeams,omitempty"`
 	// Comparator for the issues sla status.
-	SlaStatus *SlaStatusComparator `json:"slaStatus"`
+	SlaStatus *SlaStatusComparator `json:"slaStatus,omitempty"`
 	// Filters that the issues reactions must satisfy.
-	Reactions *ReactionCollectionFilter `json:"reactions"`
+	Reactions *ReactionCollectionFilter `json:"reactions,omitempty"`
 	// Filters that the issue's customer needs must satisfy.
-	Needs *CustomerNeedCollectionFilter `json:"needs"`
+	Needs *CustomerNeedCollectionFilter `json:"needs,omitempty"`
 	// [ALPHA] Filters that the issue's releases must satisfy.
-	Releases *ReleaseCollectionFilter `json:"releases"`
+	Releases *ReleaseCollectionFilter `json:"releases,omitempty"`
 	// Count of customers
-	CustomerCount *NumberComparator `json:"customerCount"`
+	CustomerCount *NumberComparator `json:"customerCount,omitempty"`
 	// Count of important customers
-	CustomerImportantCount *NumberComparator `json:"customerImportantCount"`
+	CustomerImportantCount *NumberComparator `json:"customerImportantCount,omitempty"`
 	// [Internal] Lead time (created -> completed) comparator.
-	LeadTime *NullableDurationComparator `json:"leadTime"`
+	LeadTime *NullableDurationComparator `json:"leadTime,omitempty"`
 	// [Internal] Cycle time (started -> completed) comparator.
-	CycleTime *NullableDurationComparator `json:"cycleTime"`
+	CycleTime *NullableDurationComparator `json:"cycleTime,omitempty"`
 	// [Internal] Age (created -> now) comparator, defined if the issue is still open.
-	AgeTime *NullableDurationComparator `json:"ageTime"`
+	AgeTime *NullableDurationComparator `json:"ageTime,omitempty"`
 	// [Internal] Triage time (entered triaged -> triaged) comparator.
-	TriageTime *NullableDurationComparator `json:"triageTime"`
+	TriageTime *NullableDurationComparator `json:"triageTime,omitempty"`
 	// Compound filters, all of which need to be matched by the issue.
-	And []IssueFilter `json:"and"`
+	And []IssueFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the issue.
-	Or []IssueFilter `json:"or"`
+	Or []IssueFilter `json:"or,omitempty"`
 }
 
 // GetId returns IssueFilter.Id, and is useful for accessing the field via an interface.
@@ -4456,7 +4456,7 @@ type IssueGetIssue struct {
 	// The issue's title. This is the primary human-readable summary of the work item.
 	Title string `json:"title"`
 	// The issue's description in markdown format.
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// Suggested branch name for the issue.
 	BranchName string `json:"branchName"`
 	// The priority of the issue. 0 = No priority, 1 = Urgent, 2 = High, 3 = Medium, 4 = Low.
@@ -4464,26 +4464,26 @@ type IssueGetIssue struct {
 	// Label for the priority.
 	PriorityLabel string `json:"priorityLabel"`
 	// The estimate of the complexity of the issue. The specific scale used depends on the team's estimation configuration (e.g., points, T-shirt sizes). Null if no estimate has been set.
-	Estimate *float64 `json:"estimate"`
+	Estimate *float64 `json:"estimate,omitempty"`
 	// The date at which the issue is due.
-	DueDate *string `json:"dueDate"`
+	DueDate *string `json:"dueDate,omitempty"`
 	// The time at which the entity was created.
 	CreatedAt string `json:"createdAt"`
 	// The last time at which the entity was meaningfully updated. This is the same as the creation time if the entity hasn't
 	// been updated after creation.
 	UpdatedAt string `json:"updatedAt"`
 	// The user to whom the issue is assigned. Null if the issue is unassigned.
-	Assignee *IssueGetIssueAssigneeUser `json:"assignee"`
+	Assignee *IssueGetIssueAssigneeUser `json:"assignee,omitempty"`
 	// The workflow state (issue status) that the issue is currently in. Workflow states represent the issue's progress through the team's workflow, such as Triage, Todo, In Progress, Done, or Canceled.
 	State IssueGetIssueStateWorkflowState `json:"state"`
 	// Labels associated with this issue.
 	Labels IssueGetIssueLabelsIssueLabelConnection `json:"labels"`
 	// The parent of the issue.
-	Parent *IssueGetIssueParentIssue `json:"parent"`
+	Parent *IssueGetIssueParentIssue `json:"parent,omitempty"`
 	// The team that the issue belongs to. Every issue must belong to exactly one team, which determines the available workflow states, labels, and other team-specific configuration.
 	Team IssueGetIssueTeam `json:"team"`
 	// The project that the issue is associated with. Null if the issue is not part of any project.
-	Project *IssueGetIssueProject `json:"project"`
+	Project *IssueGetIssueProject `json:"project,omitempty"`
 }
 
 // GetId returns IssueGetIssue.Id, and is useful for accessing the field via an interface.
@@ -4559,7 +4559,7 @@ func (v *IssueGetIssueAssigneeUser) GetName() string { return v.Name }
 
 // IssueGetIssueLabelsIssueLabelConnection includes the requested fields of the GraphQL type IssueLabelConnection.
 type IssueGetIssueLabelsIssueLabelConnection struct {
-	Nodes []IssueGetIssueLabelsIssueLabelConnectionNodesIssueLabel `json:"nodes"`
+	Nodes []IssueGetIssueLabelsIssueLabelConnectionNodesIssueLabel `json:"nodes,omitempty"`
 }
 
 // GetNodes returns IssueGetIssueLabelsIssueLabelConnection.Nodes, and is useful for accessing the field via an interface.
@@ -4687,7 +4687,7 @@ func (v *IssueHistoryIssue) GetHistory() IssueHistoryIssueHistoryIssueHistoryCon
 
 // IssueHistoryIssueHistoryIssueHistoryConnection includes the requested fields of the GraphQL type IssueHistoryConnection.
 type IssueHistoryIssueHistoryIssueHistoryConnection struct {
-	Nodes    []IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistory `json:"nodes"`
+	Nodes    []IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistory `json:"nodes,omitempty"`
 	PageInfo IssueHistoryIssueHistoryIssueHistoryConnectionPageInfo            `json:"pageInfo"`
 }
 
@@ -4711,49 +4711,49 @@ type IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistory struct {
 	// The time at which the entity was created.
 	CreatedAt string `json:"createdAt"`
 	// What the priority was changed from.
-	FromPriority *float64 `json:"fromPriority"`
+	FromPriority *float64 `json:"fromPriority,omitempty"`
 	// What the priority was changed to.
-	ToPriority *float64 `json:"toPriority"`
+	ToPriority *float64 `json:"toPriority,omitempty"`
 	// What the estimate was changed from.
-	FromEstimate *float64 `json:"fromEstimate"`
+	FromEstimate *float64 `json:"fromEstimate,omitempty"`
 	// What the estimate was changed to.
-	ToEstimate *float64 `json:"toEstimate"`
+	ToEstimate *float64 `json:"toEstimate,omitempty"`
 	// What the title was changed from.
-	FromTitle *string `json:"fromTitle"`
+	FromTitle *string `json:"fromTitle,omitempty"`
 	// What the title was changed to.
-	ToTitle *string `json:"toTitle"`
+	ToTitle *string `json:"toTitle,omitempty"`
 	// What the due date was changed from.
-	FromDueDate *string `json:"fromDueDate"`
+	FromDueDate *string `json:"fromDueDate,omitempty"`
 	// What the due date was changed to.
-	ToDueDate *string `json:"toDueDate"`
+	ToDueDate *string `json:"toDueDate,omitempty"`
 	// Whether the issue's description was updated.
-	UpdatedDescription *bool `json:"updatedDescription"`
+	UpdatedDescription *bool `json:"updatedDescription,omitempty"`
 	// Whether the issue was archived (true) or unarchived (false) in this change. Null if the archive status was not changed.
-	Archived *bool `json:"archived"`
+	Archived *bool `json:"archived,omitempty"`
 	// Whether the issue was trashed or un-trashed.
-	Trashed *bool `json:"trashed"`
+	Trashed *bool `json:"trashed,omitempty"`
 	// Whether the issue was auto-archived.
-	AutoArchived *bool `json:"autoArchived"`
+	AutoArchived *bool `json:"autoArchived,omitempty"`
 	// Whether the issue was auto-closed.
-	AutoClosed *bool `json:"autoClosed"`
+	AutoClosed *bool `json:"autoClosed,omitempty"`
 	// The actor that performed the actions. This field may be empty in the case of integrations or automations.
-	Actor *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryActorUser `json:"actor"`
+	Actor *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryActorUser `json:"actor,omitempty"`
 	// The state that the issue was moved from.
-	FromState *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryFromStateWorkflowState `json:"fromState"`
+	FromState *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryFromStateWorkflowState `json:"fromState,omitempty"`
 	// The state that the issue was moved to.
-	ToState *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryToStateWorkflowState `json:"toState"`
+	ToState *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryToStateWorkflowState `json:"toState,omitempty"`
 	// The user that was unassigned from the issue.
-	FromAssignee *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryFromAssigneeUser `json:"fromAssignee"`
+	FromAssignee *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryFromAssigneeUser `json:"fromAssignee,omitempty"`
 	// The user that was assigned to the issue.
-	ToAssignee *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryToAssigneeUser `json:"toAssignee"`
+	ToAssignee *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryToAssigneeUser `json:"toAssignee,omitempty"`
 	// The project that the issue was moved from.
-	FromProject *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryFromProject `json:"fromProject"`
+	FromProject *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryFromProject `json:"fromProject,omitempty"`
 	// The project that the issue was moved to.
-	ToProject *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryToProject `json:"toProject"`
+	ToProject *IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryToProject `json:"toProject,omitempty"`
 	// The labels that were added to the issue.
-	AddedLabels []IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryAddedLabelsIssueLabel `json:"addedLabels"`
+	AddedLabels []IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryAddedLabelsIssueLabel `json:"addedLabels,omitempty"`
 	// The labels that were removed from the issue.
-	RemovedLabels []IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryRemovedLabelsIssueLabel `json:"removedLabels"`
+	RemovedLabels []IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistoryRemovedLabelsIssueLabel `json:"removedLabels,omitempty"`
 }
 
 // GetId returns IssueHistoryIssueHistoryIssueHistoryConnectionNodesIssueHistory.Id, and is useful for accessing the field via an interface.
@@ -5106,7 +5106,7 @@ func (v *IssueHistoryIssueHistoryIssueHistoryConnectionPageInfo) UnmarshalJSON(b
 type __premarshalIssueHistoryIssueHistoryIssueHistoryConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *IssueHistoryIssueHistoryIssueHistoryConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -5137,13 +5137,13 @@ func (v *IssueHistoryResponse) GetIssue() IssueHistoryIssue { return v.Issue }
 // Comparator for issue identifiers.
 type IssueIDComparator struct {
 	// Equals constraint.
-	Eq *string `json:"eq"`
+	Eq *string `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *string `json:"neq"`
+	Neq *string `json:"neq,omitempty"`
 	// In-array constraint.
-	In []string `json:"in"`
+	In []string `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []string `json:"nin"`
+	Nin []string `json:"nin,omitempty"`
 }
 
 // GetEq returns IssueIDComparator.Eq, and is useful for accessing the field via an interface.
@@ -5161,33 +5161,33 @@ func (v *IssueIDComparator) GetNin() []string { return v.Nin }
 // Issue label filtering options.
 type IssueLabelCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for whether the label is a group label.
-	IsGroup *BooleanComparator `json:"isGroup"`
+	IsGroup *BooleanComparator `json:"isGroup,omitempty"`
 	// Filters that the issue labels creator must satisfy.
-	Creator *NullableUserFilter `json:"creator"`
+	Creator *NullableUserFilter `json:"creator,omitempty"`
 	// Filters that the issue labels team must satisfy.
-	Team *NullableTeamFilter `json:"team"`
+	Team *NullableTeamFilter `json:"team,omitempty"`
 	// Filters that the issue label's parent label must satisfy.
-	Parent *IssueLabelFilter `json:"parent"`
+	Parent *IssueLabelFilter `json:"parent,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the label.
-	And []IssueLabelCollectionFilter `json:"and"`
+	And []IssueLabelCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the label.
-	Or []IssueLabelCollectionFilter `json:"or"`
+	Or []IssueLabelCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some issue labels.
-	Some *IssueLabelFilter `json:"some"`
+	Some *IssueLabelFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all issue labels.
-	Every *IssueLabelFilter `json:"every"`
+	Every *IssueLabelFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns IssueLabelCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -5235,25 +5235,25 @@ func (v *IssueLabelCollectionFilter) GetLength() *NumberComparator { return v.Le
 // Issue label filtering options.
 type IssueLabelFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for whether the label is a group label.
-	IsGroup *BooleanComparator `json:"isGroup"`
+	IsGroup *BooleanComparator `json:"isGroup,omitempty"`
 	// Filters that the issue labels creator must satisfy.
-	Creator *NullableUserFilter `json:"creator"`
+	Creator *NullableUserFilter `json:"creator,omitempty"`
 	// Filters that the issue labels team must satisfy.
-	Team *NullableTeamFilter `json:"team"`
+	Team *NullableTeamFilter `json:"team,omitempty"`
 	// Filters that the issue label's parent label must satisfy.
-	Parent *IssueLabelFilter `json:"parent"`
+	Parent *IssueLabelFilter `json:"parent,omitempty"`
 	// Compound filters, all of which need to be matched by the label.
-	And []IssueLabelFilter `json:"and"`
+	And []IssueLabelFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the label.
-	Or []IssueLabelFilter `json:"or"`
+	Or []IssueLabelFilter `json:"or,omitempty"`
 }
 
 // GetId returns IssueLabelFilter.Id, and is useful for accessing the field via an interface.
@@ -5300,7 +5300,7 @@ func (v *IssueLabelsIssue) GetLabels() IssueLabelsIssueLabelsIssueLabelConnectio
 
 // IssueLabelsIssueLabelsIssueLabelConnection includes the requested fields of the GraphQL type IssueLabelConnection.
 type IssueLabelsIssueLabelsIssueLabelConnection struct {
-	Nodes []IssueLabelsIssueLabelsIssueLabelConnectionNodesIssueLabel `json:"nodes"`
+	Nodes []IssueLabelsIssueLabelsIssueLabelConnectionNodesIssueLabel `json:"nodes,omitempty"`
 }
 
 // GetNodes returns IssueLabelsIssueLabelsIssueLabelConnection.Nodes, and is useful for accessing the field via an interface.
@@ -5336,7 +5336,7 @@ func (v *IssueLabelsResponse) GetIssue() IssueLabelsIssue { return v.Issue }
 
 // IssueListIssuesIssueConnection includes the requested fields of the GraphQL type IssueConnection.
 type IssueListIssuesIssueConnection struct {
-	Nodes    []IssueListIssuesIssueConnectionNodesIssue `json:"nodes"`
+	Nodes    []IssueListIssuesIssueConnectionNodesIssue `json:"nodes,omitempty"`
 	PageInfo IssueListIssuesIssueConnectionPageInfo     `json:"pageInfo"`
 }
 
@@ -5441,7 +5441,7 @@ type __premarshalIssueListIssuesIssueConnectionNodesIssue struct {
 
 	State IssueSummaryFieldsStateWorkflowState `json:"state"`
 
-	Assignee *IssueSummaryFieldsAssigneeUser `json:"assignee"`
+	Assignee *IssueSummaryFieldsAssigneeUser `json:"assignee,omitempty"`
 
 	Team IssueSummaryFieldsTeam `json:"team"`
 }
@@ -5512,7 +5512,7 @@ func (v *IssueListIssuesIssueConnectionPageInfo) UnmarshalJSON(b []byte) error {
 type __premarshalIssueListIssuesIssueConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *IssueListIssuesIssueConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -5543,7 +5543,7 @@ func (v *IssueListResponse) GetIssues() IssueListIssuesIssueConnection { return 
 // Input for creating a new issue relation between two issues. Both the source issue and related issue must be specified along with the relationship type.
 type IssueRelationCreateInput struct {
 	// The identifier in UUID v4 format. If none is provided, the backend will generate one.
-	Id *string `json:"id"`
+	Id *string `json:"id,omitempty"`
 	// The type of relation of the issue to the related issue.
 	Type IssueRelationType `json:"type"`
 	// The identifier of the issue that is related to another issue. Can be a UUID or issue identifier (e.g., 'LIN-123').
@@ -5722,7 +5722,7 @@ func (v *IssueRelationsIssue) GetInverseRelations() IssueRelationsIssueInverseRe
 
 // IssueRelationsIssueInverseRelationsIssueRelationConnection includes the requested fields of the GraphQL type IssueRelationConnection.
 type IssueRelationsIssueInverseRelationsIssueRelationConnection struct {
-	Nodes []IssueRelationsIssueInverseRelationsIssueRelationConnectionNodesIssueRelation `json:"nodes"`
+	Nodes []IssueRelationsIssueInverseRelationsIssueRelationConnectionNodesIssueRelation `json:"nodes,omitempty"`
 }
 
 // GetNodes returns IssueRelationsIssueInverseRelationsIssueRelationConnection.Nodes, and is useful for accessing the field via an interface.
@@ -5774,7 +5774,7 @@ func (v *IssueRelationsIssueInverseRelationsIssueRelationConnectionNodesIssueRel
 
 // IssueRelationsIssueRelationsIssueRelationConnection includes the requested fields of the GraphQL type IssueRelationConnection.
 type IssueRelationsIssueRelationsIssueRelationConnection struct {
-	Nodes []IssueRelationsIssueRelationsIssueRelationConnectionNodesIssueRelation `json:"nodes"`
+	Nodes []IssueRelationsIssueRelationsIssueRelationConnectionNodesIssueRelation `json:"nodes,omitempty"`
 }
 
 // GetNodes returns IssueRelationsIssueRelationsIssueRelationConnection.Nodes, and is useful for accessing the field via an interface.
@@ -5846,7 +5846,7 @@ func (v *IssueSearchResponse) GetSearchIssues() IssueSearchSearchIssuesIssueSear
 
 // IssueSearchSearchIssuesIssueSearchPayload includes the requested fields of the GraphQL type IssueSearchPayload.
 type IssueSearchSearchIssuesIssueSearchPayload struct {
-	Nodes    []IssueSearchSearchIssuesIssueSearchPayloadNodesIssueSearchResult `json:"nodes"`
+	Nodes    []IssueSearchSearchIssuesIssueSearchPayloadNodesIssueSearchResult `json:"nodes,omitempty"`
 	PageInfo IssueSearchSearchIssuesIssueSearchPayloadPageInfo                 `json:"pageInfo"`
 }
 
@@ -5950,7 +5950,7 @@ type __premarshalIssueSearchSearchIssuesIssueSearchPayloadNodesIssueSearchResult
 
 	State IssueSearchSummaryFieldsStateWorkflowState `json:"state"`
 
-	Assignee *IssueSearchSummaryFieldsAssigneeUser `json:"assignee"`
+	Assignee *IssueSearchSummaryFieldsAssigneeUser `json:"assignee,omitempty"`
 
 	Team IssueSearchSummaryFieldsTeam `json:"team"`
 }
@@ -6021,7 +6021,7 @@ func (v *IssueSearchSearchIssuesIssueSearchPayloadPageInfo) UnmarshalJSON(b []by
 type __premarshalIssueSearchSearchIssuesIssueSearchPayloadPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *IssueSearchSearchIssuesIssueSearchPayloadPageInfo) MarshalJSON() ([]byte, error) {
@@ -6057,7 +6057,7 @@ type IssueSearchSummaryFields struct {
 	// The workflow state (issue status) that the issue is currently in. Workflow states represent the issue's progress through the team's workflow, such as Triage, Todo, In Progress, Done, or Canceled.
 	State IssueSearchSummaryFieldsStateWorkflowState `json:"state"`
 	// The user to whom the issue is assigned. Null if the issue is unassigned.
-	Assignee *IssueSearchSummaryFieldsAssigneeUser `json:"assignee"`
+	Assignee *IssueSearchSummaryFieldsAssigneeUser `json:"assignee,omitempty"`
 	// The team that the issue belongs to. Every issue must belong to exactly one team, which determines the available workflow states, labels, and other team-specific configuration.
 	Team IssueSearchSummaryFieldsTeam `json:"team"`
 }
@@ -6147,33 +6147,33 @@ func (v *IssueSearchSummaryFieldsTeam) GetName() string { return v.Name }
 // IssueSuggestion collection filtering options.
 type IssueSuggestionCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the suggestion type.
-	Type *StringComparator `json:"type"`
+	Type *StringComparator `json:"type,omitempty"`
 	// Comparator for the suggestion state.
-	State *StringComparator `json:"state"`
+	State *StringComparator `json:"state,omitempty"`
 	// Filters that the suggested user must satisfy.
-	SuggestedUser *NullableUserFilter `json:"suggestedUser"`
+	SuggestedUser *NullableUserFilter `json:"suggestedUser,omitempty"`
 	// Filters that the suggested project must satisfy.
-	SuggestedProject *NullableProjectFilter `json:"suggestedProject"`
+	SuggestedProject *NullableProjectFilter `json:"suggestedProject,omitempty"`
 	// Filters that the suggested team must satisfy.
-	SuggestedTeam *NullableTeamFilter `json:"suggestedTeam"`
+	SuggestedTeam *NullableTeamFilter `json:"suggestedTeam,omitempty"`
 	// Filters that the suggested label must satisfy.
-	SuggestedLabel *IssueLabelFilter `json:"suggestedLabel"`
+	SuggestedLabel *IssueLabelFilter `json:"suggestedLabel,omitempty"`
 	// Compound filters, all of which need to be matched by the suggestion.
-	And []IssueSuggestionCollectionFilter `json:"and"`
+	And []IssueSuggestionCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the suggestion.
-	Or []IssueSuggestionCollectionFilter `json:"or"`
+	Or []IssueSuggestionCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some suggestions.
-	Some *IssueSuggestionFilter `json:"some"`
+	Some *IssueSuggestionFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all suggestions.
-	Every *IssueSuggestionFilter `json:"every"`
+	Every *IssueSuggestionFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns IssueSuggestionCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -6229,27 +6229,27 @@ func (v *IssueSuggestionCollectionFilter) GetLength() *NumberComparator { return
 // IssueSuggestion filtering options.
 type IssueSuggestionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the suggestion type.
-	Type *StringComparator `json:"type"`
+	Type *StringComparator `json:"type,omitempty"`
 	// Comparator for the suggestion state.
-	State *StringComparator `json:"state"`
+	State *StringComparator `json:"state,omitempty"`
 	// Filters that the suggested user must satisfy.
-	SuggestedUser *NullableUserFilter `json:"suggestedUser"`
+	SuggestedUser *NullableUserFilter `json:"suggestedUser,omitempty"`
 	// Filters that the suggested project must satisfy.
-	SuggestedProject *NullableProjectFilter `json:"suggestedProject"`
+	SuggestedProject *NullableProjectFilter `json:"suggestedProject,omitempty"`
 	// Filters that the suggested team must satisfy.
-	SuggestedTeam *NullableTeamFilter `json:"suggestedTeam"`
+	SuggestedTeam *NullableTeamFilter `json:"suggestedTeam,omitempty"`
 	// Filters that the suggested label must satisfy.
-	SuggestedLabel *IssueLabelFilter `json:"suggestedLabel"`
+	SuggestedLabel *IssueLabelFilter `json:"suggestedLabel,omitempty"`
 	// Compound filters, all of which need to be matched by the suggestion.
-	And []IssueSuggestionFilter `json:"and"`
+	And []IssueSuggestionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the suggestion.
-	Or []IssueSuggestionFilter `json:"or"`
+	Or []IssueSuggestionFilter `json:"or,omitempty"`
 }
 
 // GetId returns IssueSuggestionFilter.Id, and is useful for accessing the field via an interface.
@@ -6307,7 +6307,7 @@ type IssueSummaryFields struct {
 	// The workflow state (issue status) that the issue is currently in. Workflow states represent the issue's progress through the team's workflow, such as Triage, Todo, In Progress, Done, or Canceled.
 	State IssueSummaryFieldsStateWorkflowState `json:"state"`
 	// The user to whom the issue is assigned. Null if the issue is unassigned.
-	Assignee *IssueSummaryFieldsAssigneeUser `json:"assignee"`
+	Assignee *IssueSummaryFieldsAssigneeUser `json:"assignee,omitempty"`
 	// The team that the issue belongs to. Every issue must belong to exactly one team, which determines the available workflow states, labels, and other team-specific configuration.
 	Team IssueSummaryFieldsTeam `json:"team"`
 }
@@ -6449,73 +6449,73 @@ func (v *IssueUnarchiveResponse) GetIssueUnarchive() IssueUnarchiveIssueUnarchiv
 // Input for updating an existing issue. All fields are optional; only provided fields will be updated. Setting a field to null (where supported) will clear the value.
 type IssueUpdateInput struct {
 	// The issue title.
-	Title *string `json:"title"`
+	Title *string `json:"title,omitempty"`
 	// The issue description in markdown format.
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// [Internal] The issue description as a Prosemirror document.
 	DescriptionData *map[string]interface{} `json:"descriptionData"`
 	// The identifier of the user to assign the issue to.
-	AssigneeId *string `json:"assigneeId"`
+	AssigneeId *string `json:"assigneeId,omitempty"`
 	// The identifier of the agent user to delegate the issue to.
-	DelegateId *string `json:"delegateId"`
+	DelegateId *string `json:"delegateId,omitempty"`
 	// The identifier of the parent issue. Can be a UUID or issue identifier (e.g., 'LIN-123').
-	ParentId *string `json:"parentId"`
+	ParentId *string `json:"parentId,omitempty"`
 	// The priority of the issue. 0 = No priority, 1 = Urgent, 2 = High, 3 = Medium, 4 = Low.
-	Priority *int `json:"priority"`
+	Priority *int `json:"priority,omitempty"`
 	// The estimated complexity of the issue.
-	Estimate *int `json:"estimate"`
+	Estimate *int `json:"estimate,omitempty"`
 	// The identifiers of the users subscribing to this ticket.
-	SubscriberIds []string `json:"subscriberIds"`
+	SubscriberIds []string `json:"subscriberIds,omitempty"`
 	// The identifiers of the issue labels associated with this ticket.
-	LabelIds []string `json:"labelIds"`
+	LabelIds []string `json:"labelIds,omitempty"`
 	// The identifiers of the issue labels to be added to this issue.
-	AddedLabelIds []string `json:"addedLabelIds"`
+	AddedLabelIds []string `json:"addedLabelIds,omitempty"`
 	// The identifiers of the issue labels to be removed from this issue.
-	RemovedLabelIds []string `json:"removedLabelIds"`
+	RemovedLabelIds []string `json:"removedLabelIds,omitempty"`
 	// The identifiers of the releases associated with this issue.
-	ReleaseIds []string `json:"releaseIds"`
+	ReleaseIds []string `json:"releaseIds,omitempty"`
 	// The identifiers of the releases to be added to this issue.
-	AddedReleaseIds []string `json:"addedReleaseIds"`
+	AddedReleaseIds []string `json:"addedReleaseIds,omitempty"`
 	// The identifiers of the releases to be removed from this issue.
-	RemovedReleaseIds []string `json:"removedReleaseIds"`
+	RemovedReleaseIds []string `json:"removedReleaseIds,omitempty"`
 	// The identifier of the team associated with the issue.
-	TeamId *string `json:"teamId"`
+	TeamId *string `json:"teamId,omitempty"`
 	// The cycle associated with the issue.
-	CycleId *string `json:"cycleId"`
+	CycleId *string `json:"cycleId,omitempty"`
 	// The project associated with the issue.
-	ProjectId *string `json:"projectId"`
+	ProjectId *string `json:"projectId,omitempty"`
 	// The project milestone associated with the issue.
-	ProjectMilestoneId *string `json:"projectMilestoneId"`
+	ProjectMilestoneId *string `json:"projectMilestoneId,omitempty"`
 	// The ID of the last template applied to the issue.
-	LastAppliedTemplateId *string `json:"lastAppliedTemplateId"`
+	LastAppliedTemplateId *string `json:"lastAppliedTemplateId,omitempty"`
 	// The team state of the issue.
-	StateId *string `json:"stateId"`
+	StateId *string `json:"stateId,omitempty"`
 	// The position of the issue in its column on the board view.
-	BoardOrder *float64 `json:"boardOrder"`
+	BoardOrder *float64 `json:"boardOrder,omitempty"`
 	// The position of the issue related to other issues.
-	SortOrder *float64 `json:"sortOrder"`
+	SortOrder *float64 `json:"sortOrder,omitempty"`
 	// The position of the issue related to other issues, when ordered by priority.
-	PrioritySortOrder *float64 `json:"prioritySortOrder"`
+	PrioritySortOrder *float64 `json:"prioritySortOrder,omitempty"`
 	// The position of the issue in parent's sub-issue list.
-	SubIssueSortOrder *float64 `json:"subIssueSortOrder"`
+	SubIssueSortOrder *float64 `json:"subIssueSortOrder,omitempty"`
 	// The date at which the issue is due.
-	DueDate *string `json:"dueDate"`
+	DueDate *string `json:"dueDate,omitempty"`
 	// Whether this issue should inherit shared access from its parent issue.
-	InheritsSharedAccess *bool `json:"inheritsSharedAccess"`
+	InheritsSharedAccess *bool `json:"inheritsSharedAccess,omitempty"`
 	// Whether the issue has been trashed.
-	Trashed *bool `json:"trashed"`
+	Trashed *bool `json:"trashed,omitempty"`
 	// [Internal] The time at which an issue will be considered in breach of SLA.
-	SlaBreachesAt *string `json:"slaBreachesAt"`
+	SlaBreachesAt *string `json:"slaBreachesAt,omitempty"`
 	// [Internal] The time at which the issue's SLA was started.
-	SlaStartedAt *string `json:"slaStartedAt"`
+	SlaStartedAt *string `json:"slaStartedAt,omitempty"`
 	// The time until which the issue will be snoozed in Triage view.
-	SnoozedUntilAt *string `json:"snoozedUntilAt"`
+	SnoozedUntilAt *string `json:"snoozedUntilAt,omitempty"`
 	// The identifier of the user who snoozed the issue.
-	SnoozedById *string `json:"snoozedById"`
+	SnoozedById *string `json:"snoozedById,omitempty"`
 	// The SLA day count type for the issue. Whether SLA should be business days only or calendar days (default).
-	SlaType *SLADayCountType `json:"slaType"`
+	SlaType *SLADayCountType `json:"slaType,omitempty"`
 	// Whether the issue was automatically closed because its parent issue was closed.
-	AutoClosedByParentClosing *bool `json:"autoClosedByParentClosing"`
+	AutoClosedByParentClosing *bool `json:"autoClosedByParentClosing,omitempty"`
 }
 
 // GetTitle returns IssueUpdateInput.Title, and is useful for accessing the field via an interface.
@@ -6645,7 +6645,7 @@ func (v *IssueUpdateResponse) GetIssueUpdate() IssueUpdateIssueUpdateIssuePayloa
 
 // LabelListIssueLabelsIssueLabelConnection includes the requested fields of the GraphQL type IssueLabelConnection.
 type LabelListIssueLabelsIssueLabelConnection struct {
-	Nodes    []LabelListIssueLabelsIssueLabelConnectionNodesIssueLabel `json:"nodes"`
+	Nodes    []LabelListIssueLabelsIssueLabelConnectionNodesIssueLabel `json:"nodes,omitempty"`
 	PageInfo LabelListIssueLabelsIssueLabelConnectionPageInfo          `json:"pageInfo"`
 }
 
@@ -6724,7 +6724,7 @@ func (v *LabelListIssueLabelsIssueLabelConnectionPageInfo) UnmarshalJSON(b []byt
 type __premarshalLabelListIssueLabelsIssueLabelConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *LabelListIssueLabelsIssueLabelConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -6757,37 +6757,37 @@ func (v *LabelListResponse) GetIssueLabels() LabelListIssueLabelsIssueLabelConne
 // Comment filtering options.
 type NullableCommentFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the comment's body.
-	Body *StringComparator `json:"body"`
+	Body *StringComparator `json:"body,omitempty"`
 	// Filters that the comment's creator must satisfy.
-	User *UserFilter `json:"user"`
+	User *UserFilter `json:"user,omitempty"`
 	// Filters that the comment's issue must satisfy.
-	Issue *NullableIssueFilter `json:"issue"`
+	Issue *NullableIssueFilter `json:"issue,omitempty"`
 	// Filters that the comment's project update must satisfy.
-	ProjectUpdate *NullableProjectUpdateFilter `json:"projectUpdate"`
+	ProjectUpdate *NullableProjectUpdateFilter `json:"projectUpdate,omitempty"`
 	// Filters that the comment parent must satisfy.
-	Parent *NullableCommentFilter `json:"parent"`
+	Parent *NullableCommentFilter `json:"parent,omitempty"`
 	// Filters that the comment's document content must satisfy.
-	DocumentContent *NullableDocumentContentFilter `json:"documentContent"`
+	DocumentContent *NullableDocumentContentFilter `json:"documentContent,omitempty"`
 	// [Internal] Filters that the comment's project must satisfy.
-	Project *NullableProjectFilter `json:"project"`
+	Project *NullableProjectFilter `json:"project,omitempty"`
 	// [Internal] Filters that the comment's initiative must satisfy.
-	Initiative *NullableInitiativeFilter `json:"initiative"`
+	Initiative *NullableInitiativeFilter `json:"initiative,omitempty"`
 	// Filters that the comment's reactions must satisfy.
-	Reactions *ReactionCollectionFilter `json:"reactions"`
+	Reactions *ReactionCollectionFilter `json:"reactions,omitempty"`
 	// Filters that the comment's customer needs must satisfy.
-	Needs *CustomerNeedCollectionFilter `json:"needs"`
+	Needs *CustomerNeedCollectionFilter `json:"needs,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the comment.
-	And []NullableCommentFilter `json:"and"`
+	And []NullableCommentFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the comment.
-	Or []NullableCommentFilter `json:"or"`
+	Or []NullableCommentFilter `json:"or,omitempty"`
 }
 
 // GetId returns NullableCommentFilter.Id, and is useful for accessing the field via an interface.
@@ -6845,37 +6845,37 @@ func (v *NullableCommentFilter) GetOr() []NullableCommentFilter { return v.Or }
 // Customer filtering options.
 type NullableCustomerFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the customer name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the customer slack channel ID.
-	SlackChannelId *StringComparator `json:"slackChannelId"`
+	SlackChannelId *StringComparator `json:"slackChannelId,omitempty"`
 	// Comparator for the customer's domains.
-	Domains *StringArrayComparator `json:"domains"`
+	Domains *StringArrayComparator `json:"domains,omitempty"`
 	// Comparator for the customer's external IDs.
-	ExternalIds *StringArrayComparator `json:"externalIds"`
+	ExternalIds *StringArrayComparator `json:"externalIds,omitempty"`
 	// Filters that the customer owner must satisfy.
-	Owner *NullableUserFilter `json:"owner"`
+	Owner *NullableUserFilter `json:"owner,omitempty"`
 	// Filters that the customer's needs must satisfy.
-	Needs *CustomerNeedCollectionFilter `json:"needs"`
+	Needs *CustomerNeedCollectionFilter `json:"needs,omitempty"`
 	// Comparator for the customer generated revenue.
-	Revenue *NumberComparator `json:"revenue"`
+	Revenue *NumberComparator `json:"revenue,omitempty"`
 	// Comparator for the customer size.
-	Size *NumberComparator `json:"size"`
+	Size *NumberComparator `json:"size,omitempty"`
 	// Filters that the customer's status must satisfy.
-	Status *CustomerStatusFilter `json:"status"`
+	Status *CustomerStatusFilter `json:"status,omitempty"`
 	// Filters that the customer's tier must satisfy.
-	Tier *CustomerTierFilter `json:"tier"`
+	Tier *CustomerTierFilter `json:"tier,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the customer.
-	And []NullableCustomerFilter `json:"and"`
+	And []NullableCustomerFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the customer.
-	Or []NullableCustomerFilter `json:"or"`
+	Or []NullableCustomerFilter `json:"or,omitempty"`
 }
 
 // GetId returns NullableCustomerFilter.Id, and is useful for accessing the field via an interface.
@@ -6929,45 +6929,45 @@ func (v *NullableCustomerFilter) GetOr() []NullableCustomerFilter { return v.Or 
 // Cycle filtering options.
 type NullableCycleFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the cycle number.
-	Number *NumberComparator `json:"number"`
+	Number *NumberComparator `json:"number,omitempty"`
 	// Comparator for the cycle name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the cycle start date.
-	StartsAt *DateComparator `json:"startsAt"`
+	StartsAt *DateComparator `json:"startsAt,omitempty"`
 	// Comparator for the cycle ends at date.
-	EndsAt *DateComparator `json:"endsAt"`
+	EndsAt *DateComparator `json:"endsAt,omitempty"`
 	// Comparator for the cycle completed at date.
-	CompletedAt *DateComparator `json:"completedAt"`
+	CompletedAt *DateComparator `json:"completedAt,omitempty"`
 	// Comparator for the filtering active cycle.
-	IsActive *BooleanComparator `json:"isActive"`
+	IsActive *BooleanComparator `json:"isActive,omitempty"`
 	// Comparator for filtering for whether the cycle is currently in cooldown.
-	IsInCooldown *BooleanComparator `json:"isInCooldown"`
+	IsInCooldown *BooleanComparator `json:"isInCooldown,omitempty"`
 	// Comparator for the filtering next cycle.
-	IsNext *BooleanComparator `json:"isNext"`
+	IsNext *BooleanComparator `json:"isNext,omitempty"`
 	// Comparator for the filtering previous cycle.
-	IsPrevious *BooleanComparator `json:"isPrevious"`
+	IsPrevious *BooleanComparator `json:"isPrevious,omitempty"`
 	// Comparator for the filtering future cycles.
-	IsFuture *BooleanComparator `json:"isFuture"`
+	IsFuture *BooleanComparator `json:"isFuture,omitempty"`
 	// Comparator for the filtering past cycles.
-	IsPast *BooleanComparator `json:"isPast"`
+	IsPast *BooleanComparator `json:"isPast,omitempty"`
 	// Filters that the cycles team must satisfy.
-	Team *TeamFilter `json:"team"`
+	Team *TeamFilter `json:"team,omitempty"`
 	// Filters that the cycles issues must satisfy.
-	Issues *IssueCollectionFilter `json:"issues"`
+	Issues *IssueCollectionFilter `json:"issues,omitempty"`
 	// Comparator for the inherited cycle ID.
-	InheritedFromId *IDComparator `json:"inheritedFromId"`
+	InheritedFromId *IDComparator `json:"inheritedFromId,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the cycle.
-	And []NullableCycleFilter `json:"and"`
+	And []NullableCycleFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the cycle.
-	Or []NullableCycleFilter `json:"or"`
+	Or []NullableCycleFilter `json:"or,omitempty"`
 }
 
 // GetId returns NullableCycleFilter.Id, and is useful for accessing the field via an interface.
@@ -7033,23 +7033,23 @@ func (v *NullableCycleFilter) GetOr() []NullableCycleFilter { return v.Or }
 // Comparator for optional dates.
 type NullableDateComparator struct {
 	// Equals constraint.
-	Eq *string `json:"eq"`
+	Eq *string `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *string `json:"neq"`
+	Neq *string `json:"neq,omitempty"`
 	// In-array constraint.
-	In []string `json:"in"`
+	In []string `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []string `json:"nin"`
+	Nin []string `json:"nin,omitempty"`
 	// Null constraint. Matches any non-null values if the given value is false, otherwise it matches null values.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Less-than constraint. Matches any values that are less than the given value.
-	Lt *string `json:"lt"`
+	Lt *string `json:"lt,omitempty"`
 	// Less-than-or-equal constraint. Matches any values that are less than or equal to the given value.
-	Lte *string `json:"lte"`
+	Lte *string `json:"lte,omitempty"`
 	// Greater-than constraint. Matches any values that are greater than the given value.
-	Gt *string `json:"gt"`
+	Gt *string `json:"gt,omitempty"`
 	// Greater-than-or-equal constraint. Matches any values that are greater than or equal to the given value.
-	Gte *string `json:"gte"`
+	Gte *string `json:"gte,omitempty"`
 }
 
 // GetEq returns NullableDateComparator.Eq, and is useful for accessing the field via an interface.
@@ -7082,23 +7082,23 @@ func (v *NullableDateComparator) GetGte() *string { return v.Gte }
 // Document content filtering options.
 type NullableDocumentContentFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the document content.
-	Content *NullableStringComparator `json:"content"`
+	Content *NullableStringComparator `json:"content,omitempty"`
 	// Filters that the document content project must satisfy.
-	Project *ProjectFilter `json:"project"`
+	Project *ProjectFilter `json:"project,omitempty"`
 	// Filters that the document content document must satisfy.
-	Document *DocumentFilter `json:"document"`
+	Document *DocumentFilter `json:"document,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the user.
-	And []NullableDocumentContentFilter `json:"and"`
+	And []NullableDocumentContentFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the user.
-	Or []NullableDocumentContentFilter `json:"or"`
+	Or []NullableDocumentContentFilter `json:"or,omitempty"`
 }
 
 // GetId returns NullableDocumentContentFilter.Id, and is useful for accessing the field via an interface.
@@ -7131,23 +7131,23 @@ func (v *NullableDocumentContentFilter) GetOr() []NullableDocumentContentFilter 
 // Nullable comparator for optional durations.
 type NullableDurationComparator struct {
 	// Equals constraint.
-	Eq *string `json:"eq"`
+	Eq *string `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *string `json:"neq"`
+	Neq *string `json:"neq,omitempty"`
 	// In-array constraint.
-	In []string `json:"in"`
+	In []string `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []string `json:"nin"`
+	Nin []string `json:"nin,omitempty"`
 	// Null constraint. Matches any non-null values if the given value is false, otherwise it matches null values.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Less-than constraint. Matches any values that are less than the given value.
-	Lt *string `json:"lt"`
+	Lt *string `json:"lt,omitempty"`
 	// Less-than-or-equal constraint. Matches any values that are less than or equal to the given value.
-	Lte *string `json:"lte"`
+	Lte *string `json:"lte,omitempty"`
 	// Greater-than constraint. Matches any values that are greater than the given value.
-	Gt *string `json:"gt"`
+	Gt *string `json:"gt,omitempty"`
 	// Greater-than-or-equal constraint. Matches any values that are greater than or equal to the given value.
-	Gte *string `json:"gte"`
+	Gte *string `json:"gte,omitempty"`
 }
 
 // GetEq returns NullableDurationComparator.Eq, and is useful for accessing the field via an interface.
@@ -7180,45 +7180,45 @@ func (v *NullableDurationComparator) GetGte() *string { return v.Gte }
 // Initiative filtering options.
 type NullableInitiativeFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the initiative name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the initiative slug ID.
-	SlugId *StringComparator `json:"slugId"`
+	SlugId *StringComparator `json:"slugId,omitempty"`
 	// Filters that the initiative creator must satisfy.
-	Creator *NullableUserFilter `json:"creator"`
+	Creator *NullableUserFilter `json:"creator,omitempty"`
 	// Comparator for the initiative status: Planned, Active, Completed
-	Status *StringComparator `json:"status"`
+	Status *StringComparator `json:"status,omitempty"`
 	// Filters that the initiative teams must satisfy.
-	Teams *TeamCollectionFilter `json:"teams"`
+	Teams *TeamCollectionFilter `json:"teams,omitempty"`
 	// Filters that the initiative owner must satisfy.
-	Owner *NullableUserFilter `json:"owner"`
+	Owner *NullableUserFilter `json:"owner,omitempty"`
 	// Comparator for the initiative target date.
-	TargetDate *NullableDateComparator `json:"targetDate"`
+	TargetDate *NullableDateComparator `json:"targetDate,omitempty"`
 	// Comparator for the initiative started at date.
-	StartedAt *NullableDateComparator `json:"startedAt"`
+	StartedAt *NullableDateComparator `json:"startedAt,omitempty"`
 	// Comparator for the initiative completed at date.
-	CompletedAt *NullableDateComparator `json:"completedAt"`
+	CompletedAt *NullableDateComparator `json:"completedAt,omitempty"`
 	// Comparator for the initiative health: onTrack, atRisk, offTrack
-	Health *StringComparator `json:"health"`
+	Health *StringComparator `json:"health,omitempty"`
 	// Comparator for the initiative health (with age): onTrack, atRisk, offTrack, outdated, noUpdate
-	HealthWithAge *StringComparator `json:"healthWithAge"`
+	HealthWithAge *StringComparator `json:"healthWithAge,omitempty"`
 	// Comparator for the initiative activity type.
-	ActivityType *StringComparator `json:"activityType"`
+	ActivityType *StringComparator `json:"activityType,omitempty"`
 	// Filters that the initiative must be an ancestor of.
-	Ancestors *InitiativeCollectionFilter `json:"ancestors"`
+	Ancestors *InitiativeCollectionFilter `json:"ancestors,omitempty"`
 	// Filters that the initiative updates must satisfy.
-	InitiativeUpdates *InitiativeUpdatesCollectionFilter `json:"initiativeUpdates"`
+	InitiativeUpdates *InitiativeUpdatesCollectionFilter `json:"initiativeUpdates,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the initiative.
-	And []NullableInitiativeFilter `json:"and"`
+	And []NullableInitiativeFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the initiative.
-	Or []NullableInitiativeFilter `json:"or"`
+	Or []NullableInitiativeFilter `json:"or,omitempty"`
 }
 
 // GetId returns NullableInitiativeFilter.Id, and is useful for accessing the field via an interface.
@@ -7286,139 +7286,139 @@ func (v *NullableInitiativeFilter) GetOr() []NullableInitiativeFilter { return v
 // Issue filtering options.
 type NullableIssueFilter struct {
 	// Comparator for the identifier.
-	Id *IssueIDComparator `json:"id"`
+	Id *IssueIDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the issues number.
-	Number *NumberComparator `json:"number"`
+	Number *NumberComparator `json:"number,omitempty"`
 	// Comparator for the issues title.
-	Title *StringComparator `json:"title"`
+	Title *StringComparator `json:"title,omitempty"`
 	// Comparator for the issues description.
-	Description *NullableStringComparator `json:"description"`
+	Description *NullableStringComparator `json:"description,omitempty"`
 	// Comparator for the issues priority. 0 = No priority, 1 = Urgent, 2 = High, 3 = Medium, 4 = Low.
-	Priority *NullableNumberComparator `json:"priority"`
+	Priority *NullableNumberComparator `json:"priority,omitempty"`
 	// Comparator for the issues estimate.
-	Estimate *EstimateComparator `json:"estimate"`
+	Estimate *EstimateComparator `json:"estimate,omitempty"`
 	// Comparator for the issues started at date.
-	StartedAt *NullableDateComparator `json:"startedAt"`
+	StartedAt *NullableDateComparator `json:"startedAt,omitempty"`
 	// Comparator for the issues triaged at date.
-	TriagedAt *NullableDateComparator `json:"triagedAt"`
+	TriagedAt *NullableDateComparator `json:"triagedAt,omitempty"`
 	// Comparator for the issues completed at date.
-	CompletedAt *NullableDateComparator `json:"completedAt"`
+	CompletedAt *NullableDateComparator `json:"completedAt,omitempty"`
 	// Comparator for the issues canceled at date.
-	CanceledAt *NullableDateComparator `json:"canceledAt"`
+	CanceledAt *NullableDateComparator `json:"canceledAt,omitempty"`
 	// Comparator for the issue's SLA breach date.
-	SlaBreachesAt *NullableDateComparator `json:"slaBreachesAt"`
+	SlaBreachesAt *NullableDateComparator `json:"slaBreachesAt,omitempty"`
 	// Comparator for the issues archived at date.
-	ArchivedAt *NullableDateComparator `json:"archivedAt"`
+	ArchivedAt *NullableDateComparator `json:"archivedAt,omitempty"`
 	// Comparator for the issues auto closed at date.
-	AutoClosedAt *NullableDateComparator `json:"autoClosedAt"`
+	AutoClosedAt *NullableDateComparator `json:"autoClosedAt,omitempty"`
 	// Comparator for the issues auto archived at date.
-	AutoArchivedAt *NullableDateComparator `json:"autoArchivedAt"`
+	AutoArchivedAt *NullableDateComparator `json:"autoArchivedAt,omitempty"`
 	// Comparator for the issues added to cycle at date.
-	AddedToCycleAt *NullableDateComparator `json:"addedToCycleAt"`
+	AddedToCycleAt *NullableDateComparator `json:"addedToCycleAt,omitempty"`
 	// Comparator for the period when issue was added to a cycle.
-	AddedToCyclePeriod *CyclePeriodComparator `json:"addedToCyclePeriod"`
+	AddedToCyclePeriod *CyclePeriodComparator `json:"addedToCyclePeriod,omitempty"`
 	// Comparator for the issues due date.
-	DueDate *NullableTimelessDateComparator `json:"dueDate"`
+	DueDate *NullableTimelessDateComparator `json:"dueDate,omitempty"`
 	// [Internal] Comparator for the issue's accumulatedStateUpdatedAt date.
-	AccumulatedStateUpdatedAt *NullableDateComparator `json:"accumulatedStateUpdatedAt"`
+	AccumulatedStateUpdatedAt *NullableDateComparator `json:"accumulatedStateUpdatedAt,omitempty"`
 	// Comparator for the issues snoozed until date.
-	SnoozedUntilAt *NullableDateComparator `json:"snoozedUntilAt"`
+	SnoozedUntilAt *NullableDateComparator `json:"snoozedUntilAt,omitempty"`
 	// Filters that the issues assignee must satisfy.
-	Assignee *NullableUserFilter `json:"assignee"`
+	Assignee *NullableUserFilter `json:"assignee,omitempty"`
 	// Filters that the issue's delegated agent must satisfy.
-	Delegate *NullableUserFilter `json:"delegate"`
+	Delegate *NullableUserFilter `json:"delegate,omitempty"`
 	// Filters that the last applied template must satisfy.
-	LastAppliedTemplate *NullableTemplateFilter `json:"lastAppliedTemplate"`
+	LastAppliedTemplate *NullableTemplateFilter `json:"lastAppliedTemplate,omitempty"`
 	// [ALPHA] Filters that the recurring issue template must satisfy.
-	RecurringIssueTemplate *NullableTemplateFilter `json:"recurringIssueTemplate"`
+	RecurringIssueTemplate *NullableTemplateFilter `json:"recurringIssueTemplate,omitempty"`
 	// Filters that the source must satisfy.
-	SourceMetadata *SourceMetadataComparator `json:"sourceMetadata"`
+	SourceMetadata *SourceMetadataComparator `json:"sourceMetadata,omitempty"`
 	// Filters that the issues creator must satisfy.
-	Creator *NullableUserFilter `json:"creator"`
+	Creator *NullableUserFilter `json:"creator,omitempty"`
 	// Filters that the issue parent must satisfy.
-	Parent *NullableIssueFilter `json:"parent"`
+	Parent *NullableIssueFilter `json:"parent,omitempty"`
 	// Filters that the issues snoozer must satisfy.
-	SnoozedBy *NullableUserFilter `json:"snoozedBy"`
+	SnoozedBy *NullableUserFilter `json:"snoozedBy,omitempty"`
 	// Filters that issue labels must satisfy.
-	Labels *IssueLabelCollectionFilter `json:"labels"`
+	Labels *IssueLabelCollectionFilter `json:"labels,omitempty"`
 	// Filters that issue subscribers must satisfy.
-	Subscribers *UserCollectionFilter `json:"subscribers"`
+	Subscribers *UserCollectionFilter `json:"subscribers,omitempty"`
 	// Comparator for filtering issues which have been shared with users outside of the team.
-	HasSharedUsers *RelationExistsComparator `json:"hasSharedUsers"`
+	HasSharedUsers *RelationExistsComparator `json:"hasSharedUsers,omitempty"`
 	// Filters that users the issue has been shared with must satisfy.
-	SharedWith *UserCollectionFilter `json:"sharedWith"`
+	SharedWith *UserCollectionFilter `json:"sharedWith,omitempty"`
 	// Filters that the issues team must satisfy.
-	Team *TeamFilter `json:"team"`
+	Team *TeamFilter `json:"team,omitempty"`
 	// Filters that the issues project milestone must satisfy.
-	ProjectMilestone *NullableProjectMilestoneFilter `json:"projectMilestone"`
+	ProjectMilestone *NullableProjectMilestoneFilter `json:"projectMilestone,omitempty"`
 	// Filters that the issues comments must satisfy.
-	Comments *CommentCollectionFilter `json:"comments"`
+	Comments *CommentCollectionFilter `json:"comments,omitempty"`
 	// Filters that the issue's activities must satisfy.
-	Activity *ActivityCollectionFilter `json:"activity"`
+	Activity *ActivityCollectionFilter `json:"activity,omitempty"`
 	// [Internal] Filters that the issue's suggestions must satisfy.
-	Suggestions *IssueSuggestionCollectionFilter `json:"suggestions"`
+	Suggestions *IssueSuggestionCollectionFilter `json:"suggestions,omitempty"`
 	// Filters that the issues cycle must satisfy.
-	Cycle *NullableCycleFilter `json:"cycle"`
+	Cycle *NullableCycleFilter `json:"cycle,omitempty"`
 	// Filters that the issues project must satisfy.
-	Project *NullableProjectFilter `json:"project"`
+	Project *NullableProjectFilter `json:"project,omitempty"`
 	// Filters that the issues state must satisfy.
-	State *WorkflowStateFilter `json:"state"`
+	State *WorkflowStateFilter `json:"state,omitempty"`
 	// Filters that the child issues must satisfy.
-	Children *IssueCollectionFilter `json:"children"`
+	Children *IssueCollectionFilter `json:"children,omitempty"`
 	// Filters that the issues attachments must satisfy.
-	Attachments *AttachmentCollectionFilter `json:"attachments"`
+	Attachments *AttachmentCollectionFilter `json:"attachments,omitempty"`
 	// [Internal] Comparator for the issues content.
-	SearchableContent *ContentComparator `json:"searchableContent"`
+	SearchableContent *ContentComparator `json:"searchableContent,omitempty"`
 	// Comparator for filtering issues with relations.
-	HasRelatedRelations *RelationExistsComparator `json:"hasRelatedRelations"`
+	HasRelatedRelations *RelationExistsComparator `json:"hasRelatedRelations,omitempty"`
 	// Comparator for filtering issues which are duplicates.
-	HasDuplicateRelations *RelationExistsComparator `json:"hasDuplicateRelations"`
+	HasDuplicateRelations *RelationExistsComparator `json:"hasDuplicateRelations,omitempty"`
 	// Comparator for filtering issues which are blocked.
-	HasBlockedByRelations *RelationExistsComparator `json:"hasBlockedByRelations"`
+	HasBlockedByRelations *RelationExistsComparator `json:"hasBlockedByRelations,omitempty"`
 	// Comparator for filtering issues which are blocking.
-	HasBlockingRelations *RelationExistsComparator `json:"hasBlockingRelations"`
+	HasBlockingRelations *RelationExistsComparator `json:"hasBlockingRelations,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested related issues.
-	HasSuggestedRelatedIssues *RelationExistsComparator `json:"hasSuggestedRelatedIssues"`
+	HasSuggestedRelatedIssues *RelationExistsComparator `json:"hasSuggestedRelatedIssues,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested similar issues.
-	HasSuggestedSimilarIssues *RelationExistsComparator `json:"hasSuggestedSimilarIssues"`
+	HasSuggestedSimilarIssues *RelationExistsComparator `json:"hasSuggestedSimilarIssues,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested assignees.
-	HasSuggestedAssignees *RelationExistsComparator `json:"hasSuggestedAssignees"`
+	HasSuggestedAssignees *RelationExistsComparator `json:"hasSuggestedAssignees,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested projects.
-	HasSuggestedProjects *RelationExistsComparator `json:"hasSuggestedProjects"`
+	HasSuggestedProjects *RelationExistsComparator `json:"hasSuggestedProjects,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested labels.
-	HasSuggestedLabels *RelationExistsComparator `json:"hasSuggestedLabels"`
+	HasSuggestedLabels *RelationExistsComparator `json:"hasSuggestedLabels,omitempty"`
 	// [Internal] Comparator for filtering issues which have suggested teams.
-	HasSuggestedTeams *RelationExistsComparator `json:"hasSuggestedTeams"`
+	HasSuggestedTeams *RelationExistsComparator `json:"hasSuggestedTeams,omitempty"`
 	// Comparator for the issues sla status.
-	SlaStatus *SlaStatusComparator `json:"slaStatus"`
+	SlaStatus *SlaStatusComparator `json:"slaStatus,omitempty"`
 	// Filters that the issues reactions must satisfy.
-	Reactions *ReactionCollectionFilter `json:"reactions"`
+	Reactions *ReactionCollectionFilter `json:"reactions,omitempty"`
 	// Filters that the issue's customer needs must satisfy.
-	Needs *CustomerNeedCollectionFilter `json:"needs"`
+	Needs *CustomerNeedCollectionFilter `json:"needs,omitempty"`
 	// [ALPHA] Filters that the issue's releases must satisfy.
-	Releases *ReleaseCollectionFilter `json:"releases"`
+	Releases *ReleaseCollectionFilter `json:"releases,omitempty"`
 	// Count of customers
-	CustomerCount *NumberComparator `json:"customerCount"`
+	CustomerCount *NumberComparator `json:"customerCount,omitempty"`
 	// Count of important customers
-	CustomerImportantCount *NumberComparator `json:"customerImportantCount"`
+	CustomerImportantCount *NumberComparator `json:"customerImportantCount,omitempty"`
 	// [Internal] Lead time (created -> completed) comparator.
-	LeadTime *NullableDurationComparator `json:"leadTime"`
+	LeadTime *NullableDurationComparator `json:"leadTime,omitempty"`
 	// [Internal] Cycle time (started -> completed) comparator.
-	CycleTime *NullableDurationComparator `json:"cycleTime"`
+	CycleTime *NullableDurationComparator `json:"cycleTime,omitempty"`
 	// [Internal] Age (created -> now) comparator, defined if the issue is still open.
-	AgeTime *NullableDurationComparator `json:"ageTime"`
+	AgeTime *NullableDurationComparator `json:"ageTime,omitempty"`
 	// [Internal] Triage time (entered triaged -> triaged) comparator.
-	TriageTime *NullableDurationComparator `json:"triageTime"`
+	TriageTime *NullableDurationComparator `json:"triageTime,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the issue.
-	And []NullableIssueFilter `json:"and"`
+	And []NullableIssueFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the issue.
-	Or []NullableIssueFilter `json:"or"`
+	Or []NullableIssueFilter `json:"or,omitempty"`
 }
 
 // GetId returns NullableIssueFilter.Id, and is useful for accessing the field via an interface.
@@ -7657,23 +7657,23 @@ func (v *NullableIssueFilter) GetOr() []NullableIssueFilter { return v.Or }
 // Comparator for optional numbers.
 type NullableNumberComparator struct {
 	// Equals constraint.
-	Eq *float64 `json:"eq"`
+	Eq *float64 `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *float64 `json:"neq"`
+	Neq *float64 `json:"neq,omitempty"`
 	// In-array constraint.
-	In []float64 `json:"in"`
+	In []float64 `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []float64 `json:"nin"`
+	Nin []float64 `json:"nin,omitempty"`
 	// Null constraint. Matches any non-null values if the given value is false, otherwise it matches null values.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Less-than constraint. Matches any values that are less than the given value.
-	Lt *float64 `json:"lt"`
+	Lt *float64 `json:"lt,omitempty"`
 	// Less-than-or-equal constraint. Matches any values that are less than or equal to the given value.
-	Lte *float64 `json:"lte"`
+	Lte *float64 `json:"lte,omitempty"`
 	// Greater-than constraint. Matches any values that are greater than the given value.
-	Gt *float64 `json:"gt"`
+	Gt *float64 `json:"gt,omitempty"`
 	// Greater-than-or-equal constraint. Matches any values that are greater than or equal to the given value.
-	Gte *float64 `json:"gte"`
+	Gte *float64 `json:"gte,omitempty"`
 }
 
 // GetEq returns NullableNumberComparator.Eq, and is useful for accessing the field via an interface.
@@ -7706,89 +7706,89 @@ func (v *NullableNumberComparator) GetGte() *float64 { return v.Gte }
 // Project filtering options.
 type NullableProjectFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the project name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the project slug ID.
-	SlugId *StringComparator `json:"slugId"`
+	SlugId *StringComparator `json:"slugId,omitempty"`
 	// [DEPRECATED] Comparator for the project state.
-	State *StringComparator `json:"state"`
+	State *StringComparator `json:"state,omitempty"`
 	// Filters that the project's status must satisfy.
-	Status *ProjectStatusFilter `json:"status"`
+	Status *ProjectStatusFilter `json:"status,omitempty"`
 	// Comparator for the projects priority.
-	Priority *NullableNumberComparator `json:"priority"`
+	Priority *NullableNumberComparator `json:"priority,omitempty"`
 	// Filters that project labels must satisfy.
-	Labels *ProjectLabelCollectionFilter `json:"labels"`
+	Labels *ProjectLabelCollectionFilter `json:"labels,omitempty"`
 	// [Internal] Comparator for the project's content.
-	SearchableContent *ContentComparator `json:"searchableContent"`
+	SearchableContent *ContentComparator `json:"searchableContent,omitempty"`
 	// Comparator for the project started date (when it was moved to an "In Progress" status).
-	StartedAt *NullableDateComparator `json:"startedAt"`
+	StartedAt *NullableDateComparator `json:"startedAt,omitempty"`
 	// Comparator for the project completion date.
-	CompletedAt *NullableDateComparator `json:"completedAt"`
+	CompletedAt *NullableDateComparator `json:"completedAt,omitempty"`
 	// Comparator for the project cancelation date.
-	CanceledAt *NullableDateComparator `json:"canceledAt"`
+	CanceledAt *NullableDateComparator `json:"canceledAt,omitempty"`
 	// Comparator for the project start date.
-	StartDate *NullableDateComparator `json:"startDate"`
+	StartDate *NullableDateComparator `json:"startDate,omitempty"`
 	// Comparator for the project target date.
-	TargetDate *NullableDateComparator `json:"targetDate"`
+	TargetDate *NullableDateComparator `json:"targetDate,omitempty"`
 	// Comparator for the project health: onTrack, atRisk, offTrack
-	Health *StringComparator `json:"health"`
+	Health *StringComparator `json:"health,omitempty"`
 	// Comparator for the project health (with age): onTrack, atRisk, offTrack, outdated, noUpdate
-	HealthWithAge *StringComparator `json:"healthWithAge"`
+	HealthWithAge *StringComparator `json:"healthWithAge,omitempty"`
 	// [ALPHA] Comparator for the project activity type: buzzin, active, some, none
-	ActivityType *StringComparator `json:"activityType"`
+	ActivityType *StringComparator `json:"activityType,omitempty"`
 	// Comparator for filtering projects with relations.
-	HasRelatedRelations *RelationExistsComparator `json:"hasRelatedRelations"`
+	HasRelatedRelations *RelationExistsComparator `json:"hasRelatedRelations,omitempty"`
 	// [Deprecated] Comparator for filtering projects which this is depended on by.
-	HasDependedOnByRelations *RelationExistsComparator `json:"hasDependedOnByRelations"`
+	HasDependedOnByRelations *RelationExistsComparator `json:"hasDependedOnByRelations,omitempty"`
 	// [Deprecated]Comparator for filtering projects which this depends on.
-	HasDependsOnRelations *RelationExistsComparator `json:"hasDependsOnRelations"`
+	HasDependsOnRelations *RelationExistsComparator `json:"hasDependsOnRelations,omitempty"`
 	// Comparator for filtering projects which are blocked.
-	HasBlockedByRelations *RelationExistsComparator `json:"hasBlockedByRelations"`
+	HasBlockedByRelations *RelationExistsComparator `json:"hasBlockedByRelations,omitempty"`
 	// Comparator for filtering projects which are blocking.
-	HasBlockingRelations *RelationExistsComparator `json:"hasBlockingRelations"`
+	HasBlockingRelations *RelationExistsComparator `json:"hasBlockingRelations,omitempty"`
 	// Comparator for filtering projects with violated dependencies.
-	HasViolatedRelations *RelationExistsComparator `json:"hasViolatedRelations"`
+	HasViolatedRelations *RelationExistsComparator `json:"hasViolatedRelations,omitempty"`
 	// Comparator for the project updates.
-	ProjectUpdates *ProjectUpdatesCollectionFilter `json:"projectUpdates"`
+	ProjectUpdates *ProjectUpdatesCollectionFilter `json:"projectUpdates,omitempty"`
 	// Filters that the projects creator must satisfy.
-	Creator *UserFilter `json:"creator"`
+	Creator *UserFilter `json:"creator,omitempty"`
 	// Filters that the projects lead must satisfy.
-	Lead *NullableUserFilter `json:"lead"`
+	Lead *NullableUserFilter `json:"lead,omitempty"`
 	// Filters that the projects members must satisfy.
-	Members *UserCollectionFilter `json:"members"`
+	Members *UserCollectionFilter `json:"members,omitempty"`
 	// Filters that the projects issues must satisfy.
-	Issues *IssueCollectionFilter `json:"issues"`
+	Issues *IssueCollectionFilter `json:"issues,omitempty"`
 	// Filters that the projects roadmaps must satisfy.
-	Roadmaps *RoadmapCollectionFilter `json:"roadmaps"`
+	Roadmaps *RoadmapCollectionFilter `json:"roadmaps,omitempty"`
 	// Filters that the projects initiatives must satisfy.
-	Initiatives *InitiativeCollectionFilter `json:"initiatives"`
+	Initiatives *InitiativeCollectionFilter `json:"initiatives,omitempty"`
 	// Filters that the project's milestones must satisfy.
-	ProjectMilestones *ProjectMilestoneCollectionFilter `json:"projectMilestones"`
+	ProjectMilestones *ProjectMilestoneCollectionFilter `json:"projectMilestones,omitempty"`
 	// Filters that the project's completed milestones must satisfy.
-	CompletedProjectMilestones *ProjectMilestoneCollectionFilter `json:"completedProjectMilestones"`
+	CompletedProjectMilestones *ProjectMilestoneCollectionFilter `json:"completedProjectMilestones,omitempty"`
 	// Filters that the project's next milestone must satisfy.
-	NextProjectMilestone *ProjectMilestoneFilter `json:"nextProjectMilestone"`
+	NextProjectMilestone *ProjectMilestoneFilter `json:"nextProjectMilestone,omitempty"`
 	// Filters that the project's team must satisfy.
-	AccessibleTeams *TeamCollectionFilter `json:"accessibleTeams"`
+	AccessibleTeams *TeamCollectionFilter `json:"accessibleTeams,omitempty"`
 	// Filters that the last applied template must satisfy.
-	LastAppliedTemplate *NullableTemplateFilter `json:"lastAppliedTemplate"`
+	LastAppliedTemplate *NullableTemplateFilter `json:"lastAppliedTemplate,omitempty"`
 	// Filters that the project's customer needs must satisfy.
-	Needs *CustomerNeedCollectionFilter `json:"needs"`
+	Needs *CustomerNeedCollectionFilter `json:"needs,omitempty"`
 	// Count of customers
-	CustomerCount *NumberComparator `json:"customerCount"`
+	CustomerCount *NumberComparator `json:"customerCount,omitempty"`
 	// Count of important customers
-	CustomerImportantCount *NumberComparator `json:"customerImportantCount"`
+	CustomerImportantCount *NumberComparator `json:"customerImportantCount,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the project.
-	And []NullableProjectFilter `json:"and"`
+	And []NullableProjectFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the project.
-	Or []NullableProjectFilter `json:"or"`
+	Or []NullableProjectFilter `json:"or,omitempty"`
 }
 
 // GetId returns NullableProjectFilter.Id, and is useful for accessing the field via an interface.
@@ -7944,23 +7944,23 @@ func (v *NullableProjectFilter) GetOr() []NullableProjectFilter { return v.Or }
 // Project milestone filtering options.
 type NullableProjectMilestoneFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the project milestone name.
-	Name *NullableStringComparator `json:"name"`
+	Name *NullableStringComparator `json:"name,omitempty"`
 	// Comparator for the project milestone target date.
-	TargetDate *NullableDateComparator `json:"targetDate"`
+	TargetDate *NullableDateComparator `json:"targetDate,omitempty"`
 	// Filters that the project milestone's project must satisfy.
-	Project *NullableProjectFilter `json:"project"`
+	Project *NullableProjectFilter `json:"project,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the project milestone.
-	And []NullableProjectMilestoneFilter `json:"and"`
+	And []NullableProjectMilestoneFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the project milestone.
-	Or []NullableProjectMilestoneFilter `json:"or"`
+	Or []NullableProjectMilestoneFilter `json:"or,omitempty"`
 }
 
 // GetId returns NullableProjectMilestoneFilter.Id, and is useful for accessing the field via an interface.
@@ -7993,23 +7993,23 @@ func (v *NullableProjectMilestoneFilter) GetOr() []NullableProjectMilestoneFilte
 // Nullable project update filtering options.
 type NullableProjectUpdateFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Filters that the project update creator must satisfy.
-	User *UserFilter `json:"user"`
+	User *UserFilter `json:"user,omitempty"`
 	// Filters that the project update project must satisfy.
-	Project *ProjectFilter `json:"project"`
+	Project *ProjectFilter `json:"project,omitempty"`
 	// Filters that the project updates reactions must satisfy.
-	Reactions *ReactionCollectionFilter `json:"reactions"`
+	Reactions *ReactionCollectionFilter `json:"reactions,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the project update.
-	And []NullableProjectUpdateFilter `json:"and"`
+	And []NullableProjectUpdateFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the project update.
-	Or []NullableProjectUpdateFilter `json:"or"`
+	Or []NullableProjectUpdateFilter `json:"or,omitempty"`
 }
 
 // GetId returns NullableProjectUpdateFilter.Id, and is useful for accessing the field via an interface.
@@ -8042,39 +8042,39 @@ func (v *NullableProjectUpdateFilter) GetOr() []NullableProjectUpdateFilter { re
 // Comparator for optional strings.
 type NullableStringComparator struct {
 	// Equals constraint.
-	Eq *string `json:"eq"`
+	Eq *string `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *string `json:"neq"`
+	Neq *string `json:"neq,omitempty"`
 	// In-array constraint.
-	In []string `json:"in"`
+	In []string `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []string `json:"nin"`
+	Nin []string `json:"nin,omitempty"`
 	// Null constraint. Matches any non-null values if the given value is false, otherwise it matches null values.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Equals case insensitive. Matches any values that matches the given string case insensitive.
-	EqIgnoreCase *string `json:"eqIgnoreCase"`
+	EqIgnoreCase *string `json:"eqIgnoreCase,omitempty"`
 	// Not-equals case insensitive. Matches any values that don't match the given string case insensitive.
-	NeqIgnoreCase *string `json:"neqIgnoreCase"`
+	NeqIgnoreCase *string `json:"neqIgnoreCase,omitempty"`
 	// Starts with constraint. Matches any values that start with the given string.
-	StartsWith *string `json:"startsWith"`
+	StartsWith *string `json:"startsWith,omitempty"`
 	// Starts with case insensitive constraint. Matches any values that start with the given string.
-	StartsWithIgnoreCase *string `json:"startsWithIgnoreCase"`
+	StartsWithIgnoreCase *string `json:"startsWithIgnoreCase,omitempty"`
 	// Doesn't start with constraint. Matches any values that don't start with the given string.
-	NotStartsWith *string `json:"notStartsWith"`
+	NotStartsWith *string `json:"notStartsWith,omitempty"`
 	// Ends with constraint. Matches any values that end with the given string.
-	EndsWith *string `json:"endsWith"`
+	EndsWith *string `json:"endsWith,omitempty"`
 	// Doesn't end with constraint. Matches any values that don't end with the given string.
-	NotEndsWith *string `json:"notEndsWith"`
+	NotEndsWith *string `json:"notEndsWith,omitempty"`
 	// Contains constraint. Matches any values that contain the given string.
-	Contains *string `json:"contains"`
+	Contains *string `json:"contains,omitempty"`
 	// Contains case insensitive constraint. Matches any values that contain the given string case insensitive.
-	ContainsIgnoreCase *string `json:"containsIgnoreCase"`
+	ContainsIgnoreCase *string `json:"containsIgnoreCase,omitempty"`
 	// Doesn't contain constraint. Matches any values that don't contain the given string.
-	NotContains *string `json:"notContains"`
+	NotContains *string `json:"notContains,omitempty"`
 	// Doesn't contain case insensitive constraint. Matches any values that don't contain the given string case insensitive.
-	NotContainsIgnoreCase *string `json:"notContainsIgnoreCase"`
+	NotContainsIgnoreCase *string `json:"notContainsIgnoreCase,omitempty"`
 	// Contains case and accent insensitive constraint. Matches any values that contain the given string case and accent insensitive.
-	ContainsIgnoreCaseAndAccent *string `json:"containsIgnoreCaseAndAccent"`
+	ContainsIgnoreCaseAndAccent *string `json:"containsIgnoreCaseAndAccent,omitempty"`
 }
 
 // GetEq returns NullableStringComparator.Eq, and is useful for accessing the field via an interface.
@@ -8133,35 +8133,35 @@ func (v *NullableStringComparator) GetContainsIgnoreCaseAndAccent() *string {
 // Team filtering options.
 type NullableTeamFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the team name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the team key.
-	Key *StringComparator `json:"key"`
+	Key *StringComparator `json:"key,omitempty"`
 	// Comparator for the team description.
-	Description *NullableStringComparator `json:"description"`
+	Description *NullableStringComparator `json:"description,omitempty"`
 	// Comparator for the team privacy.
-	Private *BooleanComparator `json:"private"`
+	Private *BooleanComparator `json:"private,omitempty"`
 	// Comparator for the time at which the team was retired.
-	RetiredAt *NullableDateComparator `json:"retiredAt"`
+	RetiredAt *NullableDateComparator `json:"retiredAt,omitempty"`
 	// Filters that the teams issues must satisfy.
-	Issues *IssueCollectionFilter `json:"issues"`
+	Issues *IssueCollectionFilter `json:"issues,omitempty"`
 	// Filters that the teams parent must satisfy.
-	Parent *NullableTeamFilter `json:"parent"`
+	Parent *NullableTeamFilter `json:"parent,omitempty"`
 	// Filters that the team's ancestors must satisfy.
-	Ancestors *TeamCollectionFilter `json:"ancestors"`
+	Ancestors *TeamCollectionFilter `json:"ancestors,omitempty"`
 	// [ALPHA] Filters that the team's release pipelines must satisfy.
-	ReleasePipelines *ReleasePipelineCollectionFilter `json:"releasePipelines"`
+	ReleasePipelines *ReleasePipelineCollectionFilter `json:"releasePipelines,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the team.
-	And []NullableTeamFilter `json:"and"`
+	And []NullableTeamFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the team.
-	Or []NullableTeamFilter `json:"or"`
+	Or []NullableTeamFilter `json:"or,omitempty"`
 }
 
 // GetId returns NullableTeamFilter.Id, and is useful for accessing the field via an interface.
@@ -8214,23 +8214,23 @@ func (v *NullableTeamFilter) GetOr() []NullableTeamFilter { return v.Or }
 // Template filtering options.
 type NullableTemplateFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the template's name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the template's type.
-	Type *StringComparator `json:"type"`
+	Type *StringComparator `json:"type,omitempty"`
 	// Comparator for the inherited template's ID.
-	InheritedFromId *IDComparator `json:"inheritedFromId"`
+	InheritedFromId *IDComparator `json:"inheritedFromId,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the template.
-	And []NullableTemplateFilter `json:"and"`
+	And []NullableTemplateFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the template.
-	Or []NullableTemplateFilter `json:"or"`
+	Or []NullableTemplateFilter `json:"or,omitempty"`
 }
 
 // GetId returns NullableTemplateFilter.Id, and is useful for accessing the field via an interface.
@@ -8263,23 +8263,23 @@ func (v *NullableTemplateFilter) GetOr() []NullableTemplateFilter { return v.Or 
 // Comparator for optional timeless dates.
 type NullableTimelessDateComparator struct {
 	// Equals constraint.
-	Eq *string `json:"eq"`
+	Eq *string `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *string `json:"neq"`
+	Neq *string `json:"neq,omitempty"`
 	// In-array constraint.
-	In []string `json:"in"`
+	In []string `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []string `json:"nin"`
+	Nin []string `json:"nin,omitempty"`
 	// Null constraint. Matches any non-null values if the given value is false, otherwise it matches null values.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Less-than constraint. Matches any values that are less than the given value.
-	Lt *string `json:"lt"`
+	Lt *string `json:"lt,omitempty"`
 	// Less-than-or-equal constraint. Matches any values that are less than or equal to the given value.
-	Lte *string `json:"lte"`
+	Lte *string `json:"lte,omitempty"`
 	// Greater-than constraint. Matches any values that are greater than the given value.
-	Gt *string `json:"gt"`
+	Gt *string `json:"gt,omitempty"`
 	// Greater-than-or-equal constraint. Matches any values that are greater than or equal to the given value.
-	Gte *string `json:"gte"`
+	Gte *string `json:"gte,omitempty"`
 }
 
 // GetEq returns NullableTimelessDateComparator.Eq, and is useful for accessing the field via an interface.
@@ -8312,39 +8312,39 @@ func (v *NullableTimelessDateComparator) GetGte() *string { return v.Gte }
 // User filtering options.
 type NullableUserFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the user's name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the user's display name.
-	DisplayName *StringComparator `json:"displayName"`
+	DisplayName *StringComparator `json:"displayName,omitempty"`
 	// Comparator for the user's email.
-	Email *StringComparator `json:"email"`
+	Email *StringComparator `json:"email,omitempty"`
 	// Comparator for the user's activity status.
-	Active *BooleanComparator `json:"active"`
+	Active *BooleanComparator `json:"active,omitempty"`
 	// Filters that the users assigned issues must satisfy.
-	AssignedIssues *IssueCollectionFilter `json:"assignedIssues"`
+	AssignedIssues *IssueCollectionFilter `json:"assignedIssues,omitempty"`
 	// Comparator for the user's admin status.
-	Admin *BooleanComparator `json:"admin"`
+	Admin *BooleanComparator `json:"admin,omitempty"`
 	// Comparator for the user's owner status.
-	Owner *BooleanComparator `json:"owner"`
+	Owner *BooleanComparator `json:"owner,omitempty"`
 	// Comparator for the user's invited status.
-	Invited *BooleanComparator `json:"invited"`
+	Invited *BooleanComparator `json:"invited,omitempty"`
 	// Comparator for the user's invited status.
-	IsInvited *BooleanComparator `json:"isInvited"`
+	IsInvited *BooleanComparator `json:"isInvited,omitempty"`
 	// Comparator for the user's app status.
-	App *BooleanComparator `json:"app"`
+	App *BooleanComparator `json:"app,omitempty"`
 	// Filter based on the currently authenticated user. Set to true to filter for the authenticated user, false for any other user.
-	IsMe *BooleanComparator `json:"isMe"`
+	IsMe *BooleanComparator `json:"isMe,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the user.
-	And []NullableUserFilter `json:"and"`
+	And []NullableUserFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the user.
-	Or []NullableUserFilter `json:"or"`
+	Or []NullableUserFilter `json:"or,omitempty"`
 }
 
 // GetId returns NullableUserFilter.Id, and is useful for accessing the field via an interface.
@@ -8401,21 +8401,21 @@ func (v *NullableUserFilter) GetOr() []NullableUserFilter { return v.Or }
 // Comparator for numbers.
 type NumberComparator struct {
 	// Equals constraint.
-	Eq *float64 `json:"eq"`
+	Eq *float64 `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *float64 `json:"neq"`
+	Neq *float64 `json:"neq,omitempty"`
 	// In-array constraint.
-	In []float64 `json:"in"`
+	In []float64 `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []float64 `json:"nin"`
+	Nin []float64 `json:"nin,omitempty"`
 	// Less-than constraint. Matches any values that are less than the given value.
-	Lt *float64 `json:"lt"`
+	Lt *float64 `json:"lt,omitempty"`
 	// Less-than-or-equal constraint. Matches any values that are less than or equal to the given value.
-	Lte *float64 `json:"lte"`
+	Lte *float64 `json:"lte,omitempty"`
 	// Greater-than constraint. Matches any values that are greater than the given value.
-	Gt *float64 `json:"gt"`
+	Gt *float64 `json:"gt,omitempty"`
 	// Greater-than-or-equal constraint. Matches any values that are greater than or equal to the given value.
-	Gte *float64 `json:"gte"`
+	Gte *float64 `json:"gte,omitempty"`
 }
 
 // GetEq returns NumberComparator.Eq, and is useful for accessing the field via an interface.
@@ -8478,7 +8478,7 @@ type PageInfoFields struct {
 	// Indicates if there are more results when paginating forward.
 	HasNextPage bool `json:"hasNextPage"`
 	// Cursor representing the last result in the paginated results.
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 // GetHasNextPage returns PageInfoFields.HasNextPage, and is useful for accessing the field via an interface.
@@ -8490,93 +8490,93 @@ func (v *PageInfoFields) GetEndCursor() *string { return v.EndCursor }
 // Project filtering options.
 type ProjectCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the project name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the project slug ID.
-	SlugId *StringComparator `json:"slugId"`
+	SlugId *StringComparator `json:"slugId,omitempty"`
 	// [DEPRECATED] Comparator for the project state.
-	State *StringComparator `json:"state"`
+	State *StringComparator `json:"state,omitempty"`
 	// Filters that the project's status must satisfy.
-	Status *ProjectStatusFilter `json:"status"`
+	Status *ProjectStatusFilter `json:"status,omitempty"`
 	// Comparator for the projects priority.
-	Priority *NullableNumberComparator `json:"priority"`
+	Priority *NullableNumberComparator `json:"priority,omitempty"`
 	// Filters that project labels must satisfy.
-	Labels *ProjectLabelCollectionFilter `json:"labels"`
+	Labels *ProjectLabelCollectionFilter `json:"labels,omitempty"`
 	// [Internal] Comparator for the project's content.
-	SearchableContent *ContentComparator `json:"searchableContent"`
+	SearchableContent *ContentComparator `json:"searchableContent,omitempty"`
 	// Comparator for the project started date (when it was moved to an "In Progress" status).
-	StartedAt *NullableDateComparator `json:"startedAt"`
+	StartedAt *NullableDateComparator `json:"startedAt,omitempty"`
 	// Comparator for the project completion date.
-	CompletedAt *NullableDateComparator `json:"completedAt"`
+	CompletedAt *NullableDateComparator `json:"completedAt,omitempty"`
 	// Comparator for the project cancelation date.
-	CanceledAt *NullableDateComparator `json:"canceledAt"`
+	CanceledAt *NullableDateComparator `json:"canceledAt,omitempty"`
 	// Comparator for the project start date.
-	StartDate *NullableDateComparator `json:"startDate"`
+	StartDate *NullableDateComparator `json:"startDate,omitempty"`
 	// Comparator for the project target date.
-	TargetDate *NullableDateComparator `json:"targetDate"`
+	TargetDate *NullableDateComparator `json:"targetDate,omitempty"`
 	// Comparator for the project health: onTrack, atRisk, offTrack
-	Health *StringComparator `json:"health"`
+	Health *StringComparator `json:"health,omitempty"`
 	// Comparator for the project health (with age): onTrack, atRisk, offTrack, outdated, noUpdate
-	HealthWithAge *StringComparator `json:"healthWithAge"`
+	HealthWithAge *StringComparator `json:"healthWithAge,omitempty"`
 	// [ALPHA] Comparator for the project activity type: buzzin, active, some, none
-	ActivityType *StringComparator `json:"activityType"`
+	ActivityType *StringComparator `json:"activityType,omitempty"`
 	// Comparator for filtering projects with relations.
-	HasRelatedRelations *RelationExistsComparator `json:"hasRelatedRelations"`
+	HasRelatedRelations *RelationExistsComparator `json:"hasRelatedRelations,omitempty"`
 	// [Deprecated] Comparator for filtering projects which this is depended on by.
-	HasDependedOnByRelations *RelationExistsComparator `json:"hasDependedOnByRelations"`
+	HasDependedOnByRelations *RelationExistsComparator `json:"hasDependedOnByRelations,omitempty"`
 	// [Deprecated]Comparator for filtering projects which this depends on.
-	HasDependsOnRelations *RelationExistsComparator `json:"hasDependsOnRelations"`
+	HasDependsOnRelations *RelationExistsComparator `json:"hasDependsOnRelations,omitempty"`
 	// Comparator for filtering projects which are blocked.
-	HasBlockedByRelations *RelationExistsComparator `json:"hasBlockedByRelations"`
+	HasBlockedByRelations *RelationExistsComparator `json:"hasBlockedByRelations,omitempty"`
 	// Comparator for filtering projects which are blocking.
-	HasBlockingRelations *RelationExistsComparator `json:"hasBlockingRelations"`
+	HasBlockingRelations *RelationExistsComparator `json:"hasBlockingRelations,omitempty"`
 	// Comparator for filtering projects with violated dependencies.
-	HasViolatedRelations *RelationExistsComparator `json:"hasViolatedRelations"`
+	HasViolatedRelations *RelationExistsComparator `json:"hasViolatedRelations,omitempty"`
 	// Comparator for the project updates.
-	ProjectUpdates *ProjectUpdatesCollectionFilter `json:"projectUpdates"`
+	ProjectUpdates *ProjectUpdatesCollectionFilter `json:"projectUpdates,omitempty"`
 	// Filters that the projects creator must satisfy.
-	Creator *UserFilter `json:"creator"`
+	Creator *UserFilter `json:"creator,omitempty"`
 	// Filters that the projects lead must satisfy.
-	Lead *NullableUserFilter `json:"lead"`
+	Lead *NullableUserFilter `json:"lead,omitempty"`
 	// Filters that the projects members must satisfy.
-	Members *UserCollectionFilter `json:"members"`
+	Members *UserCollectionFilter `json:"members,omitempty"`
 	// Filters that the projects issues must satisfy.
-	Issues *IssueCollectionFilter `json:"issues"`
+	Issues *IssueCollectionFilter `json:"issues,omitempty"`
 	// Filters that the projects roadmaps must satisfy.
-	Roadmaps *RoadmapCollectionFilter `json:"roadmaps"`
+	Roadmaps *RoadmapCollectionFilter `json:"roadmaps,omitempty"`
 	// Filters that the projects initiatives must satisfy.
-	Initiatives *InitiativeCollectionFilter `json:"initiatives"`
+	Initiatives *InitiativeCollectionFilter `json:"initiatives,omitempty"`
 	// Filters that the project's milestones must satisfy.
-	ProjectMilestones *ProjectMilestoneCollectionFilter `json:"projectMilestones"`
+	ProjectMilestones *ProjectMilestoneCollectionFilter `json:"projectMilestones,omitempty"`
 	// Filters that the project's completed milestones must satisfy.
-	CompletedProjectMilestones *ProjectMilestoneCollectionFilter `json:"completedProjectMilestones"`
+	CompletedProjectMilestones *ProjectMilestoneCollectionFilter `json:"completedProjectMilestones,omitempty"`
 	// Filters that the project's next milestone must satisfy.
-	NextProjectMilestone *ProjectMilestoneFilter `json:"nextProjectMilestone"`
+	NextProjectMilestone *ProjectMilestoneFilter `json:"nextProjectMilestone,omitempty"`
 	// Filters that the project's team must satisfy.
-	AccessibleTeams *TeamCollectionFilter `json:"accessibleTeams"`
+	AccessibleTeams *TeamCollectionFilter `json:"accessibleTeams,omitempty"`
 	// Filters that the last applied template must satisfy.
-	LastAppliedTemplate *NullableTemplateFilter `json:"lastAppliedTemplate"`
+	LastAppliedTemplate *NullableTemplateFilter `json:"lastAppliedTemplate,omitempty"`
 	// Filters that the project's customer needs must satisfy.
-	Needs *CustomerNeedCollectionFilter `json:"needs"`
+	Needs *CustomerNeedCollectionFilter `json:"needs,omitempty"`
 	// Count of customers
-	CustomerCount *NumberComparator `json:"customerCount"`
+	CustomerCount *NumberComparator `json:"customerCount,omitempty"`
 	// Count of important customers
-	CustomerImportantCount *NumberComparator `json:"customerImportantCount"`
+	CustomerImportantCount *NumberComparator `json:"customerImportantCount,omitempty"`
 	// Compound filters, all of which need to be matched by the project.
-	And []ProjectCollectionFilter `json:"and"`
+	And []ProjectCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the project.
-	Or []ProjectCollectionFilter `json:"or"`
+	Or []ProjectCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some projects.
-	Some *ProjectFilter `json:"some"`
+	Some *ProjectFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all projects.
-	Every *ProjectFilter `json:"every"`
+	Every *ProjectFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns ProjectCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -8742,51 +8742,51 @@ func (v *ProjectCollectionFilter) GetLength() *NumberComparator { return v.Lengt
 // Input for creating a new project. A name and at least one team are required. All other fields are optional and will use defaults if not specified.
 type ProjectCreateInput struct {
 	// The identifier in UUID v4 format. If none is provided, the backend will generate one.
-	Id *string `json:"id"`
+	Id *string `json:"id,omitempty"`
 	// The name of the project.
 	Name string `json:"name"`
 	// The icon of the project.
-	Icon *string `json:"icon"`
+	Icon *string `json:"icon,omitempty"`
 	// The color of the project.
-	Color *string `json:"color"`
+	Color *string `json:"color,omitempty"`
 	// [DEPRECATED] The state of the project.
-	State *string `json:"state"`
+	State *string `json:"state,omitempty"`
 	// The ID of the project status.
-	StatusId *string `json:"statusId"`
+	StatusId *string `json:"statusId,omitempty"`
 	// The description for the project.
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// The project content as markdown.
-	Content *string `json:"content"`
+	Content *string `json:"content,omitempty"`
 	// The identifiers of the teams this project is associated with.
-	TeamIds []string `json:"teamIds"`
+	TeamIds []string `json:"teamIds,omitempty"`
 	// The ID of the issue that was converted into this project.
-	ConvertedFromIssueId *string `json:"convertedFromIssueId"`
+	ConvertedFromIssueId *string `json:"convertedFromIssueId,omitempty"`
 	// The ID of the last template applied to the project.
-	LastAppliedTemplateId *string `json:"lastAppliedTemplateId"`
+	LastAppliedTemplateId *string `json:"lastAppliedTemplateId,omitempty"`
 	// The ID of a project template to apply when creating the project. Overrides useDefaultTemplate if both are provided.
-	TemplateId *string `json:"templateId"`
+	TemplateId *string `json:"templateId,omitempty"`
 	// When set to true, the default project template of the first team provided will be applied. If templateId is provided, this will be ignored.
-	UseDefaultTemplate *bool `json:"useDefaultTemplate"`
+	UseDefaultTemplate *bool `json:"useDefaultTemplate,omitempty"`
 	// The identifier of the project lead.
-	LeadId *string `json:"leadId"`
+	LeadId *string `json:"leadId,omitempty"`
 	// The identifiers of the members of this project.
-	MemberIds []string `json:"memberIds"`
+	MemberIds []string `json:"memberIds,omitempty"`
 	// The planned start date of the project.
-	StartDate *string `json:"startDate"`
+	StartDate *string `json:"startDate,omitempty"`
 	// The resolution of the project's start date.
-	StartDateResolution *DateResolutionType `json:"startDateResolution"`
+	StartDateResolution *DateResolutionType `json:"startDateResolution,omitempty"`
 	// The planned target date of the project.
-	TargetDate *string `json:"targetDate"`
+	TargetDate *string `json:"targetDate,omitempty"`
 	// The resolution of the project's estimated completion date.
-	TargetDateResolution *DateResolutionType `json:"targetDateResolution"`
+	TargetDateResolution *DateResolutionType `json:"targetDateResolution,omitempty"`
 	// The sort order for the project within shared views.
-	SortOrder *float64 `json:"sortOrder"`
+	SortOrder *float64 `json:"sortOrder,omitempty"`
 	// The sort order for the project within shared views, when ordered by priority.
-	PrioritySortOrder *float64 `json:"prioritySortOrder"`
+	PrioritySortOrder *float64 `json:"prioritySortOrder,omitempty"`
 	// The priority of the project. 0 = No priority, 1 = Urgent, 2 = High, 3 = Medium, 4 = Low.
-	Priority *int `json:"priority"`
+	Priority *int `json:"priority,omitempty"`
 	// [Internal] The identifiers of the project labels associated with this project.
-	LabelIds []string `json:"labelIds"`
+	LabelIds []string `json:"labelIds,omitempty"`
 }
 
 // GetId returns ProjectCreateInput.Id, and is useful for accessing the field via an interface.
@@ -8870,7 +8870,7 @@ type ProjectCreateProjectCreateProjectPayload struct {
 	// Whether the operation was successful.
 	Success bool `json:"success"`
 	// The project that was created or updated.
-	Project *ProjectCreateProjectCreateProjectPayloadProject `json:"project"`
+	Project *ProjectCreateProjectCreateProjectPayloadProject `json:"project,omitempty"`
 }
 
 // GetSuccess returns ProjectCreateProjectCreateProjectPayload.Success, and is useful for accessing the field via an interface.
@@ -8922,87 +8922,87 @@ func (v *ProjectCreateResponse) GetProjectCreate() ProjectCreateProjectCreatePro
 // Project filtering options.
 type ProjectFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the project name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the project slug ID.
-	SlugId *StringComparator `json:"slugId"`
+	SlugId *StringComparator `json:"slugId,omitempty"`
 	// [DEPRECATED] Comparator for the project state.
-	State *StringComparator `json:"state"`
+	State *StringComparator `json:"state,omitempty"`
 	// Filters that the project's status must satisfy.
-	Status *ProjectStatusFilter `json:"status"`
+	Status *ProjectStatusFilter `json:"status,omitempty"`
 	// Comparator for the projects priority.
-	Priority *NullableNumberComparator `json:"priority"`
+	Priority *NullableNumberComparator `json:"priority,omitempty"`
 	// Filters that project labels must satisfy.
-	Labels *ProjectLabelCollectionFilter `json:"labels"`
+	Labels *ProjectLabelCollectionFilter `json:"labels,omitempty"`
 	// [Internal] Comparator for the project's content.
-	SearchableContent *ContentComparator `json:"searchableContent"`
+	SearchableContent *ContentComparator `json:"searchableContent,omitempty"`
 	// Comparator for the project started date (when it was moved to an "In Progress" status).
-	StartedAt *NullableDateComparator `json:"startedAt"`
+	StartedAt *NullableDateComparator `json:"startedAt,omitempty"`
 	// Comparator for the project completion date.
-	CompletedAt *NullableDateComparator `json:"completedAt"`
+	CompletedAt *NullableDateComparator `json:"completedAt,omitempty"`
 	// Comparator for the project cancelation date.
-	CanceledAt *NullableDateComparator `json:"canceledAt"`
+	CanceledAt *NullableDateComparator `json:"canceledAt,omitempty"`
 	// Comparator for the project start date.
-	StartDate *NullableDateComparator `json:"startDate"`
+	StartDate *NullableDateComparator `json:"startDate,omitempty"`
 	// Comparator for the project target date.
-	TargetDate *NullableDateComparator `json:"targetDate"`
+	TargetDate *NullableDateComparator `json:"targetDate,omitempty"`
 	// Comparator for the project health: onTrack, atRisk, offTrack
-	Health *StringComparator `json:"health"`
+	Health *StringComparator `json:"health,omitempty"`
 	// Comparator for the project health (with age): onTrack, atRisk, offTrack, outdated, noUpdate
-	HealthWithAge *StringComparator `json:"healthWithAge"`
+	HealthWithAge *StringComparator `json:"healthWithAge,omitempty"`
 	// [ALPHA] Comparator for the project activity type: buzzin, active, some, none
-	ActivityType *StringComparator `json:"activityType"`
+	ActivityType *StringComparator `json:"activityType,omitempty"`
 	// Comparator for filtering projects with relations.
-	HasRelatedRelations *RelationExistsComparator `json:"hasRelatedRelations"`
+	HasRelatedRelations *RelationExistsComparator `json:"hasRelatedRelations,omitempty"`
 	// [Deprecated] Comparator for filtering projects which this is depended on by.
-	HasDependedOnByRelations *RelationExistsComparator `json:"hasDependedOnByRelations"`
+	HasDependedOnByRelations *RelationExistsComparator `json:"hasDependedOnByRelations,omitempty"`
 	// [Deprecated]Comparator for filtering projects which this depends on.
-	HasDependsOnRelations *RelationExistsComparator `json:"hasDependsOnRelations"`
+	HasDependsOnRelations *RelationExistsComparator `json:"hasDependsOnRelations,omitempty"`
 	// Comparator for filtering projects which are blocked.
-	HasBlockedByRelations *RelationExistsComparator `json:"hasBlockedByRelations"`
+	HasBlockedByRelations *RelationExistsComparator `json:"hasBlockedByRelations,omitempty"`
 	// Comparator for filtering projects which are blocking.
-	HasBlockingRelations *RelationExistsComparator `json:"hasBlockingRelations"`
+	HasBlockingRelations *RelationExistsComparator `json:"hasBlockingRelations,omitempty"`
 	// Comparator for filtering projects with violated dependencies.
-	HasViolatedRelations *RelationExistsComparator `json:"hasViolatedRelations"`
+	HasViolatedRelations *RelationExistsComparator `json:"hasViolatedRelations,omitempty"`
 	// Comparator for the project updates.
-	ProjectUpdates *ProjectUpdatesCollectionFilter `json:"projectUpdates"`
+	ProjectUpdates *ProjectUpdatesCollectionFilter `json:"projectUpdates,omitempty"`
 	// Filters that the projects creator must satisfy.
-	Creator *UserFilter `json:"creator"`
+	Creator *UserFilter `json:"creator,omitempty"`
 	// Filters that the projects lead must satisfy.
-	Lead *NullableUserFilter `json:"lead"`
+	Lead *NullableUserFilter `json:"lead,omitempty"`
 	// Filters that the projects members must satisfy.
-	Members *UserCollectionFilter `json:"members"`
+	Members *UserCollectionFilter `json:"members,omitempty"`
 	// Filters that the projects issues must satisfy.
-	Issues *IssueCollectionFilter `json:"issues"`
+	Issues *IssueCollectionFilter `json:"issues,omitempty"`
 	// Filters that the projects roadmaps must satisfy.
-	Roadmaps *RoadmapCollectionFilter `json:"roadmaps"`
+	Roadmaps *RoadmapCollectionFilter `json:"roadmaps,omitempty"`
 	// Filters that the projects initiatives must satisfy.
-	Initiatives *InitiativeCollectionFilter `json:"initiatives"`
+	Initiatives *InitiativeCollectionFilter `json:"initiatives,omitempty"`
 	// Filters that the project's milestones must satisfy.
-	ProjectMilestones *ProjectMilestoneCollectionFilter `json:"projectMilestones"`
+	ProjectMilestones *ProjectMilestoneCollectionFilter `json:"projectMilestones,omitempty"`
 	// Filters that the project's completed milestones must satisfy.
-	CompletedProjectMilestones *ProjectMilestoneCollectionFilter `json:"completedProjectMilestones"`
+	CompletedProjectMilestones *ProjectMilestoneCollectionFilter `json:"completedProjectMilestones,omitempty"`
 	// Filters that the project's next milestone must satisfy.
-	NextProjectMilestone *ProjectMilestoneFilter `json:"nextProjectMilestone"`
+	NextProjectMilestone *ProjectMilestoneFilter `json:"nextProjectMilestone,omitempty"`
 	// Filters that the project's team must satisfy.
-	AccessibleTeams *TeamCollectionFilter `json:"accessibleTeams"`
+	AccessibleTeams *TeamCollectionFilter `json:"accessibleTeams,omitempty"`
 	// Filters that the last applied template must satisfy.
-	LastAppliedTemplate *NullableTemplateFilter `json:"lastAppliedTemplate"`
+	LastAppliedTemplate *NullableTemplateFilter `json:"lastAppliedTemplate,omitempty"`
 	// Filters that the project's customer needs must satisfy.
-	Needs *CustomerNeedCollectionFilter `json:"needs"`
+	Needs *CustomerNeedCollectionFilter `json:"needs,omitempty"`
 	// Count of customers
-	CustomerCount *NumberComparator `json:"customerCount"`
+	CustomerCount *NumberComparator `json:"customerCount,omitempty"`
 	// Count of important customers
-	CustomerImportantCount *NumberComparator `json:"customerImportantCount"`
+	CustomerImportantCount *NumberComparator `json:"customerImportantCount,omitempty"`
 	// Compound filters, all of which need to be matched by the project.
-	And []ProjectFilter `json:"and"`
+	And []ProjectFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the project.
-	Or []ProjectFilter `json:"or"`
+	Or []ProjectFilter `json:"or,omitempty"`
 }
 
 // GetId returns ProjectFilter.Id, and is useful for accessing the field via an interface.
@@ -9166,19 +9166,19 @@ type ProjectGetProject struct {
 	// The short description of the project.
 	Description string `json:"description"`
 	// The project's content in markdown format.
-	Content *string `json:"content"`
+	Content *string `json:"content,omitempty"`
 	// [DEPRECATED] The type of the state.
 	State string `json:"state"`
 	// The overall progress of the project. This is the (completed estimate points + 0.25 * in progress estimate points) / total estimate points.
 	Progress float64 `json:"progress"`
 	// The estimated start date of the project. Null if no start date is set.
-	StartDate *string `json:"startDate"`
+	StartDate *string `json:"startDate,omitempty"`
 	// The estimated completion date of the project. Null if no target date is set.
-	TargetDate *string `json:"targetDate"`
+	TargetDate *string `json:"targetDate,omitempty"`
 	// The priority of the project. 0 = No priority, 1 = Urgent, 2 = High, 3 = Medium, 4 = Low.
 	Priority int `json:"priority"`
 	// The icon of the project. Can be an emoji or a decorative icon type.
-	Icon *string `json:"icon"`
+	Icon *string `json:"icon,omitempty"`
 	// The project's color as a HEX string. Used in the UI to visually identify the project.
 	Color string `json:"color"`
 	// The time at which the entity was created.
@@ -9187,7 +9187,7 @@ type ProjectGetProject struct {
 	// been updated after creation.
 	UpdatedAt string `json:"updatedAt"`
 	// The user who leads the project. The project lead is typically responsible for posting status updates and driving the project to completion. Null if no lead is assigned.
-	Lead *ProjectGetProjectLeadUser `json:"lead"`
+	Lead *ProjectGetProjectLeadUser `json:"lead,omitempty"`
 	// Milestones associated with the project.
 	ProjectMilestones ProjectGetProjectProjectMilestonesProjectMilestoneConnection `json:"projectMilestones"`
 }
@@ -9264,7 +9264,7 @@ func (v *ProjectGetProjectLeadUser) GetName() string { return v.Name }
 
 // ProjectGetProjectProjectMilestonesProjectMilestoneConnection includes the requested fields of the GraphQL type ProjectMilestoneConnection.
 type ProjectGetProjectProjectMilestonesProjectMilestoneConnection struct {
-	Nodes []ProjectGetProjectProjectMilestonesProjectMilestoneConnectionNodesProjectMilestone `json:"nodes"`
+	Nodes []ProjectGetProjectProjectMilestonesProjectMilestoneConnectionNodesProjectMilestone `json:"nodes,omitempty"`
 }
 
 // GetNodes returns ProjectGetProjectProjectMilestonesProjectMilestoneConnection.Nodes, and is useful for accessing the field via an interface.
@@ -9282,7 +9282,7 @@ type ProjectGetProjectProjectMilestonesProjectMilestoneConnectionNodesProjectMil
 	// The name of the project milestone.
 	Name string `json:"name"`
 	// The planned completion date of the milestone. Null if no target date is set.
-	TargetDate *string `json:"targetDate"`
+	TargetDate *string `json:"targetDate,omitempty"`
 }
 
 // GetId returns ProjectGetProjectProjectMilestonesProjectMilestoneConnectionNodesProjectMilestone.Id, and is useful for accessing the field via an interface.
@@ -9323,7 +9323,7 @@ func (v *ProjectIssuesProject) GetIssues() ProjectIssuesProjectIssuesIssueConnec
 
 // ProjectIssuesProjectIssuesIssueConnection includes the requested fields of the GraphQL type IssueConnection.
 type ProjectIssuesProjectIssuesIssueConnection struct {
-	Nodes    []ProjectIssuesProjectIssuesIssueConnectionNodesIssue `json:"nodes"`
+	Nodes    []ProjectIssuesProjectIssuesIssueConnectionNodesIssue `json:"nodes,omitempty"`
 	PageInfo ProjectIssuesProjectIssuesIssueConnectionPageInfo     `json:"pageInfo"`
 }
 
@@ -9430,7 +9430,7 @@ type __premarshalProjectIssuesProjectIssuesIssueConnectionNodesIssue struct {
 
 	State IssueSummaryFieldsStateWorkflowState `json:"state"`
 
-	Assignee *IssueSummaryFieldsAssigneeUser `json:"assignee"`
+	Assignee *IssueSummaryFieldsAssigneeUser `json:"assignee,omitempty"`
 
 	Team IssueSummaryFieldsTeam `json:"team"`
 }
@@ -9501,7 +9501,7 @@ func (v *ProjectIssuesProjectIssuesIssueConnectionPageInfo) UnmarshalJSON(b []by
 type __premarshalProjectIssuesProjectIssuesIssueConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *ProjectIssuesProjectIssuesIssueConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -9532,31 +9532,31 @@ func (v *ProjectIssuesResponse) GetProject() ProjectIssuesProject { return v.Pro
 // Project label filtering options.
 type ProjectLabelCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for whether the label is a group label.
-	IsGroup *BooleanComparator `json:"isGroup"`
+	IsGroup *BooleanComparator `json:"isGroup,omitempty"`
 	// Filters that the project labels creator must satisfy.
-	Creator *NullableUserFilter `json:"creator"`
+	Creator *NullableUserFilter `json:"creator,omitempty"`
 	// Filters that the project label's parent label must satisfy.
-	Parent *ProjectLabelFilter `json:"parent"`
+	Parent *ProjectLabelFilter `json:"parent,omitempty"`
 	// Filter based on the existence of the relation.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Compound filters, all of which need to be matched by the label.
-	And []ProjectLabelCollectionFilter `json:"and"`
+	And []ProjectLabelCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the label.
-	Or []ProjectLabelCollectionFilter `json:"or"`
+	Or []ProjectLabelCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some project labels.
-	Some *ProjectLabelCollectionFilter `json:"some"`
+	Some *ProjectLabelCollectionFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all project labels.
-	Every *ProjectLabelFilter `json:"every"`
+	Every *ProjectLabelFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns ProjectLabelCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -9601,23 +9601,23 @@ func (v *ProjectLabelCollectionFilter) GetLength() *NumberComparator { return v.
 // Project label filtering options.
 type ProjectLabelFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for whether the label is a group label.
-	IsGroup *BooleanComparator `json:"isGroup"`
+	IsGroup *BooleanComparator `json:"isGroup,omitempty"`
 	// Filters that the project labels creator must satisfy.
-	Creator *NullableUserFilter `json:"creator"`
+	Creator *NullableUserFilter `json:"creator,omitempty"`
 	// Filters that the project label's parent label must satisfy.
-	Parent *ProjectLabelFilter `json:"parent"`
+	Parent *ProjectLabelFilter `json:"parent,omitempty"`
 	// Compound filters, all of which need to be matched by the label.
-	And []ProjectLabelFilter `json:"and"`
+	And []ProjectLabelFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the label.
-	Or []ProjectLabelFilter `json:"or"`
+	Or []ProjectLabelFilter `json:"or,omitempty"`
 }
 
 // GetId returns ProjectLabelFilter.Id, and is useful for accessing the field via an interface.
@@ -9649,7 +9649,7 @@ func (v *ProjectLabelFilter) GetOr() []ProjectLabelFilter { return v.Or }
 
 // ProjectListProjectsProjectConnection includes the requested fields of the GraphQL type ProjectConnection.
 type ProjectListProjectsProjectConnection struct {
-	Nodes    []ProjectListProjectsProjectConnectionNodesProject `json:"nodes"`
+	Nodes    []ProjectListProjectsProjectConnectionNodesProject `json:"nodes,omitempty"`
 	PageInfo ProjectListProjectsProjectConnectionPageInfo       `json:"pageInfo"`
 }
 
@@ -9754,11 +9754,11 @@ type __premarshalProjectListProjectsProjectConnectionNodesProject struct {
 
 	Progress float64 `json:"progress"`
 
-	StartDate *string `json:"startDate"`
+	StartDate *string `json:"startDate,omitempty"`
 
-	TargetDate *string `json:"targetDate"`
+	TargetDate *string `json:"targetDate,omitempty"`
 
-	Lead *ProjectSummaryFieldsLeadUser `json:"lead"`
+	Lead *ProjectSummaryFieldsLeadUser `json:"lead,omitempty"`
 }
 
 func (v *ProjectListProjectsProjectConnectionNodesProject) MarshalJSON() ([]byte, error) {
@@ -9827,7 +9827,7 @@ func (v *ProjectListProjectsProjectConnectionPageInfo) UnmarshalJSON(b []byte) e
 type __premarshalProjectListProjectsProjectConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *ProjectListProjectsProjectConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -9858,27 +9858,27 @@ func (v *ProjectListResponse) GetProjects() ProjectListProjectsProjectConnection
 // Milestone collection filtering options.
 type ProjectMilestoneCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the project milestone name.
-	Name *NullableStringComparator `json:"name"`
+	Name *NullableStringComparator `json:"name,omitempty"`
 	// Comparator for the project milestone target date.
-	TargetDate *NullableDateComparator `json:"targetDate"`
+	TargetDate *NullableDateComparator `json:"targetDate,omitempty"`
 	// Filters that the project milestone's project must satisfy.
-	Project *NullableProjectFilter `json:"project"`
+	Project *NullableProjectFilter `json:"project,omitempty"`
 	// Compound filters, all of which need to be matched by the milestone.
-	And []ProjectMilestoneCollectionFilter `json:"and"`
+	And []ProjectMilestoneCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the milestone.
-	Or []ProjectMilestoneCollectionFilter `json:"or"`
+	Or []ProjectMilestoneCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some milestones.
-	Some *ProjectMilestoneFilter `json:"some"`
+	Some *ProjectMilestoneFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all milestones.
-	Every *ProjectMilestoneFilter `json:"every"`
+	Every *ProjectMilestoneFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns ProjectMilestoneCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -9919,21 +9919,21 @@ func (v *ProjectMilestoneCollectionFilter) GetLength() *NumberComparator { retur
 // Project milestone filtering options.
 type ProjectMilestoneFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the project milestone name.
-	Name *NullableStringComparator `json:"name"`
+	Name *NullableStringComparator `json:"name,omitempty"`
 	// Comparator for the project milestone target date.
-	TargetDate *NullableDateComparator `json:"targetDate"`
+	TargetDate *NullableDateComparator `json:"targetDate,omitempty"`
 	// Filters that the project milestone's project must satisfy.
-	Project *NullableProjectFilter `json:"project"`
+	Project *NullableProjectFilter `json:"project,omitempty"`
 	// Compound filters, all of which need to be matched by the project milestone.
-	And []ProjectMilestoneFilter `json:"and"`
+	And []ProjectMilestoneFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the project milestone.
-	Or []ProjectMilestoneFilter `json:"or"`
+	Or []ProjectMilestoneFilter `json:"or,omitempty"`
 }
 
 // GetId returns ProjectMilestoneFilter.Id, and is useful for accessing the field via an interface.
@@ -9973,7 +9973,7 @@ func (v *ProjectSearchResponse) GetSearchProjects() ProjectSearchSearchProjectsP
 
 // ProjectSearchSearchProjectsProjectSearchPayload includes the requested fields of the GraphQL type ProjectSearchPayload.
 type ProjectSearchSearchProjectsProjectSearchPayload struct {
-	Nodes    []ProjectSearchSearchProjectsProjectSearchPayloadNodesProjectSearchResult `json:"nodes"`
+	Nodes    []ProjectSearchSearchProjectsProjectSearchPayloadNodesProjectSearchResult `json:"nodes,omitempty"`
 	PageInfo ProjectSearchSearchProjectsProjectSearchPayloadPageInfo                   `json:"pageInfo"`
 }
 
@@ -10075,11 +10075,11 @@ type __premarshalProjectSearchSearchProjectsProjectSearchPayloadNodesProjectSear
 
 	Progress float64 `json:"progress"`
 
-	StartDate *string `json:"startDate"`
+	StartDate *string `json:"startDate,omitempty"`
 
-	TargetDate *string `json:"targetDate"`
+	TargetDate *string `json:"targetDate,omitempty"`
 
-	Lead *ProjectSearchSummaryFieldsLeadUser `json:"lead"`
+	Lead *ProjectSearchSummaryFieldsLeadUser `json:"lead,omitempty"`
 }
 
 func (v *ProjectSearchSearchProjectsProjectSearchPayloadNodesProjectSearchResult) MarshalJSON() ([]byte, error) {
@@ -10148,7 +10148,7 @@ func (v *ProjectSearchSearchProjectsProjectSearchPayloadPageInfo) UnmarshalJSON(
 type __premarshalProjectSearchSearchProjectsProjectSearchPayloadPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *ProjectSearchSearchProjectsProjectSearchPayloadPageInfo) MarshalJSON() ([]byte, error) {
@@ -10182,11 +10182,11 @@ type ProjectSearchSummaryFields struct {
 	// The overall progress of the project. This is the (completed estimate points + 0.25 * in progress estimate points) / total estimate points.
 	Progress float64 `json:"progress"`
 	// The estimated start date of the project. Null if no start date is set.
-	StartDate *string `json:"startDate"`
+	StartDate *string `json:"startDate,omitempty"`
 	// The estimated completion date of the project. Null if no target date is set.
-	TargetDate *string `json:"targetDate"`
+	TargetDate *string `json:"targetDate,omitempty"`
 	// The user who leads the project. The project lead is typically responsible for posting status updates and driving the project to completion. Null if no lead is assigned.
-	Lead *ProjectSearchSummaryFieldsLeadUser `json:"lead"`
+	Lead *ProjectSearchSummaryFieldsLeadUser `json:"lead,omitempty"`
 }
 
 // GetId returns ProjectSearchSummaryFields.Id, and is useful for accessing the field via an interface.
@@ -10231,25 +10231,25 @@ func (v *ProjectSearchSummaryFieldsLeadUser) GetName() string { return v.Name }
 // Project status filtering options.
 type ProjectStatusFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the project status name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the project status description.
-	Description *StringComparator `json:"description"`
+	Description *StringComparator `json:"description,omitempty"`
 	// Comparator for the project status position.
-	Position *NumberComparator `json:"position"`
+	Position *NumberComparator `json:"position,omitempty"`
 	// Comparator for the project status type.
-	Type *StringComparator `json:"type"`
+	Type *StringComparator `json:"type,omitempty"`
 	// Filters that the project status projects must satisfy.
-	Projects *ProjectCollectionFilter `json:"projects"`
+	Projects *ProjectCollectionFilter `json:"projects,omitempty"`
 	// Compound filters, all of which need to be matched by the project status.
-	And []ProjectStatusFilter `json:"and"`
+	And []ProjectStatusFilter `json:"and,omitempty"`
 	// Compound filters, one of which needs to be matched by the project status.
-	Or []ProjectStatusFilter `json:"or"`
+	Or []ProjectStatusFilter `json:"or,omitempty"`
 }
 
 // GetId returns ProjectStatusFilter.Id, and is useful for accessing the field via an interface.
@@ -10300,11 +10300,11 @@ type ProjectSummaryFields struct {
 	// The overall progress of the project. This is the (completed estimate points + 0.25 * in progress estimate points) / total estimate points.
 	Progress float64 `json:"progress"`
 	// The estimated start date of the project. Null if no start date is set.
-	StartDate *string `json:"startDate"`
+	StartDate *string `json:"startDate,omitempty"`
 	// The estimated completion date of the project. Null if no target date is set.
-	TargetDate *string `json:"targetDate"`
+	TargetDate *string `json:"targetDate,omitempty"`
 	// The user who leads the project. The project lead is typically responsible for posting status updates and driving the project to completion. Null if no lead is assigned.
-	Lead *ProjectSummaryFieldsLeadUser `json:"lead"`
+	Lead *ProjectSummaryFieldsLeadUser `json:"lead,omitempty"`
 }
 
 // GetId returns ProjectSummaryFields.Id, and is useful for accessing the field via an interface.
@@ -10349,69 +10349,69 @@ func (v *ProjectSummaryFieldsLeadUser) GetName() string { return v.Name }
 // Input for updating an existing project. All fields are optional; only provided fields will be updated. Setting a field to null (where supported) will clear the value.
 type ProjectUpdateInput struct {
 	// [DEPRECATED] The state of the project.
-	State *string `json:"state"`
+	State *string `json:"state,omitempty"`
 	// The ID of the project status.
-	StatusId *string `json:"statusId"`
+	StatusId *string `json:"statusId,omitempty"`
 	// The name of the project.
-	Name *string `json:"name"`
+	Name *string `json:"name,omitempty"`
 	// The description for the project.
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// The project content as markdown.
-	Content *string `json:"content"`
+	Content *string `json:"content,omitempty"`
 	// The ID of the issue from which that project is created.
-	ConvertedFromIssueId *string `json:"convertedFromIssueId"`
+	ConvertedFromIssueId *string `json:"convertedFromIssueId,omitempty"`
 	// The ID of the last template applied to the project.
-	LastAppliedTemplateId *string `json:"lastAppliedTemplateId"`
+	LastAppliedTemplateId *string `json:"lastAppliedTemplateId,omitempty"`
 	// The icon of the project.
-	Icon *string `json:"icon"`
+	Icon *string `json:"icon,omitempty"`
 	// The color of the project.
-	Color *string `json:"color"`
+	Color *string `json:"color,omitempty"`
 	// The identifiers of the teams this project is associated with.
-	TeamIds []string `json:"teamIds"`
+	TeamIds []string `json:"teamIds,omitempty"`
 	// The time until which project update reminders are paused. Set to null to resume reminders.
-	ProjectUpdateRemindersPausedUntilAt *string `json:"projectUpdateRemindersPausedUntilAt"`
+	ProjectUpdateRemindersPausedUntilAt *string `json:"projectUpdateRemindersPausedUntilAt,omitempty"`
 	// The n-weekly frequency at which to prompt for project updates. When not set, reminders are inherited from workspace settings.
-	UpdateReminderFrequencyInWeeks *float64 `json:"updateReminderFrequencyInWeeks"`
+	UpdateReminderFrequencyInWeeks *float64 `json:"updateReminderFrequencyInWeeks,omitempty"`
 	// The frequency at which to prompt for project updates. When not set, reminders are inherited from workspace settings.
-	UpdateReminderFrequency *float64 `json:"updateReminderFrequency"`
+	UpdateReminderFrequency *float64 `json:"updateReminderFrequency,omitempty"`
 	// The resolution type for the update reminder frequency (e.g., weekly, biweekly).
-	FrequencyResolution *FrequencyResolutionType `json:"frequencyResolution"`
+	FrequencyResolution *FrequencyResolutionType `json:"frequencyResolution,omitempty"`
 	// The day of the week on which to prompt for project updates.
-	UpdateRemindersDay *Day `json:"updateRemindersDay"`
+	UpdateRemindersDay *Day `json:"updateRemindersDay,omitempty"`
 	// The hour of the day (0-23) at which to prompt for project updates.
-	UpdateRemindersHour *int `json:"updateRemindersHour"`
+	UpdateRemindersHour *int `json:"updateRemindersHour,omitempty"`
 	// The identifier of the project lead.
-	LeadId *string `json:"leadId"`
+	LeadId *string `json:"leadId,omitempty"`
 	// The identifiers of the members of this project.
-	MemberIds []string `json:"memberIds"`
+	MemberIds []string `json:"memberIds,omitempty"`
 	// The planned start date of the project.
-	StartDate *string `json:"startDate"`
+	StartDate *string `json:"startDate,omitempty"`
 	// The resolution of the project's start date.
-	StartDateResolution *DateResolutionType `json:"startDateResolution"`
+	StartDateResolution *DateResolutionType `json:"startDateResolution,omitempty"`
 	// The planned target date of the project.
-	TargetDate *string `json:"targetDate"`
+	TargetDate *string `json:"targetDate,omitempty"`
 	// The resolution of the project's estimated completion date.
-	TargetDateResolution *DateResolutionType `json:"targetDateResolution"`
+	TargetDateResolution *DateResolutionType `json:"targetDateResolution,omitempty"`
 	// The time at which the project was completed.
-	CompletedAt *string `json:"completedAt"`
+	CompletedAt *string `json:"completedAt,omitempty"`
 	// The time at which the project was canceled.
-	CanceledAt *string `json:"canceledAt"`
+	CanceledAt *string `json:"canceledAt,omitempty"`
 	// Whether to send new issue notifications to Slack.
-	SlackNewIssue *bool `json:"slackNewIssue"`
+	SlackNewIssue *bool `json:"slackNewIssue,omitempty"`
 	// Whether to send new issue comment notifications to Slack.
-	SlackIssueComments *bool `json:"slackIssueComments"`
+	SlackIssueComments *bool `json:"slackIssueComments,omitempty"`
 	// Whether to send issue status update notifications to Slack.
-	SlackIssueStatuses *bool `json:"slackIssueStatuses"`
+	SlackIssueStatuses *bool `json:"slackIssueStatuses,omitempty"`
 	// The sort order for the project in shared views.
-	SortOrder *float64 `json:"sortOrder"`
+	SortOrder *float64 `json:"sortOrder,omitempty"`
 	// The sort order for the project within shared views, when ordered by priority.
-	PrioritySortOrder *float64 `json:"prioritySortOrder"`
+	PrioritySortOrder *float64 `json:"prioritySortOrder,omitempty"`
 	// Whether the project has been trashed. Set to true to trash, or null to restore.
-	Trashed *bool `json:"trashed"`
+	Trashed *bool `json:"trashed,omitempty"`
 	// The priority of the project. 0 = No priority, 1 = Urgent, 2 = High, 3 = Medium, 4 = Low.
-	Priority *int `json:"priority"`
+	Priority *int `json:"priority,omitempty"`
 	// The identifiers of the project labels associated with this project.
-	LabelIds []string `json:"labelIds"`
+	LabelIds []string `json:"labelIds,omitempty"`
 }
 
 // GetState returns ProjectUpdateInput.State, and is useful for accessing the field via an interface.
@@ -10546,23 +10546,23 @@ func (v *ProjectUpdateResponse) GetProjectUpdate() ProjectUpdateProjectUpdatePro
 // Collection filtering options for filtering projects by project updates.
 type ProjectUpdatesCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the project update health.
-	Health *StringComparator `json:"health"`
+	Health *StringComparator `json:"health,omitempty"`
 	// Compound filters, all of which need to be matched by the project update.
-	And []ProjectUpdatesCollectionFilter `json:"and"`
+	And []ProjectUpdatesCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the update.
-	Or []ProjectUpdatesCollectionFilter `json:"or"`
+	Or []ProjectUpdatesCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some updates.
-	Some *ProjectUpdatesFilter `json:"some"`
+	Some *ProjectUpdatesFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all updates.
-	Every *ProjectUpdatesFilter `json:"every"`
+	Every *ProjectUpdatesFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns ProjectUpdatesCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -10595,17 +10595,17 @@ func (v *ProjectUpdatesCollectionFilter) GetLength() *NumberComparator { return 
 // Options for filtering projects by project updates.
 type ProjectUpdatesFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the project update health.
-	Health *StringComparator `json:"health"`
+	Health *StringComparator `json:"health,omitempty"`
 	// Compound filters, all of which need to be matched by the project updates.
-	And []ProjectUpdatesFilter `json:"and"`
+	And []ProjectUpdatesFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the project updates.
-	Or []ProjectUpdatesFilter `json:"or"`
+	Or []ProjectUpdatesFilter `json:"or,omitempty"`
 }
 
 // GetId returns ProjectUpdatesFilter.Id, and is useful for accessing the field via an interface.
@@ -10629,25 +10629,25 @@ func (v *ProjectUpdatesFilter) GetOr() []ProjectUpdatesFilter { return v.Or }
 // Reaction filtering options.
 type ReactionCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the reactions emoji.
-	Emoji *StringComparator `json:"emoji"`
+	Emoji *StringComparator `json:"emoji,omitempty"`
 	// Comparator for the reactions custom emoji.
-	CustomEmojiId *IDComparator `json:"customEmojiId"`
+	CustomEmojiId *IDComparator `json:"customEmojiId,omitempty"`
 	// Compound filters, all of which need to be matched by the reaction.
-	And []ReactionCollectionFilter `json:"and"`
+	And []ReactionCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the reaction.
-	Or []ReactionCollectionFilter `json:"or"`
+	Or []ReactionCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some reactions.
-	Some *ReactionFilter `json:"some"`
+	Some *ReactionFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all reactions.
-	Every *ReactionFilter `json:"every"`
+	Every *ReactionFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns ReactionCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -10683,19 +10683,19 @@ func (v *ReactionCollectionFilter) GetLength() *NumberComparator { return v.Leng
 // Reaction filtering options.
 type ReactionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the reactions emoji.
-	Emoji *StringComparator `json:"emoji"`
+	Emoji *StringComparator `json:"emoji,omitempty"`
 	// Comparator for the reactions custom emoji.
-	CustomEmojiId *IDComparator `json:"customEmojiId"`
+	CustomEmojiId *IDComparator `json:"customEmojiId,omitempty"`
 	// Compound filters, all of which need to be matched by the reaction.
-	And []ReactionFilter `json:"and"`
+	And []ReactionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the reaction.
-	Or []ReactionFilter `json:"or"`
+	Or []ReactionFilter `json:"or,omitempty"`
 }
 
 // GetId returns ReactionFilter.Id, and is useful for accessing the field via an interface.
@@ -10722,9 +10722,9 @@ func (v *ReactionFilter) GetOr() []ReactionFilter { return v.Or }
 // Comparator for relation existence.
 type RelationExistsComparator struct {
 	// Equals constraint.
-	Eq *bool `json:"eq"`
+	Eq *bool `json:"eq,omitempty"`
 	// Not equals constraint.
-	Neq *bool `json:"neq"`
+	Neq *bool `json:"neq,omitempty"`
 }
 
 // GetEq returns RelationExistsComparator.Eq, and is useful for accessing the field via an interface.
@@ -10736,31 +10736,31 @@ func (v *RelationExistsComparator) GetNeq() *bool { return v.Neq }
 // [ALPHA] Release collection filtering options.
 type ReleaseCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the release name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the release version.
-	Version *StringComparator `json:"version"`
+	Version *StringComparator `json:"version,omitempty"`
 	// Filters that the release's pipeline must satisfy.
-	Pipeline *ReleasePipelineFilter `json:"pipeline"`
+	Pipeline *ReleasePipelineFilter `json:"pipeline,omitempty"`
 	// Filters that the release's stage must satisfy.
-	Stage *ReleaseStageFilter `json:"stage"`
+	Stage *ReleaseStageFilter `json:"stage,omitempty"`
 	// Comparator for the release completion date.
-	CompletedAt *NullableDateComparator `json:"completedAt"`
+	CompletedAt *NullableDateComparator `json:"completedAt,omitempty"`
 	// Compound filters, all of which need to be matched by the release.
-	And []ReleaseCollectionFilter `json:"and"`
+	And []ReleaseCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the release.
-	Or []ReleaseCollectionFilter `json:"or"`
+	Or []ReleaseCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some releases.
-	Some *ReleaseFilter `json:"some"`
+	Some *ReleaseFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all releases.
-	Every *ReleaseFilter `json:"every"`
+	Every *ReleaseFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns ReleaseCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -10805,25 +10805,25 @@ func (v *ReleaseCollectionFilter) GetLength() *NumberComparator { return v.Lengt
 // [ALPHA] Release filtering options.
 type ReleaseFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the release name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the release version.
-	Version *StringComparator `json:"version"`
+	Version *StringComparator `json:"version,omitempty"`
 	// Filters that the release's pipeline must satisfy.
-	Pipeline *ReleasePipelineFilter `json:"pipeline"`
+	Pipeline *ReleasePipelineFilter `json:"pipeline,omitempty"`
 	// Filters that the release's stage must satisfy.
-	Stage *ReleaseStageFilter `json:"stage"`
+	Stage *ReleaseStageFilter `json:"stage,omitempty"`
 	// Comparator for the release completion date.
-	CompletedAt *NullableDateComparator `json:"completedAt"`
+	CompletedAt *NullableDateComparator `json:"completedAt,omitempty"`
 	// Compound filters, all of which need to be matched by the release.
-	And []ReleaseFilter `json:"and"`
+	And []ReleaseFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the release.
-	Or []ReleaseFilter `json:"or"`
+	Or []ReleaseFilter `json:"or,omitempty"`
 }
 
 // GetId returns ReleaseFilter.Id, and is useful for accessing the field via an interface.
@@ -10859,27 +10859,27 @@ func (v *ReleaseFilter) GetOr() []ReleaseFilter { return v.Or }
 // [ALPHA] Release pipeline collection filtering options.
 type ReleasePipelineCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the pipeline name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the pipeline production flag.
-	IsProduction *BooleanComparator `json:"isProduction"`
+	IsProduction *BooleanComparator `json:"isProduction,omitempty"`
 	// Filters that the release pipeline's teams must satisfy.
-	Teams *TeamCollectionFilter `json:"teams"`
+	Teams *TeamCollectionFilter `json:"teams,omitempty"`
 	// Compound filters, all of which need to be matched by the release pipeline.
-	And []ReleasePipelineCollectionFilter `json:"and"`
+	And []ReleasePipelineCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the release pipeline.
-	Or []ReleasePipelineCollectionFilter `json:"or"`
+	Or []ReleasePipelineCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some release pipelines.
-	Some *ReleasePipelineFilter `json:"some"`
+	Some *ReleasePipelineFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all release pipelines.
-	Every *ReleasePipelineFilter `json:"every"`
+	Every *ReleasePipelineFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns ReleasePipelineCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -10918,21 +10918,21 @@ func (v *ReleasePipelineCollectionFilter) GetLength() *NumberComparator { return
 // [ALPHA] Release pipeline filtering options.
 type ReleasePipelineFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the pipeline name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the pipeline production flag.
-	IsProduction *BooleanComparator `json:"isProduction"`
+	IsProduction *BooleanComparator `json:"isProduction,omitempty"`
 	// Filters that the release pipeline's teams must satisfy.
-	Teams *TeamCollectionFilter `json:"teams"`
+	Teams *TeamCollectionFilter `json:"teams,omitempty"`
 	// Compound filters, all of which need to be matched by the pipeline.
-	And []ReleasePipelineFilter `json:"and"`
+	And []ReleasePipelineFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the pipeline.
-	Or []ReleasePipelineFilter `json:"or"`
+	Or []ReleasePipelineFilter `json:"or,omitempty"`
 }
 
 // GetId returns ReleasePipelineFilter.Id, and is useful for accessing the field via an interface.
@@ -10962,19 +10962,19 @@ func (v *ReleasePipelineFilter) GetOr() []ReleasePipelineFilter { return v.Or }
 // [ALPHA] Release stage filtering options.
 type ReleaseStageFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the stage type.
-	Type *ReleaseStageTypeComparator `json:"type"`
+	Type *ReleaseStageTypeComparator `json:"type,omitempty"`
 	// Comparator for the stage name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Compound filters, all of which need to be matched by the stage.
-	And []ReleaseStageFilter `json:"and"`
+	And []ReleaseStageFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the stage.
-	Or []ReleaseStageFilter `json:"or"`
+	Or []ReleaseStageFilter `json:"or,omitempty"`
 }
 
 // GetId returns ReleaseStageFilter.Id, and is useful for accessing the field via an interface.
@@ -11018,15 +11018,15 @@ var AllReleaseStageType = []ReleaseStageType{
 // [ALPHA] Comparator for release stage type.
 type ReleaseStageTypeComparator struct {
 	// Equals constraint.
-	Eq *ReleaseStageType `json:"eq"`
+	Eq *ReleaseStageType `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *ReleaseStageType `json:"neq"`
+	Neq *ReleaseStageType `json:"neq,omitempty"`
 	// In-array constraint.
-	In []ReleaseStageType `json:"in"`
+	In []ReleaseStageType `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []ReleaseStageType `json:"nin"`
+	Nin []ReleaseStageType `json:"nin,omitempty"`
 	// Null constraint. Matches any non-null values if the given value is false, otherwise it matches null values.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 }
 
 // GetEq returns ReleaseStageTypeComparator.Eq, and is useful for accessing the field via an interface.
@@ -11047,27 +11047,27 @@ func (v *ReleaseStageTypeComparator) GetNull() *bool { return v.Null }
 // Roadmap collection filtering options.
 type RoadmapCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the roadmap name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the roadmap slug ID.
-	SlugId *StringComparator `json:"slugId"`
+	SlugId *StringComparator `json:"slugId,omitempty"`
 	// Filters that the roadmap creator must satisfy.
-	Creator *UserFilter `json:"creator"`
+	Creator *UserFilter `json:"creator,omitempty"`
 	// Compound filters, all of which need to be matched by the roadmap.
-	And []RoadmapCollectionFilter `json:"and"`
+	And []RoadmapCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the roadmap.
-	Or []RoadmapCollectionFilter `json:"or"`
+	Or []RoadmapCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some roadmaps.
-	Some *RoadmapFilter `json:"some"`
+	Some *RoadmapFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all roadmaps.
-	Every *RoadmapFilter `json:"every"`
+	Every *RoadmapFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns RoadmapCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -11106,21 +11106,21 @@ func (v *RoadmapCollectionFilter) GetLength() *NumberComparator { return v.Lengt
 // Roadmap filtering options.
 type RoadmapFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the roadmap name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the roadmap slug ID.
-	SlugId *StringComparator `json:"slugId"`
+	SlugId *StringComparator `json:"slugId,omitempty"`
 	// Filters that the roadmap creator must satisfy.
-	Creator *UserFilter `json:"creator"`
+	Creator *UserFilter `json:"creator,omitempty"`
 	// Compound filters, all of which need to be matched by the roadmap.
-	And []RoadmapFilter `json:"and"`
+	And []RoadmapFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the roadmap.
-	Or []RoadmapFilter `json:"or"`
+	Or []RoadmapFilter `json:"or,omitempty"`
 }
 
 // GetId returns RoadmapFilter.Id, and is useful for accessing the field via an interface.
@@ -11170,11 +11170,11 @@ type RoadmapGetRoadmap struct {
 	// The name of the roadmap.
 	Name string `json:"name"`
 	// The description of the roadmap.
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// The time at which the entity was created.
 	CreatedAt string `json:"createdAt"`
 	// The user who owns the roadmap.
-	Owner *RoadmapGetRoadmapOwnerUser `json:"owner"`
+	Owner *RoadmapGetRoadmapOwnerUser `json:"owner,omitempty"`
 	// The user who created the roadmap.
 	Creator RoadmapGetRoadmapCreatorUser `json:"creator"`
 }
@@ -11248,7 +11248,7 @@ func (v *RoadmapListResponse) GetRoadmaps() RoadmapListRoadmapsRoadmapConnection
 
 // RoadmapListRoadmapsRoadmapConnection includes the requested fields of the GraphQL type RoadmapConnection.
 type RoadmapListRoadmapsRoadmapConnection struct {
-	Nodes    []RoadmapListRoadmapsRoadmapConnectionNodesRoadmap `json:"nodes"`
+	Nodes    []RoadmapListRoadmapsRoadmapConnectionNodesRoadmap `json:"nodes,omitempty"`
 	PageInfo RoadmapListRoadmapsRoadmapConnectionPageInfo       `json:"pageInfo"`
 }
 
@@ -11276,9 +11276,9 @@ type RoadmapListRoadmapsRoadmapConnectionNodesRoadmap struct {
 	// The name of the roadmap.
 	Name string `json:"name"`
 	// The description of the roadmap.
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// The user who owns the roadmap.
-	Owner *RoadmapListRoadmapsRoadmapConnectionNodesRoadmapOwnerUser `json:"owner"`
+	Owner *RoadmapListRoadmapsRoadmapConnectionNodesRoadmapOwnerUser `json:"owner,omitempty"`
 }
 
 // GetId returns RoadmapListRoadmapsRoadmapConnectionNodesRoadmap.Id, and is useful for accessing the field via an interface.
@@ -11358,7 +11358,7 @@ func (v *RoadmapListRoadmapsRoadmapConnectionPageInfo) UnmarshalJSON(b []byte) e
 type __premarshalRoadmapListRoadmapsRoadmapConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *RoadmapListRoadmapsRoadmapConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -11402,7 +11402,7 @@ func (v *RoadmapProjectsRoadmap) GetProjects() RoadmapProjectsRoadmapProjectsPro
 
 // RoadmapProjectsRoadmapProjectsProjectConnection includes the requested fields of the GraphQL type ProjectConnection.
 type RoadmapProjectsRoadmapProjectsProjectConnection struct {
-	Nodes    []RoadmapProjectsRoadmapProjectsProjectConnectionNodesProject `json:"nodes"`
+	Nodes    []RoadmapProjectsRoadmapProjectsProjectConnectionNodesProject `json:"nodes,omitempty"`
 	PageInfo RoadmapProjectsRoadmapProjectsProjectConnectionPageInfo       `json:"pageInfo"`
 }
 
@@ -11507,11 +11507,11 @@ type __premarshalRoadmapProjectsRoadmapProjectsProjectConnectionNodesProject str
 
 	Progress float64 `json:"progress"`
 
-	StartDate *string `json:"startDate"`
+	StartDate *string `json:"startDate,omitempty"`
 
-	TargetDate *string `json:"targetDate"`
+	TargetDate *string `json:"targetDate,omitempty"`
 
-	Lead *ProjectSummaryFieldsLeadUser `json:"lead"`
+	Lead *ProjectSummaryFieldsLeadUser `json:"lead,omitempty"`
 }
 
 func (v *RoadmapProjectsRoadmapProjectsProjectConnectionNodesProject) MarshalJSON() ([]byte, error) {
@@ -11580,7 +11580,7 @@ func (v *RoadmapProjectsRoadmapProjectsProjectConnectionPageInfo) UnmarshalJSON(
 type __premarshalRoadmapProjectsRoadmapProjectsProjectConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *RoadmapProjectsRoadmapProjectsProjectConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -11646,15 +11646,15 @@ var AllSlaStatus = []SlaStatus{
 // Comparator for sla status.
 type SlaStatusComparator struct {
 	// Equals constraint.
-	Eq *SlaStatus `json:"eq"`
+	Eq *SlaStatus `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *SlaStatus `json:"neq"`
+	Neq *SlaStatus `json:"neq,omitempty"`
 	// In-array constraint.
-	In []SlaStatus `json:"in"`
+	In []SlaStatus `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []SlaStatus `json:"nin"`
+	Nin []SlaStatus `json:"nin,omitempty"`
 	// Null constraint. Matches any non-null values if the given value is false, otherwise it matches null values.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 }
 
 // GetEq returns SlaStatusComparator.Eq, and is useful for accessing the field via an interface.
@@ -11675,11 +11675,11 @@ func (v *SlaStatusComparator) GetNull() *bool { return v.Null }
 // Comparator for issue source type.
 type SourceMetadataComparator struct {
 	// Null constraint. Matches any non-null values if the given value is false, otherwise it matches null values.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 	// Comparator for the sub type.
-	SubType *SubTypeComparator `json:"subType"`
+	SubType *SubTypeComparator `json:"subType,omitempty"`
 	// [INTERNAL] Comparator for the salesforce metadata.
-	SalesforceMetadata *SalesforceMetadataIntegrationComparator `json:"salesforceMetadata"`
+	SalesforceMetadata *SalesforceMetadataIntegrationComparator `json:"salesforceMetadata,omitempty"`
 }
 
 // GetNull returns SourceMetadataComparator.Null, and is useful for accessing the field via an interface.
@@ -11696,37 +11696,37 @@ func (v *SourceMetadataComparator) GetSalesforceMetadata() *SalesforceMetadataIn
 // Comparator for `sourceType` field.
 type SourceTypeComparator struct {
 	// Equals constraint.
-	Eq *string `json:"eq"`
+	Eq *string `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *string `json:"neq"`
+	Neq *string `json:"neq,omitempty"`
 	// In-array constraint.
-	In []string `json:"in"`
+	In []string `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []string `json:"nin"`
+	Nin []string `json:"nin,omitempty"`
 	// Equals case insensitive. Matches any values that matches the given string case insensitive.
-	EqIgnoreCase *string `json:"eqIgnoreCase"`
+	EqIgnoreCase *string `json:"eqIgnoreCase,omitempty"`
 	// Not-equals case insensitive. Matches any values that don't match the given string case insensitive.
-	NeqIgnoreCase *string `json:"neqIgnoreCase"`
+	NeqIgnoreCase *string `json:"neqIgnoreCase,omitempty"`
 	// Starts with constraint. Matches any values that start with the given string.
-	StartsWith *string `json:"startsWith"`
+	StartsWith *string `json:"startsWith,omitempty"`
 	// Starts with case insensitive constraint. Matches any values that start with the given string.
-	StartsWithIgnoreCase *string `json:"startsWithIgnoreCase"`
+	StartsWithIgnoreCase *string `json:"startsWithIgnoreCase,omitempty"`
 	// Doesn't start with constraint. Matches any values that don't start with the given string.
-	NotStartsWith *string `json:"notStartsWith"`
+	NotStartsWith *string `json:"notStartsWith,omitempty"`
 	// Ends with constraint. Matches any values that end with the given string.
-	EndsWith *string `json:"endsWith"`
+	EndsWith *string `json:"endsWith,omitempty"`
 	// Doesn't end with constraint. Matches any values that don't end with the given string.
-	NotEndsWith *string `json:"notEndsWith"`
+	NotEndsWith *string `json:"notEndsWith,omitempty"`
 	// Contains constraint. Matches any values that contain the given string.
-	Contains *string `json:"contains"`
+	Contains *string `json:"contains,omitempty"`
 	// Contains case insensitive constraint. Matches any values that contain the given string case insensitive.
-	ContainsIgnoreCase *string `json:"containsIgnoreCase"`
+	ContainsIgnoreCase *string `json:"containsIgnoreCase,omitempty"`
 	// Doesn't contain constraint. Matches any values that don't contain the given string.
-	NotContains *string `json:"notContains"`
+	NotContains *string `json:"notContains,omitempty"`
 	// Doesn't contain case insensitive constraint. Matches any values that don't contain the given string case insensitive.
-	NotContainsIgnoreCase *string `json:"notContainsIgnoreCase"`
+	NotContainsIgnoreCase *string `json:"notContainsIgnoreCase,omitempty"`
 	// Contains case and accent insensitive constraint. Matches any values that contain the given string case and accent insensitive.
-	ContainsIgnoreCaseAndAccent *string `json:"containsIgnoreCaseAndAccent"`
+	ContainsIgnoreCaseAndAccent *string `json:"containsIgnoreCaseAndAccent,omitempty"`
 }
 
 // GetEq returns SourceTypeComparator.Eq, and is useful for accessing the field via an interface.
@@ -11782,11 +11782,11 @@ func (v *SourceTypeComparator) GetContainsIgnoreCaseAndAccent() *string {
 // Comparator for strings.
 type StringArrayComparator struct {
 	// Length of the array. Matches any values that have the given length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 	// Compound filters, all of which need to be matched.
-	Every *StringItemComparator `json:"every"`
+	Every *StringItemComparator `json:"every,omitempty"`
 	// Compound filters, one of which needs to be matched.
-	Some *StringItemComparator `json:"some"`
+	Some *StringItemComparator `json:"some,omitempty"`
 }
 
 // GetLength returns StringArrayComparator.Length, and is useful for accessing the field via an interface.
@@ -11801,37 +11801,37 @@ func (v *StringArrayComparator) GetSome() *StringItemComparator { return v.Some 
 // Comparator for strings.
 type StringComparator struct {
 	// Equals constraint.
-	Eq *string `json:"eq"`
+	Eq *string `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *string `json:"neq"`
+	Neq *string `json:"neq,omitempty"`
 	// In-array constraint.
-	In []string `json:"in"`
+	In []string `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []string `json:"nin"`
+	Nin []string `json:"nin,omitempty"`
 	// Equals case insensitive. Matches any values that matches the given string case insensitive.
-	EqIgnoreCase *string `json:"eqIgnoreCase"`
+	EqIgnoreCase *string `json:"eqIgnoreCase,omitempty"`
 	// Not-equals case insensitive. Matches any values that don't match the given string case insensitive.
-	NeqIgnoreCase *string `json:"neqIgnoreCase"`
+	NeqIgnoreCase *string `json:"neqIgnoreCase,omitempty"`
 	// Starts with constraint. Matches any values that start with the given string.
-	StartsWith *string `json:"startsWith"`
+	StartsWith *string `json:"startsWith,omitempty"`
 	// Starts with case insensitive constraint. Matches any values that start with the given string.
-	StartsWithIgnoreCase *string `json:"startsWithIgnoreCase"`
+	StartsWithIgnoreCase *string `json:"startsWithIgnoreCase,omitempty"`
 	// Doesn't start with constraint. Matches any values that don't start with the given string.
-	NotStartsWith *string `json:"notStartsWith"`
+	NotStartsWith *string `json:"notStartsWith,omitempty"`
 	// Ends with constraint. Matches any values that end with the given string.
-	EndsWith *string `json:"endsWith"`
+	EndsWith *string `json:"endsWith,omitempty"`
 	// Doesn't end with constraint. Matches any values that don't end with the given string.
-	NotEndsWith *string `json:"notEndsWith"`
+	NotEndsWith *string `json:"notEndsWith,omitempty"`
 	// Contains constraint. Matches any values that contain the given string.
-	Contains *string `json:"contains"`
+	Contains *string `json:"contains,omitempty"`
 	// Contains case insensitive constraint. Matches any values that contain the given string case insensitive.
-	ContainsIgnoreCase *string `json:"containsIgnoreCase"`
+	ContainsIgnoreCase *string `json:"containsIgnoreCase,omitempty"`
 	// Doesn't contain constraint. Matches any values that don't contain the given string.
-	NotContains *string `json:"notContains"`
+	NotContains *string `json:"notContains,omitempty"`
 	// Doesn't contain case insensitive constraint. Matches any values that don't contain the given string case insensitive.
-	NotContainsIgnoreCase *string `json:"notContainsIgnoreCase"`
+	NotContainsIgnoreCase *string `json:"notContainsIgnoreCase,omitempty"`
 	// Contains case and accent insensitive constraint. Matches any values that contain the given string case and accent insensitive.
-	ContainsIgnoreCaseAndAccent *string `json:"containsIgnoreCaseAndAccent"`
+	ContainsIgnoreCaseAndAccent *string `json:"containsIgnoreCaseAndAccent,omitempty"`
 }
 
 // GetEq returns StringComparator.Eq, and is useful for accessing the field via an interface.
@@ -11887,37 +11887,37 @@ func (v *StringComparator) GetContainsIgnoreCaseAndAccent() *string {
 // Comparator for strings in arrays.
 type StringItemComparator struct {
 	// Equals constraint.
-	Eq *string `json:"eq"`
+	Eq *string `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *string `json:"neq"`
+	Neq *string `json:"neq,omitempty"`
 	// In-array constraint.
-	In []string `json:"in"`
+	In []string `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []string `json:"nin"`
+	Nin []string `json:"nin,omitempty"`
 	// Equals case insensitive. Matches any values that matches the given string case insensitive.
-	EqIgnoreCase *string `json:"eqIgnoreCase"`
+	EqIgnoreCase *string `json:"eqIgnoreCase,omitempty"`
 	// Not-equals case insensitive. Matches any values that don't match the given string case insensitive.
-	NeqIgnoreCase *string `json:"neqIgnoreCase"`
+	NeqIgnoreCase *string `json:"neqIgnoreCase,omitempty"`
 	// Starts with constraint. Matches any values that start with the given string.
-	StartsWith *string `json:"startsWith"`
+	StartsWith *string `json:"startsWith,omitempty"`
 	// Starts with case insensitive constraint. Matches any values that start with the given string.
-	StartsWithIgnoreCase *string `json:"startsWithIgnoreCase"`
+	StartsWithIgnoreCase *string `json:"startsWithIgnoreCase,omitempty"`
 	// Doesn't start with constraint. Matches any values that don't start with the given string.
-	NotStartsWith *string `json:"notStartsWith"`
+	NotStartsWith *string `json:"notStartsWith,omitempty"`
 	// Ends with constraint. Matches any values that end with the given string.
-	EndsWith *string `json:"endsWith"`
+	EndsWith *string `json:"endsWith,omitempty"`
 	// Doesn't end with constraint. Matches any values that don't end with the given string.
-	NotEndsWith *string `json:"notEndsWith"`
+	NotEndsWith *string `json:"notEndsWith,omitempty"`
 	// Contains constraint. Matches any values that contain the given string.
-	Contains *string `json:"contains"`
+	Contains *string `json:"contains,omitempty"`
 	// Contains case insensitive constraint. Matches any values that contain the given string case insensitive.
-	ContainsIgnoreCase *string `json:"containsIgnoreCase"`
+	ContainsIgnoreCase *string `json:"containsIgnoreCase,omitempty"`
 	// Doesn't contain constraint. Matches any values that don't contain the given string.
-	NotContains *string `json:"notContains"`
+	NotContains *string `json:"notContains,omitempty"`
 	// Doesn't contain case insensitive constraint. Matches any values that don't contain the given string case insensitive.
-	NotContainsIgnoreCase *string `json:"notContainsIgnoreCase"`
+	NotContainsIgnoreCase *string `json:"notContainsIgnoreCase,omitempty"`
 	// Contains case and accent insensitive constraint. Matches any values that contain the given string case and accent insensitive.
-	ContainsIgnoreCaseAndAccent *string `json:"containsIgnoreCaseAndAccent"`
+	ContainsIgnoreCaseAndAccent *string `json:"containsIgnoreCaseAndAccent,omitempty"`
 }
 
 // GetEq returns StringItemComparator.Eq, and is useful for accessing the field via an interface.
@@ -11973,15 +11973,15 @@ func (v *StringItemComparator) GetContainsIgnoreCaseAndAccent() *string {
 // Comparator for source type.
 type SubTypeComparator struct {
 	// Equals constraint.
-	Eq *string `json:"eq"`
+	Eq *string `json:"eq,omitempty"`
 	// Not-equals constraint.
-	Neq *string `json:"neq"`
+	Neq *string `json:"neq,omitempty"`
 	// In-array constraint.
-	In []string `json:"in"`
+	In []string `json:"in,omitempty"`
 	// Not-in-array constraint.
-	Nin []string `json:"nin"`
+	Nin []string `json:"nin,omitempty"`
 	// Null constraint. Matches any non-null values if the given value is false, otherwise it matches null values.
-	Null *bool `json:"null"`
+	Null *bool `json:"null,omitempty"`
 }
 
 // GetEq returns SubTypeComparator.Eq, and is useful for accessing the field via an interface.
@@ -12014,7 +12014,7 @@ func (v *TeamActiveCycleResponse) GetTeam() TeamActiveCycleTeam { return v.Team 
 // A team is the primary organizational unit in Linear. Issues belong to teams, and each team has its own workflow states, cycles, labels, and settings. Teams can be public (visible to all workspace members) or private (visible only to team members). Teams can also have sub-teams that inherit settings from their parent.
 type TeamActiveCycleTeam struct {
 	// Team's currently active cycle.
-	ActiveCycle *TeamActiveCycleTeamActiveCycle `json:"activeCycle"`
+	ActiveCycle *TeamActiveCycleTeamActiveCycle `json:"activeCycle,omitempty"`
 }
 
 // GetActiveCycle returns TeamActiveCycleTeam.ActiveCycle, and is useful for accessing the field via an interface.
@@ -12030,7 +12030,7 @@ type TeamActiveCycleTeamActiveCycle struct {
 	// The auto-incrementing number of the cycle, unique within its team. This value is assigned automatically by the database and cannot be set on creation.
 	Number float64 `json:"number"`
 	// The custom name of the cycle. If not set, the cycle is displayed using its number (e.g., "Cycle 5").
-	Name *string `json:"name"`
+	Name *string `json:"name,omitempty"`
 	// The start date and time of the cycle.
 	StartsAt string `json:"startsAt"`
 	// The end date and time of the cycle. When a cycle is completed prematurely, this is updated to match the completion time. When cycles are disabled, both endsAt and completedAt are set to the current time.
@@ -12055,25 +12055,25 @@ func (v *TeamActiveCycleTeamActiveCycle) GetEndsAt() string { return v.EndsAt }
 // Team collection filtering options.
 type TeamCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Compound filters, all of which need to be matched by the team.
-	And []TeamCollectionFilter `json:"and"`
+	And []TeamCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the team.
-	Or []TeamCollectionFilter `json:"or"`
+	Or []TeamCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some teams.
-	Some *TeamFilter `json:"some"`
+	Some *TeamFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all teams.
-	Every *TeamFilter `json:"every"`
+	Every *TeamFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 	// Filters that the teams parent must satisfy.
-	Parent *NullableTeamFilter `json:"parent"`
+	Parent *NullableTeamFilter `json:"parent,omitempty"`
 	// Filters that the team's ancestors must satisfy.
-	Ancestors *TeamCollectionFilter `json:"ancestors"`
+	Ancestors *TeamCollectionFilter `json:"ancestors,omitempty"`
 }
 
 // GetId returns TeamCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -12129,7 +12129,7 @@ func (v *TeamCyclesTeam) GetCycles() TeamCyclesTeamCyclesCycleConnection { retur
 
 // TeamCyclesTeamCyclesCycleConnection includes the requested fields of the GraphQL type CycleConnection.
 type TeamCyclesTeamCyclesCycleConnection struct {
-	Nodes    []TeamCyclesTeamCyclesCycleConnectionNodesCycle `json:"nodes"`
+	Nodes    []TeamCyclesTeamCyclesCycleConnectionNodesCycle `json:"nodes,omitempty"`
 	PageInfo TeamCyclesTeamCyclesCycleConnectionPageInfo     `json:"pageInfo"`
 }
 
@@ -12153,7 +12153,7 @@ type TeamCyclesTeamCyclesCycleConnectionNodesCycle struct {
 	// The auto-incrementing number of the cycle, unique within its team. This value is assigned automatically by the database and cannot be set on creation.
 	Number float64 `json:"number"`
 	// The custom name of the cycle. If not set, the cycle is displayed using its number (e.g., "Cycle 5").
-	Name *string `json:"name"`
+	Name *string `json:"name,omitempty"`
 	// The start date and time of the cycle.
 	StartsAt string `json:"startsAt"`
 	// The end date and time of the cycle. When a cycle is completed prematurely, this is updated to match the completion time. When cycles are disabled, both endsAt and completedAt are set to the current time.
@@ -12218,7 +12218,7 @@ func (v *TeamCyclesTeamCyclesCycleConnectionPageInfo) UnmarshalJSON(b []byte) er
 type __premarshalTeamCyclesTeamCyclesCycleConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *TeamCyclesTeamCyclesCycleConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -12240,33 +12240,33 @@ func (v *TeamCyclesTeamCyclesCycleConnectionPageInfo) __premarshalJSON() (*__pre
 // Team filtering options.
 type TeamFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the team name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the team key.
-	Key *StringComparator `json:"key"`
+	Key *StringComparator `json:"key,omitempty"`
 	// Comparator for the team description.
-	Description *NullableStringComparator `json:"description"`
+	Description *NullableStringComparator `json:"description,omitempty"`
 	// Comparator for the team privacy.
-	Private *BooleanComparator `json:"private"`
+	Private *BooleanComparator `json:"private,omitempty"`
 	// Comparator for the time at which the team was retired.
-	RetiredAt *NullableDateComparator `json:"retiredAt"`
+	RetiredAt *NullableDateComparator `json:"retiredAt,omitempty"`
 	// Filters that the teams issues must satisfy.
-	Issues *IssueCollectionFilter `json:"issues"`
+	Issues *IssueCollectionFilter `json:"issues,omitempty"`
 	// Filters that the teams parent must satisfy.
-	Parent *NullableTeamFilter `json:"parent"`
+	Parent *NullableTeamFilter `json:"parent,omitempty"`
 	// Filters that the team's ancestors must satisfy.
-	Ancestors *TeamCollectionFilter `json:"ancestors"`
+	Ancestors *TeamCollectionFilter `json:"ancestors,omitempty"`
 	// [ALPHA] Filters that the team's release pipelines must satisfy.
-	ReleasePipelines *ReleasePipelineCollectionFilter `json:"releasePipelines"`
+	ReleasePipelines *ReleasePipelineCollectionFilter `json:"releasePipelines,omitempty"`
 	// Compound filters, all of which need to be matched by the team.
-	And []TeamFilter `json:"and"`
+	And []TeamFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the team.
-	Or []TeamFilter `json:"or"`
+	Or []TeamFilter `json:"or,omitempty"`
 }
 
 // GetId returns TeamFilter.Id, and is useful for accessing the field via an interface.
@@ -12334,7 +12334,7 @@ type TeamGetTeam struct {
 	// The team's unique key, used as a prefix in issue identifiers (e.g., 'ENG' in 'ENG-123') and in URLs.
 	Key string `json:"key"`
 	// The team's description.
-	Description *string `json:"description"`
+	Description *string `json:"description,omitempty"`
 	// The issue estimation type to use. Must be one of "notUsed", "exponential", "fibonacci", "linear", "tShirt".
 	IssueEstimationType string `json:"issueEstimationType"`
 	// Whether to allow zeros in issues estimates.
@@ -12392,7 +12392,7 @@ func (v *TeamLabelsTeam) GetLabels() TeamLabelsTeamLabelsIssueLabelConnection { 
 
 // TeamLabelsTeamLabelsIssueLabelConnection includes the requested fields of the GraphQL type IssueLabelConnection.
 type TeamLabelsTeamLabelsIssueLabelConnection struct {
-	Nodes    []TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel `json:"nodes"`
+	Nodes    []TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel `json:"nodes,omitempty"`
 	PageInfo TeamLabelsTeamLabelsIssueLabelConnectionPageInfo          `json:"pageInfo"`
 }
 
@@ -12471,7 +12471,7 @@ func (v *TeamLabelsTeamLabelsIssueLabelConnectionPageInfo) UnmarshalJSON(b []byt
 type __premarshalTeamLabelsTeamLabelsIssueLabelConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *TeamLabelsTeamLabelsIssueLabelConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -12501,7 +12501,7 @@ func (v *TeamListResponse) GetTeams() TeamListTeamsTeamConnection { return v.Tea
 
 // TeamListTeamsTeamConnection includes the requested fields of the GraphQL type TeamConnection.
 type TeamListTeamsTeamConnection struct {
-	Nodes    []TeamListTeamsTeamConnectionNodesTeam `json:"nodes"`
+	Nodes    []TeamListTeamsTeamConnectionNodesTeam `json:"nodes,omitempty"`
 	PageInfo TeamListTeamsTeamConnectionPageInfo    `json:"pageInfo"`
 }
 
@@ -12580,7 +12580,7 @@ func (v *TeamListTeamsTeamConnectionPageInfo) UnmarshalJSON(b []byte) error {
 type __premarshalTeamListTeamsTeamConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *TeamListTeamsTeamConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -12622,7 +12622,7 @@ func (v *TeamMembersTeam) GetMembers() TeamMembersTeamMembersUserConnection { re
 
 // TeamMembersTeamMembersUserConnection includes the requested fields of the GraphQL type UserConnection.
 type TeamMembersTeamMembersUserConnection struct {
-	Nodes    []TeamMembersTeamMembersUserConnectionNodesUser `json:"nodes"`
+	Nodes    []TeamMembersTeamMembersUserConnectionNodesUser `json:"nodes,omitempty"`
 	PageInfo TeamMembersTeamMembersUserConnectionPageInfo    `json:"pageInfo"`
 }
 
@@ -12701,7 +12701,7 @@ func (v *TeamMembersTeamMembersUserConnectionPageInfo) UnmarshalJSON(b []byte) e
 type __premarshalTeamMembersTeamMembersUserConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *TeamMembersTeamMembersUserConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -12723,43 +12723,43 @@ func (v *TeamMembersTeamMembersUserConnectionPageInfo) __premarshalJSON() (*__pr
 // User filtering options.
 type UserCollectionFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the user's name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the user's display name.
-	DisplayName *StringComparator `json:"displayName"`
+	DisplayName *StringComparator `json:"displayName,omitempty"`
 	// Comparator for the user's email.
-	Email *StringComparator `json:"email"`
+	Email *StringComparator `json:"email,omitempty"`
 	// Comparator for the user's activity status.
-	Active *BooleanComparator `json:"active"`
+	Active *BooleanComparator `json:"active,omitempty"`
 	// Filters that the users assigned issues must satisfy.
-	AssignedIssues *IssueCollectionFilter `json:"assignedIssues"`
+	AssignedIssues *IssueCollectionFilter `json:"assignedIssues,omitempty"`
 	// Comparator for the user's admin status.
-	Admin *BooleanComparator `json:"admin"`
+	Admin *BooleanComparator `json:"admin,omitempty"`
 	// Comparator for the user's owner status.
-	Owner *BooleanComparator `json:"owner"`
+	Owner *BooleanComparator `json:"owner,omitempty"`
 	// Comparator for the user's invited status.
-	Invited *BooleanComparator `json:"invited"`
+	Invited *BooleanComparator `json:"invited,omitempty"`
 	// Comparator for the user's invited status.
-	IsInvited *BooleanComparator `json:"isInvited"`
+	IsInvited *BooleanComparator `json:"isInvited,omitempty"`
 	// Comparator for the user's app status.
-	App *BooleanComparator `json:"app"`
+	App *BooleanComparator `json:"app,omitempty"`
 	// Filter based on the currently authenticated user. Set to true to filter for the authenticated user, false for any other user.
-	IsMe *BooleanComparator `json:"isMe"`
+	IsMe *BooleanComparator `json:"isMe,omitempty"`
 	// Compound filters, all of which need to be matched by the user.
-	And []UserCollectionFilter `json:"and"`
+	And []UserCollectionFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the user.
-	Or []UserCollectionFilter `json:"or"`
+	Or []UserCollectionFilter `json:"or,omitempty"`
 	// Filters that needs to be matched by some users.
-	Some *UserFilter `json:"some"`
+	Some *UserFilter `json:"some,omitempty"`
 	// Filters that needs to be matched by all users.
-	Every *UserFilter `json:"every"`
+	Every *UserFilter `json:"every,omitempty"`
 	// Comparator for the collection length.
-	Length *NumberComparator `json:"length"`
+	Length *NumberComparator `json:"length,omitempty"`
 }
 
 // GetId returns UserCollectionFilter.Id, and is useful for accessing the field via an interface.
@@ -12822,37 +12822,37 @@ func (v *UserCollectionFilter) GetLength() *NumberComparator { return v.Length }
 // User filtering options.
 type UserFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the user's name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the user's display name.
-	DisplayName *StringComparator `json:"displayName"`
+	DisplayName *StringComparator `json:"displayName,omitempty"`
 	// Comparator for the user's email.
-	Email *StringComparator `json:"email"`
+	Email *StringComparator `json:"email,omitempty"`
 	// Comparator for the user's activity status.
-	Active *BooleanComparator `json:"active"`
+	Active *BooleanComparator `json:"active,omitempty"`
 	// Filters that the users assigned issues must satisfy.
-	AssignedIssues *IssueCollectionFilter `json:"assignedIssues"`
+	AssignedIssues *IssueCollectionFilter `json:"assignedIssues,omitempty"`
 	// Comparator for the user's admin status.
-	Admin *BooleanComparator `json:"admin"`
+	Admin *BooleanComparator `json:"admin,omitempty"`
 	// Comparator for the user's owner status.
-	Owner *BooleanComparator `json:"owner"`
+	Owner *BooleanComparator `json:"owner,omitempty"`
 	// Comparator for the user's invited status.
-	Invited *BooleanComparator `json:"invited"`
+	Invited *BooleanComparator `json:"invited,omitempty"`
 	// Comparator for the user's invited status.
-	IsInvited *BooleanComparator `json:"isInvited"`
+	IsInvited *BooleanComparator `json:"isInvited,omitempty"`
 	// Comparator for the user's app status.
-	App *BooleanComparator `json:"app"`
+	App *BooleanComparator `json:"app,omitempty"`
 	// Filter based on the currently authenticated user. Set to true to filter for the authenticated user, false for any other user.
-	IsMe *BooleanComparator `json:"isMe"`
+	IsMe *BooleanComparator `json:"isMe,omitempty"`
 	// Compound filters, all of which need to be matched by the user.
-	And []UserFilter `json:"and"`
+	And []UserFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the user.
-	Or []UserFilter `json:"or"`
+	Or []UserFilter `json:"or,omitempty"`
 }
 
 // GetId returns UserFilter.Id, and is useful for accessing the field via an interface.
@@ -12914,7 +12914,7 @@ func (v *UserListResponse) GetUsers() UserListUsersUserConnection { return v.Use
 
 // UserListUsersUserConnection includes the requested fields of the GraphQL type UserConnection.
 type UserListUsersUserConnection struct {
-	Nodes    []UserListUsersUserConnectionNodesUser `json:"nodes"`
+	Nodes    []UserListUsersUserConnectionNodesUser `json:"nodes,omitempty"`
 	PageInfo UserListUsersUserConnectionPageInfo    `json:"pageInfo"`
 }
 
@@ -12998,7 +12998,7 @@ func (v *UserListUsersUserConnectionPageInfo) UnmarshalJSON(b []byte) error {
 type __premarshalUserListUsersUserConnectionPageInfo struct {
 	HasNextPage bool `json:"hasNextPage"`
 
-	EndCursor *string `json:"endCursor"`
+	EndCursor *string `json:"endCursor,omitempty"`
 }
 
 func (v *UserListUsersUserConnectionPageInfo) MarshalJSON() ([]byte, error) {
@@ -13083,27 +13083,27 @@ func (v *ViewerViewerUserOrganization) GetUrlKey() string { return v.UrlKey }
 // Workflow state filtering options.
 type WorkflowStateFilter struct {
 	// Comparator for the identifier.
-	Id *IDComparator `json:"id"`
+	Id *IDComparator `json:"id,omitempty"`
 	// Comparator for the created at date.
-	CreatedAt *DateComparator `json:"createdAt"`
+	CreatedAt *DateComparator `json:"createdAt,omitempty"`
 	// Comparator for the updated at date.
-	UpdatedAt *DateComparator `json:"updatedAt"`
+	UpdatedAt *DateComparator `json:"updatedAt,omitempty"`
 	// Comparator for the workflow state name.
-	Name *StringComparator `json:"name"`
+	Name *StringComparator `json:"name,omitempty"`
 	// Comparator for the workflow state description.
-	Description *StringComparator `json:"description"`
+	Description *StringComparator `json:"description,omitempty"`
 	// Comparator for the workflow state position.
-	Position *NumberComparator `json:"position"`
+	Position *NumberComparator `json:"position,omitempty"`
 	// Comparator for the workflow state type. Possible values are "triage", "backlog", "unstarted", "started", "completed", "canceled", "duplicate".
-	Type *StringComparator `json:"type"`
+	Type *StringComparator `json:"type,omitempty"`
 	// Filters that the workflow states team must satisfy.
-	Team *TeamFilter `json:"team"`
+	Team *TeamFilter `json:"team,omitempty"`
 	// Filters that the workflow states issues must satisfy.
-	Issues *IssueCollectionFilter `json:"issues"`
+	Issues *IssueCollectionFilter `json:"issues,omitempty"`
 	// Compound filters, all of which need to be matched by the workflow state.
-	And []WorkflowStateFilter `json:"and"`
+	And []WorkflowStateFilter `json:"and,omitempty"`
 	// Compound filters, one of which need to be matched by the workflow state.
-	Or []WorkflowStateFilter `json:"or"`
+	Or []WorkflowStateFilter `json:"or,omitempty"`
 }
 
 // GetId returns WorkflowStateFilter.Id, and is useful for accessing the field via an interface.
@@ -13152,7 +13152,7 @@ func (v *WorkflowStatesResponse) GetWorkflowStates() WorkflowStatesWorkflowState
 
 // WorkflowStatesWorkflowStatesWorkflowStateConnection includes the requested fields of the GraphQL type WorkflowStateConnection.
 type WorkflowStatesWorkflowStatesWorkflowStateConnection struct {
-	Nodes []WorkflowStatesWorkflowStatesWorkflowStateConnectionNodesWorkflowState `json:"nodes"`
+	Nodes []WorkflowStatesWorkflowStatesWorkflowStateConnectionNodesWorkflowState `json:"nodes,omitempty"`
 }
 
 // GetNodes returns WorkflowStatesWorkflowStatesWorkflowStateConnection.Nodes, and is useful for accessing the field via an interface.

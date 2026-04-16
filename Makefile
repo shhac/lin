@@ -23,6 +23,7 @@ vet:
 
 generate:
 	go generate ./internal/linear/...
+	go run scripts/fix-omitempty.go -- internal/linear/generated.go
 
 dev:
 	go run ./cmd/lin $(ARGS)
