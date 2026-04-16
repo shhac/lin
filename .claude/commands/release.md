@@ -97,7 +97,7 @@ Read checksums from `dist/checksums-sha256.txt` and update the formula:
 
 1. Read `../homebrew-tap/Formula/lin.rb`
 2. Update version, URLs (use `v${new_version}`), SHA256 values, assert_match version
-3. Note: Go binaries use `amd64` not `x64` — update the tarball names accordingly if migrating from the old Bun release format
+3. Note: Go binaries use `amd64` not `x64` for architecture naming
 4. Commit and push:
    ```bash
    cd ../homebrew-tap
