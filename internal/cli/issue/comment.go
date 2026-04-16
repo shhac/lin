@@ -11,6 +11,20 @@ import (
 	"github.com/shhac/lin/internal/upload"
 )
 
+// commentBase builds the common fields shared by all comment output shapes.
+func commentBase(id, body, createdAt, updatedAt string, userID, userName *string) map[string]any {
+	m := map[string]any{
+		"id":        id,
+		"body":      body,
+		"createdAt": createdAt,
+		"updatedAt": updatedAt,
+	}
+	if userID != nil {
+		m["user"] = map[string]any{"id": *userID, "name": *userName}
+	}
+	return m
+}
+
 func registerComment(parent *cobra.Command) {
 	comment := &cobra.Command{
 		Use:   "comment",
@@ -51,15 +65,11 @@ func registerCommentList(parent *cobra.Command) {
 
 			items := make([]any, len(resp.Issue.Comments.Nodes))
 			for i, c := range resp.Issue.Comments.Nodes {
-				m := map[string]any{
-					"id":        c.Id,
-					"body":      c.Body,
-					"createdAt": c.CreatedAt,
-					"updatedAt": c.UpdatedAt,
-				}
+				var uid, uname *string
 				if c.User != nil {
-					m["user"] = map[string]any{"id": c.User.Id, "name": c.User.Name}
+					uid, uname = &c.User.Id, &c.User.Name
 				}
+				m := commentBase(c.Id, c.Body, c.CreatedAt, c.UpdatedAt, uid, uname)
 				if c.Parent != nil {
 					m["parent"] = map[string]any{"id": c.Parent.Id}
 				}
@@ -146,15 +156,11 @@ func registerCommentGet(parent *cobra.Command) {
 			}
 
 			c := resp.Comment
-			result := map[string]any{
-				"id":        c.Id,
-				"body":      c.Body,
-				"createdAt": c.CreatedAt,
-				"updatedAt": c.UpdatedAt,
-			}
+			var uid, uname *string
 			if c.User != nil {
-				result["user"] = map[string]any{"id": c.User.Id, "name": c.User.Name}
+				uid, uname = &c.User.Id, &c.User.Name
 			}
+			result := commentBase(c.Id, c.Body, c.CreatedAt, c.UpdatedAt, uid, uname)
 			if c.Issue != nil {
 				result["issue"] = map[string]any{"id": c.Issue.Id, "identifier": c.Issue.Identifier}
 			}
@@ -226,16 +232,11 @@ func registerCommentReplies(parent *cobra.Command) {
 
 			items := make([]any, len(resp.Comment.Children.Nodes))
 			for i, c := range resp.Comment.Children.Nodes {
-				m := map[string]any{
-					"id":        c.Id,
-					"body":      c.Body,
-					"createdAt": c.CreatedAt,
-					"updatedAt": c.UpdatedAt,
-				}
+				var uid, uname *string
 				if c.User != nil {
-					m["user"] = map[string]any{"id": c.User.Id, "name": c.User.Name}
+					uid, uname = &c.User.Id, &c.User.Name
 				}
-				items[i] = m
+				items[i] = commentBase(c.Id, c.Body, c.CreatedAt, c.UpdatedAt, uid, uname)
 			}
 
 			pi := resp.Comment.Children.PageInfo
