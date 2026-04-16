@@ -77,6 +77,7 @@ query IssueComments(
         updatedAt
         user { id name }
         parent { id }
+        children { nodes { id } }
       }
       pageInfo { ...PageInfoFields }
     }

@@ -7,6 +7,7 @@ query CommentGet($id: String!) {
     user { id name }
     issue { id identifier }
     parent { id }
+    children { nodes { id } }
   }
 }
 

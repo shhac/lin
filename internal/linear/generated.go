@@ -705,6 +705,8 @@ type CommentGetComment struct {
 	Issue *CommentGetCommentIssue `json:"issue,omitempty"`
 	// The parent comment under which the current comment is nested. Null for top-level comments that are not replies.
 	Parent *CommentGetCommentParentComment `json:"parent,omitempty"`
+	// The children of the comment.
+	Children CommentGetCommentChildrenCommentConnection `json:"children"`
 }
 
 // GetId returns CommentGetComment.Id, and is useful for accessing the field via an interface.
@@ -727,6 +729,33 @@ func (v *CommentGetComment) GetIssue() *CommentGetCommentIssue { return v.Issue 
 
 // GetParent returns CommentGetComment.Parent, and is useful for accessing the field via an interface.
 func (v *CommentGetComment) GetParent() *CommentGetCommentParentComment { return v.Parent }
+
+// GetChildren returns CommentGetComment.Children, and is useful for accessing the field via an interface.
+func (v *CommentGetComment) GetChildren() CommentGetCommentChildrenCommentConnection {
+	return v.Children
+}
+
+// CommentGetCommentChildrenCommentConnection includes the requested fields of the GraphQL type CommentConnection.
+type CommentGetCommentChildrenCommentConnection struct {
+	Nodes []CommentGetCommentChildrenCommentConnectionNodesComment `json:"nodes,omitempty"`
+}
+
+// GetNodes returns CommentGetCommentChildrenCommentConnection.Nodes, and is useful for accessing the field via an interface.
+func (v *CommentGetCommentChildrenCommentConnection) GetNodes() []CommentGetCommentChildrenCommentConnectionNodesComment {
+	return v.Nodes
+}
+
+// CommentGetCommentChildrenCommentConnectionNodesComment includes the requested fields of the GraphQL type Comment.
+// The GraphQL type's documentation follows.
+//
+// A comment associated with an issue, project update, initiative update, document content, post, project, or initiative. Comments support rich text (ProseMirror), emoji reactions, and threaded replies via parentId. Comments can be created by workspace users or by external users through integrations (e.g., Slack, Intercom). Each comment belongs to exactly one parent entity.
+type CommentGetCommentChildrenCommentConnectionNodesComment struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+}
+
+// GetId returns CommentGetCommentChildrenCommentConnectionNodesComment.Id, and is useful for accessing the field via an interface.
+func (v *CommentGetCommentChildrenCommentConnectionNodesComment) GetId() string { return v.Id }
 
 // CommentGetCommentIssue includes the requested fields of the GraphQL type Issue.
 // The GraphQL type's documentation follows.
@@ -3685,6 +3714,8 @@ type IssueCommentsIssueCommentsCommentConnectionNodesComment struct {
 	User *IssueCommentsIssueCommentsCommentConnectionNodesCommentUser `json:"user,omitempty"`
 	// The parent comment under which the current comment is nested. Null for top-level comments that are not replies.
 	Parent *IssueCommentsIssueCommentsCommentConnectionNodesCommentParentComment `json:"parent,omitempty"`
+	// The children of the comment.
+	Children IssueCommentsIssueCommentsCommentConnectionNodesCommentChildrenCommentConnection `json:"children"`
 }
 
 // GetId returns IssueCommentsIssueCommentsCommentConnectionNodesComment.Id, and is useful for accessing the field via an interface.
@@ -3711,6 +3742,35 @@ func (v *IssueCommentsIssueCommentsCommentConnectionNodesComment) GetUser() *Iss
 // GetParent returns IssueCommentsIssueCommentsCommentConnectionNodesComment.Parent, and is useful for accessing the field via an interface.
 func (v *IssueCommentsIssueCommentsCommentConnectionNodesComment) GetParent() *IssueCommentsIssueCommentsCommentConnectionNodesCommentParentComment {
 	return v.Parent
+}
+
+// GetChildren returns IssueCommentsIssueCommentsCommentConnectionNodesComment.Children, and is useful for accessing the field via an interface.
+func (v *IssueCommentsIssueCommentsCommentConnectionNodesComment) GetChildren() IssueCommentsIssueCommentsCommentConnectionNodesCommentChildrenCommentConnection {
+	return v.Children
+}
+
+// IssueCommentsIssueCommentsCommentConnectionNodesCommentChildrenCommentConnection includes the requested fields of the GraphQL type CommentConnection.
+type IssueCommentsIssueCommentsCommentConnectionNodesCommentChildrenCommentConnection struct {
+	Nodes []IssueCommentsIssueCommentsCommentConnectionNodesCommentChildrenCommentConnectionNodesComment `json:"nodes,omitempty"`
+}
+
+// GetNodes returns IssueCommentsIssueCommentsCommentConnectionNodesCommentChildrenCommentConnection.Nodes, and is useful for accessing the field via an interface.
+func (v *IssueCommentsIssueCommentsCommentConnectionNodesCommentChildrenCommentConnection) GetNodes() []IssueCommentsIssueCommentsCommentConnectionNodesCommentChildrenCommentConnectionNodesComment {
+	return v.Nodes
+}
+
+// IssueCommentsIssueCommentsCommentConnectionNodesCommentChildrenCommentConnectionNodesComment includes the requested fields of the GraphQL type Comment.
+// The GraphQL type's documentation follows.
+//
+// A comment associated with an issue, project update, initiative update, document content, post, project, or initiative. Comments support rich text (ProseMirror), emoji reactions, and threaded replies via parentId. Comments can be created by workspace users or by external users through integrations (e.g., Slack, Intercom). Each comment belongs to exactly one parent entity.
+type IssueCommentsIssueCommentsCommentConnectionNodesCommentChildrenCommentConnectionNodesComment struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+}
+
+// GetId returns IssueCommentsIssueCommentsCommentConnectionNodesCommentChildrenCommentConnectionNodesComment.Id, and is useful for accessing the field via an interface.
+func (v *IssueCommentsIssueCommentsCommentConnectionNodesCommentChildrenCommentConnectionNodesComment) GetId() string {
+	return v.Id
 }
 
 // IssueCommentsIssueCommentsCommentConnectionNodesCommentParentComment includes the requested fields of the GraphQL type Comment.
@@ -13896,6 +13956,11 @@ query CommentGet ($id: String!) {
 		parent {
 			id
 		}
+		children {
+			nodes {
+				id
+			}
+		}
 	}
 }
 `
@@ -14518,6 +14583,11 @@ query IssueComments ($id: String!, $first: Int!, $after: String) {
 				}
 				parent {
 					id
+				}
+				children {
+					nodes {
+						id
+					}
 				}
 			}
 			pageInfo {

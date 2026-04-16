@@ -61,7 +61,7 @@ func registerCommentList(parent *cobra.Command) {
 				if c.Parent != nil {
 					m["parent"] = map[string]any{"id": c.Parent.Id}
 				}
-				// childCount not available in the IssueComments query; omit to match Go query shape
+				m["childCount"] = len(c.Children.Nodes)
 				items[i] = m
 			}
 
@@ -159,6 +159,7 @@ func registerCommentGet(parent *cobra.Command) {
 			if c.Parent != nil {
 				result["parent"] = map[string]any{"id": c.Parent.Id}
 			}
+			result["childCount"] = len(c.Children.Nodes)
 
 			output.PrintJSON(result)
 		},
