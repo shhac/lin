@@ -1,0 +1,86 @@
+# --- Queries ---
+
+query ProjectGet($id: String!) {
+  project(id: $id) {
+    id
+    slugId
+    url
+    name
+    description
+    content
+    state
+    progress
+    startDate
+    targetDate
+    priority
+    icon
+    color
+    createdAt
+    updatedAt
+    lead { id name }
+    projectMilestones {
+      nodes { id name targetDate }
+    }
+  }
+}
+
+query ProjectList(
+  # @genqlient(omitempty: true)
+  $filter: ProjectFilter,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  projects(filter: $filter, first: $first, after: $after) {
+    nodes { ...ProjectSummaryFields }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query ProjectSearch(
+  $term: String!,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  searchProjects(term: $term, first: $first, after: $after) {
+    nodes { ...ProjectSearchSummaryFields }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query ProjectIssues(
+  $id: String!,
+  # @genqlient(omitempty: true)
+  $filter: IssueFilter,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  project(id: $id) {
+    issues(filter: $filter, first: $first, after: $after) {
+      nodes { ...IssueSummaryFields }
+      pageInfo { ...PageInfoFields }
+    }
+  }
+}
+
+# --- Mutations ---
+
+mutation ProjectCreate($input: ProjectCreateInput!) {
+  projectCreate(input: $input) {
+    success
+    project {
+      id
+      slugId
+      url
+      name
+    }
+  }
+}
+
+mutation ProjectUpdate($id: String!, $input: ProjectUpdateInput!) {
+  projectUpdate(id: $id, input: $input) {
+    success
+  }
+}

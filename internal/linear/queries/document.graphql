@@ -1,0 +1,81 @@
+# --- Queries ---
+
+query DocumentGet($id: String!) {
+  document(id: $id) {
+    id
+    slugId
+    title
+    content
+    url
+    icon
+    color
+    createdAt
+    updatedAt
+    creator { id name }
+    project { id name slugId }
+    updatedBy { id name }
+  }
+}
+
+query DocumentList(
+  # @genqlient(omitempty: true)
+  $filter: DocumentFilter,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+  # @genqlient(omitempty: true)
+  $includeArchived: Boolean,
+) {
+  documents(filter: $filter, first: $first, after: $after, includeArchived: $includeArchived) {
+    nodes { ...DocSummaryFields }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query DocumentSearch(
+  $term: String!,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+  # @genqlient(omitempty: true)
+  $includeComments: Boolean,
+  # @genqlient(omitempty: true)
+  $includeArchived: Boolean,
+) {
+  searchDocuments(term: $term, first: $first, after: $after, includeComments: $includeComments, includeArchived: $includeArchived) {
+    nodes { ...DocSearchSummaryFields }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query DocumentContentHistory($id: String!) {
+  documentContentHistory(id: $id) {
+    success
+    history {
+      id
+      actorIds
+      contentDataSnapshotAt
+      createdAt
+    }
+  }
+}
+
+# --- Mutations ---
+
+mutation DocumentCreate($input: DocumentCreateInput!) {
+  documentCreate(input: $input) {
+    success
+    document {
+      id
+      slugId
+      title
+      url
+    }
+  }
+}
+
+mutation DocumentUpdate($id: String!, $input: DocumentUpdateInput!) {
+  documentUpdate(id: $id, input: $input) {
+    success
+  }
+}

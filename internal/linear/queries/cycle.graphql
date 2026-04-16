@@ -1,0 +1,12 @@
+query CycleGet($id: String!) {
+  cycle(id: $id) {
+    id
+    number
+    name
+    startsAt
+    endsAt
+    issues {
+      nodes { ...IssueSummaryFields }
+    }
+  }
+}

@@ -1,0 +1,73 @@
+fragment PageInfoFields on PageInfo {
+  hasNextPage
+  endCursor
+}
+
+fragment IssueSummaryFields on Issue {
+  id
+  identifier
+  title
+  branchName
+  priority
+  priorityLabel
+  state { name type }
+  assignee { id name }
+  team { key name }
+}
+
+# IssueSearchResult has the same fields but is a different type
+fragment IssueSearchSummaryFields on IssueSearchResult {
+  id
+  identifier
+  title
+  branchName
+  priority
+  priorityLabel
+  state { name type }
+  assignee { id name }
+  team { key name }
+}
+
+fragment ProjectSummaryFields on Project {
+  id
+  slugId
+  url
+  name
+  state
+  progress
+  startDate
+  targetDate
+  lead { name }
+}
+
+fragment ProjectSearchSummaryFields on ProjectSearchResult {
+  id
+  slugId
+  url
+  name
+  state
+  progress
+  startDate
+  targetDate
+  lead { name }
+}
+
+fragment DocSummaryFields on Document {
+  id
+  slugId
+  title
+  url
+  updatedAt
+  creator { id name }
+  project { id name }
+}
+
+fragment DocSearchSummaryFields on DocumentSearchResult {
+  id
+  slugId
+  title
+  url
+  updatedAt
+  creator { id name }
+  project { id name }
+}

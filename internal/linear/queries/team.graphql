@@ -1,0 +1,112 @@
+query TeamGet($id: String!) {
+  team(id: $id) {
+    id
+    name
+    key
+    description
+    issueEstimationType
+    issueEstimationAllowZero
+    issueEstimationExtended
+    defaultIssueEstimate
+  }
+}
+
+query TeamList(
+  # @genqlient(omitempty: true)
+  $filter: TeamFilter,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  teams(filter: $filter, first: $first, after: $after) {
+    nodes {
+      id
+      name
+      key
+    }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query TeamMembers(
+  $id: String!,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  team(id: $id) {
+    members(first: $first, after: $after) {
+      nodes {
+        id
+        name
+        email
+      }
+      pageInfo { ...PageInfoFields }
+    }
+  }
+}
+
+query TeamLabels(
+  $id: String!,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  team(id: $id) {
+    labels(first: $first, after: $after) {
+      nodes {
+        id
+        name
+        color
+      }
+      pageInfo { ...PageInfoFields }
+    }
+  }
+}
+
+query TeamCycles(
+  $id: String!,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  team(id: $id) {
+    cycles(first: $first, after: $after) {
+      nodes {
+        id
+        number
+        name
+        startsAt
+        endsAt
+      }
+      pageInfo { ...PageInfoFields }
+    }
+  }
+}
+
+query TeamActiveCycle($id: String!) {
+  team(id: $id) {
+    activeCycle {
+      id
+      number
+      name
+      startsAt
+      endsAt
+    }
+  }
+}
+
+query WorkflowStates(
+  # @genqlient(omitempty: true)
+  $filter: WorkflowStateFilter,
+) {
+  workflowStates(filter: $filter) {
+    nodes {
+      id
+      name
+      type
+      color
+      position
+    }
+  }
+}

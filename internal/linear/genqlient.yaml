@@ -1,0 +1,29 @@
+schema:
+  - schema.graphql
+
+operations:
+  - queries/*.graphql
+
+generated: generated.go
+
+package: linear
+
+optional: pointer
+
+bindings:
+  DateTime:
+    type: string
+  TimelessDate:
+    type: string
+  DateTimeOrDuration:
+    type: string
+  TimelessDateOrDuration:
+    type: string
+  Duration:
+    type: string
+  JSON:
+    type: map[string]interface{}
+  JSONObject:
+    type: map[string]interface{}
+  UUID:
+    type: string

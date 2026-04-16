@@ -1,0 +1,48 @@
+query CommentGet($id: String!) {
+  comment(id: $id) {
+    id
+    body
+    createdAt
+    updatedAt
+    user { id name }
+    issue { id identifier }
+    parent { id }
+    children { nodes { id } }
+  }
+}
+
+query CommentReplies(
+  $id: String!,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  comment(id: $id) {
+    children(first: $first, after: $after) {
+      nodes {
+        id
+        body
+        createdAt
+        updatedAt
+        user { id name }
+      }
+      pageInfo { ...PageInfoFields }
+    }
+  }
+}
+
+mutation CommentCreate($input: CommentCreateInput!) {
+  commentCreate(input: $input) {
+    success
+    comment {
+      id
+      body
+    }
+  }
+}
+
+mutation CommentUpdate($id: String!, $input: CommentUpdateInput!) {
+  commentUpdate(id: $id, input: $input) {
+    success
+  }
+}

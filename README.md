@@ -4,7 +4,7 @@ Linear CLI for humans and LLMs.
 
 - **Structured JSON output** — all output is JSON to stdout, errors to stderr
 - **LLM-optimized** — `lin usage` prints concise docs in <1,000 tokens
-- **Zero runtime deps** — single compiled binary via `bun build --compile`
+- **Zero runtime deps** — single static binary via `go build`
 - **Smart IDs** — accepts issue keys (`ENG-123`), UUIDs, or URL fragments
 
 **Website:** [lin.paulie.app](https://lin.paulie.app/)
@@ -130,11 +130,11 @@ Most list/search commands accept:
 ## Development
 
 ```bash
-bun install
-bun run dev -- --help        # run in dev mode
-bun run typecheck             # type check
-bun test                      # run tests
-bun run lint                  # lint
+make dev ARGS="--help"       # run in dev mode
+make build                   # build binary
+make test                    # run tests
+make generate                # regenerate GraphQL code
+make lint                    # golangci-lint
 ```
 
 ## License
