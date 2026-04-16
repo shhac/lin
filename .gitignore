@@ -2,27 +2,15 @@
 .env
 .env.*
 
-# bun (legacy, under bun/)
-node_modules
-bun/bun.lockb
-bun/dist
-bun/release
-bun/*.bun-build
-
 # go
 /lin
 release/
+dist/
 
 # local
 .cache
 .tmp
 .ai-cache
-
-# npm artifacts/logs
-*.tgz
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # claude
 .claude/*.local.json
