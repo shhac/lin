@@ -50,23 +50,7 @@ func registerSearch(parent *cobra.Command) {
 
 			items := make([]any, len(resp.SearchIssues.Nodes))
 			for i, n := range resp.SearchIssues.Nodes {
-				f := n.IssueSearchSummaryFields
-				input := mappers.IssueSummaryInput{
-					ID:            f.Id,
-					Identifier:    f.Identifier,
-					Title:         f.Title,
-					BranchName:    f.BranchName,
-					Priority:      f.Priority,
-					PriorityLabel: f.PriorityLabel,
-					StateName:     f.State.Name,
-					StateType:     f.State.Type,
-					TeamKey:       f.Team.Key,
-				}
-				if f.Assignee != nil {
-					input.AssigneeID = f.Assignee.Id
-					input.AssigneeName = f.Assignee.Name
-				}
-				items[i] = mappers.MapIssueSummary(input)
+				items[i] = mappers.MapIssueSummary(mappers.FromIssueSearchSummaryFields(n.IssueSearchSummaryFields))
 			}
 
 			pi := resp.SearchIssues.PageInfo

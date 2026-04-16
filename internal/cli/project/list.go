@@ -51,7 +51,7 @@ func registerList(parent *cobra.Command) {
 
 			items := make([]any, len(resp.Projects.Nodes))
 			for i, n := range resp.Projects.Nodes {
-				items[i] = projectSummaryFromFields(n.ProjectSummaryFields)
+				items[i] = mappers.MapProjectSummary(mappers.FromProjectSummaryFields(n.ProjectSummaryFields))
 			}
 
 			pi := resp.Projects.PageInfo
@@ -69,19 +69,3 @@ func registerList(parent *cobra.Command) {
 	parent.AddCommand(cmd)
 }
 
-func projectSummaryFromFields(f linear.ProjectSummaryFields) map[string]any {
-	input := mappers.ProjectSummaryInput{
-		ID:         f.Id,
-		SlugId:     f.SlugId,
-		URL:        f.Url,
-		Name:       f.Name,
-		State:      f.State,
-		Progress:   f.Progress,
-		StartDate:  ptr.Deref(f.StartDate),
-		TargetDate: ptr.Deref(f.TargetDate),
-	}
-	if f.Lead != nil {
-		input.LeadName = f.Lead.Name
-	}
-	return mappers.MapProjectSummary(input)
-}

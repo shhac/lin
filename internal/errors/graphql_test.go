@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+
+	"github.com/Khan/genqlient/graphql"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 func TestCleanGraphQLError(t *testing.T) {
@@ -97,5 +100,69 @@ func TestClassifyGraphQLError_Generic(t *testing.T) {
 func TestClassifyGraphQLError_Nil(t *testing.T) {
 	if ClassifyGraphQLError(nil) != nil {
 		t.Error("expected nil for nil input")
+	}
+}
+
+func makeHTTPError(statusCode int, msg string) *graphql.HTTPError {
+	resp := graphql.Response{}
+	if msg != "" {
+		resp.Errors = gqlerror.List{{Message: msg}}
+	}
+	return &graphql.HTTPError{StatusCode: statusCode, Response: resp}
+}
+
+func TestClassifyHTTPError_401(t *testing.T) {
+	apiErr := ClassifyGraphQLError(makeHTTPError(401, "invalid token"))
+	if apiErr.FixableBy != FixableByHuman {
+		t.Errorf("FixableBy = %q, want %q", apiErr.FixableBy, FixableByHuman)
+	}
+	if !strings.Contains(apiErr.Message, "authentication") {
+		t.Errorf("Message should contain 'authentication', got %q", apiErr.Message)
+	}
+	if !strings.Contains(apiErr.Hint, "auth") {
+		t.Errorf("Hint should mention auth, got %q", apiErr.Hint)
+	}
+}
+
+func TestClassifyHTTPError_403(t *testing.T) {
+	apiErr := ClassifyGraphQLError(makeHTTPError(403, "forbidden"))
+	if apiErr.FixableBy != FixableByHuman {
+		t.Errorf("FixableBy = %q, want %q", apiErr.FixableBy, FixableByHuman)
+	}
+	if !strings.Contains(apiErr.Message, "permission") {
+		t.Errorf("Message should contain 'permission', got %q", apiErr.Message)
+	}
+	if !strings.Contains(apiErr.Hint, "permission") {
+		t.Errorf("Hint should mention permission, got %q", apiErr.Hint)
+	}
+}
+
+func TestClassifyHTTPError_429(t *testing.T) {
+	apiErr := ClassifyGraphQLError(makeHTTPError(429, ""))
+	if apiErr.FixableBy != FixableByRetry {
+		t.Errorf("FixableBy = %q, want %q", apiErr.FixableBy, FixableByRetry)
+	}
+	if !strings.Contains(apiErr.Message, "rate limit") {
+		t.Errorf("Message should contain 'rate limit', got %q", apiErr.Message)
+	}
+	if !strings.Contains(apiErr.Hint, "rate limit") {
+		t.Errorf("Hint should mention rate limit, got %q", apiErr.Hint)
+	}
+}
+
+func TestClassifyHTTPError_500(t *testing.T) {
+	apiErr := ClassifyGraphQLError(makeHTTPError(500, "internal server error"))
+	if apiErr.FixableBy != FixableByRetry {
+		t.Errorf("FixableBy = %q, want %q", apiErr.FixableBy, FixableByRetry)
+	}
+	if !strings.Contains(apiErr.Hint, "server error") {
+		t.Errorf("Hint should mention server error, got %q", apiErr.Hint)
+	}
+}
+
+func TestClassifyHTTPError_418(t *testing.T) {
+	apiErr := ClassifyGraphQLError(makeHTTPError(418, "i'm a teapot"))
+	if apiErr.FixableBy != FixableByAgent {
+		t.Errorf("FixableBy = %q, want %q", apiErr.FixableBy, FixableByAgent)
 	}
 }

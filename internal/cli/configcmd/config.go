@@ -12,16 +12,16 @@ import (
 )
 
 type settingDef struct {
-	section     string
-	field       string
-	parse       func(string) (any, error)
 	description string
+	parse       func(string) (any, error)
+	get         func(*config.Settings) any
+	set         func(*config.Settings, int)
+	reset       func(*config.Settings)
 }
 
 var settingDefs = map[string]settingDef{
 	"truncation.maxLength": {
-		section: "truncation",
-		field:   "maxLength",
+		description: "Max characters before truncating description/body/content fields (default: 200)",
 		parse: func(v string) (any, error) {
 			n, err := strconv.Atoi(v)
 			if err != nil || n < 0 {
@@ -29,11 +29,26 @@ var settingDefs = map[string]settingDef{
 			}
 			return n, nil
 		},
-		description: "Max characters before truncating description/body/content fields (default: 200)",
+		get: func(s *config.Settings) any {
+			if s.Truncation == nil || s.Truncation.MaxLength == nil {
+				return nil
+			}
+			return *s.Truncation.MaxLength
+		},
+		set: func(s *config.Settings, v int) {
+			if s.Truncation == nil {
+				s.Truncation = &config.TruncationSettings{}
+			}
+			s.Truncation.MaxLength = &v
+		},
+		reset: func(s *config.Settings) {
+			if s.Truncation != nil {
+				s.Truncation.MaxLength = nil
+			}
+		},
 	},
 	"pagination.defaultPageSize": {
-		section: "pagination",
-		field:   "defaultPageSize",
+		description: "Default number of results for list/search commands (default: 50)",
 		parse: func(v string) (any, error) {
 			n, err := strconv.Atoi(v)
 			if err != nil || n < 1 || n > 250 {
@@ -41,7 +56,23 @@ var settingDefs = map[string]settingDef{
 			}
 			return n, nil
 		},
-		description: "Default number of results for list/search commands (default: 50)",
+		get: func(s *config.Settings) any {
+			if s.Pagination == nil || s.Pagination.DefaultPageSize == nil {
+				return nil
+			}
+			return *s.Pagination.DefaultPageSize
+		},
+		set: func(s *config.Settings, v int) {
+			if s.Pagination == nil {
+				s.Pagination = &config.PaginationSettings{}
+			}
+			s.Pagination.DefaultPageSize = &v
+		},
+		reset: func(s *config.Settings) {
+			if s.Pagination != nil {
+				s.Pagination.DefaultPageSize = nil
+			}
+		},
 	},
 }
 
@@ -57,34 +88,8 @@ func validKeysStr() string {
 	return strings.Join(validKeys, ", ")
 }
 
-func getNestedValue(settings *config.Settings, key string) any {
-	def, ok := settingDefs[key]
-	if !ok {
-		return nil
-	}
-	switch def.section {
-	case "truncation":
-		if settings.Truncation == nil {
-			return nil
-		}
-		if def.field == "maxLength" {
-			if settings.Truncation.MaxLength == nil {
-				return nil
-			}
-			return *settings.Truncation.MaxLength
-		}
-	case "pagination":
-		if settings.Pagination == nil {
-			return nil
-		}
-		if def.field == "defaultPageSize" {
-			if settings.Pagination.DefaultPageSize == nil {
-				return nil
-			}
-			return *settings.Pagination.DefaultPageSize
-		}
-	}
-	return nil
+func getNestedValue(settings *config.Settings, def settingDef) any {
+	return def.get(settings)
 }
 
 // Register adds the config command group to the parent command.
@@ -118,12 +123,13 @@ func registerGet(cfg *cobra.Command) {
 			}
 
 			key := args[0]
-			if _, ok := settingDefs[key]; !ok {
+			def, ok := settingDefs[key]
+			if !ok {
 				output.PrintError(fmt.Sprintf("Unknown setting: %s. Valid keys: %s", key, validKeysStr()))
 				return
 			}
 
-			value := getNestedValue(settings, key)
+			value := getNestedValue(settings, def)
 			output.PrintJSON(map[string]any{key: value})
 		},
 	}
@@ -151,18 +157,7 @@ func registerSet(cfg *cobra.Command) {
 
 			intVal := parsed.(int)
 			settings := config.GetSettings()
-			switch def.section {
-			case "truncation":
-				if settings.Truncation == nil {
-					settings.Truncation = &config.TruncationSettings{}
-				}
-				settings.Truncation.MaxLength = &intVal
-			case "pagination":
-				if settings.Pagination == nil {
-					settings.Pagination = &config.PaginationSettings{}
-				}
-				settings.Pagination.DefaultPageSize = &intVal
-			}
+			def.set(settings, intVal)
 
 			if err := config.UpdateSettings(settings); err != nil {
 				output.PrintError(err.Error())
@@ -197,16 +192,7 @@ func registerReset(cfg *cobra.Command) {
 			}
 
 			settings := config.GetSettings()
-			switch def.section {
-			case "truncation":
-				if settings.Truncation != nil && def.field == "maxLength" {
-					settings.Truncation.MaxLength = nil
-				}
-			case "pagination":
-				if settings.Pagination != nil && def.field == "defaultPageSize" {
-					settings.Pagination.DefaultPageSize = nil
-				}
-			}
+			def.reset(settings)
 
 			if err := config.UpdateSettings(settings); err != nil {
 				output.PrintError(err.Error())

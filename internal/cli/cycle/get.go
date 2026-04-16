@@ -26,23 +26,7 @@ func registerGet(cycle *cobra.Command) {
 			c := resp.Cycle
 			issues := make([]map[string]any, len(c.Issues.Nodes))
 			for i, issue := range c.Issues.Nodes {
-				f := issue.IssueSummaryFields
-				input := mappers.IssueSummaryInput{
-					ID:            f.Id,
-					Identifier:    f.Identifier,
-					Title:         f.Title,
-					BranchName:    f.BranchName,
-					Priority:      f.Priority,
-					PriorityLabel: f.PriorityLabel,
-					StateName:     f.State.Name,
-					StateType:     f.State.Type,
-					TeamKey:       f.Team.Key,
-				}
-				if f.Assignee != nil {
-					input.AssigneeID = f.Assignee.Id
-					input.AssigneeName = f.Assignee.Name
-				}
-				issues[i] = mappers.MapIssueSummary(input)
+				issues[i] = mappers.MapIssueSummary(mappers.FromIssueSummaryFields(issue.IssueSummaryFields))
 			}
 
 			result := mapCycleSummary(c.Id, c.Number, c.Name, c.StartsAt, c.EndsAt)

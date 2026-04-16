@@ -50,19 +50,14 @@ func registerList(parent *cobra.Command) {
 			pageSize := output.ResolvePageSize(limit)
 			afterPtr := output.ResolveCursor(cursor)
 
-			var includeArchivedPtr *bool
-			if includeArchived {
-				includeArchivedPtr = &includeArchived
-			}
-
-			resp, err := linear.DocumentList(ctx, client, filter, pageSize, afterPtr, includeArchivedPtr)
+			resp, err := linear.DocumentList(ctx, client, filter, pageSize, afterPtr, ptr.TrueOrNil(includeArchived))
 			if err != nil {
 				output.HandleGraphQLError(err)
 			}
 
 			items := make([]any, len(resp.Documents.Nodes))
 			for i, n := range resp.Documents.Nodes {
-				items[i] = docSummaryFromFields(n.DocSummaryFields)
+				items[i] = mappers.MapDocSummary(mappers.FromDocSummaryFields(n.DocSummaryFields))
 			}
 
 			pi := resp.Documents.PageInfo
@@ -81,21 +76,3 @@ func registerList(parent *cobra.Command) {
 	parent.AddCommand(cmd)
 }
 
-func docSummaryFromFields(f linear.DocSummaryFields) map[string]any {
-	input := mappers.DocSummaryInput{
-		ID:        f.Id,
-		SlugId:    f.SlugId,
-		Title:     f.Title,
-		URL:       f.Url,
-		UpdatedAt: f.UpdatedAt,
-	}
-	if f.Creator != nil {
-		input.CreatorID = f.Creator.Id
-		input.CreatorName = f.Creator.Name
-	}
-	if f.Project != nil {
-		input.ProjectID = f.Project.Id
-		input.ProjectName = f.Project.Name
-	}
-	return mappers.MapDocSummary(input)
-}

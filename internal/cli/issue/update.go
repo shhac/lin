@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 
+	"github.com/Khan/genqlient/graphql"
 	"github.com/spf13/cobra"
 
 	"github.com/shhac/lin/internal/estimates"
@@ -39,6 +40,14 @@ func registerUpdate(parent *cobra.Command) {
 		func(v string) linear.IssueUpdateInput { return linear.IssueUpdateInput{ParentId: &v} })
 }
 
+func resolveIssueTeamID(ctx context.Context, client graphql.Client, issueID string) string {
+	resp, err := linear.IssueTeam(ctx, client, issueID)
+	if err != nil {
+		output.HandleGraphQLError(err)
+	}
+	return resp.Issue.Team.Id
+}
+
 func registerSimpleIssueUpdate(parent *cobra.Command, use, short string, buildInput func(string) linear.IssueUpdateInput) {
 	parent.AddCommand(&cobra.Command{
 		Use:   use,
@@ -66,11 +75,7 @@ func registerUpdateStatus(parent *cobra.Command) {
 			client := linear.GetClient()
 			ctx := context.Background()
 
-			teamResp, err := linear.IssueTeam(ctx, client, args[0])
-			if err != nil {
-				output.HandleGraphQLError(err)
-			}
-			teamID := teamResp.Issue.Team.Id
+			teamID := resolveIssueTeamID(ctx, client, args[0])
 			if teamID == "" {
 				output.PrintError("Could not resolve team for this issue.")
 			}
@@ -167,12 +172,9 @@ func registerUpdateLabels(parent *cobra.Command) {
 			client := linear.GetClient()
 			ctx := context.Background()
 
-			teamResp, err := linear.IssueTeam(ctx, client, args[0])
-			if err != nil {
-				output.HandleGraphQLError(err)
-			}
+			teamID := resolveIssueTeamID(ctx, client, args[0])
 
-			labelIds, err := resolvers.ResolveLabels(client, args[1], teamResp.Issue.Team.Id)
+			labelIds, err := resolvers.ResolveLabels(client, args[1], teamID)
 			if err != nil {
 				output.PrintError(err.Error())
 			}
@@ -200,11 +202,7 @@ func registerUpdateEstimate(parent *cobra.Command) {
 			client := linear.GetClient()
 			ctx := context.Background()
 
-			teamResp, err := linear.IssueTeam(ctx, client, args[0])
-			if err != nil {
-				output.HandleGraphQLError(err)
-			}
-			teamID := teamResp.Issue.Team.Id
+			teamID := resolveIssueTeamID(ctx, client, args[0])
 			if teamID == "" {
 				output.PrintError("Could not resolve team for this issue.")
 			}

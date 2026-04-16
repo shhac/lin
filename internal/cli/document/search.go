@@ -30,39 +30,14 @@ func registerSearch(parent *cobra.Command) {
 			pageSize := output.ResolvePageSize(limit)
 			afterPtr := output.ResolveCursor(cursor)
 
-			var includeCommentsPtr *bool
-			if includeComments {
-				includeCommentsPtr = &includeComments
-			}
-			var includeArchivedPtr *bool
-			if includeArchived {
-				includeArchivedPtr = &includeArchived
-			}
-
-			resp, err := linear.DocumentSearch(ctx, client, args[0], pageSize, afterPtr, includeCommentsPtr, includeArchivedPtr)
+			resp, err := linear.DocumentSearch(ctx, client, args[0], pageSize, afterPtr, ptr.TrueOrNil(includeComments), ptr.TrueOrNil(includeArchived))
 			if err != nil {
 				output.HandleGraphQLError(err)
 			}
 
 			items := make([]any, len(resp.SearchDocuments.Nodes))
 			for i, n := range resp.SearchDocuments.Nodes {
-				f := n.DocSearchSummaryFields
-				input := mappers.DocSummaryInput{
-					ID:        f.Id,
-					SlugId:    f.SlugId,
-					Title:     f.Title,
-					URL:       f.Url,
-					UpdatedAt: f.UpdatedAt,
-				}
-				if f.Creator != nil {
-					input.CreatorID = f.Creator.Id
-					input.CreatorName = f.Creator.Name
-				}
-				if f.Project != nil {
-					input.ProjectID = f.Project.Id
-					input.ProjectName = f.Project.Name
-				}
-				items[i] = mappers.MapDocSummary(input)
+				items[i] = mappers.MapDocSummary(mappers.FromDocSearchSummaryFields(n.DocSearchSummaryFields))
 			}
 
 			pi := resp.SearchDocuments.PageInfo

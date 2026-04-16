@@ -51,23 +51,7 @@ func registerIssues(parent *cobra.Command) {
 
 			items := make([]any, len(resp.Project.Issues.Nodes))
 			for i, n := range resp.Project.Issues.Nodes {
-				f := n.IssueSummaryFields
-				input := mappers.IssueSummaryInput{
-					ID:            f.Id,
-					Identifier:    f.Identifier,
-					Title:         f.Title,
-					BranchName:    f.BranchName,
-					Priority:      f.Priority,
-					PriorityLabel: f.PriorityLabel,
-					StateName:     f.State.Name,
-					StateType:     f.State.Type,
-					TeamKey:       f.Team.Key,
-				}
-				if f.Assignee != nil {
-					input.AssigneeID = f.Assignee.Id
-					input.AssigneeName = f.Assignee.Name
-				}
-				items[i] = mappers.MapIssueSummary(input)
+				items[i] = mappers.MapIssueSummary(mappers.FromIssueSummaryFields(n.IssueSummaryFields))
 			}
 
 			pi := resp.Project.Issues.PageInfo

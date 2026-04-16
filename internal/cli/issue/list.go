@@ -61,7 +61,7 @@ func registerList(parent *cobra.Command) {
 
 			items := make([]any, len(resp.Issues.Nodes))
 			for i, n := range resp.Issues.Nodes {
-				items[i] = issueSummaryFromFields(n.IssueSummaryFields)
+				items[i] = mappers.MapIssueSummary(mappers.FromIssueSummaryFields(n.IssueSummaryFields))
 			}
 
 			pi := resp.Issues.PageInfo
@@ -88,22 +88,4 @@ func registerList(parent *cobra.Command) {
 	parent.AddCommand(cmd)
 }
 
-func issueSummaryFromFields(f linear.IssueSummaryFields) map[string]any {
-	input := mappers.IssueSummaryInput{
-		ID:            f.Id,
-		Identifier:    f.Identifier,
-		Title:         f.Title,
-		BranchName:    f.BranchName,
-		Priority:      f.Priority,
-		PriorityLabel: f.PriorityLabel,
-		StateName:     f.State.Name,
-		StateType:     f.State.Type,
-		TeamKey:       f.Team.Key,
-	}
-	if f.Assignee != nil {
-		input.AssigneeID = f.Assignee.Id
-		input.AssigneeName = f.Assignee.Name
-	}
-	return mappers.MapIssueSummary(input)
-}
 

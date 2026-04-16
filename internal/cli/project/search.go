@@ -35,21 +35,7 @@ func registerSearch(parent *cobra.Command) {
 
 			items := make([]any, len(resp.SearchProjects.Nodes))
 			for i, n := range resp.SearchProjects.Nodes {
-				f := n.ProjectSearchSummaryFields
-				input := mappers.ProjectSummaryInput{
-					ID:         f.Id,
-					SlugId:     f.SlugId,
-					URL:        f.Url,
-					Name:       f.Name,
-					State:      f.State,
-					Progress:   f.Progress,
-					StartDate:  ptr.Deref(f.StartDate),
-					TargetDate: ptr.Deref(f.TargetDate),
-				}
-				if f.Lead != nil {
-					input.LeadName = f.Lead.Name
-				}
-				items[i] = mappers.MapProjectSummary(input)
+				items[i] = mappers.MapProjectSummary(mappers.FromProjectSearchSummaryFields(n.ProjectSearchSummaryFields))
 			}
 
 			pi := resp.SearchProjects.PageInfo

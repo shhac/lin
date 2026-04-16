@@ -38,21 +38,7 @@ func registerProjects(roadmap *cobra.Command) {
 
 			items := make([]map[string]any, len(resp.Roadmap.Projects.Nodes))
 			for i, p := range resp.Roadmap.Projects.Nodes {
-				f := p.ProjectSummaryFields
-				input := mappers.ProjectSummaryInput{
-					ID:         f.Id,
-					SlugId:     f.SlugId,
-					URL:        f.Url,
-					Name:       f.Name,
-					State:      f.State,
-					Progress:   f.Progress,
-					StartDate:  ptr.Deref(f.StartDate),
-					TargetDate: ptr.Deref(f.TargetDate),
-				}
-				if f.Lead != nil {
-					input.LeadName = f.Lead.Name
-				}
-				items[i] = mappers.MapProjectSummary(input)
+				items[i] = mappers.MapProjectSummary(mappers.FromProjectSummaryFields(p.ProjectSummaryFields))
 			}
 
 			pi := resp.Roadmap.Projects.PageInfo
