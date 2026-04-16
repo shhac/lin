@@ -30,12 +30,21 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 - `lin project update icon <id> <emoji>`
 - `lin project update color <id> <hex>`
 - `lin project new <name> [--team <keys>] [--description <text>] [--lead <user>] [--start-date <YYYY-MM-DD>] [--target-date <YYYY-MM-DD>] [--status <status>] [--content <markdown>]`
+- `lin project delete <id>` — delete project (move to trash)
+- `lin project unarchive <id>` — restore trashed/archived project
 
-## Roadmaps
+## Initiatives
 
-- `lin roadmap list [--limit] [--cursor]` — list roadmaps
-- `lin roadmap get <id>` — roadmap summary with owner, creator, url
-- `lin roadmap projects <id> [--limit] [--cursor]` — projects linked to a roadmap
+- `lin initiative search <text> [--limit] [--cursor]` — search initiatives by name
+- `lin initiative list [--status] [--limit] [--cursor]` — list initiatives (status: planned | active | completed)
+- `lin initiative get <id>` — initiative summary with status, health, owner, projects
+- `lin initiative projects <id> [--limit] [--cursor]` — projects linked to an initiative
+- `lin initiative new <name> [--status <status>] [--owner <user>] [--target-date <YYYY-MM-DD>]`
+- `lin initiative update status <id> <value>` — planned | active | completed
+- `lin initiative update target-date <id> <YYYY-MM-DD>`
+- `lin initiative archive <id>` — archive an initiative
+- `lin initiative unarchive <id>` — unarchive an initiative
+- `lin initiative delete <id>` — delete an initiative
 
 ## Documents
 
@@ -144,7 +153,8 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 - `lin usage` — print concise LLM-optimized top-level docs (~1000 tokens)
 - `lin <command> usage` — print detailed docs for a specific command domain:
   - `lin issue usage` — issue search, list, create, update, comment, relation, archive, attachment
-  - `lin project usage` — project + roadmap commands
+  - `lin project usage` — project commands
+  - `lin initiative usage` — initiative commands
   - `lin document usage` — document search, list, create, update
   - `lin team usage` — team, user, label, cycle commands
   - `lin auth usage` — authentication + workspace management

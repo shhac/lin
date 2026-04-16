@@ -2,7 +2,17 @@
 
 ## General
 
-All commands print JSON to stdout. Errors print `{ "error": "..." }` to stderr with non-zero exit.
+All commands print JSON to stdout. Errors print structured JSON to stderr with non-zero exit:
+
+```json
+{
+  "error": "unknown status \"wip\" for team ENG",
+  "fixable_by": "agent",
+  "hint": "valid statuses: Backlog, Todo, In Progress, In Review, Done, Canceled"
+}
+```
+
+`fixable_by` values: `agent` (can self-correct), `human` (needs user input), `retry` (transient failure).
 
 Empty/null fields are pruned automatically — missing keys mean no value, not `null`.
 
@@ -147,35 +157,41 @@ Includes comment count, branch name, and attachments (e.g., linked GitHub PRs):
 
 Use `project get <id>` with `--expand content` or `--full` for the full markdown body.
 
-## Roadmap list items
+## Initiative list items
 
 ```json
 {
   "id": "...",
-  "slugId": "q1-2025-roadmap-a1b2c3",
-  "url": "https://linear.app/.../roadmap/...",
-  "name": "Q1 2025 Roadmap",
-  "description": "Key initiatives for Q1",
+  "slugId": "q3-launch-a1b2c3",
+  "url": "https://linear.app/.../initiative/...",
+  "name": "Q3 Launch",
+  "description": "Platform launch for Q3",
+  "status": "active",
   "owner": "Alice Example"
 }
 ```
 
-## Roadmap overview (`roadmap get`)
+## Initiative overview (`initiative get`)
 
 ```json
 {
   "id": "...",
-  "slugId": "q1-2025-roadmap-a1b2c3",
-  "url": "https://linear.app/.../roadmap/...",
-  "name": "Q1 2025 Roadmap",
-  "description": "Key initiatives for Q1",
+  "slugId": "q3-launch-a1b2c3",
+  "url": "https://linear.app/.../initiative/...",
+  "name": "Q3 Launch",
+  "description": "Platform launch for Q3",
+  "status": "active",
+  "health": "onTrack",
   "owner": { "id": "...", "name": "Alice Example" },
   "creator": { "id": "...", "name": "Bob Example" },
+  "targetDate": "2025-09-30",
   "createdAt": "2025-01-01T00:00:00.000Z"
 }
 ```
 
-## Roadmap projects (`roadmap projects`)
+Initiative statuses: `planned`, `active`, `completed`.
+
+## Initiative projects (`initiative projects`)
 
 ```json
 {

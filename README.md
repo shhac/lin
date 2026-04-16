@@ -56,11 +56,16 @@ lin
 │   ├── issues <id> [filters]
 │   ├── new <name> --team <teams>
 │   ├── update title|status|description|content|lead|start-date|target-date|priority|icon|color <id> <value>
+│   ├── delete|unarchive <id>
 │   └── usage
-├── roadmap
-│   ├── list
+├── initiative
+│   ├── search <text>
+│   ├── list [--status planned|active|completed]
 │   ├── get <id>
 │   ├── projects <id>
+│   ├── new <name> [options]
+│   ├── update name|description|owner|status|target-date|content|color|icon <id> <value>
+│   ├── archive|unarchive|delete <id>
 │   └── usage
 ├── document
 │   ├── search <text>
@@ -102,12 +107,11 @@ lin
 │   ├── list <team>
 │   ├── get <id>
 │   └── usage
-├── auth
-│   └── usage
 ├── api
 │   ├── query <graphql> [--variables <json>]
 │   └── usage
 ├── config
+│   ├── get|set|reset|list-keys
 │   └── usage
 └── usage                          # LLM-optimized docs (<1k tokens)
 ```
@@ -116,9 +120,9 @@ Each top-level command also has a `usage` subcommand for detailed, LLM-friendly 
 
 ## Output
 
-- Lists → JSON arrays
+- Lists → `{ "items": [...], "pagination"?: { "hasMore", "nextCursor" } }`
 - Single items → JSON objects
-- Errors → `{ "error": "message" }` to stderr + non-zero exit
+- Errors → `{ "error": "...", "fixable_by": "agent|human|retry", "hint": "..." }` to stderr + non-zero exit
 - Empty/null fields are pruned automatically
 
 ## Filters

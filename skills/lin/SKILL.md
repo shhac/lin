@@ -2,19 +2,19 @@
 name: lin
 description: |
   Linear CLI for humans and LLMs. Use when:
-  - Looking up Linear issues, projects, documents, cycles, or teams
-  - Searching Linear issues, projects, or documents by text
-  - Creating or updating Linear issues or documents
+  - Looking up Linear issues, projects, initiatives, documents, cycles, or teams
+  - Searching Linear issues, projects, initiatives, or documents by text
+  - Creating or updating Linear issues, initiatives, or documents
   - Adding comments to Linear issues (with threaded replies and file attachments)
   - Checking project status, milestones, or team members
-  Triggers: "linear issue", "linear project", "linear document", "linear ticket", "linear search", "create issue", "create document", "update issue", "update document", "linear team", "linear cycle", "linear comment", "reply to comment", "attach file", "upload file", "download file", "linear file", "linear download"
+  Triggers: "linear issue", "linear project", "linear initiative", "linear document", "linear ticket", "linear search", "create issue", "create document", "update issue", "update document", "linear team", "linear cycle", "linear comment", "reply to comment", "attach file", "upload file", "download file", "linear file", "linear download", "linear initiative"
 ---
 
 # Linear automation with `lin`
 
 `lin` is a CLI binary installed on `$PATH`. Invoke it directly (e.g. `lin issue list --team ENG`).
 
-All output is JSON to stdout. Errors go to stderr as `{ "error": "..." }` with non-zero exit.
+All output is JSON to stdout. Errors go to stderr as `{ "error": "...", "fixable_by": "agent|human|retry", "hint": "..." }` with non-zero exit.
 
 ## IMPORTANT: Never access the Linear API directly
 
@@ -133,17 +133,28 @@ lin project update content <id> "# Updated body content"
 lin project update start-date <id> 2025-01-15
 lin project update target-date <id> 2025-03-31
 lin project update priority <id> high
+lin project delete <id>                  # moves to trash
+lin project unarchive <id>               # restore trashed/archived project
 ```
 
 The `--project` filter on issue commands also accepts slug or name.
 
-## Roadmaps
+## Initiatives (replaces roadmaps)
 
 ```bash
-lin roadmap list
-lin roadmap get <id>                    # roadmap summary + owner
-lin roadmap projects <id>               # projects linked to a roadmap
+lin initiative search "migration"
+lin initiative list --status active
+lin initiative get <id>                  # status, health, owner, projects
+lin initiative projects <id>             # projects linked to initiative
+lin initiative new "Q3 Launch" --status planned --owner "alice@example.com"
+lin initiative update status <id> active
+lin initiative update target-date <id> 2025-06-30
+lin initiative archive <id>
+lin initiative unarchive <id>
+lin initiative delete <id>
 ```
+
+Initiative statuses: `planned`, `active`, `completed`.
 
 ## Documents
 
@@ -208,7 +219,8 @@ Every top-level command has a `usage` subcommand with detailed, LLM-optimized do
 
 ```bash
 lin issue usage          # all issue subcommands, flags, valid values
-lin project usage        # project + roadmap commands
+lin project usage        # project commands
+lin initiative usage     # initiative commands
 lin document usage       # document commands
 lin team usage           # team, user, label, cycle commands
 lin auth usage           # auth + workspace management
