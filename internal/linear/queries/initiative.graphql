@@ -1,0 +1,95 @@
+query InitiativeGet($id: String!) {
+  initiative(id: $id) {
+    id
+    slugId
+    url
+    name
+    description
+    content
+    status
+    health
+    targetDate
+    startedAt
+    completedAt
+    createdAt
+    updatedAt
+    owner { id name }
+    creator { id name }
+    projects(first: 50) {
+      nodes { ...ProjectSummaryFields }
+      pageInfo { ...PageInfoFields }
+    }
+  }
+}
+
+query InitiativeList(
+  # @genqlient(omitempty: true)
+  $filter: InitiativeFilter,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  initiatives(filter: $filter, first: $first, after: $after) {
+    nodes {
+      id
+      slugId
+      url
+      name
+      status
+      health
+      targetDate
+      owner { name }
+    }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query InitiativeProjects(
+  $id: String!,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  initiative(id: $id) {
+    projects(first: $first, after: $after) {
+      nodes { ...ProjectSummaryFields }
+      pageInfo { ...PageInfoFields }
+    }
+  }
+}
+
+mutation InitiativeCreate($input: InitiativeCreateInput!) {
+  initiativeCreate(input: $input) {
+    success
+    initiative {
+      id
+      slugId
+      url
+      name
+    }
+  }
+}
+
+mutation InitiativeUpdate($id: String!, $input: InitiativeUpdateInput!) {
+  initiativeUpdate(id: $id, input: $input) {
+    success
+  }
+}
+
+mutation InitiativeArchive($id: String!) {
+  initiativeArchive(id: $id) {
+    success
+  }
+}
+
+mutation InitiativeUnarchive($id: String!) {
+  initiativeUnarchive(id: $id) {
+    success
+  }
+}
+
+mutation InitiativeDelete($id: String!) {
+  initiativeDelete(id: $id) {
+    success
+  }
+}

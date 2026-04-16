@@ -22,9 +22,16 @@ COMMANDS:
   project update <field> <id> <value>     Update (title|status|description|lead)
   project new <name> --team <t> [options]  Create project
 
-  roadmap list                            List roadmaps
+  roadmap list                            List roadmaps (deprecated, use initiative)
   roadmap get <id>                        Roadmap summary + owner
   roadmap projects <id>                   Projects in a roadmap
+
+  initiative list [--status]              List initiatives
+  initiative get <id>                     Initiative summary + health + owner
+  initiative projects <id>                Projects in an initiative
+  initiative new <name> [options]         Create initiative
+  initiative update <field> <id> <value>  Update (name|status|description|owner|...)
+  initiative archive|unarchive|delete <id> Lifecycle operations
 
   document search <text>                  Full-text search
   document list [--project] [--creator]   List documents
