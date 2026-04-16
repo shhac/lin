@@ -13,7 +13,7 @@ Perform a full release: version bump, build, GitHub release, and Homebrew tap up
 
 ## Instructions
 
-You are performing a release of the `lin` CLI (Go version). Follow these steps exactly.
+You are performing a release of the `lin` CLI. Follow these steps exactly.
 
 ### Pre-flight
 
@@ -44,13 +44,7 @@ git tag "v${new_version}"
 git push origin main "v${new_version}"
 ```
 
-### Step 2: Build with goreleaser
-
-```bash
-goreleaser release --clean
-```
-
-If `goreleaser` is not installed, build manually:
+### Step 2: Cross-compile
 
 ```bash
 rm -rf dist/
@@ -60,7 +54,7 @@ GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X main.version=${new_version}"
 GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X main.version=${new_version}" -o "dist/lin-linux-arm64" ./cmd/lin
 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X main.version=${new_version}" -o "dist/lin-windows-amd64.exe" ./cmd/lin
 
-# Create tarballs
+# Create tarballs + checksums
 cd dist
 for bin in lin-darwin-arm64 lin-darwin-amd64 lin-linux-amd64 lin-linux-arm64; do
   tar czf "${bin}.tar.gz" "$bin"
@@ -69,12 +63,16 @@ shasum -a 256 *.tar.gz lin-windows-amd64.exe > checksums-sha256.txt
 cd ..
 ```
 
-### Step 3: Create GitHub release
-
-If goreleaser handled it, skip this step. Otherwise:
+Test the native binary before proceeding:
 
 ```bash
-# Generate release notes
+./dist/lin-darwin-arm64 --version
+./dist/lin-darwin-arm64 user me
+```
+
+### Step 3: Create GitHub release
+
+```bash
 prev_tag=$(git tag --sort=-v:refname | head -2 | tail -1)
 notes=$(git log --pretty=format:"- %s" "${prev_tag}..v${new_version}" --no-merges | grep -v "^- v[0-9]")
 
@@ -97,8 +95,7 @@ Read checksums from `dist/checksums-sha256.txt` and update the formula:
 
 1. Read `../homebrew-tap/Formula/lin.rb`
 2. Update version, URLs (use `v${new_version}`), SHA256 values, assert_match version
-3. Note: Go binaries use `amd64` not `x64` for architecture naming
-4. Commit and push:
+3. Commit and push:
    ```bash
    cd ../homebrew-tap
    git add Formula/lin.rb
