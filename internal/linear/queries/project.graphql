@@ -84,3 +84,15 @@ mutation ProjectUpdate($id: String!, $input: ProjectUpdateInput!) {
     success
   }
 }
+
+mutation ProjectDelete($id: String!) {
+  projectDelete(id: $id) {
+    success
+  }
+}
+
+mutation ProjectUnarchive($id: String!) {
+  projectUnarchive(id: $id) {
+    success
+  }
+}

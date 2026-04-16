@@ -1,8 +1,7 @@
 package cli
 
 import (
-	"fmt"
-	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -16,11 +15,12 @@ import (
 	"github.com/shhac/lin/internal/cli/issue"
 	"github.com/shhac/lin/internal/cli/label"
 	"github.com/shhac/lin/internal/cli/project"
-	"github.com/shhac/lin/internal/cli/roadmap"
 	"github.com/shhac/lin/internal/cli/team"
 	"github.com/shhac/lin/internal/cli/usage"
 	"github.com/shhac/lin/internal/cli/user"
 	"github.com/shhac/lin/internal/config"
+	apierrors "github.com/shhac/lin/internal/errors"
+	"github.com/shhac/lin/internal/output"
 	"github.com/shhac/lin/internal/truncation"
 )
 
@@ -56,7 +56,6 @@ func newRootCmd(version string) *cobra.Command {
 	api.Register(root)
 	auth.Register(root)
 	project.Register(root)
-	roadmap.Register(root)
 	initiative.Register(root)
 	document.Register(root)
 	file.Register(root)
@@ -68,13 +67,20 @@ func newRootCmd(version string) *cobra.Command {
 	configcmd.Register(root)
 	usage.Register(root)
 
+	output.HandleUnknownCommand(root, "Run 'lin usage' for full documentation")
+
 	return root
 }
 
 func Execute(version string) error {
 	err := newRootCmd(version).Execute()
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		msg := err.Error()
+		if strings.Contains(msg, "unknown command") || strings.Contains(msg, "unknown flag") {
+			output.WriteError(apierrors.New(msg, apierrors.FixableByAgent).
+				WithHint("run 'lin usage' for full documentation"))
+		}
+		output.WriteError(apierrors.Wrap(err, apierrors.FixableByAgent))
 	}
 	return err
 }

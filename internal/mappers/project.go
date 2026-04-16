@@ -41,7 +41,7 @@ func MapProjectSummary(s ProjectSummaryInput) map[string]any {
 }
 
 // FromProjectSummaryFields converts the genqlient ProjectSummaryFields fragment
-// (used by ProjectList, RoadmapProjects) into a ProjectSummaryInput.
+// (used by ProjectList, InitiativeProjects) into a ProjectSummaryInput.
 func FromProjectSummaryFields(f linear.ProjectSummaryFields) ProjectSummaryInput {
 	input := ProjectSummaryInput{
 		ID:         f.Id,

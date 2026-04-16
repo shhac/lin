@@ -19,6 +19,8 @@ func registerAttachment(parent *cobra.Command) {
 	registerAttachmentList(attachment)
 	registerAttachmentAdd(attachment)
 	registerAttachmentRemove(attachment)
+
+	output.HandleUnknownCommand(attachment, "Run 'lin issue usage' for available attachment subcommands")
 }
 
 func registerAttachmentList(parent *cobra.Command) {

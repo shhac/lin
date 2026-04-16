@@ -142,11 +142,12 @@ func HandleUnknownCommand(cmd *cobra.Command, hint string) {
 					names = append(names, sub.Name())
 				}
 			}
-			msg := fmt.Sprintf("Unknown command: %q. Valid commands: %s", args[0], strings.Join(names, ", "))
+			msg := fmt.Sprintf("unknown command: %q, valid commands: %s", args[0], strings.Join(names, ", "))
+			apiErr := apierrors.New(msg, apierrors.FixableByAgent)
 			if hint != "" {
-				msg += ". " + hint
+				apiErr = apiErr.WithHint(hint)
 			}
-			PrintError(msg)
+			WriteError(apiErr)
 		}
 		return cmd.Help()
 	}

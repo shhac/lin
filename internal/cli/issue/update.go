@@ -38,6 +38,8 @@ func registerUpdate(parent *cobra.Command) {
 		func(v string) linear.IssueUpdateInput { return linear.IssueUpdateInput{CycleId: &v} })
 	registerSimpleIssueUpdate(update, "parent <id> <parent-id>", "Set parent issue (make sub-issue)",
 		func(v string) linear.IssueUpdateInput { return linear.IssueUpdateInput{ParentId: &v} })
+
+	output.HandleUnknownCommand(update, "Run 'lin issue usage' for available update subcommands")
 }
 
 func resolveIssueTeamID(ctx context.Context, client graphql.Client, issueID string) string {

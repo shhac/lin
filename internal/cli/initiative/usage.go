@@ -9,7 +9,9 @@ import (
 
 const usageText = `lin initiative — Manage Linear initiatives (replaces roadmap)
 
-LIST:
+SEARCH & LIST:
+  initiative search <text>                Search initiatives by name
+    [--limit] [--cursor]
   initiative list                         List all initiatives
     [--status planned|active|completed]
     [--limit] [--cursor]

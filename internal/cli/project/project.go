@@ -19,6 +19,8 @@ func Register(parent *cobra.Command) {
 	registerIssues(project)
 	registerNew(project)
 	registerUpdate(project)
+	registerDelete(project)
+	registerUnarchive(project)
 	registerUsage(project)
 	output.HandleUnknownCommand(project, "To view a project: lin project get <id>")
 }

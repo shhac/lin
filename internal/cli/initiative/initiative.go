@@ -14,6 +14,7 @@ func Register(parent *cobra.Command) {
 	}
 	parent.AddCommand(initiative)
 
+	registerSearch(initiative)
 	registerList(initiative)
 	registerGet(initiative)
 	registerProjects(initiative)

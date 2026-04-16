@@ -21,11 +21,10 @@ COMMANDS:
   project issues <id>                     Issues in a project
   project update <field> <id> <value>     Update (title|status|description|lead)
   project new <name> --team <t> [options]  Create project
+  project delete <id>                     Delete (trash) a project
+  project unarchive <id>                  Restore trashed/archived project
 
-  roadmap list                            List roadmaps (deprecated, use initiative)
-  roadmap get <id>                        Roadmap summary + owner
-  roadmap projects <id>                   Projects in a roadmap
-
+  initiative search <text>                Search initiatives by name
   initiative list [--status]              List initiatives
   initiative get <id>                     Initiative summary + health + owner
   initiative projects <id>                Projects in an initiative
@@ -73,7 +72,7 @@ COMMANDS:
   api query <graphql> [--variables <json>] Raw GraphQL query (escape hatch)
 
 IDS: Issue keys (ENG-123), UUIDs, or slugs. --team accepts key (ENG) or name.
-     Project/roadmap/document <id> accept UUID, slug ID, or name.
+     Project/initiative/document <id> accept UUID, slug ID, or name.
 
 FILTERS (issue list/search): --team --status --assignee --priority --label --cycle --project --limit
 FILTERS (document list): --project --creator --limit

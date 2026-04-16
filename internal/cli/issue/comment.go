@@ -23,6 +23,8 @@ func registerComment(parent *cobra.Command) {
 	registerCommentGet(comment)
 	registerCommentEdit(comment)
 	registerCommentReplies(comment)
+
+	output.HandleUnknownCommand(comment, "Run 'lin issue usage' for available comment subcommands")
 }
 
 func registerCommentList(parent *cobra.Command) {

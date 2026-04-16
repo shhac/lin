@@ -28,6 +28,8 @@ func registerRelation(parent *cobra.Command) {
 	registerRelationList(relation)
 	registerRelationAdd(relation)
 	registerRelationRemove(relation)
+
+	output.HandleUnknownCommand(relation, "Run 'lin issue usage' for available relation subcommands")
 }
 
 func registerRelationList(parent *cobra.Command) {

@@ -37,6 +37,10 @@ UPDATE (each is a subcommand):
   project update icon <id> <emoji>
   project update color <id> <hex>
 
+LIFECYCLE:
+  project delete <id>          Delete (trash) a project
+  project unarchive <id>       Restore a trashed or archived project
+
 IDS: <id> accepts UUID, slug ID, or project name.
 TEAM: Team key (ENG), name, or UUID.
 LEAD: Name, email, or user ID.
