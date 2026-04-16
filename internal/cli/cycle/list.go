@@ -59,56 +59,20 @@ func registerList(cycle *cobra.Command) {
 			now := time.Now()
 
 			if next {
-				type cycleEntry struct {
-					node    linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle
-					startAt time.Time
-				}
-				var future []cycleEntry
-				for _, c := range nodes {
-					t, err := time.Parse(time.RFC3339, c.StartsAt)
-					if err != nil {
-						continue
-					}
-					if t.After(now) {
-						future = append(future, cycleEntry{node: c, startAt: t})
-					}
-				}
-				if len(future) == 0 {
+				if n, ok := findNextCycle(nodes, now); ok {
+					output.PrintJSON([]any{mapCycleSummary(n.Id, n.Number, n.Name, n.StartsAt, n.EndsAt)})
+				} else {
 					output.PrintJSON([]any{})
-					return
 				}
-				sort.Slice(future, func(i, j int) bool {
-					return future[i].startAt.Before(future[j].startAt)
-				})
-				n := future[0].node
-				output.PrintJSON([]any{mapCycleSummary(n.Id, n.Number, n.Name, n.StartsAt, n.EndsAt)})
 				return
 			}
 
 			if previous {
-				type cycleEntry struct {
-					node  linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle
-					endAt time.Time
-				}
-				var past []cycleEntry
-				for _, c := range nodes {
-					t, err := time.Parse(time.RFC3339, c.EndsAt)
-					if err != nil {
-						continue
-					}
-					if t.Before(now) {
-						past = append(past, cycleEntry{node: c, endAt: t})
-					}
-				}
-				if len(past) == 0 {
+				if p, ok := findPreviousCycle(nodes, now); ok {
+					output.PrintJSON([]any{mapCycleSummary(p.Id, p.Number, p.Name, p.StartsAt, p.EndsAt)})
+				} else {
 					output.PrintJSON([]any{})
-					return
 				}
-				sort.Slice(past, func(i, j int) bool {
-					return past[i].endAt.After(past[j].endAt)
-				})
-				p := past[0].node
-				output.PrintJSON([]any{mapCycleSummary(p.Id, p.Number, p.Name, p.StartsAt, p.EndsAt)})
 				return
 			}
 
@@ -141,5 +105,55 @@ func mapCycleSummary(id string, number float64, name *string, startsAt, endsAt s
 		"startsAt": startsAt,
 		"endsAt":   endsAt,
 	}
+}
+
+// findNextCycle returns the cycle with the earliest start time after now.
+func findNextCycle(nodes []linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle, now time.Time) (linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle, bool) {
+	type cycleEntry struct {
+		node    linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle
+		startAt time.Time
+	}
+	var future []cycleEntry
+	for _, c := range nodes {
+		t, err := time.Parse(time.RFC3339, c.StartsAt)
+		if err != nil {
+			continue
+		}
+		if t.After(now) {
+			future = append(future, cycleEntry{node: c, startAt: t})
+		}
+	}
+	if len(future) == 0 {
+		return linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle{}, false
+	}
+	sort.Slice(future, func(i, j int) bool {
+		return future[i].startAt.Before(future[j].startAt)
+	})
+	return future[0].node, true
+}
+
+// findPreviousCycle returns the cycle with the latest end time before now.
+func findPreviousCycle(nodes []linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle, now time.Time) (linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle, bool) {
+	type cycleEntry struct {
+		node  linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle
+		endAt time.Time
+	}
+	var past []cycleEntry
+	for _, c := range nodes {
+		t, err := time.Parse(time.RFC3339, c.EndsAt)
+		if err != nil {
+			continue
+		}
+		if t.Before(now) {
+			past = append(past, cycleEntry{node: c, endAt: t})
+		}
+	}
+	if len(past) == 0 {
+		return linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle{}, false
+	}
+	sort.Slice(past, func(i, j int) bool {
+		return past[i].endAt.After(past[j].endAt)
+	})
+	return past[0].node, true
 }
 

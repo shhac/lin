@@ -268,8 +268,8 @@ func TestIsUUID(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.input, func(t *testing.T) {
-			if got := isUUID(tt.input); got != tt.want {
-				t.Errorf("isUUID(%q) = %v, want %v", tt.input, got, tt.want)
+			if got := IsUUID(tt.input); got != tt.want {
+				t.Errorf("IsUUID(%q) = %v, want %v", tt.input, got, tt.want)
 			}
 		})
 	}

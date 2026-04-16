@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/shhac/lin/internal/linear"
+	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
 	"github.com/shhac/lin/internal/ptr"
 )
@@ -36,25 +37,7 @@ func registerSearch(parent *cobra.Command) {
 
 			items := make([]map[string]any, len(resp.Initiatives.Nodes))
 			for i, n := range resp.Initiatives.Nodes {
-				var ownerName *string
-				if n.Owner != nil {
-					ownerName = &n.Owner.Name
-				}
-				item := map[string]any{
-					"id":     n.Id,
-					"slugId": n.SlugId,
-					"url":    n.Url,
-					"name":   n.Name,
-					"status": n.Status,
-					"owner":  ownerName,
-				}
-				if n.Health != nil {
-					item["health"] = *n.Health
-				}
-				if n.TargetDate != nil {
-					item["targetDate"] = *n.TargetDate
-				}
-				items[i] = item
+				items[i] = mappers.MapInitiativeSummary(mappers.FromInitiativeListFields(n))
 			}
 
 			pi := resp.Initiatives.PageInfo

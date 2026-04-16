@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"sort"
+	"strings"
 
 	"github.com/shhac/lin/internal/credential/keychain"
 )
@@ -34,12 +35,7 @@ func StoreLogin(alias string, ws Workspace) error {
 func SetDefaultWorkspace(alias string) error {
 	cfg := Read()
 	if _, ok := cfg.Workspaces[alias]; !ok {
-		keys := workspaceKeys(cfg)
-		valid := "(none)"
-		if len(keys) > 0 {
-			valid = joinKeys(keys)
-		}
-		return fmt.Errorf("unknown workspace: %s, valid: %s", alias, valid)
+		return workspaceNotFoundError(alias, cfg)
 	}
 	cfg.DefaultWorkspace = alias
 	return Write(cfg)
@@ -49,12 +45,7 @@ func SetDefaultWorkspace(alias string) error {
 func RemoveWorkspace(alias string) error {
 	cfg := Read()
 	if _, ok := cfg.Workspaces[alias]; !ok {
-		keys := workspaceKeys(cfg)
-		valid := "(none)"
-		if len(keys) > 0 {
-			valid = joinKeys(keys)
-		}
-		return fmt.Errorf("unknown workspace: %s, valid: %s", alias, valid)
+		return workspaceNotFoundError(alias, cfg)
 	}
 	_ = keychain.Delete(alias)
 	delete(cfg.Workspaces, alias)
@@ -110,13 +101,11 @@ func workspaceKeys(cfg *Config) []string {
 	return keys
 }
 
-func joinKeys(keys []string) string {
-	result := ""
-	for i, k := range keys {
-		if i > 0 {
-			result += ", "
-		}
-		result += k
+func workspaceNotFoundError(alias string, cfg *Config) error {
+	keys := workspaceKeys(cfg)
+	valid := "(none)"
+	if len(keys) > 0 {
+		valid = strings.Join(keys, ", ")
 	}
-	return result
+	return fmt.Errorf("unknown workspace: %s, valid: %s", alias, valid)
 }

@@ -13,12 +13,11 @@ import (
 
 	"github.com/Khan/genqlient/graphql"
 
+	"github.com/shhac/lin/internal/filters"
 	"github.com/shhac/lin/internal/linear"
 )
 
 const uploadHost = "uploads.linear.app"
-
-var uuidRE = regexp.MustCompile(`(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
 
 // eslint-disable-next-line no-control-regex
 var unsafeFilenameRE = regexp.MustCompile(`[<>:"|?*\x00-\x1f]`)
@@ -93,7 +92,7 @@ func ParseFileURL(input string, defaultOrgID string) (ParsedFileURL, error) {
 	}
 
 	for _, seg := range segments {
-		if !uuidRE.MatchString(seg) {
+		if !filters.IsUUID(seg) {
 			return ParsedFileURL{}, fmt.Errorf("invalid UUID segment: %q, expected format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", seg)
 		}
 	}

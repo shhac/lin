@@ -11,7 +11,8 @@ import (
 
 var uuidRE = regexp.MustCompile(`(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$`)
 
-func isUUID(s string) bool { return uuidRE.MatchString(s) }
+// IsUUID returns true if s is a valid UUID v4 format string.
+func IsUUID(s string) bool { return uuidRE.MatchString(s) }
 
 func eqIgnoreCase(s string) *linear.StringComparator {
 	return &linear.StringComparator{EqIgnoreCase: ptr.To(s)}
@@ -39,7 +40,7 @@ func BuildProjectFilter(input string) *linear.ProjectFilter {
 		{SlugId: &linear.StringComparator{Eq: ptr.To(input)}},
 		{Name: eqIgnoreCase(input)},
 	}
-	if isUUID(input) {
+	if IsUUID(input) {
 		branches = append([]linear.ProjectFilter{{Id: &linear.IDComparator{Eq: ptr.To(input)}}}, branches...)
 	}
 	return &linear.ProjectFilter{Or: branches}
@@ -48,7 +49,7 @@ func BuildProjectFilter(input string) *linear.ProjectFilter {
 // BuildNullableProjectFilter builds a project filter for use in IssueFilter.Project.
 // NullableProjectFilter doesn't support Or, so we pick the best match strategy.
 func BuildNullableProjectFilter(input string) *linear.NullableProjectFilter {
-	if isUUID(input) {
+	if IsUUID(input) {
 		return &linear.NullableProjectFilter{Id: &linear.IDComparator{Eq: ptr.To(input)}}
 	}
 	return &linear.NullableProjectFilter{
@@ -94,7 +95,7 @@ func BuildIssueFilter(opts IssueFilterOpts) *linear.IssueFilter {
 				{DisplayName: eqIgnoreCase(opts.Assignee)},
 				{Email: eqIgnoreCase(opts.Assignee)},
 			}
-			if isUUID(opts.Assignee) {
+			if IsUUID(opts.Assignee) {
 				branches = append([]linear.NullableUserFilter{{Id: &linear.IDComparator{Eq: ptr.To(opts.Assignee)}}}, branches...)
 			}
 			f.Assignee = &linear.NullableUserFilter{Or: branches}

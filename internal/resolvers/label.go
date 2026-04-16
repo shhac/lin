@@ -31,6 +31,24 @@ func ResolveLabels(client graphql.Client, input, teamID string) ([]string, error
 	return ids, nil
 }
 
+func fetchOrgLabels(client graphql.Client) ([]ResolvedLabel, error) {
+	nodes, err := linear.FetchAll(func(first int, after *string) ([]linear.LabelListIssueLabelsIssueLabelConnectionNodesIssueLabel, bool, *string, error) {
+		resp, err := linear.LabelList(ctx(), client, first, after)
+		if err != nil {
+			return nil, false, nil, err
+		}
+		return resp.IssueLabels.Nodes, resp.IssueLabels.PageInfo.HasNextPage, resp.IssueLabels.PageInfo.EndCursor, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	labels := make([]ResolvedLabel, len(nodes))
+	for i, l := range nodes {
+		labels[i] = ResolvedLabel{ID: l.Id, Name: l.Name}
+	}
+	return labels, nil
+}
+
 func fetchLabels(client graphql.Client, teamID string) ([]ResolvedLabel, error) {
 	if teamID != "" {
 		teamLabels, err := linear.FetchAll(func(first int, after *string) ([]linear.TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel, bool, *string, error) {
@@ -43,13 +61,7 @@ func fetchLabels(client graphql.Client, teamID string) ([]ResolvedLabel, error) 
 		if err != nil {
 			return nil, err
 		}
-		allLabels, err := linear.FetchAll(func(first int, after *string) ([]linear.LabelListIssueLabelsIssueLabelConnectionNodesIssueLabel, bool, *string, error) {
-			resp, err := linear.LabelList(ctx(), client, first, after)
-			if err != nil {
-				return nil, false, nil, err
-			}
-			return resp.IssueLabels.Nodes, resp.IssueLabels.PageInfo.HasNextPage, resp.IssueLabels.PageInfo.EndCursor, nil
-		})
+		orgLabels, err := fetchOrgLabels(client)
 		if err != nil {
 			return nil, err
 		}
@@ -59,28 +71,14 @@ func fetchLabels(client graphql.Client, teamID string) ([]ResolvedLabel, error) 
 			teamIDs[l.Id] = true
 			labels = append(labels, ResolvedLabel{ID: l.Id, Name: l.Name})
 		}
-		for _, l := range allLabels {
-			if !teamIDs[l.Id] {
-				labels = append(labels, ResolvedLabel{ID: l.Id, Name: l.Name})
+		for _, l := range orgLabels {
+			if !teamIDs[l.ID] {
+				labels = append(labels, l)
 			}
 		}
 		return labels, nil
 	}
-	allLabels, err := linear.FetchAll(func(first int, after *string) ([]linear.LabelListIssueLabelsIssueLabelConnectionNodesIssueLabel, bool, *string, error) {
-		resp, err := linear.LabelList(ctx(), client, first, after)
-		if err != nil {
-			return nil, false, nil, err
-		}
-		return resp.IssueLabels.Nodes, resp.IssueLabels.PageInfo.HasNextPage, resp.IssueLabels.PageInfo.EndCursor, nil
-	})
-	if err != nil {
-		return nil, err
-	}
-	labels := make([]ResolvedLabel, len(allLabels))
-	for i, l := range allLabels {
-		labels[i] = ResolvedLabel{ID: l.Id, Name: l.Name}
-	}
-	return labels, nil
+	return fetchOrgLabels(client)
 }
 
 func resolveOneLabel(input string, labels []ResolvedLabel, teamScoped bool) (ResolvedLabel, error) {
