@@ -33,33 +33,51 @@ func ResolveLabels(client graphql.Client, input, teamID string) ([]string, error
 
 func fetchLabels(client graphql.Client, teamID string) ([]ResolvedLabel, error) {
 	if teamID != "" {
-		teamResp, err := linear.TeamLabels(ctx(), client, teamID, 250, nil)
+		teamLabels, err := linear.FetchAll(func(first int, after *string) ([]linear.TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel, bool, *string, error) {
+			resp, err := linear.TeamLabels(ctx(), client, teamID, first, after)
+			if err != nil {
+				return nil, false, nil, err
+			}
+			return resp.Team.Labels.Nodes, resp.Team.Labels.PageInfo.HasNextPage, resp.Team.Labels.PageInfo.EndCursor, nil
+		})
 		if err != nil {
 			return nil, err
 		}
-		allResp, err := linear.LabelList(ctx(), client, 250, nil)
+		allLabels, err := linear.FetchAll(func(first int, after *string) ([]linear.LabelListIssueLabelsIssueLabelConnectionNodesIssueLabel, bool, *string, error) {
+			resp, err := linear.LabelList(ctx(), client, first, after)
+			if err != nil {
+				return nil, false, nil, err
+			}
+			return resp.IssueLabels.Nodes, resp.IssueLabels.PageInfo.HasNextPage, resp.IssueLabels.PageInfo.EndCursor, nil
+		})
 		if err != nil {
 			return nil, err
 		}
 		teamIDs := map[string]bool{}
 		var labels []ResolvedLabel
-		for _, l := range teamResp.Team.Labels.Nodes {
+		for _, l := range teamLabels {
 			teamIDs[l.Id] = true
 			labels = append(labels, ResolvedLabel{ID: l.Id, Name: l.Name})
 		}
-		for _, l := range allResp.IssueLabels.Nodes {
+		for _, l := range allLabels {
 			if !teamIDs[l.Id] {
 				labels = append(labels, ResolvedLabel{ID: l.Id, Name: l.Name})
 			}
 		}
 		return labels, nil
 	}
-	resp, err := linear.LabelList(ctx(), client, 250, nil)
+	allLabels, err := linear.FetchAll(func(first int, after *string) ([]linear.LabelListIssueLabelsIssueLabelConnectionNodesIssueLabel, bool, *string, error) {
+		resp, err := linear.LabelList(ctx(), client, first, after)
+		if err != nil {
+			return nil, false, nil, err
+		}
+		return resp.IssueLabels.Nodes, resp.IssueLabels.PageInfo.HasNextPage, resp.IssueLabels.PageInfo.EndCursor, nil
+	})
 	if err != nil {
 		return nil, err
 	}
-	labels := make([]ResolvedLabel, len(resp.IssueLabels.Nodes))
-	for i, l := range resp.IssueLabels.Nodes {
+	labels := make([]ResolvedLabel, len(allLabels))
+	for i, l := range allLabels {
 		labels[i] = ResolvedLabel{ID: l.Id, Name: l.Name}
 	}
 	return labels, nil

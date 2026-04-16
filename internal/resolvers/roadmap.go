@@ -22,18 +22,24 @@ func ResolveRoadmap(client graphql.Client, input string) (ResolvedRoadmap, error
 			ID: resp.Roadmap.Id, Name: resp.Roadmap.Name, SlugId: resp.Roadmap.SlugId,
 		}, nil
 	}
-	listResp, err := linear.RoadmapList(ctx(), client, 250, nil)
+	roadmaps, err := linear.FetchAll(func(first int, after *string) ([]linear.RoadmapListRoadmapsRoadmapConnectionNodesRoadmap, bool, *string, error) {
+		resp, err := linear.RoadmapList(ctx(), client, first, after)
+		if err != nil {
+			return nil, false, nil, err
+		}
+		return resp.Roadmaps.Nodes, resp.Roadmaps.PageInfo.HasNextPage, resp.Roadmaps.PageInfo.EndCursor, nil
+	})
 	if err != nil {
 		return ResolvedRoadmap{}, err
 	}
 	lower := strings.ToLower(input)
-	for _, r := range listResp.Roadmaps.Nodes {
+	for _, r := range roadmaps {
 		if r.SlugId == input || strings.ToLower(r.Name) == lower {
 			return ResolvedRoadmap{ID: r.Id, Name: r.Name, SlugId: r.SlugId}, nil
 		}
 	}
 	var names []string
-	for _, r := range listResp.Roadmaps.Nodes {
+	for _, r := range roadmaps {
 		names = append(names, fmt.Sprintf("%s (%s)", r.Name, r.SlugId))
 	}
 	hint := "none"

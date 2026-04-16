@@ -2,13 +2,9 @@ package mappers
 
 import "github.com/shhac/lin/internal/linear"
 
-// MapIssueDetail builds the standard output map for an issue get command,
-// combining data from the IssueGet, IssueComments, and IssueAttachments queries.
-func MapIssueDetail(
-	issue linear.IssueGetIssue,
-	comments []linear.IssueCommentsIssueCommentsCommentConnectionNodesComment,
-	attachments []linear.IssueAttachmentsIssueAttachmentsAttachmentConnectionNodesAttachment,
-) map[string]any {
+// MapIssueDetail builds the standard output map for an issue get command.
+// Comments and attachments are included in the IssueGet query response.
+func MapIssueDetail(issue linear.IssueGetIssue) map[string]any {
 	statusObj := map[string]any{
 		"id":   issue.State.Id,
 		"name": issue.State.Name,
@@ -32,8 +28,8 @@ func MapIssueDetail(
 		labels[i] = map[string]any{"id": l.Id, "name": l.Name}
 	}
 
-	attachmentMaps := make([]map[string]any, len(attachments))
-	for i, a := range attachments {
+	attachmentMaps := make([]map[string]any, len(issue.Attachments.Nodes))
+	for i, a := range issue.Attachments.Nodes {
 		attachmentMaps[i] = map[string]any{
 			"title":      a.Title,
 			"url":        a.Url,
@@ -59,7 +55,7 @@ func MapIssueDetail(
 		"project":       projectObj,
 		"priority":      issue.Priority,
 		"priorityLabel": issue.PriorityLabel,
-		"commentCount":  len(comments),
+		"commentCount":  len(issue.Comments.Nodes),
 		"labels":        labels,
 		"attachments":   attachmentMaps,
 		"parent":        parentObj,

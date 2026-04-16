@@ -4544,6 +4544,10 @@ type IssueGetIssue struct {
 	Team IssueGetIssueTeam `json:"team"`
 	// The project that the issue is associated with. Null if the issue is not part of any project.
 	Project *IssueGetIssueProject `json:"project,omitempty"`
+	// Comments associated with the issue.
+	Comments IssueGetIssueCommentsCommentConnection `json:"comments"`
+	// Attachments associated with the issue.
+	Attachments IssueGetIssueAttachmentsAttachmentConnection `json:"attachments"`
 }
 
 // GetId returns IssueGetIssue.Id, and is useful for accessing the field via an interface.
@@ -4600,6 +4604,14 @@ func (v *IssueGetIssue) GetTeam() IssueGetIssueTeam { return v.Team }
 // GetProject returns IssueGetIssue.Project, and is useful for accessing the field via an interface.
 func (v *IssueGetIssue) GetProject() *IssueGetIssueProject { return v.Project }
 
+// GetComments returns IssueGetIssue.Comments, and is useful for accessing the field via an interface.
+func (v *IssueGetIssue) GetComments() IssueGetIssueCommentsCommentConnection { return v.Comments }
+
+// GetAttachments returns IssueGetIssue.Attachments, and is useful for accessing the field via an interface.
+func (v *IssueGetIssue) GetAttachments() IssueGetIssueAttachmentsAttachmentConnection {
+	return v.Attachments
+}
+
 // IssueGetIssueAssigneeUser includes the requested fields of the GraphQL type User.
 // The GraphQL type's documentation follows.
 //
@@ -4616,6 +4628,76 @@ func (v *IssueGetIssueAssigneeUser) GetId() string { return v.Id }
 
 // GetName returns IssueGetIssueAssigneeUser.Name, and is useful for accessing the field via an interface.
 func (v *IssueGetIssueAssigneeUser) GetName() string { return v.Name }
+
+// IssueGetIssueAttachmentsAttachmentConnection includes the requested fields of the GraphQL type AttachmentConnection.
+type IssueGetIssueAttachmentsAttachmentConnection struct {
+	Nodes []IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment `json:"nodes,omitempty"`
+}
+
+// GetNodes returns IssueGetIssueAttachmentsAttachmentConnection.Nodes, and is useful for accessing the field via an interface.
+func (v *IssueGetIssueAttachmentsAttachmentConnection) GetNodes() []IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment {
+	return v.Nodes
+}
+
+// IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment includes the requested fields of the GraphQL type Attachment.
+// The GraphQL type's documentation follows.
+//
+// An attachment linking external content to an issue. Attachments represent connections to external resources such as GitHub pull requests, Slack messages, Zendesk tickets, Figma files, Sentry issues, Intercom conversations, and plain URLs. Each attachment has a title and subtitle displayed in the Linear UI, a URL serving as both the link destination and unique identifier per issue, and optional metadata specific to the source integration.
+type IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// Content for the title line in the Linear attachment widget.
+	Title string `json:"title"`
+	// The URL of the external resource this attachment links to. Also serves as a unique identifier for the attachment within an issue; no two attachments on the same issue can share the same URL.
+	Url string `json:"url"`
+	// Content for the subtitle line in the Linear attachment widget.
+	Subtitle *string `json:"subtitle,omitempty"`
+	// The source type of the attachment, derived from the source metadata. Returns the integration type (e.g., 'github', 'slack', 'zendesk') or 'unknown' if no source is set.
+	SourceType *string `json:"sourceType,omitempty"`
+}
+
+// GetId returns IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment.Id, and is useful for accessing the field via an interface.
+func (v *IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment) GetId() string { return v.Id }
+
+// GetTitle returns IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment.Title, and is useful for accessing the field via an interface.
+func (v *IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment) GetTitle() string {
+	return v.Title
+}
+
+// GetUrl returns IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment.Url, and is useful for accessing the field via an interface.
+func (v *IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment) GetUrl() string { return v.Url }
+
+// GetSubtitle returns IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment.Subtitle, and is useful for accessing the field via an interface.
+func (v *IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment) GetSubtitle() *string {
+	return v.Subtitle
+}
+
+// GetSourceType returns IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment.SourceType, and is useful for accessing the field via an interface.
+func (v *IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment) GetSourceType() *string {
+	return v.SourceType
+}
+
+// IssueGetIssueCommentsCommentConnection includes the requested fields of the GraphQL type CommentConnection.
+type IssueGetIssueCommentsCommentConnection struct {
+	Nodes []IssueGetIssueCommentsCommentConnectionNodesComment `json:"nodes,omitempty"`
+}
+
+// GetNodes returns IssueGetIssueCommentsCommentConnection.Nodes, and is useful for accessing the field via an interface.
+func (v *IssueGetIssueCommentsCommentConnection) GetNodes() []IssueGetIssueCommentsCommentConnectionNodesComment {
+	return v.Nodes
+}
+
+// IssueGetIssueCommentsCommentConnectionNodesComment includes the requested fields of the GraphQL type Comment.
+// The GraphQL type's documentation follows.
+//
+// A comment associated with an issue, project update, initiative update, document content, post, project, or initiative. Comments support rich text (ProseMirror), emoji reactions, and threaded replies via parentId. Comments can be created by workspace users or by external users through integrations (e.g., Slack, Intercom). Each comment belongs to exactly one parent entity.
+type IssueGetIssueCommentsCommentConnectionNodesComment struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+}
+
+// GetId returns IssueGetIssueCommentsCommentConnectionNodesComment.Id, and is useful for accessing the field via an interface.
+func (v *IssueGetIssueCommentsCommentConnectionNodesComment) GetId() string { return v.Id }
 
 // IssueGetIssueLabelsIssueLabelConnection includes the requested fields of the GraphQL type IssueLabelConnection.
 type IssueGetIssueLabelsIssueLabelConnection struct {
@@ -12403,6 +12485,8 @@ type TeamGetTeam struct {
 	IssueEstimationExtended bool `json:"issueEstimationExtended"`
 	// What to use as a default estimate for unestimated issues.
 	DefaultIssueEstimate float64 `json:"defaultIssueEstimate"`
+	// Users who are members of this team. Supports filtering and pagination.
+	Members TeamGetTeamMembersUserConnection `json:"members"`
 }
 
 // GetId returns TeamGetTeam.Id, and is useful for accessing the field via an interface.
@@ -12428,6 +12512,41 @@ func (v *TeamGetTeam) GetIssueEstimationExtended() bool { return v.IssueEstimati
 
 // GetDefaultIssueEstimate returns TeamGetTeam.DefaultIssueEstimate, and is useful for accessing the field via an interface.
 func (v *TeamGetTeam) GetDefaultIssueEstimate() float64 { return v.DefaultIssueEstimate }
+
+// GetMembers returns TeamGetTeam.Members, and is useful for accessing the field via an interface.
+func (v *TeamGetTeam) GetMembers() TeamGetTeamMembersUserConnection { return v.Members }
+
+// TeamGetTeamMembersUserConnection includes the requested fields of the GraphQL type UserConnection.
+type TeamGetTeamMembersUserConnection struct {
+	Nodes []TeamGetTeamMembersUserConnectionNodesUser `json:"nodes,omitempty"`
+}
+
+// GetNodes returns TeamGetTeamMembersUserConnection.Nodes, and is useful for accessing the field via an interface.
+func (v *TeamGetTeamMembersUserConnection) GetNodes() []TeamGetTeamMembersUserConnectionNodesUser {
+	return v.Nodes
+}
+
+// TeamGetTeamMembersUserConnectionNodesUser includes the requested fields of the GraphQL type User.
+// The GraphQL type's documentation follows.
+//
+// A user that belongs to a workspace. Users can have different roles (admin, member, guest, or app) that determine their level of access. Users can be members of multiple teams, and can be active or deactivated. Guest users have limited access scoped to specific teams they are invited to.
+type TeamGetTeamMembersUserConnectionNodesUser struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The user's full name.
+	Name string `json:"name"`
+	// The user's email address.
+	Email string `json:"email"`
+}
+
+// GetId returns TeamGetTeamMembersUserConnectionNodesUser.Id, and is useful for accessing the field via an interface.
+func (v *TeamGetTeamMembersUserConnectionNodesUser) GetId() string { return v.Id }
+
+// GetName returns TeamGetTeamMembersUserConnectionNodesUser.Name, and is useful for accessing the field via an interface.
+func (v *TeamGetTeamMembersUserConnectionNodesUser) GetName() string { return v.Name }
+
+// GetEmail returns TeamGetTeamMembersUserConnectionNodesUser.Email, and is useful for accessing the field via an interface.
+func (v *TeamGetTeamMembersUserConnectionNodesUser) GetEmail() string { return v.Email }
 
 // TeamLabelsResponse is returned by TeamLabels on success.
 type TeamLabelsResponse struct {
@@ -14749,6 +14868,20 @@ query IssueGet ($id: String!) {
 			id
 			name
 		}
+		comments(first: 250) {
+			nodes {
+				id
+			}
+		}
+		attachments {
+			nodes {
+				id
+				title
+				url
+				subtitle
+				sourceType
+			}
+		}
 	}
 }
 `
@@ -15958,6 +16091,13 @@ query TeamGet ($id: String!) {
 		issueEstimationAllowZero
 		issueEstimationExtended
 		defaultIssueEstimate
+		members(first: 250) {
+			nodes {
+				id
+				name
+				email
+			}
+		}
 	}
 }
 `

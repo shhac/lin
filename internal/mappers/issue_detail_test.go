@@ -50,19 +50,22 @@ func TestMapIssueDetail_Full(t *testing.T) {
 		},
 	}
 
-	comments := []linear.IssueCommentsIssueCommentsCommentConnectionNodesComment{
-		{Id: "c1"}, {Id: "c2"},
+	issue.Comments = linear.IssueGetIssueCommentsCommentConnection{
+		Nodes: []linear.IssueGetIssueCommentsCommentConnectionNodesComment{
+			{Id: "c1"}, {Id: "c2"},
+		},
 	}
-
-	attachments := []linear.IssueAttachmentsIssueAttachmentsAttachmentConnectionNodesAttachment{
-		{
-			Title:      "PR #42",
-			Url:        "https://github.com/org/repo/pull/42",
-			SourceType: ptr.To("github"),
+	issue.Attachments = linear.IssueGetIssueAttachmentsAttachmentConnection{
+		Nodes: []linear.IssueGetIssueAttachmentsAttachmentConnectionNodesAttachment{
+			{
+				Title:      "PR #42",
+				Url:        "https://github.com/org/repo/pull/42",
+				SourceType: ptr.To("github"),
+			},
 		},
 	}
 
-	got := MapIssueDetail(issue, comments, attachments)
+	got := MapIssueDetail(issue)
 
 	assertField(t, got, "id", "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
 	assertField(t, got, "identifier", "ENG-200")
@@ -128,7 +131,7 @@ func TestMapIssueDetail_NoOptionalFields(t *testing.T) {
 		},
 	}
 
-	got := MapIssueDetail(issue, nil, nil)
+	got := MapIssueDetail(issue)
 
 	if v, ok := got["assignee"].(map[string]any); ok && v != nil {
 		t.Errorf("assignee should be nil when unassigned, got %v", v)

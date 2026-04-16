@@ -8,6 +8,7 @@ query TeamGet($id: String!) {
     issueEstimationAllowZero
     issueEstimationExtended
     defaultIssueEstimate
+    members(first: 250) { nodes { id name email } }
   }
 }
 

@@ -30,12 +30,18 @@ func ResolveTeam(client graphql.Client, input string) (ResolvedTeam, error) {
 		t := listResp.Teams.Nodes[0]
 		return ResolvedTeam{ID: t.Id, Name: t.Name, Key: t.Key}, nil
 	}
-	allResp, err := linear.TeamList(ctx(), client, nil, 250, nil)
+	allTeams, err := linear.FetchAll(func(first int, after *string) ([]linear.TeamListTeamsTeamConnectionNodesTeam, bool, *string, error) {
+		resp, err := linear.TeamList(ctx(), client, nil, first, after)
+		if err != nil {
+			return nil, false, nil, err
+		}
+		return resp.Teams.Nodes, resp.Teams.PageInfo.HasNextPage, resp.Teams.PageInfo.EndCursor, nil
+	})
 	if err != nil {
 		return ResolvedTeam{}, err
 	}
 	var keys []string
-	for _, t := range allResp.Teams.Nodes {
+	for _, t := range allTeams {
 		keys = append(keys, fmt.Sprintf("%s (%s)", t.Key, t.Name))
 	}
 	hint := "none"

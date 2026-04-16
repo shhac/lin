@@ -17,13 +17,19 @@ type ResolvedUser struct {
 }
 
 func ResolveUser(client graphql.Client, input string) (ResolvedUser, error) {
-	resp, err := linear.UserList(ctx(), client, nil, 250, nil)
+	users, err := linear.FetchAll(func(first int, after *string) ([]linear.UserListUsersUserConnectionNodesUser, bool, *string, error) {
+		resp, err := linear.UserList(ctx(), client, nil, first, after)
+		if err != nil {
+			return nil, false, nil, err
+		}
+		return resp.Users.Nodes, resp.Users.PageInfo.HasNextPage, resp.Users.PageInfo.EndCursor, nil
+	})
 	if err != nil {
 		return ResolvedUser{}, err
 	}
 	lower := strings.ToLower(input)
 	var matches []ResolvedUser
-	for _, u := range resp.Users.Nodes {
+	for _, u := range users {
 		if u.Id == input ||
 			strings.ToLower(u.Name) == lower ||
 			strings.ToLower(u.Email) == lower ||
@@ -38,7 +44,7 @@ func ResolveUser(client graphql.Client, input string) (ResolvedUser, error) {
 	}
 	if len(matches) == 0 {
 		var names []string
-		for _, u := range resp.Users.Nodes {
+		for _, u := range users {
 			names = append(names, fmt.Sprintf("%s <%s>", u.Name, u.Email))
 		}
 		return ResolvedUser{}, fmt.Errorf("user not found: %q, known users: %s", input, strings.Join(names, ", "))

@@ -25,21 +25,7 @@ func registerGet(parent *cobra.Command) {
 				output.HandleGraphQLError(err)
 			}
 
-			commentsResp, err := linear.IssueComments(ctx, client, id, 250, nil)
-			if err != nil {
-				output.HandleGraphQLError(err)
-			}
-
-			attachResp, err := linear.IssueAttachments(ctx, client, id)
-			if err != nil {
-				output.HandleGraphQLError(err)
-			}
-
-			result := mappers.MapIssueDetail(
-				resp.Issue,
-				commentsResp.Issue.Comments.Nodes,
-				attachResp.Issue.Attachments.Nodes,
-			)
+			result := mappers.MapIssueDetail(resp.Issue)
 			output.PrintJSON(result)
 		},
 	}

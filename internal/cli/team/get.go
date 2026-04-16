@@ -31,11 +31,6 @@ func registerGet(team *cobra.Command) {
 			}
 			t := resp.Team
 
-			membersResp, err := linear.TeamMembers(ctx, client, resolved.ID, 250, nil)
-			if err != nil {
-				output.HandleGraphQLError(err)
-			}
-
 			var validValues []int
 			var display *string
 			if t.IssueEstimationType != "notUsed" {
@@ -45,8 +40,8 @@ func registerGet(team *cobra.Command) {
 				display = &d
 			}
 
-			members := make([]map[string]any, len(membersResp.Team.Members.Nodes))
-			for i, m := range membersResp.Team.Members.Nodes {
+			members := make([]map[string]any, len(t.Members.Nodes))
+			for i, m := range t.Members.Nodes {
 				members[i] = map[string]any{
 					"id":    m.Id,
 					"name":  m.Name,

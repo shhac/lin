@@ -20,6 +20,8 @@ query IssueGet($id: String!) {
     parent { id identifier }
     team { id key name }
     project { id name }
+    comments(first: 250) { nodes { id } }
+    attachments { nodes { id title url subtitle sourceType } }
   }
 }
 
