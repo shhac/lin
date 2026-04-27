@@ -2,7 +2,6 @@ package cycle
 
 import (
 	"context"
-	"sort"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -97,53 +96,41 @@ func mapCycleSummary(id string, number float64, name *string, startsAt, endsAt s
 	}
 }
 
+type cycleNode = linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle
+
 // findNextCycle returns the cycle with the earliest start time after now.
-func findNextCycle(nodes []linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle, now time.Time) (linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle, bool) {
-	type cycleEntry struct {
-		node    linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle
-		startAt time.Time
-	}
-	var future []cycleEntry
-	for _, c := range nodes {
-		t, err := time.Parse(time.RFC3339, c.StartsAt)
-		if err != nil {
-			continue
-		}
-		if t.After(now) {
-			future = append(future, cycleEntry{node: c, startAt: t})
-		}
-	}
-	if len(future) == 0 {
-		return linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle{}, false
-	}
-	sort.Slice(future, func(i, j int) bool {
-		return future[i].startAt.Before(future[j].startAt)
-	})
-	return future[0].node, true
+func findNextCycle(nodes []cycleNode, now time.Time) (cycleNode, bool) {
+	return pickCycle(nodes, func(c cycleNode) string { return c.StartsAt }, func(t time.Time) bool { return t.After(now) }, time.Time.Before)
 }
 
 // findPreviousCycle returns the cycle with the latest end time before now.
-func findPreviousCycle(nodes []linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle, now time.Time) (linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle, bool) {
-	type cycleEntry struct {
-		node  linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle
-		endAt time.Time
-	}
-	var past []cycleEntry
+func findPreviousCycle(nodes []cycleNode, now time.Time) (cycleNode, bool) {
+	return pickCycle(nodes, func(c cycleNode) string { return c.EndsAt }, func(t time.Time) bool { return t.Before(now) }, time.Time.After)
+}
+
+// pickCycle is a single-pass argmin/argmax over cycles. timeOf extracts the
+// time field; keep filters which entries to consider; better reports whether
+// a is preferred over b (returns true ⇒ a wins).
+func pickCycle(
+	nodes []cycleNode,
+	timeOf func(cycleNode) string,
+	keep func(time.Time) bool,
+	better func(a, b time.Time) bool,
+) (cycleNode, bool) {
+	var (
+		best   cycleNode
+		bestAt time.Time
+		found  bool
+	)
 	for _, c := range nodes {
-		t, err := time.Parse(time.RFC3339, c.EndsAt)
-		if err != nil {
+		t, err := time.Parse(time.RFC3339, timeOf(c))
+		if err != nil || !keep(t) {
 			continue
 		}
-		if t.Before(now) {
-			past = append(past, cycleEntry{node: c, endAt: t})
+		if !found || better(t, bestAt) {
+			best, bestAt, found = c, t, true
 		}
 	}
-	if len(past) == 0 {
-		return linear.TeamCyclesTeamCyclesCycleConnectionNodesCycle{}, false
-	}
-	sort.Slice(past, func(i, j int) bool {
-		return past[i].endAt.After(past[j].endAt)
-	})
-	return past[0].node, true
+	return best, found
 }
 
