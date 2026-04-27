@@ -1,9 +1,68 @@
 package download
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 )
+
+func TestFetchFile_OK(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if got := r.Header.Get("Authorization"); got != "test-key" {
+			t.Errorf("Authorization header = %q, want %q", got, "test-key")
+		}
+		w.Header().Set("Content-Type", "image/png")
+		w.Header().Set("Content-Disposition", `attachment; filename="hello.png"`)
+		_, _ = w.Write([]byte("PNGDATA"))
+	}))
+	defer srv.Close()
+
+	f, err := fetchFile(srv.URL, "test-key")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if string(f.Data) != "PNGDATA" {
+		t.Errorf("Data = %q", f.Data)
+	}
+	if f.ContentType != "image/png" {
+		t.Errorf("ContentType = %q", f.ContentType)
+	}
+	if f.Filename != "hello.png" {
+		t.Errorf("Filename = %q", f.Filename)
+	}
+}
+
+func TestFetchFile_HTTPError(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+	}))
+	defer srv.Close()
+
+	if _, err := fetchFile(srv.URL, "test-key"); err == nil {
+		t.Fatal("expected error for 403 response")
+	}
+}
+
+func TestFetchFile_DefaultsContentType(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		// no Content-Type header, no Content-Disposition — exercise both fallbacks
+		_, _ = w.Write([]byte("payload"))
+	}))
+	defer srv.Close()
+
+	f, err := fetchFile(srv.URL, "test-key")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	// httptest sniffs Content-Type when not set; assert only that it's non-empty.
+	if f.ContentType == "" {
+		t.Error("expected non-empty ContentType")
+	}
+	if f.Filename == "" {
+		t.Error("expected non-empty Filename")
+	}
+}
 
 func TestParseFileURL_FullHTTPS(t *testing.T) {
 	input := "https://uploads.linear.app/a1b2c3d4-e5f6-7890-abcd-ef1234567890/11111111-2222-3333-4444-555555555555/66666666-7777-8888-9999-aaaaaaaaaaaa"
