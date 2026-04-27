@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/Khan/genqlient/graphql"
 	"github.com/spf13/cobra"
 
 	apierrors "github.com/shhac/lin/internal/errors"
@@ -59,15 +60,29 @@ func registerAttachmentList(parent *cobra.Command) {
 	})
 }
 
+// attachmentFlags collects the integration-flag state for `lin issue attachment add`.
+type attachmentFlags struct {
+	githubPR    bool
+	githubIssue bool
+	gitlabMR    bool
+	slack       bool
+	discord     bool
+	syncThread  bool
+}
+
+// linkResult is the uniform shape returned by every attachment-link mutation.
+type linkResult struct {
+	success    bool
+	id         string
+	title      string
+	url        string
+	sourceType *string
+}
+
 func registerAttachmentAdd(parent *cobra.Command) {
 	var (
-		title       string
-		githubPR    bool
-		githubIssue bool
-		gitlabMR    bool
-		slack       bool
-		discord     bool
-		syncThread  bool
+		title string
+		flags attachmentFlags
 	)
 
 	cmd := &cobra.Command{
@@ -78,30 +93,8 @@ func registerAttachmentAdd(parent *cobra.Command) {
 			issueID := args[0]
 			rawURL := args[1]
 
-			selected := []string{}
-			if githubPR {
-				selected = append(selected, "--github-pr")
-			}
-			if githubIssue {
-				selected = append(selected, "--github-issue")
-			}
-			if gitlabMR {
-				selected = append(selected, "--gitlab-mr")
-			}
-			if slack {
-				selected = append(selected, "--slack")
-			}
-			if discord {
-				selected = append(selected, "--discord")
-			}
-			if len(selected) > 1 {
-				output.WriteError(apierrors.Newf(apierrors.FixableByAgent,
-					"conflicting flags: %s", strings.Join(selected, ", ")).
-					WithHint("specify at most one integration flag"))
-			}
-			if syncThread && !slack {
-				output.WriteError(apierrors.New("--sync-thread requires --slack", apierrors.FixableByAgent).
-					WithHint("add --slack to sync the thread to a comment thread"))
+			if err := validateAttachmentFlags(flags); err != nil {
+				output.WriteError(err)
 			}
 
 			var titlePtr *string
@@ -112,79 +105,147 @@ func registerAttachmentAdd(parent *cobra.Command) {
 			client := linear.GetClient()
 			ctx := context.Background()
 
-			switch {
-			case githubPR:
-				resp, err := linear.AttachmentLinkGitHubPR(ctx, client, issueID, rawURL, titlePtr)
-				if err != nil {
-					output.HandleGraphQLError(err)
-				}
-				printLinkedAttachment(resp.AttachmentLinkGitHubPR.Success, resp.AttachmentLinkGitHubPR.Attachment.Id, resp.AttachmentLinkGitHubPR.Attachment.Title, resp.AttachmentLinkGitHubPR.Attachment.Url, resp.AttachmentLinkGitHubPR.Attachment.SourceType)
-			case githubIssue:
-				resp, err := linear.AttachmentLinkGitHubIssue(ctx, client, issueID, rawURL, titlePtr)
-				if err != nil {
-					output.HandleGraphQLError(err)
-				}
-				printLinkedAttachment(resp.AttachmentLinkGitHubIssue.Success, resp.AttachmentLinkGitHubIssue.Attachment.Id, resp.AttachmentLinkGitHubIssue.Attachment.Title, resp.AttachmentLinkGitHubIssue.Attachment.Url, resp.AttachmentLinkGitHubIssue.Attachment.SourceType)
-			case gitlabMR:
-				projectPath, number, err := parseGitLabMRURL(rawURL)
-				if err != nil {
-					output.WriteError(apierrors.New(err.Error(), apierrors.FixableByAgent).
-						WithHint("GitLab MR URLs look like https://gitlab.com/<group>/<project>/-/merge_requests/<n>"))
-				}
-				resp, err := linear.AttachmentLinkGitLabMR(ctx, client, issueID, rawURL, projectPath, float64(number), titlePtr)
-				if err != nil {
-					output.HandleGraphQLError(err)
-				}
-				printLinkedAttachment(resp.AttachmentLinkGitLabMR.Success, resp.AttachmentLinkGitLabMR.Attachment.Id, resp.AttachmentLinkGitLabMR.Attachment.Title, resp.AttachmentLinkGitLabMR.Attachment.Url, resp.AttachmentLinkGitLabMR.Attachment.SourceType)
-			case slack:
-				var syncPtr *bool
-				if syncThread {
-					syncPtr = ptr.To(true)
-				}
-				resp, err := linear.AttachmentLinkSlack(ctx, client, issueID, rawURL, titlePtr, syncPtr)
-				if err != nil {
-					output.HandleGraphQLError(err)
-				}
-				printLinkedAttachment(resp.AttachmentLinkSlack.Success, resp.AttachmentLinkSlack.Attachment.Id, resp.AttachmentLinkSlack.Attachment.Title, resp.AttachmentLinkSlack.Attachment.Url, resp.AttachmentLinkSlack.Attachment.SourceType)
-			case discord:
-				channelID, messageID, err := parseDiscordMessageURL(rawURL)
-				if err != nil {
-					output.WriteError(apierrors.New(err.Error(), apierrors.FixableByAgent).
-						WithHint("Discord URLs look like https://discord.com/channels/<guild>/<channel>/<message>"))
-				}
-				resp, err := linear.AttachmentLinkDiscord(ctx, client, issueID, rawURL, channelID, messageID, titlePtr)
-				if err != nil {
-					output.HandleGraphQLError(err)
-				}
-				printLinkedAttachment(resp.AttachmentLinkDiscord.Success, resp.AttachmentLinkDiscord.Attachment.Id, resp.AttachmentLinkDiscord.Attachment.Title, resp.AttachmentLinkDiscord.Attachment.Url, resp.AttachmentLinkDiscord.Attachment.SourceType)
-			default:
-				resp, err := linear.AttachmentLinkURL(ctx, client, issueID, rawURL, titlePtr)
-				if err != nil {
-					output.HandleGraphQLError(err)
-				}
-				printLinkedAttachment(resp.AttachmentLinkURL.Success, resp.AttachmentLinkURL.Attachment.Id, resp.AttachmentLinkURL.Attachment.Title, resp.AttachmentLinkURL.Attachment.Url, resp.AttachmentLinkURL.Attachment.SourceType)
+			op, opErr := selectLinkOp(ctx, client, flags, issueID, rawURL, titlePtr)
+			if opErr != nil {
+				output.WriteError(opErr)
 			}
+
+			result, err := op()
+			if err != nil {
+				output.HandleGraphQLError(err)
+			}
+
+			output.PrintJSON(map[string]any{
+				"created":    result.success,
+				"id":         result.id,
+				"title":      result.title,
+				"url":        result.url,
+				"sourceType": ptr.Deref(result.sourceType),
+			})
 		},
 	}
 
 	cmd.Flags().StringVar(&title, "title", "", "Override the attachment title")
-	cmd.Flags().BoolVar(&githubPR, "github-pr", false, "Link as a GitHub pull request (rich attachment with PR sync)")
-	cmd.Flags().BoolVar(&githubIssue, "github-issue", false, "Link as a GitHub issue (rich attachment with issue sync)")
-	cmd.Flags().BoolVar(&gitlabMR, "gitlab-mr", false, "Link as a GitLab merge request (rich attachment with MR sync)")
-	cmd.Flags().BoolVar(&slack, "slack", false, "Link as a Slack message")
-	cmd.Flags().BoolVar(&syncThread, "sync-thread", false, "Sync the Slack thread with the issue's comment thread (requires --slack)")
-	cmd.Flags().BoolVar(&discord, "discord", false, "Link as a Discord message")
+	cmd.Flags().BoolVar(&flags.githubPR, "github-pr", false, "Link as a GitHub pull request (rich attachment with PR sync)")
+	cmd.Flags().BoolVar(&flags.githubIssue, "github-issue", false, "Link as a GitHub issue (rich attachment with issue sync)")
+	cmd.Flags().BoolVar(&flags.gitlabMR, "gitlab-mr", false, "Link as a GitLab merge request (rich attachment with MR sync)")
+	cmd.Flags().BoolVar(&flags.slack, "slack", false, "Link as a Slack message")
+	cmd.Flags().BoolVar(&flags.syncThread, "sync-thread", false, "Sync the Slack thread with the issue's comment thread (requires --slack)")
+	cmd.Flags().BoolVar(&flags.discord, "discord", false, "Link as a Discord message")
 	parent.AddCommand(cmd)
 }
 
-func printLinkedAttachment(success bool, id, title, urlStr string, sourceType *string) {
-	output.PrintJSON(map[string]any{
-		"created":    success,
-		"id":         id,
-		"title":      title,
-		"url":        urlStr,
-		"sourceType": ptr.Deref(sourceType),
-	})
+// validateAttachmentFlags returns nil if the flag combination is valid, or a
+// structured error describing the conflict.
+func validateAttachmentFlags(f attachmentFlags) *apierrors.APIError {
+	var selected []string
+	if f.githubPR {
+		selected = append(selected, "--github-pr")
+	}
+	if f.githubIssue {
+		selected = append(selected, "--github-issue")
+	}
+	if f.gitlabMR {
+		selected = append(selected, "--gitlab-mr")
+	}
+	if f.slack {
+		selected = append(selected, "--slack")
+	}
+	if f.discord {
+		selected = append(selected, "--discord")
+	}
+	if len(selected) > 1 {
+		return apierrors.Newf(apierrors.FixableByAgent,
+			"conflicting flags: %s", strings.Join(selected, ", ")).
+			WithHint("specify at most one integration flag")
+	}
+	if f.syncThread && !f.slack {
+		return apierrors.New("--sync-thread requires --slack", apierrors.FixableByAgent).
+			WithHint("add --slack to sync the thread to a comment thread")
+	}
+	return nil
+}
+
+// selectLinkOp returns a closure that performs the appropriate Linear mutation
+// based on the chosen flags. It validates URL-derived args eagerly so callers
+// see a clean error rather than a confusing GraphQL response.
+func selectLinkOp(
+	ctx context.Context,
+	client graphql.Client,
+	f attachmentFlags,
+	issueID, rawURL string,
+	titlePtr *string,
+) (func() (linkResult, error), *apierrors.APIError) {
+	switch {
+	case f.githubPR:
+		return func() (linkResult, error) {
+			r, err := linear.AttachmentLinkGitHubPR(ctx, client, issueID, rawURL, titlePtr)
+			if err != nil {
+				return linkResult{}, err
+			}
+			a := r.AttachmentLinkGitHubPR
+			return linkResult{a.Success, a.Attachment.Id, a.Attachment.Title, a.Attachment.Url, a.Attachment.SourceType}, nil
+		}, nil
+	case f.githubIssue:
+		return func() (linkResult, error) {
+			r, err := linear.AttachmentLinkGitHubIssue(ctx, client, issueID, rawURL, titlePtr)
+			if err != nil {
+				return linkResult{}, err
+			}
+			a := r.AttachmentLinkGitHubIssue
+			return linkResult{a.Success, a.Attachment.Id, a.Attachment.Title, a.Attachment.Url, a.Attachment.SourceType}, nil
+		}, nil
+	case f.gitlabMR:
+		projectPath, number, err := parseGitLabMRURL(rawURL)
+		if err != nil {
+			return nil, apierrors.New(err.Error(), apierrors.FixableByAgent).
+				WithHint("GitLab MR URLs look like https://gitlab.com/<group>/<project>/-/merge_requests/<n>")
+		}
+		return func() (linkResult, error) {
+			r, err := linear.AttachmentLinkGitLabMR(ctx, client, issueID, rawURL, projectPath, float64(number), titlePtr)
+			if err != nil {
+				return linkResult{}, err
+			}
+			a := r.AttachmentLinkGitLabMR
+			return linkResult{a.Success, a.Attachment.Id, a.Attachment.Title, a.Attachment.Url, a.Attachment.SourceType}, nil
+		}, nil
+	case f.slack:
+		var syncPtr *bool
+		if f.syncThread {
+			syncPtr = ptr.To(true)
+		}
+		return func() (linkResult, error) {
+			r, err := linear.AttachmentLinkSlack(ctx, client, issueID, rawURL, titlePtr, syncPtr)
+			if err != nil {
+				return linkResult{}, err
+			}
+			a := r.AttachmentLinkSlack
+			return linkResult{a.Success, a.Attachment.Id, a.Attachment.Title, a.Attachment.Url, a.Attachment.SourceType}, nil
+		}, nil
+	case f.discord:
+		channelID, messageID, err := parseDiscordMessageURL(rawURL)
+		if err != nil {
+			return nil, apierrors.New(err.Error(), apierrors.FixableByAgent).
+				WithHint("Discord URLs look like https://discord.com/channels/<guild>/<channel>/<message>")
+		}
+		return func() (linkResult, error) {
+			r, err := linear.AttachmentLinkDiscord(ctx, client, issueID, rawURL, channelID, messageID, titlePtr)
+			if err != nil {
+				return linkResult{}, err
+			}
+			a := r.AttachmentLinkDiscord
+			return linkResult{a.Success, a.Attachment.Id, a.Attachment.Title, a.Attachment.Url, a.Attachment.SourceType}, nil
+		}, nil
+	default:
+		return func() (linkResult, error) {
+			r, err := linear.AttachmentLinkURL(ctx, client, issueID, rawURL, titlePtr)
+			if err != nil {
+				return linkResult{}, err
+			}
+			a := r.AttachmentLinkURL
+			return linkResult{a.Success, a.Attachment.Id, a.Attachment.Title, a.Attachment.Url, a.Attachment.SourceType}, nil
+		}, nil
+	}
 }
 
 func registerAttachmentRemove(parent *cobra.Command) {
