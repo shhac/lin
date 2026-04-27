@@ -1,6 +1,7 @@
 package filters
 
 import (
+	"reflect"
 	"regexp"
 	"strings"
 
@@ -70,32 +71,26 @@ type LabelFilterOpts struct {
 
 func BuildIssueLabelFilter(opts LabelFilterOpts, teamID string) *linear.IssueLabelFilter {
 	f := &linear.IssueLabelFilter{}
-	empty := true
 
 	if opts.Name != "" {
 		f.Name = eqIgnoreCase(opts.Name)
-		empty = false
 	}
 	if opts.Search != "" {
 		f.Name = containsIgnoreCaseAndAccent(opts.Search)
-		empty = false
 	}
 	if teamID != "" {
 		f.Team = &linear.NullableTeamFilter{Id: &linear.IDComparator{Eq: ptr.To(teamID)}}
-		empty = false
 	} else if opts.Team != "" {
 		f.Team = &linear.NullableTeamFilter{Or: []linear.NullableTeamFilter{
 			{Key: eqIgnoreCase(opts.Team)},
 			{Name: eqIgnoreCase(opts.Team)},
 		}}
-		empty = false
 	}
 	if opts.IsGroup != nil {
 		f.IsGroup = &linear.BooleanComparator{Eq: opts.IsGroup}
-		empty = false
 	}
 
-	if empty {
+	if reflect.DeepEqual(*f, linear.IssueLabelFilter{}) {
 		return nil
 	}
 	return f
@@ -117,16 +112,13 @@ type IssueFilterOpts struct {
 
 func BuildIssueFilter(opts IssueFilterOpts) *linear.IssueFilter {
 	f := &linear.IssueFilter{}
-	empty := true
 
 	if opts.Project != "" {
 		f.Project = BuildNullableProjectFilter(opts.Project)
-		empty = false
 	}
 
 	if opts.Team != "" {
 		f.Team = BuildTeamFilter(opts.Team)
-		empty = false
 	}
 
 	if opts.Assignee != "" {
@@ -144,19 +136,16 @@ func BuildIssueFilter(opts IssueFilterOpts) *linear.IssueFilter {
 			}
 			f.Assignee = &linear.NullableUserFilter{Or: branches}
 		}
-		empty = false
 	}
 
 	if opts.Status != "" {
 		f.State = &linear.WorkflowStateFilter{Name: eqIgnoreCase(opts.Status)}
-		empty = false
 	}
 
 	if opts.Priority != "" {
 		if p, ok := priorities.Resolve(opts.Priority); ok {
 			pf := float64(p)
 			f.Priority = &linear.NullableNumberComparator{Eq: &pf}
-			empty = false
 		}
 	}
 
@@ -164,12 +153,10 @@ func BuildIssueFilter(opts IssueFilterOpts) *linear.IssueFilter {
 		f.Labels = &linear.IssueLabelCollectionFilter{
 			Some: &linear.IssueLabelFilter{Name: eqIgnoreCase(opts.Label)},
 		}
-		empty = false
 	}
 
 	if opts.Cycle != "" {
 		f.Cycle = &linear.NullableCycleFilter{Id: &linear.IDComparator{Eq: ptr.To(opts.Cycle)}}
-		empty = false
 	}
 
 	if opts.UpdatedAfter != "" || opts.UpdatedBefore != "" {
@@ -181,7 +168,6 @@ func BuildIssueFilter(opts IssueFilterOpts) *linear.IssueFilter {
 			dc.Lte = ptr.To(opts.UpdatedBefore)
 		}
 		f.UpdatedAt = dc
-		empty = false
 	}
 
 	if opts.CreatedAfter != "" || opts.CreatedBefore != "" {
@@ -193,10 +179,9 @@ func BuildIssueFilter(opts IssueFilterOpts) *linear.IssueFilter {
 			dc.Lte = ptr.To(opts.CreatedBefore)
 		}
 		f.CreatedAt = dc
-		empty = false
 	}
 
-	if empty {
+	if reflect.DeepEqual(*f, linear.IssueFilter{}) {
 		return nil
 	}
 	return f
