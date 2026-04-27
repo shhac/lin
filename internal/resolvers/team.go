@@ -16,6 +16,19 @@ type ResolvedTeam struct {
 	Key  string
 }
 
+// ResolveOptionalTeamID returns the team ID for a non-empty input, or "" when
+// input is empty. Useful for commands with an optional --team flag.
+func ResolveOptionalTeamID(client graphql.Client, input string) (string, error) {
+	if input == "" {
+		return "", nil
+	}
+	resolved, err := ResolveTeam(client, input)
+	if err != nil {
+		return "", err
+	}
+	return resolved.ID, nil
+}
+
 func ResolveTeam(client graphql.Client, input string) (ResolvedTeam, error) {
 	resp, err := linear.TeamGet(ctx(), client, input)
 	if err == nil {

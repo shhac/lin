@@ -30,13 +30,9 @@ func registerList(label *cobra.Command) {
 		client := linear.GetClient()
 		ctx := context.Background()
 
-		var teamID string
-		if teamFlag != "" {
-			resolved, err := resolvers.ResolveTeam(client, teamFlag)
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-			teamID = resolved.ID
+		teamID, err := resolvers.ResolveOptionalTeamID(client, teamFlag)
+		if err != nil {
+			output.PrintError(err.Error())
 		}
 
 		opts := filters.LabelFilterOpts{Name: nameFlag}

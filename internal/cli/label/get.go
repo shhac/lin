@@ -25,13 +25,9 @@ func registerGet(label *cobra.Command) {
 			ctx := context.Background()
 			input := args[0]
 
-			var teamID string
-			if teamFlag != "" {
-				resolved, err := resolvers.ResolveTeam(client, teamFlag)
-				if err != nil {
-					output.PrintError(err.Error())
-				}
-				teamID = resolved.ID
+			teamID, err := resolvers.ResolveOptionalTeamID(client, teamFlag)
+			if err != nil {
+				output.PrintError(err.Error())
 			}
 
 			var filter *linear.IssueLabelFilter
