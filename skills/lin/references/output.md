@@ -137,7 +137,7 @@ Includes comment count, branch name, and attachments (e.g., linked GitHub PRs):
   "title": "Fix login redirect",
   "branchName": "alice/eng-123-fix-login-redirect",
   "commentCount": 3,
-  "attachments": [{ "title": "PR #456", "url": "https://github.com/...", "sourceType": "github" }]
+  "attachments": [{ "title": "PR #456", "url": "https://github.com/...", "sourceType": "github_pr" }]
 }
 ```
 

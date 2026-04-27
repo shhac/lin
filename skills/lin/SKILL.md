@@ -2,12 +2,13 @@
 name: lin
 description: |
   Linear CLI for humans and LLMs. Use when:
-  - Looking up Linear issues, projects, initiatives, documents, cycles, or teams
-  - Searching Linear issues, projects, initiatives, or documents by text
+  - Looking up Linear issues, projects, initiatives, documents, cycles, teams, or labels
+  - Searching Linear issues, projects, initiatives, documents, or labels by text
   - Creating or updating Linear issues, initiatives, or documents
   - Adding comments to Linear issues (with threaded replies and file attachments)
+  - Linking external resources (GitHub PRs/issues, GitLab MRs, Slack/Discord messages) to Linear issues
   - Checking project status, milestones, or team members
-  Triggers: "linear issue", "linear project", "linear initiative", "linear document", "linear ticket", "linear search", "create issue", "create document", "update issue", "update document", "linear team", "linear cycle", "linear comment", "reply to comment", "attach file", "upload file", "download file", "linear file", "linear download", "linear initiative"
+  Triggers: "linear issue", "linear project", "linear initiative", "linear document", "linear ticket", "linear search", "create issue", "create document", "update issue", "update document", "linear team", "linear cycle", "linear comment", "reply to comment", "attach file", "upload file", "download file", "linear file", "linear download", "linear label", "search labels", "find label", "label by name", "attach github pr", "attach pull request", "link pr to issue", "link slack message", "link gitlab mr", "linear attachment"
 ---
 
 # Linear automation with `lin`
