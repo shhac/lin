@@ -188,11 +188,13 @@ func pruneEmpty(v any) any {
 	case map[string]any:
 		out := make(map[string]any, len(val))
 		for k, v := range val {
-			if v == nil {
+			pruned := pruneEmpty(v)
+			if pruned == nil {
 				continue
 			}
-			pruned := pruneEmpty(v)
-			if isEmpty(pruned) {
+			// pruneEmpty preserves empty slices at top level; inside maps,
+			// drop them too so pruned objects don't keep stub keys.
+			if arr, ok := pruned.([]any); ok && len(arr) == 0 {
 				continue
 			}
 			out[k] = pruned
@@ -217,20 +219,5 @@ func pruneEmpty(v any) any {
 		return val
 	default:
 		return v
-	}
-}
-
-func isEmpty(v any) bool {
-	switch val := v.(type) {
-	case nil:
-		return true
-	case string:
-		return strings.TrimSpace(val) == ""
-	case map[string]any:
-		return len(val) == 0
-	case []any:
-		return len(val) == 0
-	default:
-		return false
 	}
 }

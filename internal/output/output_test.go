@@ -201,29 +201,47 @@ func TestResolvePageSize_Fallback(t *testing.T) {
 	}
 }
 
-func TestIsEmpty(t *testing.T) {
-	tests := []struct {
-		name string
-		v    any
-		want bool
-	}{
-		{"nil", nil, true},
-		{"empty string", "", true},
-		{"whitespace", "  ", true},
-		{"non-empty string", "abc", false},
-		{"empty map", map[string]any{}, true},
-		{"non-empty map", map[string]any{"k": "v"}, false},
-		{"empty slice", []any{}, true},
-		{"non-empty slice", []any{1}, false},
-		{"number", 42, false},
-		{"bool", false, false},
+func TestPruneEmpty_DropsEmptyContainersInMaps(t *testing.T) {
+	in := map[string]any{
+		"id":     "x",
+		"empty":  "",
+		"blank":  "   ",
+		"nilval": nil,
+		"sub":    map[string]any{"a": "", "b": nil}, // collapses to empty → dropped
+		"items":  []any{},                           // empty slice as map value → dropped
+		"keep":   "yes",
 	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := isEmpty(tt.v); got != tt.want {
-				t.Errorf("isEmpty(%v) = %v, want %v", tt.v, got, tt.want)
-			}
-		})
+	got := pruneEmpty(in).(map[string]any)
+	if _, ok := got["empty"]; ok {
+		t.Error("expected empty string key to be dropped")
+	}
+	if _, ok := got["blank"]; ok {
+		t.Error("expected whitespace string key to be dropped")
+	}
+	if _, ok := got["nilval"]; ok {
+		t.Error("expected nil key to be dropped")
+	}
+	if _, ok := got["sub"]; ok {
+		t.Error("expected collapsed-empty sub-map to be dropped")
+	}
+	if _, ok := got["items"]; ok {
+		t.Error("expected empty slice to be dropped from a map")
+	}
+	if got["keep"] != "yes" {
+		t.Errorf("keep = %v", got["keep"])
+	}
+	if got["id"] != "x" {
+		t.Errorf("id = %v", got["id"])
+	}
+}
+
+func TestPruneEmpty_PreservesEmptySliceAtTopLevel(t *testing.T) {
+	got := pruneEmpty([]any{})
+	if got == nil {
+		t.Fatal("empty slice at top level should not be nil")
+	}
+	if arr, ok := got.([]any); !ok || len(arr) != 0 {
+		t.Errorf("expected [] at top level, got %v", got)
 	}
 }
 
