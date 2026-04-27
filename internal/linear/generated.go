@@ -353,6 +353,400 @@ func (v *AttachmentFilter) GetAnd() []AttachmentFilter { return v.And }
 // GetOr returns AttachmentFilter.Or, and is useful for accessing the field via an interface.
 func (v *AttachmentFilter) GetOr() []AttachmentFilter { return v.Or }
 
+// AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayload includes the requested fields of the GraphQL type AttachmentPayload.
+// The GraphQL type's documentation follows.
+//
+// The result of an attachment mutation.
+type AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayload struct {
+	// Whether the operation was successful.
+	Success bool `json:"success"`
+	// The issue attachment that was created.
+	Attachment AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayloadAttachment `json:"attachment"`
+}
+
+// GetSuccess returns AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayload.Success, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayload) GetSuccess() bool {
+	return v.Success
+}
+
+// GetAttachment returns AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayload.Attachment, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayload) GetAttachment() AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayloadAttachment {
+	return v.Attachment
+}
+
+// AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayloadAttachment includes the requested fields of the GraphQL type Attachment.
+// The GraphQL type's documentation follows.
+//
+// An attachment linking external content to an issue. Attachments represent connections to external resources such as GitHub pull requests, Slack messages, Zendesk tickets, Figma files, Sentry issues, Intercom conversations, and plain URLs. Each attachment has a title and subtitle displayed in the Linear UI, a URL serving as both the link destination and unique identifier per issue, and optional metadata specific to the source integration.
+type AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayloadAttachment struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// Content for the title line in the Linear attachment widget.
+	Title string `json:"title"`
+	// The URL of the external resource this attachment links to. Also serves as a unique identifier for the attachment within an issue; no two attachments on the same issue can share the same URL.
+	Url string `json:"url"`
+	// The source type of the attachment, derived from the source metadata. Returns the integration type (e.g., 'github', 'slack', 'zendesk') or 'unknown' if no source is set.
+	SourceType *string `json:"sourceType,omitempty"`
+}
+
+// GetId returns AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayloadAttachment.Id, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayloadAttachment) GetId() string {
+	return v.Id
+}
+
+// GetTitle returns AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayloadAttachment.Title, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayloadAttachment) GetTitle() string {
+	return v.Title
+}
+
+// GetUrl returns AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayloadAttachment.Url, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayloadAttachment) GetUrl() string {
+	return v.Url
+}
+
+// GetSourceType returns AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayloadAttachment.SourceType, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayloadAttachment) GetSourceType() *string {
+	return v.SourceType
+}
+
+// AttachmentLinkDiscordResponse is returned by AttachmentLinkDiscord on success.
+type AttachmentLinkDiscordResponse struct {
+	// Link an existing Discord message to an issue. This creates a rich attachment using the workspace's Discord integration.
+	AttachmentLinkDiscord AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayload `json:"attachmentLinkDiscord"`
+}
+
+// GetAttachmentLinkDiscord returns AttachmentLinkDiscordResponse.AttachmentLinkDiscord, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkDiscordResponse) GetAttachmentLinkDiscord() AttachmentLinkDiscordAttachmentLinkDiscordAttachmentPayload {
+	return v.AttachmentLinkDiscord
+}
+
+// AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayload includes the requested fields of the GraphQL type AttachmentPayload.
+// The GraphQL type's documentation follows.
+//
+// The result of an attachment mutation.
+type AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayload struct {
+	// Whether the operation was successful.
+	Success bool `json:"success"`
+	// The issue attachment that was created.
+	Attachment AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayloadAttachment `json:"attachment"`
+}
+
+// GetSuccess returns AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayload.Success, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayload) GetSuccess() bool {
+	return v.Success
+}
+
+// GetAttachment returns AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayload.Attachment, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayload) GetAttachment() AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayloadAttachment {
+	return v.Attachment
+}
+
+// AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayloadAttachment includes the requested fields of the GraphQL type Attachment.
+// The GraphQL type's documentation follows.
+//
+// An attachment linking external content to an issue. Attachments represent connections to external resources such as GitHub pull requests, Slack messages, Zendesk tickets, Figma files, Sentry issues, Intercom conversations, and plain URLs. Each attachment has a title and subtitle displayed in the Linear UI, a URL serving as both the link destination and unique identifier per issue, and optional metadata specific to the source integration.
+type AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayloadAttachment struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// Content for the title line in the Linear attachment widget.
+	Title string `json:"title"`
+	// The URL of the external resource this attachment links to. Also serves as a unique identifier for the attachment within an issue; no two attachments on the same issue can share the same URL.
+	Url string `json:"url"`
+	// The source type of the attachment, derived from the source metadata. Returns the integration type (e.g., 'github', 'slack', 'zendesk') or 'unknown' if no source is set.
+	SourceType *string `json:"sourceType,omitempty"`
+}
+
+// GetId returns AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayloadAttachment.Id, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayloadAttachment) GetId() string {
+	return v.Id
+}
+
+// GetTitle returns AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayloadAttachment.Title, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayloadAttachment) GetTitle() string {
+	return v.Title
+}
+
+// GetUrl returns AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayloadAttachment.Url, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayloadAttachment) GetUrl() string {
+	return v.Url
+}
+
+// GetSourceType returns AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayloadAttachment.SourceType, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayloadAttachment) GetSourceType() *string {
+	return v.SourceType
+}
+
+// AttachmentLinkGitHubIssueResponse is returned by AttachmentLinkGitHubIssue on success.
+type AttachmentLinkGitHubIssueResponse struct {
+	// Link a GitHub issue to a Linear issue. This creates a rich attachment using the workspace's GitHub integration, enabling features like automated status syncing.
+	AttachmentLinkGitHubIssue AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayload `json:"attachmentLinkGitHubIssue"`
+}
+
+// GetAttachmentLinkGitHubIssue returns AttachmentLinkGitHubIssueResponse.AttachmentLinkGitHubIssue, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubIssueResponse) GetAttachmentLinkGitHubIssue() AttachmentLinkGitHubIssueAttachmentLinkGitHubIssueAttachmentPayload {
+	return v.AttachmentLinkGitHubIssue
+}
+
+// AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayload includes the requested fields of the GraphQL type AttachmentPayload.
+// The GraphQL type's documentation follows.
+//
+// The result of an attachment mutation.
+type AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayload struct {
+	// Whether the operation was successful.
+	Success bool `json:"success"`
+	// The issue attachment that was created.
+	Attachment AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayloadAttachment `json:"attachment"`
+}
+
+// GetSuccess returns AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayload.Success, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayload) GetSuccess() bool {
+	return v.Success
+}
+
+// GetAttachment returns AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayload.Attachment, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayload) GetAttachment() AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayloadAttachment {
+	return v.Attachment
+}
+
+// AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayloadAttachment includes the requested fields of the GraphQL type Attachment.
+// The GraphQL type's documentation follows.
+//
+// An attachment linking external content to an issue. Attachments represent connections to external resources such as GitHub pull requests, Slack messages, Zendesk tickets, Figma files, Sentry issues, Intercom conversations, and plain URLs. Each attachment has a title and subtitle displayed in the Linear UI, a URL serving as both the link destination and unique identifier per issue, and optional metadata specific to the source integration.
+type AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayloadAttachment struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// Content for the title line in the Linear attachment widget.
+	Title string `json:"title"`
+	// The URL of the external resource this attachment links to. Also serves as a unique identifier for the attachment within an issue; no two attachments on the same issue can share the same URL.
+	Url string `json:"url"`
+	// The source type of the attachment, derived from the source metadata. Returns the integration type (e.g., 'github', 'slack', 'zendesk') or 'unknown' if no source is set.
+	SourceType *string `json:"sourceType,omitempty"`
+}
+
+// GetId returns AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayloadAttachment.Id, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayloadAttachment) GetId() string {
+	return v.Id
+}
+
+// GetTitle returns AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayloadAttachment.Title, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayloadAttachment) GetTitle() string {
+	return v.Title
+}
+
+// GetUrl returns AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayloadAttachment.Url, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayloadAttachment) GetUrl() string {
+	return v.Url
+}
+
+// GetSourceType returns AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayloadAttachment.SourceType, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayloadAttachment) GetSourceType() *string {
+	return v.SourceType
+}
+
+// AttachmentLinkGitHubPRResponse is returned by AttachmentLinkGitHubPR on success.
+type AttachmentLinkGitHubPRResponse struct {
+	// Link a GitHub pull request to an issue. This creates a rich attachment using the workspace's GitHub integration, enabling features like automated status syncing.
+	AttachmentLinkGitHubPR AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayload `json:"attachmentLinkGitHubPR"`
+}
+
+// GetAttachmentLinkGitHubPR returns AttachmentLinkGitHubPRResponse.AttachmentLinkGitHubPR, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitHubPRResponse) GetAttachmentLinkGitHubPR() AttachmentLinkGitHubPRAttachmentLinkGitHubPRAttachmentPayload {
+	return v.AttachmentLinkGitHubPR
+}
+
+// AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayload includes the requested fields of the GraphQL type AttachmentPayload.
+// The GraphQL type's documentation follows.
+//
+// The result of an attachment mutation.
+type AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayload struct {
+	// Whether the operation was successful.
+	Success bool `json:"success"`
+	// The issue attachment that was created.
+	Attachment AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayloadAttachment `json:"attachment"`
+}
+
+// GetSuccess returns AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayload.Success, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayload) GetSuccess() bool {
+	return v.Success
+}
+
+// GetAttachment returns AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayload.Attachment, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayload) GetAttachment() AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayloadAttachment {
+	return v.Attachment
+}
+
+// AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayloadAttachment includes the requested fields of the GraphQL type Attachment.
+// The GraphQL type's documentation follows.
+//
+// An attachment linking external content to an issue. Attachments represent connections to external resources such as GitHub pull requests, Slack messages, Zendesk tickets, Figma files, Sentry issues, Intercom conversations, and plain URLs. Each attachment has a title and subtitle displayed in the Linear UI, a URL serving as both the link destination and unique identifier per issue, and optional metadata specific to the source integration.
+type AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayloadAttachment struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// Content for the title line in the Linear attachment widget.
+	Title string `json:"title"`
+	// The URL of the external resource this attachment links to. Also serves as a unique identifier for the attachment within an issue; no two attachments on the same issue can share the same URL.
+	Url string `json:"url"`
+	// The source type of the attachment, derived from the source metadata. Returns the integration type (e.g., 'github', 'slack', 'zendesk') or 'unknown' if no source is set.
+	SourceType *string `json:"sourceType,omitempty"`
+}
+
+// GetId returns AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayloadAttachment.Id, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayloadAttachment) GetId() string {
+	return v.Id
+}
+
+// GetTitle returns AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayloadAttachment.Title, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayloadAttachment) GetTitle() string {
+	return v.Title
+}
+
+// GetUrl returns AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayloadAttachment.Url, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayloadAttachment) GetUrl() string {
+	return v.Url
+}
+
+// GetSourceType returns AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayloadAttachment.SourceType, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayloadAttachment) GetSourceType() *string {
+	return v.SourceType
+}
+
+// AttachmentLinkGitLabMRResponse is returned by AttachmentLinkGitLabMR on success.
+type AttachmentLinkGitLabMRResponse struct {
+	// Link an existing GitLab MR to an issue. This creates a rich attachment using the workspace's GitLab integration, enabling features like automated status syncing.
+	AttachmentLinkGitLabMR AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayload `json:"attachmentLinkGitLabMR"`
+}
+
+// GetAttachmentLinkGitLabMR returns AttachmentLinkGitLabMRResponse.AttachmentLinkGitLabMR, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkGitLabMRResponse) GetAttachmentLinkGitLabMR() AttachmentLinkGitLabMRAttachmentLinkGitLabMRAttachmentPayload {
+	return v.AttachmentLinkGitLabMR
+}
+
+// AttachmentLinkSlackAttachmentLinkSlackAttachmentPayload includes the requested fields of the GraphQL type AttachmentPayload.
+// The GraphQL type's documentation follows.
+//
+// The result of an attachment mutation.
+type AttachmentLinkSlackAttachmentLinkSlackAttachmentPayload struct {
+	// Whether the operation was successful.
+	Success bool `json:"success"`
+	// The issue attachment that was created.
+	Attachment AttachmentLinkSlackAttachmentLinkSlackAttachmentPayloadAttachment `json:"attachment"`
+}
+
+// GetSuccess returns AttachmentLinkSlackAttachmentLinkSlackAttachmentPayload.Success, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkSlackAttachmentLinkSlackAttachmentPayload) GetSuccess() bool { return v.Success }
+
+// GetAttachment returns AttachmentLinkSlackAttachmentLinkSlackAttachmentPayload.Attachment, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkSlackAttachmentLinkSlackAttachmentPayload) GetAttachment() AttachmentLinkSlackAttachmentLinkSlackAttachmentPayloadAttachment {
+	return v.Attachment
+}
+
+// AttachmentLinkSlackAttachmentLinkSlackAttachmentPayloadAttachment includes the requested fields of the GraphQL type Attachment.
+// The GraphQL type's documentation follows.
+//
+// An attachment linking external content to an issue. Attachments represent connections to external resources such as GitHub pull requests, Slack messages, Zendesk tickets, Figma files, Sentry issues, Intercom conversations, and plain URLs. Each attachment has a title and subtitle displayed in the Linear UI, a URL serving as both the link destination and unique identifier per issue, and optional metadata specific to the source integration.
+type AttachmentLinkSlackAttachmentLinkSlackAttachmentPayloadAttachment struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// Content for the title line in the Linear attachment widget.
+	Title string `json:"title"`
+	// The URL of the external resource this attachment links to. Also serves as a unique identifier for the attachment within an issue; no two attachments on the same issue can share the same URL.
+	Url string `json:"url"`
+	// The source type of the attachment, derived from the source metadata. Returns the integration type (e.g., 'github', 'slack', 'zendesk') or 'unknown' if no source is set.
+	SourceType *string `json:"sourceType,omitempty"`
+}
+
+// GetId returns AttachmentLinkSlackAttachmentLinkSlackAttachmentPayloadAttachment.Id, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkSlackAttachmentLinkSlackAttachmentPayloadAttachment) GetId() string {
+	return v.Id
+}
+
+// GetTitle returns AttachmentLinkSlackAttachmentLinkSlackAttachmentPayloadAttachment.Title, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkSlackAttachmentLinkSlackAttachmentPayloadAttachment) GetTitle() string {
+	return v.Title
+}
+
+// GetUrl returns AttachmentLinkSlackAttachmentLinkSlackAttachmentPayloadAttachment.Url, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkSlackAttachmentLinkSlackAttachmentPayloadAttachment) GetUrl() string {
+	return v.Url
+}
+
+// GetSourceType returns AttachmentLinkSlackAttachmentLinkSlackAttachmentPayloadAttachment.SourceType, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkSlackAttachmentLinkSlackAttachmentPayloadAttachment) GetSourceType() *string {
+	return v.SourceType
+}
+
+// AttachmentLinkSlackResponse is returned by AttachmentLinkSlack on success.
+type AttachmentLinkSlackResponse struct {
+	// Link an existing Slack message to an issue. This creates a rich attachment using the workspace's Slack integration.
+	AttachmentLinkSlack AttachmentLinkSlackAttachmentLinkSlackAttachmentPayload `json:"attachmentLinkSlack"`
+}
+
+// GetAttachmentLinkSlack returns AttachmentLinkSlackResponse.AttachmentLinkSlack, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkSlackResponse) GetAttachmentLinkSlack() AttachmentLinkSlackAttachmentLinkSlackAttachmentPayload {
+	return v.AttachmentLinkSlack
+}
+
+// AttachmentLinkURLAttachmentLinkURLAttachmentPayload includes the requested fields of the GraphQL type AttachmentPayload.
+// The GraphQL type's documentation follows.
+//
+// The result of an attachment mutation.
+type AttachmentLinkURLAttachmentLinkURLAttachmentPayload struct {
+	// Whether the operation was successful.
+	Success bool `json:"success"`
+	// The issue attachment that was created.
+	Attachment AttachmentLinkURLAttachmentLinkURLAttachmentPayloadAttachment `json:"attachment"`
+}
+
+// GetSuccess returns AttachmentLinkURLAttachmentLinkURLAttachmentPayload.Success, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkURLAttachmentLinkURLAttachmentPayload) GetSuccess() bool { return v.Success }
+
+// GetAttachment returns AttachmentLinkURLAttachmentLinkURLAttachmentPayload.Attachment, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkURLAttachmentLinkURLAttachmentPayload) GetAttachment() AttachmentLinkURLAttachmentLinkURLAttachmentPayloadAttachment {
+	return v.Attachment
+}
+
+// AttachmentLinkURLAttachmentLinkURLAttachmentPayloadAttachment includes the requested fields of the GraphQL type Attachment.
+// The GraphQL type's documentation follows.
+//
+// An attachment linking external content to an issue. Attachments represent connections to external resources such as GitHub pull requests, Slack messages, Zendesk tickets, Figma files, Sentry issues, Intercom conversations, and plain URLs. Each attachment has a title and subtitle displayed in the Linear UI, a URL serving as both the link destination and unique identifier per issue, and optional metadata specific to the source integration.
+type AttachmentLinkURLAttachmentLinkURLAttachmentPayloadAttachment struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// Content for the title line in the Linear attachment widget.
+	Title string `json:"title"`
+	// The URL of the external resource this attachment links to. Also serves as a unique identifier for the attachment within an issue; no two attachments on the same issue can share the same URL.
+	Url string `json:"url"`
+	// The source type of the attachment, derived from the source metadata. Returns the integration type (e.g., 'github', 'slack', 'zendesk') or 'unknown' if no source is set.
+	SourceType *string `json:"sourceType,omitempty"`
+}
+
+// GetId returns AttachmentLinkURLAttachmentLinkURLAttachmentPayloadAttachment.Id, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkURLAttachmentLinkURLAttachmentPayloadAttachment) GetId() string { return v.Id }
+
+// GetTitle returns AttachmentLinkURLAttachmentLinkURLAttachmentPayloadAttachment.Title, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkURLAttachmentLinkURLAttachmentPayloadAttachment) GetTitle() string {
+	return v.Title
+}
+
+// GetUrl returns AttachmentLinkURLAttachmentLinkURLAttachmentPayloadAttachment.Url, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkURLAttachmentLinkURLAttachmentPayloadAttachment) GetUrl() string { return v.Url }
+
+// GetSourceType returns AttachmentLinkURLAttachmentLinkURLAttachmentPayloadAttachment.SourceType, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkURLAttachmentLinkURLAttachmentPayloadAttachment) GetSourceType() *string {
+	return v.SourceType
+}
+
+// AttachmentLinkURLResponse is returned by AttachmentLinkURL on success.
+type AttachmentLinkURLResponse struct {
+	// Link any URL to an issue. If the workspace has a matching integration configured and the URL is recognized (e.g., Zendesk, GitHub, Slack), a rich attachment will be created that enables features like automated status updates. Otherwise, a basic attachment is created.
+	AttachmentLinkURL AttachmentLinkURLAttachmentLinkURLAttachmentPayload `json:"attachmentLinkURL"`
+}
+
+// GetAttachmentLinkURL returns AttachmentLinkURLResponse.AttachmentLinkURL, and is useful for accessing the field via an interface.
+func (v *AttachmentLinkURLResponse) GetAttachmentLinkURL() AttachmentLinkURLAttachmentLinkURLAttachmentPayload {
+	return v.AttachmentLinkURL
+}
+
 // Comparator for booleans.
 type BooleanComparator struct {
 	// Equals constraint.
@@ -14046,6 +14440,124 @@ type __AttachmentDeleteInput struct {
 // GetId returns __AttachmentDeleteInput.Id, and is useful for accessing the field via an interface.
 func (v *__AttachmentDeleteInput) GetId() string { return v.Id }
 
+// __AttachmentLinkDiscordInput is used internally by genqlient
+type __AttachmentLinkDiscordInput struct {
+	IssueId   string  `json:"issueId"`
+	Url       string  `json:"url"`
+	ChannelId string  `json:"channelId"`
+	MessageId string  `json:"messageId"`
+	Title     *string `json:"title,omitempty"`
+}
+
+// GetIssueId returns __AttachmentLinkDiscordInput.IssueId, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkDiscordInput) GetIssueId() string { return v.IssueId }
+
+// GetUrl returns __AttachmentLinkDiscordInput.Url, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkDiscordInput) GetUrl() string { return v.Url }
+
+// GetChannelId returns __AttachmentLinkDiscordInput.ChannelId, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkDiscordInput) GetChannelId() string { return v.ChannelId }
+
+// GetMessageId returns __AttachmentLinkDiscordInput.MessageId, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkDiscordInput) GetMessageId() string { return v.MessageId }
+
+// GetTitle returns __AttachmentLinkDiscordInput.Title, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkDiscordInput) GetTitle() *string { return v.Title }
+
+// __AttachmentLinkGitHubIssueInput is used internally by genqlient
+type __AttachmentLinkGitHubIssueInput struct {
+	IssueId string  `json:"issueId"`
+	Url     string  `json:"url"`
+	Title   *string `json:"title,omitempty"`
+}
+
+// GetIssueId returns __AttachmentLinkGitHubIssueInput.IssueId, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkGitHubIssueInput) GetIssueId() string { return v.IssueId }
+
+// GetUrl returns __AttachmentLinkGitHubIssueInput.Url, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkGitHubIssueInput) GetUrl() string { return v.Url }
+
+// GetTitle returns __AttachmentLinkGitHubIssueInput.Title, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkGitHubIssueInput) GetTitle() *string { return v.Title }
+
+// __AttachmentLinkGitHubPRInput is used internally by genqlient
+type __AttachmentLinkGitHubPRInput struct {
+	IssueId string  `json:"issueId"`
+	Url     string  `json:"url"`
+	Title   *string `json:"title,omitempty"`
+}
+
+// GetIssueId returns __AttachmentLinkGitHubPRInput.IssueId, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkGitHubPRInput) GetIssueId() string { return v.IssueId }
+
+// GetUrl returns __AttachmentLinkGitHubPRInput.Url, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkGitHubPRInput) GetUrl() string { return v.Url }
+
+// GetTitle returns __AttachmentLinkGitHubPRInput.Title, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkGitHubPRInput) GetTitle() *string { return v.Title }
+
+// __AttachmentLinkGitLabMRInput is used internally by genqlient
+type __AttachmentLinkGitLabMRInput struct {
+	IssueId                  string  `json:"issueId"`
+	Url                      string  `json:"url"`
+	ProjectPathWithNamespace string  `json:"projectPathWithNamespace"`
+	Number                   float64 `json:"number"`
+	Title                    *string `json:"title,omitempty"`
+}
+
+// GetIssueId returns __AttachmentLinkGitLabMRInput.IssueId, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkGitLabMRInput) GetIssueId() string { return v.IssueId }
+
+// GetUrl returns __AttachmentLinkGitLabMRInput.Url, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkGitLabMRInput) GetUrl() string { return v.Url }
+
+// GetProjectPathWithNamespace returns __AttachmentLinkGitLabMRInput.ProjectPathWithNamespace, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkGitLabMRInput) GetProjectPathWithNamespace() string {
+	return v.ProjectPathWithNamespace
+}
+
+// GetNumber returns __AttachmentLinkGitLabMRInput.Number, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkGitLabMRInput) GetNumber() float64 { return v.Number }
+
+// GetTitle returns __AttachmentLinkGitLabMRInput.Title, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkGitLabMRInput) GetTitle() *string { return v.Title }
+
+// __AttachmentLinkSlackInput is used internally by genqlient
+type __AttachmentLinkSlackInput struct {
+	IssueId             string  `json:"issueId"`
+	Url                 string  `json:"url"`
+	Title               *string `json:"title,omitempty"`
+	SyncToCommentThread *bool   `json:"syncToCommentThread,omitempty"`
+}
+
+// GetIssueId returns __AttachmentLinkSlackInput.IssueId, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkSlackInput) GetIssueId() string { return v.IssueId }
+
+// GetUrl returns __AttachmentLinkSlackInput.Url, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkSlackInput) GetUrl() string { return v.Url }
+
+// GetTitle returns __AttachmentLinkSlackInput.Title, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkSlackInput) GetTitle() *string { return v.Title }
+
+// GetSyncToCommentThread returns __AttachmentLinkSlackInput.SyncToCommentThread, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkSlackInput) GetSyncToCommentThread() *bool { return v.SyncToCommentThread }
+
+// __AttachmentLinkURLInput is used internally by genqlient
+type __AttachmentLinkURLInput struct {
+	IssueId string  `json:"issueId"`
+	Url     string  `json:"url"`
+	Title   *string `json:"title,omitempty"`
+}
+
+// GetIssueId returns __AttachmentLinkURLInput.IssueId, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkURLInput) GetIssueId() string { return v.IssueId }
+
+// GetUrl returns __AttachmentLinkURLInput.Url, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkURLInput) GetUrl() string { return v.Url }
+
+// GetTitle returns __AttachmentLinkURLInput.Title, and is useful for accessing the field via an interface.
+func (v *__AttachmentLinkURLInput) GetTitle() *string { return v.Title }
+
 // __CommentCreateInput is used internally by genqlient
 type __CommentCreateInput struct {
 	Input CommentCreateInput `json:"input"`
@@ -14720,6 +15232,280 @@ func AttachmentDelete(
 	}
 
 	data_ = &AttachmentDeleteResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AttachmentLinkDiscord.
+const AttachmentLinkDiscord_Operation = `
+mutation AttachmentLinkDiscord ($issueId: String!, $url: String!, $channelId: String!, $messageId: String!, $title: String) {
+	attachmentLinkDiscord(issueId: $issueId, url: $url, channelId: $channelId, messageId: $messageId, title: $title) {
+		success
+		attachment {
+			id
+			title
+			url
+			sourceType
+		}
+	}
+}
+`
+
+func AttachmentLinkDiscord(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	issueId string,
+	url string,
+	channelId string,
+	messageId string,
+	title *string,
+) (data_ *AttachmentLinkDiscordResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AttachmentLinkDiscord",
+		Query:  AttachmentLinkDiscord_Operation,
+		Variables: &__AttachmentLinkDiscordInput{
+			IssueId:   issueId,
+			Url:       url,
+			ChannelId: channelId,
+			MessageId: messageId,
+			Title:     title,
+		},
+	}
+
+	data_ = &AttachmentLinkDiscordResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AttachmentLinkGitHubIssue.
+const AttachmentLinkGitHubIssue_Operation = `
+mutation AttachmentLinkGitHubIssue ($issueId: String!, $url: String!, $title: String) {
+	attachmentLinkGitHubIssue(issueId: $issueId, url: $url, title: $title) {
+		success
+		attachment {
+			id
+			title
+			url
+			sourceType
+		}
+	}
+}
+`
+
+func AttachmentLinkGitHubIssue(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	issueId string,
+	url string,
+	title *string,
+) (data_ *AttachmentLinkGitHubIssueResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AttachmentLinkGitHubIssue",
+		Query:  AttachmentLinkGitHubIssue_Operation,
+		Variables: &__AttachmentLinkGitHubIssueInput{
+			IssueId: issueId,
+			Url:     url,
+			Title:   title,
+		},
+	}
+
+	data_ = &AttachmentLinkGitHubIssueResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AttachmentLinkGitHubPR.
+const AttachmentLinkGitHubPR_Operation = `
+mutation AttachmentLinkGitHubPR ($issueId: String!, $url: String!, $title: String) {
+	attachmentLinkGitHubPR(issueId: $issueId, url: $url, title: $title) {
+		success
+		attachment {
+			id
+			title
+			url
+			sourceType
+		}
+	}
+}
+`
+
+func AttachmentLinkGitHubPR(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	issueId string,
+	url string,
+	title *string,
+) (data_ *AttachmentLinkGitHubPRResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AttachmentLinkGitHubPR",
+		Query:  AttachmentLinkGitHubPR_Operation,
+		Variables: &__AttachmentLinkGitHubPRInput{
+			IssueId: issueId,
+			Url:     url,
+			Title:   title,
+		},
+	}
+
+	data_ = &AttachmentLinkGitHubPRResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AttachmentLinkGitLabMR.
+const AttachmentLinkGitLabMR_Operation = `
+mutation AttachmentLinkGitLabMR ($issueId: String!, $url: String!, $projectPathWithNamespace: String!, $number: Float!, $title: String) {
+	attachmentLinkGitLabMR(issueId: $issueId, url: $url, projectPathWithNamespace: $projectPathWithNamespace, number: $number, title: $title) {
+		success
+		attachment {
+			id
+			title
+			url
+			sourceType
+		}
+	}
+}
+`
+
+func AttachmentLinkGitLabMR(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	issueId string,
+	url string,
+	projectPathWithNamespace string,
+	number float64,
+	title *string,
+) (data_ *AttachmentLinkGitLabMRResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AttachmentLinkGitLabMR",
+		Query:  AttachmentLinkGitLabMR_Operation,
+		Variables: &__AttachmentLinkGitLabMRInput{
+			IssueId:                  issueId,
+			Url:                      url,
+			ProjectPathWithNamespace: projectPathWithNamespace,
+			Number:                   number,
+			Title:                    title,
+		},
+	}
+
+	data_ = &AttachmentLinkGitLabMRResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AttachmentLinkSlack.
+const AttachmentLinkSlack_Operation = `
+mutation AttachmentLinkSlack ($issueId: String!, $url: String!, $title: String, $syncToCommentThread: Boolean) {
+	attachmentLinkSlack(issueId: $issueId, url: $url, title: $title, syncToCommentThread: $syncToCommentThread) {
+		success
+		attachment {
+			id
+			title
+			url
+			sourceType
+		}
+	}
+}
+`
+
+func AttachmentLinkSlack(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	issueId string,
+	url string,
+	title *string,
+	syncToCommentThread *bool,
+) (data_ *AttachmentLinkSlackResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AttachmentLinkSlack",
+		Query:  AttachmentLinkSlack_Operation,
+		Variables: &__AttachmentLinkSlackInput{
+			IssueId:             issueId,
+			Url:                 url,
+			Title:               title,
+			SyncToCommentThread: syncToCommentThread,
+		},
+	}
+
+	data_ = &AttachmentLinkSlackResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by AttachmentLinkURL.
+const AttachmentLinkURL_Operation = `
+mutation AttachmentLinkURL ($issueId: String!, $url: String!, $title: String) {
+	attachmentLinkURL(issueId: $issueId, url: $url, title: $title) {
+		success
+		attachment {
+			id
+			title
+			url
+			sourceType
+		}
+	}
+}
+`
+
+func AttachmentLinkURL(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	issueId string,
+	url string,
+	title *string,
+) (data_ *AttachmentLinkURLResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "AttachmentLinkURL",
+		Query:  AttachmentLinkURL_Operation,
+		Variables: &__AttachmentLinkURLInput{
+			IssueId: issueId,
+			Url:     url,
+			Title:   title,
+		},
+	}
+
+	data_ = &AttachmentLinkURLResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

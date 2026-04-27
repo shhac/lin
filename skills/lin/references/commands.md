@@ -124,9 +124,14 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 
 ## Issue Attachments
 
-- `lin issue attachment list <issue-id>` — list attachments
-- `lin issue attachment add <issue-id> --url <url> --title <title> [--subtitle <text>]` — add URL attachment
-- `lin issue attachment remove <attachment-id>` — remove attachment
+- `lin issue attachment list <issue-id>` — list attachments (any source type)
+- `lin issue attachment add <issue-id> <url> [--title <text>]` — link a URL (default: rich link via `attachmentLinkURL` — server detects integrations)
+  - `--github-pr` — force GitHub pull request integration (PR status sync)
+  - `--github-issue` — force GitHub issue integration
+  - `--gitlab-mr` — force GitLab merge request integration (project path + number derived from URL)
+  - `--slack [--sync-thread]` — force Slack message integration; `--sync-thread` mirrors the Slack thread to a comment thread
+  - `--discord` — force Discord message integration (channel + message IDs derived from URL)
+- `lin issue attachment remove <attachment-id>` — remove any attachment, regardless of source type
 
 ## Teams
 

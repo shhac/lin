@@ -14,3 +14,128 @@ mutation AttachmentDelete($id: String!) {
     success
   }
 }
+
+mutation AttachmentLinkURL(
+  $issueId: String!,
+  $url: String!,
+  # @genqlient(omitempty: true)
+  $title: String,
+) {
+  attachmentLinkURL(issueId: $issueId, url: $url, title: $title) {
+    success
+    attachment {
+      id
+      title
+      url
+      sourceType
+    }
+  }
+}
+
+mutation AttachmentLinkGitHubPR(
+  $issueId: String!,
+  $url: String!,
+  # @genqlient(omitempty: true)
+  $title: String,
+) {
+  attachmentLinkGitHubPR(issueId: $issueId, url: $url, title: $title) {
+    success
+    attachment {
+      id
+      title
+      url
+      sourceType
+    }
+  }
+}
+
+mutation AttachmentLinkGitHubIssue(
+  $issueId: String!,
+  $url: String!,
+  # @genqlient(omitempty: true)
+  $title: String,
+) {
+  attachmentLinkGitHubIssue(issueId: $issueId, url: $url, title: $title) {
+    success
+    attachment {
+      id
+      title
+      url
+      sourceType
+    }
+  }
+}
+
+mutation AttachmentLinkGitLabMR(
+  $issueId: String!,
+  $url: String!,
+  $projectPathWithNamespace: String!,
+  $number: Float!,
+  # @genqlient(omitempty: true)
+  $title: String,
+) {
+  attachmentLinkGitLabMR(
+    issueId: $issueId,
+    url: $url,
+    projectPathWithNamespace: $projectPathWithNamespace,
+    number: $number,
+    title: $title,
+  ) {
+    success
+    attachment {
+      id
+      title
+      url
+      sourceType
+    }
+  }
+}
+
+mutation AttachmentLinkSlack(
+  $issueId: String!,
+  $url: String!,
+  # @genqlient(omitempty: true)
+  $title: String,
+  # @genqlient(omitempty: true)
+  $syncToCommentThread: Boolean,
+) {
+  attachmentLinkSlack(
+    issueId: $issueId,
+    url: $url,
+    title: $title,
+    syncToCommentThread: $syncToCommentThread,
+  ) {
+    success
+    attachment {
+      id
+      title
+      url
+      sourceType
+    }
+  }
+}
+
+mutation AttachmentLinkDiscord(
+  $issueId: String!,
+  $url: String!,
+  $channelId: String!,
+  $messageId: String!,
+  # @genqlient(omitempty: true)
+  $title: String,
+) {
+  attachmentLinkDiscord(
+    issueId: $issueId,
+    url: $url,
+    channelId: $channelId,
+    messageId: $messageId,
+    title: $title,
+  ) {
+    success
+    attachment {
+      id
+      title
+      url
+      sourceType
+    }
+  }
+}

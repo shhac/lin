@@ -382,11 +382,23 @@ State types: `triage` | `backlog` | `unstarted` | `started` | `completed` | `can
     "title": "PR #456",
     "url": "https://github.com/...",
     "subtitle": "Fixes login bug",
-    "sourceType": "github"
+    "sourceType": "github_pr"
   }
 ]
 ```
 
+`sourceType` reflects the integration that created the attachment (`url`, `github_pr`, `github`, `gitlab_mr`, `slack`, `discord`, `api`, …). Rich integrations (GitHub PR, Slack message, etc.) sync metadata back to Linear automatically.
+
+## Issue attachments (`issue attachment add`)
+
+```json
+{
+  "created": true,
+  "id": "...",
+  "title": "PR #456",
+  "url": "https://github.com/...",
+  "sourceType": "github_pr"
+}
 ## Priority values
 
 | Value    | Meaning         |

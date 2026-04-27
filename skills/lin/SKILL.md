@@ -112,10 +112,15 @@ lin issue archive ENG-123
 lin issue unarchive ENG-123
 lin issue delete ENG-123                  # moves to trash
 
-# Attachments (link PRs, docs, etc.)
+# Attachments (link PRs, docs, Slack messages, etc.)
 lin issue attachment list ENG-123
-lin issue attachment add ENG-123 --url "https://github.com/org/repo/pull/456" --title "PR #456" --subtitle "Fixes login bug"
-lin issue attachment remove <attachment-id>
+lin issue attachment add ENG-123 "https://example.com/spec.pdf" --title "Spec doc"        # default: rich link, server detects integration
+lin issue attachment add ENG-123 "https://github.com/org/repo/pull/456" --github-pr        # force GitHub PR integration
+lin issue attachment add ENG-123 "https://github.com/org/repo/issues/789" --github-issue
+lin issue attachment add ENG-123 "https://gitlab.com/group/project/-/merge_requests/42" --gitlab-mr
+lin issue attachment add ENG-123 "https://app.slack.com/client/T0/C0/p1700000000000000" --slack --sync-thread
+lin issue attachment add ENG-123 "https://discord.com/channels/<guild>/<channel>/<message>" --discord
+lin issue attachment remove <attachment-id>      # works for any source type
 ```
 
 ## Projects

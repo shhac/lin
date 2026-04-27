@@ -88,7 +88,7 @@ lin
 │   ├── comment list|new|get|edit|replies <id> [<body>]
 │   ├── relation list|add|remove
 │   ├── archive|unarchive|delete <id>
-│   ├── attachment list|add|remove
+│   ├── attachment list|add|remove   # add: --github-pr|--github-issue|--gitlab-mr|--slack [--sync-thread]|--discord
 │   ├── history <id> [--limit] [--cursor]
 │   └── usage
 ├── team

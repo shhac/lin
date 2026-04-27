@@ -45,8 +45,15 @@ HISTORY:
 LIFECYCLE:  issue archive|unarchive|delete <id>
 
 ATTACHMENTS:
-  issue attachment list|remove <id>
-  issue attachment add <id> --url <u> --title <t> [--subtitle <s>]
+  issue attachment list <id>            All attachments (any source type)
+  issue attachment remove <attachment-id>   Works for any attachment (URL, GitHub PR, Slack, …)
+  issue attachment add <id> <url> [--title <t>]    Default: rich link via attachmentLinkURL
+    --github-pr        Force GitHub pull request integration
+    --github-issue     Force GitHub issue integration
+    --gitlab-mr        Force GitLab merge request integration (project + number derived from URL)
+    --slack            Force Slack message integration
+      --sync-thread    (with --slack) sync the Slack thread to a comment thread
+    --discord          Force Discord message integration (channel + message derived from URL)
 
 IDS: Issue keys (ENG-123) or UUIDs. PRIORITY: none|urgent|high|medium|low
 PAGINATION: --limit <n> --cursor <token> on search and list.`
