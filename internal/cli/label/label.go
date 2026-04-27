@@ -15,6 +15,8 @@ func Register(parent *cobra.Command) {
 	output.HandleUnknownCommand(label, "Run 'lin label usage' for help")
 
 	registerList(label)
+	registerSearch(label)
+	registerGet(label)
 	registerUsage(label)
 
 	parent.AddCommand(label)

@@ -146,7 +146,9 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 
 ## Labels
 
-- `lin label list [--team]` — list labels
+- `lin label list [--team] [--name <text>] [--is-group[=false]]` — list labels (filterable). Output includes `team{id,key,name}` and `parent{id,name}` when present.
+- `lin label search <text> [--team]` — substring search by name (case- and accent-insensitive).
+- `lin label get <id|name> [--team]` — single label by UUID or exact name. Use `--team` (or a UUID) to disambiguate when a name is shared across teams.
 
 ## Cycles
 

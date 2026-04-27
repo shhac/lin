@@ -114,8 +114,18 @@ func TestResolveLabels_Ambiguous(t *testing.T) {
 	mock.Handle("LabelList", map[string]any{
 		"issueLabels": map[string]any{
 			"nodes": []map[string]any{
-				{"id": "aaaaaaaa-1111-2222-3333-444444444444", "name": "Bug", "color": "#ff0000"},
-				{"id": "bbbbbbbb-1111-2222-3333-444444444444", "name": "Bug", "color": "#ff0000"},
+				{
+					"id":    "aaaaaaaa-1111-2222-3333-444444444444",
+					"name":  "Bug",
+					"color": "#ff0000",
+					"team":  map[string]any{"id": "team-1", "key": "ENG", "name": "Engineering"},
+				},
+				{
+					"id":    "bbbbbbbb-1111-2222-3333-444444444444",
+					"name":  "Bug",
+					"color": "#ff0000",
+					"team":  map[string]any{"id": "team-2", "key": "DSGN", "name": "Design"},
+				},
 			},
 			"pageInfo": map[string]any{"hasNextPage": false, "endCursor": nil},
 		},
@@ -130,6 +140,9 @@ func TestResolveLabels_Ambiguous(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "tip: use --team") {
 		t.Error("error should include team hint when not team-scoped")
+	}
+	if !strings.Contains(err.Error(), "team: ENG") || !strings.Contains(err.Error(), "team: DSGN") {
+		t.Errorf("error should include team keys for each match: %v", err)
 	}
 }
 

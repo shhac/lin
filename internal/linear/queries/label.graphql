@@ -1,14 +1,22 @@
+fragment LabelFields on IssueLabel {
+  id
+  name
+  color
+  description
+  isGroup
+  team { id key name }
+  parent { id name }
+}
+
 query LabelList(
   $first: Int!,
   # @genqlient(omitempty: true)
   $after: String,
+  # @genqlient(omitempty: true)
+  $filter: IssueLabelFilter,
 ) {
-  issueLabels(first: $first, after: $after) {
-    nodes {
-      id
-      name
-      color
-    }
+  issueLabels(first: $first, after: $after, filter: $filter) {
+    nodes { ...LabelFields }
     pageInfo { ...PageInfoFields }
   }
 }

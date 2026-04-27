@@ -293,6 +293,67 @@ func TestHelperComparators(t *testing.T) {
 	}
 }
 
+func TestBuildIssueLabelFilter_Empty(t *testing.T) {
+	if f := BuildIssueLabelFilter(LabelFilterOpts{}, ""); f != nil {
+		t.Errorf("expected nil filter for empty opts, got %+v", f)
+	}
+}
+
+func TestBuildIssueLabelFilter_Name(t *testing.T) {
+	f := BuildIssueLabelFilter(LabelFilterOpts{Name: "Bug"}, "")
+	if f == nil || f.Name == nil || f.Name.EqIgnoreCase == nil {
+		t.Fatal("expected name EqIgnoreCase filter")
+	}
+	if *f.Name.EqIgnoreCase != "Bug" {
+		t.Errorf("expected EqIgnoreCase=Bug, got %s", *f.Name.EqIgnoreCase)
+	}
+}
+
+func TestBuildIssueLabelFilter_Search(t *testing.T) {
+	f := BuildIssueLabelFilter(LabelFilterOpts{Search: "perf"}, "")
+	if f == nil || f.Name == nil || f.Name.ContainsIgnoreCaseAndAccent == nil {
+		t.Fatal("expected name ContainsIgnoreCaseAndAccent filter")
+	}
+	if *f.Name.ContainsIgnoreCaseAndAccent != "perf" {
+		t.Errorf("expected ContainsIgnoreCaseAndAccent=perf, got %s", *f.Name.ContainsIgnoreCaseAndAccent)
+	}
+}
+
+func TestBuildIssueLabelFilter_TeamID(t *testing.T) {
+	id := "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+	f := BuildIssueLabelFilter(LabelFilterOpts{}, id)
+	if f == nil || f.Team == nil || f.Team.Id == nil {
+		t.Fatal("expected team ID filter")
+	}
+	if *f.Team.Id.Eq != id {
+		t.Errorf("expected team ID=%s, got %s", id, *f.Team.Id.Eq)
+	}
+}
+
+func TestBuildIssueLabelFilter_TeamFlag(t *testing.T) {
+	f := BuildIssueLabelFilter(LabelFilterOpts{Team: "ENG"}, "")
+	if f == nil || f.Team == nil {
+		t.Fatal("expected team filter")
+	}
+	if len(f.Team.Or) != 2 {
+		t.Fatalf("expected 2 OR branches (key + name), got %d", len(f.Team.Or))
+	}
+	if *f.Team.Or[0].Key.EqIgnoreCase != "ENG" {
+		t.Error("expected key match")
+	}
+}
+
+func TestBuildIssueLabelFilter_IsGroup(t *testing.T) {
+	tru := true
+	f := BuildIssueLabelFilter(LabelFilterOpts{IsGroup: &tru}, "")
+	if f == nil || f.IsGroup == nil || f.IsGroup.Eq == nil {
+		t.Fatal("expected isGroup filter")
+	}
+	if *f.IsGroup.Eq != true {
+		t.Errorf("expected isGroup Eq=true, got %v", *f.IsGroup.Eq)
+	}
+}
+
 // Verify the filter types are correctly shaped (compile-time check + runtime spot check).
 func TestBuildIssueFilter_Project_UUID(t *testing.T) {
 	uuid := "a1b2c3d4-e5f6-7890-abcd-ef1234567890"

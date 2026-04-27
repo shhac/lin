@@ -7,23 +7,29 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const usageText = `lin label — List Linear issue labels
+const usageText = `lin label — Search, list, and inspect Linear issue labels
 
 SUBCOMMANDS:
-  label list [--team <team>]  List labels (optionally filtered by team)
+  label list [--team <team>] [--name <text>] [--is-group[=false]]   List labels (filterable)
+  label search <text> [--team <team>]                               Substring search (case- and accent-insensitive)
+  label get <id|name> [--team <team>]                               Single label by UUID or exact name
 
 OPTIONS:
-  --team <team>             Filter by team key or name (e.g., "ENG")
-  --limit <n>               Limit results
-  --cursor <token>          Pagination cursor for next page
+  --team <team>     Filter/disambiguate by team key, name, or UUID
+  --name <text>     Exact match (case-insensitive)
+  --is-group        Only group labels (--is-group=false for non-groups)
+  --limit <n>       Limit results (list, search)
+  --cursor <token>  Pagination cursor (list, search)
 
 OUTPUT FIELDS:
-  list → id, name, color
+  list/search → id, name, color, [description, isGroup, team{id,key,name}, parent{id,name}]
+  get         → same fields, single object
 
 NOTES:
-  Without --team, returns all workspace labels.
-  With --team, returns only labels scoped to that team.
-  Label names are used as values for --label filters and "issue update labels".`
+  Without --team, labels include the workspace and all teams.
+  Workspace-wide labels have no team field. Team-scoped labels include team{key, name}.
+  When two labels share a name, "label get" errors and "list --name" shows both with team info.
+  Use the resulting label name (with --team) or UUID with "issue new --labels" / "issue update labels".`
 
 func registerUsage(label *cobra.Command) {
 	cmd := &cobra.Command{

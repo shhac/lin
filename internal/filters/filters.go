@@ -22,6 +22,10 @@ func containsIgnoreCase(s string) *linear.StringComparator {
 	return &linear.StringComparator{ContainsIgnoreCase: ptr.To(s)}
 }
 
+func containsIgnoreCaseAndAccent(s string) *linear.StringComparator {
+	return &linear.StringComparator{ContainsIgnoreCaseAndAccent: ptr.To(s)}
+}
+
 func nullableEqIgnoreCase(s string) *linear.NullableStringComparator {
 	return &linear.NullableStringComparator{EqIgnoreCase: ptr.To(s)}
 }
@@ -55,6 +59,46 @@ func BuildNullableProjectFilter(input string) *linear.NullableProjectFilter {
 	return &linear.NullableProjectFilter{
 		Name: eqIgnoreCase(input),
 	}
+}
+
+type LabelFilterOpts struct {
+	Name   string // exact match (case-insensitive)
+	Search string // substring match (case+accent insensitive)
+	Team   string // team key/name/UUID
+	IsGroup *bool
+}
+
+func BuildIssueLabelFilter(opts LabelFilterOpts, teamID string) *linear.IssueLabelFilter {
+	f := &linear.IssueLabelFilter{}
+	empty := true
+
+	if opts.Name != "" {
+		f.Name = eqIgnoreCase(opts.Name)
+		empty = false
+	}
+	if opts.Search != "" {
+		f.Name = containsIgnoreCaseAndAccent(opts.Search)
+		empty = false
+	}
+	if teamID != "" {
+		f.Team = &linear.NullableTeamFilter{Id: &linear.IDComparator{Eq: ptr.To(teamID)}}
+		empty = false
+	} else if opts.Team != "" {
+		f.Team = &linear.NullableTeamFilter{Or: []linear.NullableTeamFilter{
+			{Key: eqIgnoreCase(opts.Team)},
+			{Name: eqIgnoreCase(opts.Team)},
+		}}
+		empty = false
+	}
+	if opts.IsGroup != nil {
+		f.IsGroup = &linear.BooleanComparator{Eq: opts.IsGroup}
+		empty = false
+	}
+
+	if empty {
+		return nil
+	}
+	return f
 }
 
 type IssueFilterOpts struct {

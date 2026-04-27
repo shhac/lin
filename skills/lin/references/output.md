@@ -399,6 +399,24 @@ State types: `triage` | `backlog` | `unstarted` | `started` | `completed` | `can
   "url": "https://github.com/...",
   "sourceType": "github_pr"
 }
+```
+
+## Labels (`label list`, `label search`, `label get`)
+
+```json
+{
+  "id": "...",
+  "name": "Test coverage",
+  "color": "#4cb782",
+  "description": "Tests added or improved",
+  "isGroup": false,
+  "team": { "id": "...", "key": "ENG", "name": "Engineering" },
+  "parent": { "id": "...", "name": "Quality" }
+}
+```
+
+`description`, `isGroup`, `team`, and `parent` are omitted when not set. Workspace-wide labels have no `team`.
+
 ## Priority values
 
 | Value    | Meaning         |
