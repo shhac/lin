@@ -9,7 +9,6 @@ import (
 
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
-	"github.com/shhac/lin/internal/ptr"
 	"github.com/shhac/lin/internal/resolvers"
 )
 
@@ -17,83 +16,74 @@ func registerList(cycle *cobra.Command) {
 	var current bool
 	var next bool
 	var previous bool
-	var limit string
-	var cursor string
 
 	cmd := &cobra.Command{
 		Use:   "list <team>",
 		Short: "List cycles",
 		Args:  cobra.ExactArgs(1),
-		Run: func(_ *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
+	}
+	page := output.AddPageFlags(cmd)
 
-			resolved, err := resolvers.ResolveTeam(client, args[0])
-			if err != nil {
-				output.PrintError(err.Error())
-			}
+	cmd.Run = func(_ *cobra.Command, args []string) {
+		client := linear.GetClient()
+		ctx := context.Background()
 
-			if current {
-				resp, err := linear.TeamActiveCycle(ctx, client, resolved.ID)
-				if err != nil {
-					output.HandleGraphQLError(err)
-				}
-				c := resp.Team.ActiveCycle
-				if c == nil {
-					output.PrintJSON([]any{})
-					return
-				}
-				output.PrintJSON([]any{mapCycleSummary(c.Id, c.Number, c.Name, c.StartsAt, c.EndsAt)})
-				return
-			}
+		resolved, err := resolvers.ResolveTeam(client, args[0])
+		if err != nil {
+			output.PrintError(err.Error())
+		}
 
-			pageSize := output.ResolvePageSize(limit)
-			after := output.ResolveCursor(cursor)
-
-			resp, err := linear.TeamCycles(ctx, client, resolved.ID, pageSize, after)
+		if current {
+			resp, err := linear.TeamActiveCycle(ctx, client, resolved.ID)
 			if err != nil {
 				output.HandleGraphQLError(err)
 			}
-
-			nodes := resp.Team.Cycles.Nodes
-			now := time.Now()
-
-			if next {
-				if n, ok := findNextCycle(nodes, now); ok {
-					output.PrintJSON([]any{mapCycleSummary(n.Id, n.Number, n.Name, n.StartsAt, n.EndsAt)})
-				} else {
-					output.PrintJSON([]any{})
-				}
+			c := resp.Team.ActiveCycle
+			if c == nil {
+				output.PrintJSON([]any{})
 				return
 			}
+			output.PrintJSON([]any{mapCycleSummary(c.Id, c.Number, c.Name, c.StartsAt, c.EndsAt)})
+			return
+		}
 
-			if previous {
-				if p, ok := findPreviousCycle(nodes, now); ok {
-					output.PrintJSON([]any{mapCycleSummary(p.Id, p.Number, p.Name, p.StartsAt, p.EndsAt)})
-				} else {
-					output.PrintJSON([]any{})
-				}
-				return
+		resp, err := linear.TeamCycles(ctx, client, resolved.ID, page.Size(), page.Cursor())
+		if err != nil {
+			output.HandleGraphQLError(err)
+		}
+
+		nodes := resp.Team.Cycles.Nodes
+		now := time.Now()
+
+		if next {
+			if n, ok := findNextCycle(nodes, now); ok {
+				output.PrintJSON([]any{mapCycleSummary(n.Id, n.Number, n.Name, n.StartsAt, n.EndsAt)})
+			} else {
+				output.PrintJSON([]any{})
 			}
+			return
+		}
 
-			items := make([]map[string]any, len(nodes))
-			for i, c := range nodes {
-				items[i] = mapCycleSummary(c.Id, c.Number, c.Name, c.StartsAt, c.EndsAt)
+		if previous {
+			if p, ok := findPreviousCycle(nodes, now); ok {
+				output.PrintJSON([]any{mapCycleSummary(p.Id, p.Number, p.Name, p.StartsAt, p.EndsAt)})
+			} else {
+				output.PrintJSON([]any{})
 			}
+			return
+		}
 
-			pi := resp.Team.Cycles.PageInfo
-			output.PrintPaginated(items, &output.Pagination{
-				HasMore:    pi.HasNextPage,
-				NextCursor: ptr.Deref(pi.EndCursor),
-			})
-		},
+		items := make([]map[string]any, len(nodes))
+		for i, c := range nodes {
+			items[i] = mapCycleSummary(c.Id, c.Number, c.Name, c.StartsAt, c.EndsAt)
+		}
+
+		output.PrintPage(items, resp.Team.Cycles.PageInfo.HasNextPage, resp.Team.Cycles.PageInfo.EndCursor)
 	}
 
 	cmd.Flags().BoolVar(&current, "current", false, "Show only current cycle")
 	cmd.Flags().BoolVar(&next, "next", false, "Show only next cycle")
 	cmd.Flags().BoolVar(&previous, "previous", false, "Show only previous cycle")
-	cmd.Flags().StringVar(&limit, "limit", "", "Limit results")
-	cmd.Flags().StringVar(&cursor, "cursor", "", "Pagination cursor for next page")
 	cycle.AddCommand(cmd)
 }
 

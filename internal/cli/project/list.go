@@ -16,56 +16,47 @@ func registerList(parent *cobra.Command) {
 	var (
 		team   string
 		status string
-		limit  string
-		cursor string
 	)
 
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List all projects",
 		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
+	}
+	page := output.AddPageFlags(cmd)
 
-			var filter *linear.ProjectFilter
-			if team != "" || status != "" {
-				filter = &linear.ProjectFilter{}
-				if team != "" {
-					filter.AccessibleTeams = &linear.TeamCollectionFilter{
-						Some: filters.BuildTeamFilter(team),
-					}
+	cmd.Run = func(cmd *cobra.Command, args []string) {
+		client := linear.GetClient()
+		ctx := context.Background()
+
+		var filter *linear.ProjectFilter
+		if team != "" || status != "" {
+			filter = &linear.ProjectFilter{}
+			if team != "" {
+				filter.AccessibleTeams = &linear.TeamCollectionFilter{
+					Some: filters.BuildTeamFilter(team),
 				}
-				if status != "" {
-					filter.State = &linear.StringComparator{EqIgnoreCase: ptr.To(status)}
-				}
 			}
-
-			pageSize := output.ResolvePageSize(limit)
-			afterPtr := output.ResolveCursor(cursor)
-
-			resp, err := linear.ProjectList(ctx, client, filter, pageSize, afterPtr)
-			if err != nil {
-				output.HandleGraphQLError(err)
+			if status != "" {
+				filter.State = &linear.StringComparator{EqIgnoreCase: ptr.To(status)}
 			}
+		}
 
-			items := make([]any, len(resp.Projects.Nodes))
-			for i, n := range resp.Projects.Nodes {
-				items[i] = mappers.MapProjectSummary(mappers.FromProjectSummaryFields(n.ProjectSummaryFields))
-			}
+		resp, err := linear.ProjectList(ctx, client, filter, page.Size(), page.Cursor())
+		if err != nil {
+			output.HandleGraphQLError(err)
+		}
 
-			pi := resp.Projects.PageInfo
-			output.PrintPaginated(items, &output.Pagination{
-				HasMore:    pi.HasNextPage,
-				NextCursor: ptr.Deref(pi.EndCursor),
-			})
-		},
+		items := make([]any, len(resp.Projects.Nodes))
+		for i, n := range resp.Projects.Nodes {
+			items[i] = mappers.MapProjectSummary(mappers.FromProjectSummaryFields(n.ProjectSummaryFields))
+		}
+
+		output.PrintPage(items, resp.Projects.PageInfo.HasNextPage, resp.Projects.PageInfo.EndCursor)
 	}
 
 	cmd.Flags().StringVar(&team, "team", "", "Filter by team name or ID")
 	cmd.Flags().StringVar(&status, "status", "", "Filter by status")
-	cmd.Flags().StringVar(&limit, "limit", "", "Limit results")
-	cmd.Flags().StringVar(&cursor, "cursor", "", "Pagination cursor for next page")
 	parent.AddCommand(cmd)
 }
 

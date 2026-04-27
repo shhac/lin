@@ -17,61 +17,50 @@ func registerList(label *cobra.Command) {
 		teamFlag  string
 		nameFlag  string
 		groupFlag bool
-		groupSet  bool
-		limit     string
-		cursor    string
 	)
 
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List labels (optionally filtered)",
 		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, _ []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-			pageSize := output.ResolvePageSize(limit)
-			after := output.ResolveCursor(cursor)
+	}
+	page := output.AddPageFlags(cmd)
 
-			groupSet = cmd.Flags().Changed("is-group")
+	cmd.Run = func(cmd *cobra.Command, _ []string) {
+		client := linear.GetClient()
+		ctx := context.Background()
 
-			var teamID string
-			if teamFlag != "" {
-				resolved, err := resolvers.ResolveTeam(client, teamFlag)
-				if err != nil {
-					output.PrintError(err.Error())
-				}
-				teamID = resolved.ID
-			}
-
-			opts := filters.LabelFilterOpts{Name: nameFlag}
-			if groupSet {
-				opts.IsGroup = ptr.To(groupFlag)
-			}
-			filter := filters.BuildIssueLabelFilter(opts, teamID)
-
-			resp, err := linear.LabelList(ctx, client, pageSize, after, filter)
+		var teamID string
+		if teamFlag != "" {
+			resolved, err := resolvers.ResolveTeam(client, teamFlag)
 			if err != nil {
-				output.HandleGraphQLError(err)
+				output.PrintError(err.Error())
 			}
+			teamID = resolved.ID
+		}
 
-			items := make([]map[string]any, len(resp.IssueLabels.Nodes))
-			for i, n := range resp.IssueLabels.Nodes {
-				items[i] = mapLabel(n.LabelFields)
-			}
+		opts := filters.LabelFilterOpts{Name: nameFlag}
+		if cmd.Flags().Changed("is-group") {
+			opts.IsGroup = ptr.To(groupFlag)
+		}
+		filter := filters.BuildIssueLabelFilter(opts, teamID)
 
-			pi := resp.IssueLabels.PageInfo
-			output.PrintPaginated(items, &output.Pagination{
-				HasMore:    pi.HasNextPage,
-				NextCursor: ptr.Deref(pi.EndCursor),
-			})
-		},
+		resp, err := linear.LabelList(ctx, client, page.Size(), page.Cursor(), filter)
+		if err != nil {
+			output.HandleGraphQLError(err)
+		}
+
+		items := make([]map[string]any, len(resp.IssueLabels.Nodes))
+		for i, n := range resp.IssueLabels.Nodes {
+			items[i] = mapLabel(n.LabelFields)
+		}
+
+		output.PrintPage(items, resp.IssueLabels.PageInfo.HasNextPage, resp.IssueLabels.PageInfo.EndCursor)
 	}
 
 	cmd.Flags().StringVar(&teamFlag, "team", "", "Filter by team key, name, or UUID")
 	cmd.Flags().StringVar(&nameFlag, "name", "", "Filter by exact label name (case-insensitive)")
 	cmd.Flags().BoolVar(&groupFlag, "is-group", false, "Filter to only group labels (--is-group=false for non-groups)")
-	cmd.Flags().StringVar(&limit, "limit", "", "Limit results")
-	cmd.Flags().StringVar(&cursor, "cursor", "", "Pagination cursor for next page")
 	label.AddCommand(cmd)
 }
 

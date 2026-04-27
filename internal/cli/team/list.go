@@ -7,47 +7,35 @@ import (
 
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
-	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerList(team *cobra.Command) {
-	var limit string
-	var cursor string
-
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List all teams",
 		Args:  cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
-			client := linear.GetClient()
-			pageSize := output.ResolvePageSize(limit)
+	}
+	page := output.AddPageFlags(cmd)
 
-			after := output.ResolveCursor(cursor)
+	cmd.Run = func(_ *cobra.Command, _ []string) {
+		client := linear.GetClient()
 
-			resp, err := linear.TeamList(context.Background(), client, nil, pageSize, after)
-			if err != nil {
-				output.HandleGraphQLError(err)
+		resp, err := linear.TeamList(context.Background(), client, nil, page.Size(), page.Cursor())
+		if err != nil {
+			output.HandleGraphQLError(err)
+		}
+
+		items := make([]map[string]any, len(resp.Teams.Nodes))
+		for i, t := range resp.Teams.Nodes {
+			items[i] = map[string]any{
+				"id":   t.Id,
+				"name": t.Name,
+				"key":  t.Key,
 			}
+		}
 
-			items := make([]map[string]any, len(resp.Teams.Nodes))
-			for i, t := range resp.Teams.Nodes {
-				items[i] = map[string]any{
-					"id":   t.Id,
-					"name": t.Name,
-					"key":  t.Key,
-				}
-			}
-
-			pi := resp.Teams.PageInfo
-			output.PrintPaginated(items, &output.Pagination{
-				HasMore:    pi.HasNextPage,
-				NextCursor: ptr.Deref(pi.EndCursor),
-			})
-		},
+		output.PrintPage(items, resp.Teams.PageInfo.HasNextPage, resp.Teams.PageInfo.EndCursor)
 	}
 
-	cmd.Flags().StringVar(&limit, "limit", "", "Limit results")
-	cmd.Flags().StringVar(&cursor, "cursor", "", "Pagination cursor for next page")
 	team.AddCommand(cmd)
 }
-

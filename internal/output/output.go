@@ -132,6 +132,33 @@ func ResolvePageSize(limit string) int {
 	return DefaultPageSize
 }
 
+// Page holds the bound values of a command's --limit/--cursor flags.
+type Page struct {
+	limit  string
+	cursor string
+}
+
+// AddPageFlags registers --limit and --cursor on cmd and returns a Page that
+// resolves them lazily via Size() and Cursor().
+func AddPageFlags(cmd *cobra.Command) *Page {
+	p := &Page{}
+	cmd.Flags().StringVar(&p.limit, "limit", "", "Limit results")
+	cmd.Flags().StringVar(&p.cursor, "cursor", "", "Pagination cursor for next page")
+	return p
+}
+
+func (p *Page) Size() int       { return ResolvePageSize(p.limit) }
+func (p *Page) Cursor() *string { return ResolveCursor(p.cursor) }
+
+// PrintPage emits a paginated result given items plus genqlient PageInfo fields.
+func PrintPage(items any, hasNextPage bool, endCursor *string) {
+	cursor := ""
+	if endCursor != nil {
+		cursor = *endCursor
+	}
+	PrintPaginated(items, &Pagination{HasMore: hasNextPage, NextCursor: cursor})
+}
+
 // HandleUnknownCommand registers a handler for unknown subcommands on a cobra command.
 func HandleUnknownCommand(cmd *cobra.Command, hint string) {
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {

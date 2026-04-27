@@ -9,7 +9,6 @@ import (
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
-	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerSearch(parent *cobra.Command) {
@@ -19,46 +18,39 @@ func registerSearch(parent *cobra.Command) {
 		assignee string
 		status   string
 		priority string
-		limit    string
-		cursor   string
 	)
 
 	cmd := &cobra.Command{
 		Use:   "search <text>",
 		Short: "Full-text search for issues",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-			text := args[0]
+	}
+	page := output.AddPageFlags(cmd)
 
-			filter := filters.BuildIssueFilter(filters.IssueFilterOpts{
-				Project:  project,
-				Team:     team,
-				Assignee: assignee,
-				Status:   status,
-				Priority: priority,
-			})
+	cmd.Run = func(cmd *cobra.Command, args []string) {
+		client := linear.GetClient()
+		ctx := context.Background()
+		text := args[0]
 
-			pageSize := output.ResolvePageSize(limit)
-			afterPtr := output.ResolveCursor(cursor)
+		filter := filters.BuildIssueFilter(filters.IssueFilterOpts{
+			Project:  project,
+			Team:     team,
+			Assignee: assignee,
+			Status:   status,
+			Priority: priority,
+		})
 
-			resp, err := linear.IssueSearch(ctx, client, text, pageSize, afterPtr, filter)
-			if err != nil {
-				output.HandleGraphQLError(err)
-			}
+		resp, err := linear.IssueSearch(ctx, client, text, page.Size(), page.Cursor(), filter)
+		if err != nil {
+			output.HandleGraphQLError(err)
+		}
 
-			items := make([]any, len(resp.SearchIssues.Nodes))
-			for i, n := range resp.SearchIssues.Nodes {
-				items[i] = mappers.MapIssueSummary(mappers.FromIssueSearchSummaryFields(n.IssueSearchSummaryFields))
-			}
+		items := make([]any, len(resp.SearchIssues.Nodes))
+		for i, n := range resp.SearchIssues.Nodes {
+			items[i] = mappers.MapIssueSummary(mappers.FromIssueSearchSummaryFields(n.IssueSearchSummaryFields))
+		}
 
-			pi := resp.SearchIssues.PageInfo
-			output.PrintPaginated(items, &output.Pagination{
-				HasMore:    pi.HasNextPage,
-				NextCursor: ptr.Deref(pi.EndCursor),
-			})
-		},
+		output.PrintPage(items, resp.SearchIssues.PageInfo.HasNextPage, resp.SearchIssues.PageInfo.EndCursor)
 	}
 
 	cmd.Flags().StringVar(&project, "project", "", "Filter by project ID, slug, or name")
@@ -66,8 +58,5 @@ func registerSearch(parent *cobra.Command) {
 	cmd.Flags().StringVar(&assignee, "assignee", "", "Filter by assignee")
 	cmd.Flags().StringVar(&status, "status", "", "Filter by status")
 	cmd.Flags().StringVar(&priority, "priority", "", "Filter by priority")
-	cmd.Flags().StringVar(&limit, "limit", "", "Limit results")
-	cmd.Flags().StringVar(&cursor, "cursor", "", "Pagination cursor for next page")
 	parent.AddCommand(cmd)
 }
-

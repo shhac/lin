@@ -11,48 +11,38 @@ import (
 )
 
 func registerSearch(user *cobra.Command) {
-	var limit string
-	var cursor string
-
 	cmd := &cobra.Command{
 		Use:   "search <text>",
 		Short: "Search users by name, email, or display name",
 		Args:  cobra.ExactArgs(1),
-		Run: func(_ *cobra.Command, args []string) {
-			text := args[0]
-			client := linear.GetClient()
-			pageSize := output.ResolvePageSize(limit)
+	}
+	page := output.AddPageFlags(cmd)
 
-			after := output.ResolveCursor(cursor)
+	cmd.Run = func(_ *cobra.Command, args []string) {
+		text := args[0]
+		client := linear.GetClient()
 
-			filter := &linear.UserFilter{
-				Or: []linear.UserFilter{
-					{Name: containsIgnoreCase(text)},
-					{DisplayName: containsIgnoreCase(text)},
-					{Email: containsIgnoreCase(text)},
-				},
-			}
+		filter := &linear.UserFilter{
+			Or: []linear.UserFilter{
+				{Name: containsIgnoreCase(text)},
+				{DisplayName: containsIgnoreCase(text)},
+				{Email: containsIgnoreCase(text)},
+			},
+		}
 
-			resp, err := linear.UserList(context.Background(), client, filter, pageSize, after)
-			if err != nil {
-				output.HandleGraphQLError(err)
-			}
+		resp, err := linear.UserList(context.Background(), client, filter, page.Size(), page.Cursor())
+		if err != nil {
+			output.HandleGraphQLError(err)
+		}
 
-			items := make([]map[string]any, len(resp.Users.Nodes))
-			for i, u := range resp.Users.Nodes {
-				items[i] = mapUserSummary(u)
-			}
+		items := make([]map[string]any, len(resp.Users.Nodes))
+		for i, u := range resp.Users.Nodes {
+			items[i] = mapUserSummary(u)
+		}
 
-			pi := resp.Users.PageInfo
-			output.PrintPaginated(items, &output.Pagination{
-				HasMore:    pi.HasNextPage,
-				NextCursor: ptr.Deref(pi.EndCursor),
-			})
-		},
+		output.PrintPage(items, resp.Users.PageInfo.HasNextPage, resp.Users.PageInfo.EndCursor)
 	}
 
-	cmd.Flags().StringVar(&limit, "limit", "", "Limit results")
-	cmd.Flags().StringVar(&cursor, "cursor", "", "Pagination cursor for next page")
 	user.AddCommand(cmd)
 }
 

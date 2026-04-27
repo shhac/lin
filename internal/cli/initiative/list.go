@@ -10,7 +10,6 @@ import (
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
-	"github.com/shhac/lin/internal/ptr"
 )
 
 var validStatuses = []string{"planned", "active", "completed"}
@@ -29,50 +28,42 @@ func validateInitiativeStatus(input string) (string, error) {
 }
 
 func registerList(parent *cobra.Command) {
-	var limit string
-	var cursor string
 	var status string
 
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List initiatives",
 		Args:  cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
-			client := linear.GetClient()
-			pageSize := output.ResolvePageSize(limit)
-			after := output.ResolveCursor(cursor)
+	}
+	page := output.AddPageFlags(cmd)
 
-			var filter *linear.InitiativeFilter
-			if status != "" {
-				normalized, err := validateInitiativeStatus(status)
-				if err != nil {
-					output.PrintError(err.Error())
-				}
-				filter = &linear.InitiativeFilter{
-					Status: &linear.StringComparator{EqIgnoreCase: &normalized},
-				}
-			}
+	cmd.Run = func(_ *cobra.Command, _ []string) {
+		client := linear.GetClient()
 
-			resp, err := linear.InitiativeList(context.Background(), client, filter, pageSize, after)
+		var filter *linear.InitiativeFilter
+		if status != "" {
+			normalized, err := validateInitiativeStatus(status)
 			if err != nil {
-				output.HandleGraphQLError(err)
+				output.PrintError(err.Error())
 			}
-
-			items := make([]map[string]any, len(resp.Initiatives.Nodes))
-			for i, n := range resp.Initiatives.Nodes {
-				items[i] = mappers.MapInitiativeSummary(mappers.FromInitiativeListFields(n))
+			filter = &linear.InitiativeFilter{
+				Status: &linear.StringComparator{EqIgnoreCase: &normalized},
 			}
+		}
 
-			pi := resp.Initiatives.PageInfo
-			output.PrintPaginated(items, &output.Pagination{
-				HasMore:    pi.HasNextPage,
-				NextCursor: ptr.Deref(pi.EndCursor),
-			})
-		},
+		resp, err := linear.InitiativeList(context.Background(), client, filter, page.Size(), page.Cursor())
+		if err != nil {
+			output.HandleGraphQLError(err)
+		}
+
+		items := make([]map[string]any, len(resp.Initiatives.Nodes))
+		for i, n := range resp.Initiatives.Nodes {
+			items[i] = mappers.MapInitiativeSummary(mappers.FromInitiativeListFields(n))
+		}
+
+		output.PrintPage(items, resp.Initiatives.PageInfo.HasNextPage, resp.Initiatives.PageInfo.EndCursor)
 	}
 
 	cmd.Flags().StringVar(&status, "status", "", "Filter by status: planned|active|completed")
-	cmd.Flags().StringVar(&limit, "limit", "", "Limit results")
-	cmd.Flags().StringVar(&cursor, "cursor", "", "Pagination cursor for next page")
 	parent.AddCommand(cmd)
 }

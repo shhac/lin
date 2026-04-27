@@ -9,7 +9,6 @@ import (
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
-	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerList(parent *cobra.Command) {
@@ -25,51 +24,44 @@ func registerList(parent *cobra.Command) {
 		updatedBefore string
 		createdAfter  string
 		createdBefore string
-		limit         string
-		cursor        string
 	)
 
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List issues",
 		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
+	}
+	page := output.AddPageFlags(cmd)
 
-			filter := filters.BuildIssueFilter(filters.IssueFilterOpts{
-				Project:       project,
-				Team:          team,
-				Assignee:      assignee,
-				Status:        status,
-				Priority:      priority,
-				Label:         label,
-				Cycle:         cycle,
-				UpdatedAfter:  updatedAfter,
-				UpdatedBefore: updatedBefore,
-				CreatedAfter:  createdAfter,
-				CreatedBefore: createdBefore,
-			})
+	cmd.Run = func(cmd *cobra.Command, args []string) {
+		client := linear.GetClient()
+		ctx := context.Background()
 
-			pageSize := output.ResolvePageSize(limit)
-			afterPtr := output.ResolveCursor(cursor)
+		filter := filters.BuildIssueFilter(filters.IssueFilterOpts{
+			Project:       project,
+			Team:          team,
+			Assignee:      assignee,
+			Status:        status,
+			Priority:      priority,
+			Label:         label,
+			Cycle:         cycle,
+			UpdatedAfter:  updatedAfter,
+			UpdatedBefore: updatedBefore,
+			CreatedAfter:  createdAfter,
+			CreatedBefore: createdBefore,
+		})
 
-			resp, err := linear.IssueList(ctx, client, filter, pageSize, afterPtr)
-			if err != nil {
-				output.HandleGraphQLError(err)
-			}
+		resp, err := linear.IssueList(ctx, client, filter, page.Size(), page.Cursor())
+		if err != nil {
+			output.HandleGraphQLError(err)
+		}
 
-			items := make([]any, len(resp.Issues.Nodes))
-			for i, n := range resp.Issues.Nodes {
-				items[i] = mappers.MapIssueSummary(mappers.FromIssueSummaryFields(n.IssueSummaryFields))
-			}
+		items := make([]any, len(resp.Issues.Nodes))
+		for i, n := range resp.Issues.Nodes {
+			items[i] = mappers.MapIssueSummary(mappers.FromIssueSummaryFields(n.IssueSummaryFields))
+		}
 
-			pi := resp.Issues.PageInfo
-			output.PrintPaginated(items, &output.Pagination{
-				HasMore:    pi.HasNextPage,
-				NextCursor: ptr.Deref(pi.EndCursor),
-			})
-		},
+		output.PrintPage(items, resp.Issues.PageInfo.HasNextPage, resp.Issues.PageInfo.EndCursor)
 	}
 
 	cmd.Flags().StringVar(&project, "project", "", "Filter by project ID, slug, or name")
@@ -83,8 +75,6 @@ func registerList(parent *cobra.Command) {
 	cmd.Flags().StringVar(&updatedBefore, "updated-before", "", "Updated before date (YYYY-MM-DD)")
 	cmd.Flags().StringVar(&createdAfter, "created-after", "", "Created after date (YYYY-MM-DD)")
 	cmd.Flags().StringVar(&createdBefore, "created-before", "", "Created before date (YYYY-MM-DD)")
-	cmd.Flags().StringVar(&limit, "limit", "", "Limit results")
-	cmd.Flags().StringVar(&cursor, "cursor", "", "Pagination cursor for next page")
 	parent.AddCommand(cmd)
 }
 
