@@ -1,9 +1,52 @@
 package issue
 
 import (
+	"context"
 	"strings"
 	"testing"
+
+	"github.com/shhac/lin/internal/linear"
 )
+
+func TestMapAttachment(t *testing.T) {
+	subtitle := "Fixes login bug"
+	sourceType := "github_pr"
+	a := linear.IssueAttachmentsIssueAttachmentsAttachmentConnectionNodesAttachment{
+		Id:         "att-1",
+		Title:      "PR #456",
+		Url:        "https://github.com/org/repo/pull/456",
+		Subtitle:   &subtitle,
+		SourceType: &sourceType,
+	}
+	got := mapAttachment(a)
+	if got["id"] != "att-1" {
+		t.Errorf("id = %v", got["id"])
+	}
+	if got["title"] != "PR #456" {
+		t.Errorf("title = %v", got["title"])
+	}
+	if got["sourceType"] != &sourceType {
+		// Stored as the same *string pointer; no re-allocation.
+		// Allow either pointer equality or string equality:
+		if sp, ok := got["sourceType"].(*string); !ok || *sp != "github_pr" {
+			t.Errorf("sourceType = %v", got["sourceType"])
+		}
+	}
+}
+
+func TestMapAttachment_NoOptionalFields(t *testing.T) {
+	a := linear.IssueAttachmentsIssueAttachmentsAttachmentConnectionNodesAttachment{
+		Id:    "att-2",
+		Title: "Spec",
+		Url:   "https://example.com/s.pdf",
+	}
+	got := mapAttachment(a)
+	// subtitle and sourceType are *string; nil pointers are acceptable here
+	// (output.pruneEmpty drops them at print time).
+	if got["id"] != "att-2" {
+		t.Errorf("id = %v", got["id"])
+	}
+}
 
 func TestValidateAttachmentFlags(t *testing.T) {
 	cases := []struct {
@@ -105,7 +148,7 @@ func TestSelectLinkOp_DerivedArgsValidation(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			op, err := selectLinkOp(nil, nil, tc.flags, "issue", tc.url, nil)
+			op, err := selectLinkOp(context.Background(), nil, tc.flags, "issue", tc.url, nil)
 			if tc.wantOK {
 				if err != nil {
 					t.Fatalf("unexpected error: %v", err)

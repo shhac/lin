@@ -354,6 +354,53 @@ func TestBuildIssueLabelFilter_IsGroup(t *testing.T) {
 	}
 }
 
+func TestBuildIssueLabelFilter_SearchOverwritesName(t *testing.T) {
+	// Both opts.Name and opts.Search target f.Name. The current contract: the
+	// later assignment (Search) wins. This test pins that behavior.
+	f := BuildIssueLabelFilter(LabelFilterOpts{Name: "Bug", Search: "perf"}, "")
+	if f == nil || f.Name == nil {
+		t.Fatal("expected name filter")
+	}
+	if f.Name.EqIgnoreCase != nil {
+		t.Errorf("expected EqIgnoreCase to be nil when Search is set, got %v", *f.Name.EqIgnoreCase)
+	}
+	if f.Name.ContainsIgnoreCaseAndAccent == nil || *f.Name.ContainsIgnoreCaseAndAccent != "perf" {
+		t.Errorf("expected Search to set ContainsIgnoreCaseAndAccent=perf")
+	}
+}
+
+func TestBuildIssueLabelFilter_TeamIDOverridesTeamFlag(t *testing.T) {
+	id := "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+	f := BuildIssueLabelFilter(LabelFilterOpts{Team: "ENG"}, id)
+	if f == nil || f.Team == nil {
+		t.Fatal("expected team filter")
+	}
+	if f.Team.Id == nil || *f.Team.Id.Eq != id {
+		t.Errorf("expected resolved teamID to win, got %+v", f.Team)
+	}
+	if len(f.Team.Or) != 0 {
+		t.Errorf("expected no Or branches when teamID is set, got %d", len(f.Team.Or))
+	}
+}
+
+func TestBuildIssueLabelFilter_AllOptsCombined(t *testing.T) {
+	tru := true
+	id := "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
+	f := BuildIssueLabelFilter(LabelFilterOpts{Name: "Bug", IsGroup: &tru}, id)
+	if f == nil {
+		t.Fatal("expected non-nil filter")
+	}
+	if f.Name == nil || f.Name.EqIgnoreCase == nil || *f.Name.EqIgnoreCase != "Bug" {
+		t.Error("expected name filter")
+	}
+	if f.Team == nil || f.Team.Id == nil || *f.Team.Id.Eq != id {
+		t.Error("expected team filter by ID")
+	}
+	if f.IsGroup == nil || f.IsGroup.Eq == nil || *f.IsGroup.Eq != true {
+		t.Error("expected isGroup filter")
+	}
+}
+
 // Verify the filter types are correctly shaped (compile-time check + runtime spot check).
 func TestBuildIssueFilter_Project_UUID(t *testing.T) {
 	uuid := "a1b2c3d4-e5f6-7890-abcd-ef1234567890"

@@ -18,6 +18,22 @@ var validRelationTypeSet = map[string]linear.IssueRelationType{
 	"related":   linear.IssueRelationTypeRelated,
 }
 
+// resolveRelationType maps a user-provided relation type (any case) to the
+// Linear enum value. Returns ok=false for unknown types.
+func resolveRelationType(input string) (linear.IssueRelationType, bool) {
+	v, ok := validRelationTypeSet[strings.ToLower(input)]
+	return v, ok
+}
+
+// inverseRelationLabel rewrites the inverse-direction "blocks" relation to
+// "blocked_by"; other types pass through.
+func inverseRelationLabel(forward string) string {
+	if forward == "blocks" {
+		return "blocked_by"
+	}
+	return forward
+}
+
 func registerRelation(parent *cobra.Command) {
 	relation := &cobra.Command{
 		Use:   "relation",
@@ -55,13 +71,9 @@ func registerRelationList(parent *cobra.Command) {
 				})
 			}
 			for _, r := range resp.Issue.InverseRelations.Nodes {
-				relType := r.Type
-				if relType == "blocks" {
-					relType = "blocked_by"
-				}
 				mapped = append(mapped, map[string]any{
 					"id":           r.Id,
-					"type":         relType,
+					"type":         inverseRelationLabel(r.Type),
 					"relatedIssue": r.Issue.Identifier,
 				})
 			}
@@ -82,8 +94,7 @@ func registerRelationAdd(parent *cobra.Command) {
 		Short: "Add a relation between two issues",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			normalized := strings.ToLower(relType)
-			enumVal, ok := validRelationTypeSet[normalized]
+			enumVal, ok := resolveRelationType(relType)
 			if !ok {
 				output.PrintErrorf("Invalid relation type: %q. Valid values: %s", relType, validRelationTypes)
 			}

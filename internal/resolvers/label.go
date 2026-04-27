@@ -77,8 +77,8 @@ func fetchLabels(client graphql.Client, teamID string) ([]ResolvedLabel, error) 
 	seen := map[string]bool{}
 	labels := make([]ResolvedLabel, 0, len(teamNodes)+len(orgLabels))
 	for _, n := range teamNodes {
-		seen[n.LabelFields.Id] = true
-		labels = append(labels, ResolvedLabel{ID: n.LabelFields.Id, Name: n.LabelFields.Name, TeamKey: teamKeyOf(n.LabelFields)})
+		seen[n.Id] = true
+		labels = append(labels, ResolvedLabel{ID: n.Id, Name: n.Name, TeamKey: teamKeyOf(n.LabelFields)})
 	}
 	for _, l := range orgLabels {
 		if !seen[l.ID] {

@@ -25,16 +25,21 @@ func registerAttachmentList(parent *cobra.Command) {
 
 			items := make([]any, len(resp.Issue.Attachments.Nodes))
 			for i, a := range resp.Issue.Attachments.Nodes {
-				items[i] = map[string]any{
-					"id":         a.Id,
-					"title":      a.Title,
-					"url":        a.Url,
-					"subtitle":   a.Subtitle,
-					"sourceType": a.SourceType,
-				}
+				items[i] = mapAttachment(a)
 			}
 
 			output.PrintJSON(items)
 		},
 	})
+}
+
+// mapAttachment renders a single attachment node to its output shape.
+func mapAttachment(a linear.IssueAttachmentsIssueAttachmentsAttachmentConnectionNodesAttachment) map[string]any {
+	return map[string]any{
+		"id":         a.Id,
+		"title":      a.Title,
+		"url":        a.Url,
+		"subtitle":   a.Subtitle,
+		"sourceType": a.SourceType,
+	}
 }
