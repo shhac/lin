@@ -55,39 +55,37 @@ func fetchOrgLabels(client graphql.Client) ([]ResolvedLabel, error) {
 }
 
 func fetchLabels(client graphql.Client, teamID string) ([]ResolvedLabel, error) {
-	if teamID != "" {
-		teamLabels, err := linear.FetchAll(func(first int, after *string) ([]linear.TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel, bool, *string, error) {
-			resp, err := linear.TeamLabels(ctx(), client, teamID, first, after)
-			if err != nil {
-				return nil, false, nil, err
-			}
-			return resp.Team.Labels.Nodes, resp.Team.Labels.PageInfo.HasNextPage, resp.Team.Labels.PageInfo.EndCursor, nil
-		})
-		if err != nil {
-			return nil, err
-		}
-		orgLabels, err := fetchOrgLabels(client)
-		if err != nil {
-			return nil, err
-		}
-		teamIDs := map[string]bool{}
-		var labels []ResolvedLabel
-		for _, l := range teamLabels {
-			teamIDs[l.Id] = true
-			key := ""
-			if l.Team != nil {
-				key = l.Team.Key
-			}
-			labels = append(labels, ResolvedLabel{ID: l.Id, Name: l.Name, TeamKey: key})
-		}
-		for _, l := range orgLabels {
-			if !teamIDs[l.ID] {
-				labels = append(labels, l)
-			}
-		}
-		return labels, nil
+	if teamID == "" {
+		return fetchOrgLabels(client)
 	}
-	return fetchOrgLabels(client)
+
+	teamNodes, err := linear.FetchAll(func(first int, after *string) ([]linear.TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel, bool, *string, error) {
+		resp, err := linear.TeamLabels(ctx(), client, teamID, first, after)
+		if err != nil {
+			return nil, false, nil, err
+		}
+		return resp.Team.Labels.Nodes, resp.Team.Labels.PageInfo.HasNextPage, resp.Team.Labels.PageInfo.EndCursor, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	orgLabels, err := fetchOrgLabels(client)
+	if err != nil {
+		return nil, err
+	}
+
+	seen := map[string]bool{}
+	labels := make([]ResolvedLabel, 0, len(teamNodes)+len(orgLabels))
+	for _, n := range teamNodes {
+		seen[n.LabelFields.Id] = true
+		labels = append(labels, ResolvedLabel{ID: n.LabelFields.Id, Name: n.LabelFields.Name, TeamKey: teamKeyOf(n.LabelFields)})
+	}
+	for _, l := range orgLabels {
+		if !seen[l.ID] {
+			labels = append(labels, l)
+		}
+	}
+	return labels, nil
 }
 
 func teamKeyOf(l linear.LabelFields) string {
@@ -110,27 +108,36 @@ func resolveOneLabel(input string, labels []ResolvedLabel, teamScoped bool) (Res
 			matches = append(matches, l)
 		}
 	}
+
 	if len(matches) == 1 {
 		return matches[0], nil
 	}
 	if len(matches) == 0 {
-		var names []string
-		for _, l := range labels {
-			names = append(names, l.Name)
-		}
-		return ResolvedLabel{}, fmt.Errorf("label not found: %q, available labels: %s", input, strings.Join(names, ", "))
+		return ResolvedLabel{}, labelNotFoundErr(input, labels)
 	}
-	var ambiguous []string
-	for _, l := range matches {
+	return ResolvedLabel{}, ambiguousLabelErr(input, matches, teamScoped)
+}
+
+func labelNotFoundErr(input string, labels []ResolvedLabel) error {
+	names := make([]string, len(labels))
+	for i, l := range labels {
+		names[i] = l.Name
+	}
+	return fmt.Errorf("label not found: %q, available labels: %s", input, strings.Join(names, ", "))
+}
+
+func ambiguousLabelErr(input string, matches []ResolvedLabel, teamScoped bool) error {
+	parts := make([]string, len(matches))
+	for i, l := range matches {
 		if l.TeamKey != "" {
-			ambiguous = append(ambiguous, fmt.Sprintf("%s (id: %s, team: %s)", l.Name, l.ID, l.TeamKey))
+			parts[i] = fmt.Sprintf("%s (id: %s, team: %s)", l.Name, l.ID, l.TeamKey)
 		} else {
-			ambiguous = append(ambiguous, fmt.Sprintf("%s (id: %s, workspace)", l.Name, l.ID))
+			parts[i] = fmt.Sprintf("%s (id: %s, workspace)", l.Name, l.ID)
 		}
 	}
 	hint := ""
 	if !teamScoped {
 		hint = ", tip: use --team to narrow scope"
 	}
-	return ResolvedLabel{}, fmt.Errorf("ambiguous label: %q matches %d labels: %s, use the label ID to disambiguate%s", input, len(matches), strings.Join(ambiguous, ", "), hint)
+	return fmt.Errorf("ambiguous label: %q matches %d labels: %s, use the label ID to disambiguate%s", input, len(matches), strings.Join(parts, ", "), hint)
 }

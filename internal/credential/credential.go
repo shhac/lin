@@ -43,29 +43,29 @@ func resolve() *resolved {
 	}
 
 	cfg := config.Read()
-	ws := cfg.DefaultWorkspace
-	if ws == "" {
+	legacy := func() *resolved {
 		if cfg.LegacyAPIKey != "" {
 			return &resolved{key: cfg.LegacyAPIKey, source: "config"}
 		}
 		return nil
 	}
 
+	ws := cfg.DefaultWorkspace
+	if ws == "" {
+		return legacy()
+	}
 	workspace, ok := cfg.Workspaces[ws]
 	if !ok {
-		if cfg.LegacyAPIKey != "" {
-			return &resolved{key: cfg.LegacyAPIKey, source: "config"}
-		}
-		return nil
+		return legacy()
 	}
 
 	if workspace.APIKey == keychainPlaceholder {
 		if key, err := keychain.Get(ws); err == nil && key != "" {
 			return &resolved{key: key, source: "keychain"}
 		}
+		return nil
 	}
-
-	if workspace.APIKey != "" && workspace.APIKey != keychainPlaceholder {
+	if workspace.APIKey != "" {
 		return &resolved{key: workspace.APIKey, source: "config"}
 	}
 

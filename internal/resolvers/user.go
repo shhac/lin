@@ -43,15 +43,23 @@ func ResolveUser(client graphql.Client, input string) (ResolvedUser, error) {
 		return matches[0], nil
 	}
 	if len(matches) == 0 {
-		var names []string
-		for _, u := range users {
-			names = append(names, fmt.Sprintf("%s <%s>", u.Name, u.Email))
-		}
-		return ResolvedUser{}, fmt.Errorf("user not found: %q, known users: %s", input, strings.Join(names, ", "))
+		return ResolvedUser{}, userNotFoundErr(input, users)
 	}
-	var ambiguous []string
-	for _, u := range matches {
-		ambiguous = append(ambiguous, fmt.Sprintf("%s <%s> (%s)", u.Name, u.Email, u.ID))
+	return ResolvedUser{}, ambiguousUserErr(input, matches)
+}
+
+func userNotFoundErr(input string, users []linear.UserListUsersUserConnectionNodesUser) error {
+	names := make([]string, len(users))
+	for i, u := range users {
+		names[i] = fmt.Sprintf("%s <%s>", u.Name, u.Email)
 	}
-	return ResolvedUser{}, fmt.Errorf("ambiguous user: %q matches %d users: %s, use a unique name, email, or ID", input, len(matches), strings.Join(ambiguous, ", "))
+	return fmt.Errorf("user not found: %q, known users: %s", input, strings.Join(names, ", "))
+}
+
+func ambiguousUserErr(input string, matches []ResolvedUser) error {
+	parts := make([]string, len(matches))
+	for i, u := range matches {
+		parts[i] = fmt.Sprintf("%s <%s> (%s)", u.Name, u.Email, u.ID)
+	}
+	return fmt.Errorf("ambiguous user: %q matches %d users: %s, use a unique name, email, or ID", input, len(matches), strings.Join(parts, ", "))
 }

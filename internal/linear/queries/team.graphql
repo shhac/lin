@@ -55,15 +55,7 @@ query TeamLabels(
 ) {
   team(id: $id) {
     labels(first: $first, after: $after) {
-      nodes {
-        id
-        name
-        color
-        description
-        isGroup
-        team { id key name }
-        parent { id name }
-      }
+      nodes { ...LabelFields }
       pageInfo { ...PageInfoFields }
     }
   }

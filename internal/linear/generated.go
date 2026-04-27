@@ -13797,91 +13797,105 @@ func (v *TeamLabelsTeamLabelsIssueLabelConnection) GetPageInfo() TeamLabelsTeamL
 //
 // Labels that can be associated with issues. Labels help categorize and filter issues across a workspace. They can be workspace-level (shared across all teams) or team-scoped. Labels have a color for visual identification and can be organized hierarchically into groups, where a parent label acts as a group containing child labels. Labels may also be inherited from parent teams to sub-teams.
 type TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel struct {
-	// The unique identifier of the entity.
-	Id string `json:"id"`
-	// The label's name.
-	Name string `json:"name"`
-	// The label's color as a HEX string (e.g., '#EB5757'). Used for visual identification of the label in the UI.
-	Color string `json:"color"`
-	// The label's description.
-	Description *string `json:"description,omitempty"`
-	// Whether the label is a group. When true, this label acts as a container for child labels and cannot be directly applied to issues or projects. When false, the label can be directly applied.
-	IsGroup bool `json:"isGroup"`
-	// The team that the label is scoped to. If null, the label is a workspace-level label available to all teams in the workspace.
-	Team *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelTeam `json:"team,omitempty"`
-	// The parent label.
-	Parent *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelParentIssueLabel `json:"parent,omitempty"`
+	LabelFields `json:"-"`
 }
 
 // GetId returns TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel.Id, and is useful for accessing the field via an interface.
-func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetId() string { return v.Id }
+func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetId() string {
+	return v.LabelFields.Id
+}
 
 // GetName returns TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel.Name, and is useful for accessing the field via an interface.
-func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetName() string { return v.Name }
+func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetName() string {
+	return v.LabelFields.Name
+}
 
 // GetColor returns TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel.Color, and is useful for accessing the field via an interface.
-func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetColor() string { return v.Color }
+func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetColor() string {
+	return v.LabelFields.Color
+}
 
 // GetDescription returns TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel.Description, and is useful for accessing the field via an interface.
 func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetDescription() *string {
-	return v.Description
+	return v.LabelFields.Description
 }
 
 // GetIsGroup returns TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel.IsGroup, and is useful for accessing the field via an interface.
-func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetIsGroup() bool { return v.IsGroup }
+func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetIsGroup() bool {
+	return v.LabelFields.IsGroup
+}
 
 // GetTeam returns TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel.Team, and is useful for accessing the field via an interface.
-func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetTeam() *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelTeam {
-	return v.Team
+func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetTeam() *LabelFieldsTeam {
+	return v.LabelFields.Team
 }
 
 // GetParent returns TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel.Parent, and is useful for accessing the field via an interface.
-func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetParent() *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelParentIssueLabel {
-	return v.Parent
+func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) GetParent() *LabelFieldsParentIssueLabel {
+	return v.LabelFields.Parent
 }
 
-// TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelParentIssueLabel includes the requested fields of the GraphQL type IssueLabel.
-// The GraphQL type's documentation follows.
-//
-// Labels that can be associated with issues. Labels help categorize and filter issues across a workspace. They can be workspace-level (shared across all teams) or team-scoped. Labels have a color for visual identification and can be organized hierarchically into groups, where a parent label acts as a group containing child labels. Labels may also be inherited from parent teams to sub-teams.
-type TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelParentIssueLabel struct {
-	// The unique identifier of the entity.
+func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.LabelFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalTeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel struct {
 	Id string `json:"id"`
-	// The label's name.
+
 	Name string `json:"name"`
+
+	Color string `json:"color"`
+
+	Description *string `json:"description,omitempty"`
+
+	IsGroup bool `json:"isGroup"`
+
+	Team *LabelFieldsTeam `json:"team,omitempty"`
+
+	Parent *LabelFieldsParentIssueLabel `json:"parent,omitempty"`
 }
 
-// GetId returns TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelParentIssueLabel.Id, and is useful for accessing the field via an interface.
-func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelParentIssueLabel) GetId() string {
-	return v.Id
+func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
 }
 
-// GetName returns TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelParentIssueLabel.Name, and is useful for accessing the field via an interface.
-func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelParentIssueLabel) GetName() string {
-	return v.Name
+func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel) __premarshalJSON() (*__premarshalTeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel, error) {
+	var retval __premarshalTeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel
+
+	retval.Id = v.LabelFields.Id
+	retval.Name = v.LabelFields.Name
+	retval.Color = v.LabelFields.Color
+	retval.Description = v.LabelFields.Description
+	retval.IsGroup = v.LabelFields.IsGroup
+	retval.Team = v.LabelFields.Team
+	retval.Parent = v.LabelFields.Parent
+	return &retval, nil
 }
-
-// TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelTeam includes the requested fields of the GraphQL type Team.
-// The GraphQL type's documentation follows.
-//
-// A team is the primary organizational unit in Linear. Issues belong to teams, and each team has its own workflow states, cycles, labels, and settings. Teams can be public (visible to all workspace members) or private (visible only to team members). Teams can also have sub-teams that inherit settings from their parent.
-type TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelTeam struct {
-	// The unique identifier of the entity.
-	Id string `json:"id"`
-	// The team's unique key, used as a prefix in issue identifiers (e.g., 'ENG' in 'ENG-123') and in URLs.
-	Key string `json:"key"`
-	// The team's name.
-	Name string `json:"name"`
-}
-
-// GetId returns TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelTeam.Id, and is useful for accessing the field via an interface.
-func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelTeam) GetId() string { return v.Id }
-
-// GetKey returns TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelTeam.Key, and is useful for accessing the field via an interface.
-func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelTeam) GetKey() string { return v.Key }
-
-// GetName returns TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelTeam.Name, and is useful for accessing the field via an interface.
-func (v *TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabelTeam) GetName() string { return v.Name }
 
 // TeamLabelsTeamLabelsIssueLabelConnectionPageInfo includes the requested fields of the GraphQL type PageInfo.
 type TeamLabelsTeamLabelsIssueLabelConnectionPageInfo struct {
@@ -18167,25 +18181,28 @@ query TeamLabels ($id: String!, $first: Int!, $after: String) {
 	team(id: $id) {
 		labels(first: $first, after: $after) {
 			nodes {
-				id
-				name
-				color
-				description
-				isGroup
-				team {
-					id
-					key
-					name
-				}
-				parent {
-					id
-					name
-				}
+				... LabelFields
 			}
 			pageInfo {
 				... PageInfoFields
 			}
 		}
+	}
+}
+fragment LabelFields on IssueLabel {
+	id
+	name
+	color
+	description
+	isGroup
+	team {
+		id
+		key
+		name
+	}
+	parent {
+		id
+		name
 	}
 }
 fragment PageInfoFields on PageInfo {
