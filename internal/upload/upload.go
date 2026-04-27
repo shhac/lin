@@ -22,60 +22,84 @@ type UploadedFile struct {
 }
 
 func UploadFiles(client graphql.Client, paths []string) ([]UploadedFile, error) {
-	var results []UploadedFile
+	results := make([]UploadedFile, 0, len(paths))
 	for _, filePath := range paths {
-		info, err := os.Stat(filePath)
-		if err != nil {
-			return nil, fmt.Errorf("file not found: %s", filepath.Base(filePath))
-		}
-
-		filename := filepath.Base(filePath)
-		contentType := detectMIME(filename)
-		size := int(info.Size())
-
-		resp, err := linear.FileUpload(context.Background(), client, contentType, filename, size)
-		if err != nil {
-			return nil, fmt.Errorf("upload failed for %s: %v", filename, err)
-		}
-		if resp.FileUpload.UploadFile == nil {
-			return nil, fmt.Errorf("upload failed for %s: no upload URL returned", filename)
-		}
-
-		uf := resp.FileUpload.UploadFile
-
-		f, err := os.Open(filePath)
+		uploaded, err := uploadOne(client, filePath)
 		if err != nil {
 			return nil, err
 		}
-
-		req, err := http.NewRequest("PUT", uf.UploadUrl, f)
-		if err != nil {
-			_ = f.Close()
-			return nil, err
-		}
-		for _, h := range uf.Headers {
-			req.Header.Set(h.Key, h.Value)
-		}
-		req.ContentLength = int64(size)
-
-		putResp, err := http.DefaultClient.Do(req)
-		_ = f.Close()
-		if err != nil {
-			return nil, fmt.Errorf("upload failed for %s: %v", filename, err)
-		}
-		_, _ = io.Copy(io.Discard, putResp.Body)
-		_ = putResp.Body.Close()
-		if putResp.StatusCode >= 300 {
-			return nil, fmt.Errorf("upload failed for %s: %d %s", filename, putResp.StatusCode, putResp.Status)
-		}
-
-		results = append(results, UploadedFile{
-			Filename:    filename,
-			AssetURL:    uf.AssetUrl,
-			ContentType: contentType,
-		})
+		results = append(results, uploaded)
 	}
 	return results, nil
+}
+
+// uploadOne handles a single file: stat, request an upload URL, PUT, and
+// return the asset record. Errors are wrapped with the filename for context.
+func uploadOne(client graphql.Client, filePath string) (UploadedFile, error) {
+	info, err := os.Stat(filePath)
+	if err != nil {
+		return UploadedFile{}, fmt.Errorf("file not found: %s", filepath.Base(filePath))
+	}
+
+	filename := filepath.Base(filePath)
+	contentType := detectMIME(filename)
+	size := int(info.Size())
+
+	resp, err := linear.FileUpload(context.Background(), client, contentType, filename, size)
+	if err != nil {
+		return UploadedFile{}, fmt.Errorf("upload failed for %s: %v", filename, err)
+	}
+	if resp.FileUpload.UploadFile == nil {
+		return UploadedFile{}, fmt.Errorf("upload failed for %s: no upload URL returned", filename)
+	}
+	uf := resp.FileUpload.UploadFile
+
+	headers := make(map[string]string, len(uf.Headers))
+	for _, h := range uf.Headers {
+		headers[h.Key] = h.Value
+	}
+
+	f, err := os.Open(filePath)
+	if err != nil {
+		return UploadedFile{}, err
+	}
+	defer func() { _ = f.Close() }()
+
+	if err := httpPutWithHeaders(uf.UploadUrl, f, int64(size), headers); err != nil {
+		return UploadedFile{}, fmt.Errorf("upload failed for %s: %v", filename, err)
+	}
+
+	return UploadedFile{
+		Filename:    filename,
+		AssetURL:    uf.AssetUrl,
+		ContentType: contentType,
+	}, nil
+}
+
+// httpPutWithHeaders streams body to url via HTTP PUT with the given headers
+// and content length. Returns nil on 2xx, otherwise an error describing the
+// response. Body is fully drained.
+func httpPutWithHeaders(url string, body io.Reader, contentLength int64, headers map[string]string) error {
+	req, err := http.NewRequest("PUT", url, body)
+	if err != nil {
+		return err
+	}
+	for k, v := range headers {
+		req.Header.Set(k, v)
+	}
+	req.ContentLength = contentLength
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return err
+	}
+	defer func() { _ = resp.Body.Close() }()
+	_, _ = io.Copy(io.Discard, resp.Body)
+
+	if resp.StatusCode >= 300 {
+		return fmt.Errorf("%d %s", resp.StatusCode, resp.Status)
+	}
+	return nil
 }
 
 func FormatFileMarkdown(files []UploadedFile) string {

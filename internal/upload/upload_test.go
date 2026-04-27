@@ -1,6 +1,62 @@
 package upload
 
-import "testing"
+import (
+	"io"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+)
+
+func TestHTTPPutWithHeaders_OK(t *testing.T) {
+	var seenMethod string
+	var seenLength int64
+	var seenHeader string
+	var seenBody string
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		seenMethod = r.Method
+		seenLength = r.ContentLength
+		seenHeader = r.Header.Get("X-Test")
+		body, _ := io.ReadAll(r.Body)
+		seenBody = string(body)
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer srv.Close()
+
+	body := strings.NewReader("payload-bytes")
+	err := httpPutWithHeaders(srv.URL, body, int64(body.Len()), map[string]string{"X-Test": "yes"})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if seenMethod != "PUT" {
+		t.Errorf("method = %q, want PUT", seenMethod)
+	}
+	if seenLength != 13 {
+		t.Errorf("ContentLength = %d, want 13", seenLength)
+	}
+	if seenHeader != "yes" {
+		t.Errorf("X-Test header = %q, want %q", seenHeader, "yes")
+	}
+	if seenBody != "payload-bytes" {
+		t.Errorf("body = %q", seenBody)
+	}
+}
+
+func TestHTTPPutWithHeaders_RemoteError(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusForbidden)
+	}))
+	defer srv.Close()
+
+	body := strings.NewReader("payload")
+	err := httpPutWithHeaders(srv.URL, body, int64(body.Len()), nil)
+	if err == nil {
+		t.Fatal("expected error for 403")
+	}
+	if !strings.Contains(err.Error(), "403") {
+		t.Errorf("error = %v, want to contain 403", err)
+	}
+}
 
 func TestFormatFileMarkdown_ImageTypes(t *testing.T) {
 	files := []UploadedFile{
