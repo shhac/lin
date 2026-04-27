@@ -40,9 +40,9 @@ func registerList(parent *cobra.Command) {
 				filter.Creator = &linear.UserFilter{
 					Or: []linear.UserFilter{
 						{Id: &linear.IDComparator{Eq: ptr.To(creator)}},
-						{Name: &linear.StringComparator{EqIgnoreCase: ptr.To(creator)}},
-						{DisplayName: &linear.StringComparator{EqIgnoreCase: ptr.To(creator)}},
-						{Email: &linear.StringComparator{EqIgnoreCase: ptr.To(creator)}},
+						{Name: filters.EqIgnoreCase(creator)},
+						{DisplayName: filters.EqIgnoreCase(creator)},
+						{Email: filters.EqIgnoreCase(creator)},
 					},
 				}
 			}

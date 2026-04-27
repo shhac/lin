@@ -9,7 +9,6 @@ import (
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
-	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerList(parent *cobra.Command) {
@@ -38,7 +37,7 @@ func registerList(parent *cobra.Command) {
 				}
 			}
 			if status != "" {
-				filter.State = &linear.StringComparator{EqIgnoreCase: ptr.To(status)}
+				filter.State = filters.EqIgnoreCase(status)
 			}
 		}
 

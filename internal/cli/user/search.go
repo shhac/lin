@@ -5,9 +5,9 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/filters"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
-	"github.com/shhac/lin/internal/ptr"
 )
 
 func registerSearch(user *cobra.Command) {
@@ -24,9 +24,9 @@ func registerSearch(user *cobra.Command) {
 
 		filter := &linear.UserFilter{
 			Or: []linear.UserFilter{
-				{Name: containsIgnoreCase(text)},
-				{DisplayName: containsIgnoreCase(text)},
-				{Email: containsIgnoreCase(text)},
+				{Name: filters.ContainsIgnoreCase(text)},
+				{DisplayName: filters.ContainsIgnoreCase(text)},
+				{Email: filters.ContainsIgnoreCase(text)},
 			},
 		}
 
@@ -44,8 +44,4 @@ func registerSearch(user *cobra.Command) {
 	}
 
 	user.AddCommand(cmd)
-}
-
-func containsIgnoreCase(s string) *linear.StringComparator {
-	return &linear.StringComparator{ContainsIgnoreCase: ptr.To(s)}
 }

@@ -15,21 +15,34 @@ var uuidRE = regexp.MustCompile(`(?i)^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-
 // IsUUID returns true if s is a valid UUID v4 format string.
 func IsUUID(s string) bool { return uuidRE.MatchString(s) }
 
-func eqIgnoreCase(s string) *linear.StringComparator {
+// EqIgnoreCase returns a case-insensitive equality StringComparator.
+func EqIgnoreCase(s string) *linear.StringComparator {
 	return &linear.StringComparator{EqIgnoreCase: ptr.To(s)}
 }
 
-func containsIgnoreCase(s string) *linear.StringComparator {
+// ContainsIgnoreCase returns a case-insensitive substring StringComparator.
+func ContainsIgnoreCase(s string) *linear.StringComparator {
 	return &linear.StringComparator{ContainsIgnoreCase: ptr.To(s)}
 }
 
-func containsIgnoreCaseAndAccent(s string) *linear.StringComparator {
+// ContainsIgnoreCaseAndAccent returns a case- and accent-insensitive
+// substring StringComparator.
+func ContainsIgnoreCaseAndAccent(s string) *linear.StringComparator {
 	return &linear.StringComparator{ContainsIgnoreCaseAndAccent: ptr.To(s)}
 }
 
-func nullableEqIgnoreCase(s string) *linear.NullableStringComparator {
+// NullableEqIgnoreCase returns a case-insensitive equality NullableStringComparator.
+func NullableEqIgnoreCase(s string) *linear.NullableStringComparator {
 	return &linear.NullableStringComparator{EqIgnoreCase: ptr.To(s)}
 }
+
+// Internal aliases keep package-local call sites concise.
+var (
+	eqIgnoreCase                = EqIgnoreCase
+	containsIgnoreCase          = ContainsIgnoreCase
+	containsIgnoreCaseAndAccent = ContainsIgnoreCaseAndAccent
+	nullableEqIgnoreCase        = NullableEqIgnoreCase
+)
 
 func BuildTeamFilter(input string) *linear.TeamFilter {
 	return &linear.TeamFilter{

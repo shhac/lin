@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/filters"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
@@ -22,7 +23,7 @@ func registerSearch(parent *cobra.Command) {
 		client := linear.GetClient()
 
 		filter := &linear.InitiativeFilter{
-			Name: &linear.StringComparator{ContainsIgnoreCase: &args[0]},
+			Name: filters.ContainsIgnoreCase(args[0]),
 		}
 
 		resp, err := linear.InitiativeList(context.Background(), client, filter, page.Size(), page.Cursor())
