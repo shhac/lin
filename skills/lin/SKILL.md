@@ -139,6 +139,7 @@ lin project update content <id> "# Updated body content"
 lin project update start-date <id> 2025-01-15
 lin project update target-date <id> 2025-03-31
 lin project update priority <id> high
+lin project update labels <id> "Discovery, Roadmap"   # replaces project labels (project labels, not issue labels)
 lin project delete <id>                  # moves to trash
 lin project unarchive <id>               # restore trashed/archived project
 ```

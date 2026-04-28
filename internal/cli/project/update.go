@@ -21,6 +21,7 @@ func registerUpdate(parent *cobra.Command) {
 	registerUpdateStatus(update)
 	registerUpdateLead(update)
 	registerUpdatePriority(update)
+	registerUpdateLabels(update)
 
 	registerSimpleProjectUpdate(update, "description <id> <description>", "Update project description",
 		func(v string) linear.ProjectUpdateInput { return linear.ProjectUpdateInput{Description: &v} })

@@ -29,6 +29,7 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 - `lin project update priority <id> <value>` — none | urgent | high | medium | low
 - `lin project update icon <id> <emoji>`
 - `lin project update color <id> <hex>`
+- `lin project update labels <id> <labels>` — replace project labels (comma-separated names or UUIDs; resolved via `lin label list --type project`). Replace semantics: previously-set labels not listed are removed.
 - `lin project new <name> [--team <keys>] [--description <text>] [--lead <user>] [--start-date <YYYY-MM-DD>] [--target-date <YYYY-MM-DD>] [--status <status>] [--content <markdown>]`
 - `lin project delete <id>` — delete project (move to trash)
 - `lin project unarchive <id>` — restore trashed/archived project

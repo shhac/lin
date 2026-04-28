@@ -36,6 +36,10 @@ UPDATE (each is a subcommand):
   project update priority <id> <priority>    none|urgent|high|medium|low
   project update icon <id> <emoji>
   project update color <id> <hex>
+  project update labels <id> <labels>        Replace project labels (comma-separated names or UUIDs).
+                                             Resolved against project labels only — see
+                                             "lin label list --type project". Replace semantics: any
+                                             previously-set label not listed is removed.
 
 LIFECYCLE:
   project delete <id>          Delete (trash) a project

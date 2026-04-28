@@ -55,7 +55,7 @@ lin
 │   ├── get <id>
 │   ├── issues <id> [filters]
 │   ├── new <name> --team <teams>
-│   ├── update title|status|description|content|lead|start-date|target-date|priority|icon|color <id> <value>
+│   ├── update title|status|description|content|lead|start-date|target-date|priority|icon|color|labels <id> <value>
 │   ├── delete|unarchive <id>
 │   └── usage
 ├── initiative
