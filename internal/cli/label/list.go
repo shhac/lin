@@ -29,10 +29,7 @@ func registerList(label *cobra.Command) {
 	page := output.AddPageFlags(cmd)
 
 	cmd.Run = func(cmd *cobra.Command, _ []string) {
-		if err := validateType(typeFlag); err != nil {
-			output.WriteError(err)
-		}
-		if err := rejectTeamForProject(typeFlag, teamFlag); err != nil {
+		if err := validateLabelTypeFlags(typeFlag, teamFlag); err != nil {
 			output.WriteError(err)
 		}
 
@@ -89,51 +86,3 @@ func runProjectLabelList(ctx context.Context, client graphql.Client, page *outpu
 	output.PrintPage(items, resp.ProjectLabels.PageInfo.HasNextPage, resp.ProjectLabels.PageInfo.EndCursor)
 }
 
-func mapIssueLabel(l linear.IssueLabelFields) map[string]any {
-	m := map[string]any{
-		"id":    l.Id,
-		"name":  l.Name,
-		"color": l.Color,
-	}
-	if l.Description != nil && *l.Description != "" {
-		m["description"] = *l.Description
-	}
-	if l.IsGroup {
-		m["isGroup"] = true
-	}
-	if l.Team != nil {
-		m["team"] = map[string]any{
-			"id":   l.Team.Id,
-			"key":  l.Team.Key,
-			"name": l.Team.Name,
-		}
-	}
-	if l.Parent != nil {
-		m["parent"] = map[string]any{
-			"id":   l.Parent.Id,
-			"name": l.Parent.Name,
-		}
-	}
-	return m
-}
-
-func mapProjectLabel(l linear.ProjectLabelFields) map[string]any {
-	m := map[string]any{
-		"id":    l.Id,
-		"name":  l.Name,
-		"color": l.Color,
-	}
-	if l.Description != nil && *l.Description != "" {
-		m["description"] = *l.Description
-	}
-	if l.IsGroup {
-		m["isGroup"] = true
-	}
-	if l.Parent != nil {
-		m["parent"] = map[string]any{
-			"id":   l.Parent.Id,
-			"name": l.Parent.Name,
-		}
-	}
-	return m
-}

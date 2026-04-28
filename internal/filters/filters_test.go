@@ -448,6 +448,20 @@ func TestBuildProjectLabelFilter_SearchOverwritesName(t *testing.T) {
 	}
 }
 
+func TestBuildProjectLabelFilter_AllOptsCombined(t *testing.T) {
+	tru := true
+	f := BuildProjectLabelFilter(ProjectLabelFilterOpts{Name: "Discovery", IsGroup: &tru})
+	if f == nil {
+		t.Fatal("expected non-nil filter")
+	}
+	if f.Name == nil || f.Name.EqIgnoreCase == nil || *f.Name.EqIgnoreCase != "Discovery" {
+		t.Error("expected name filter")
+	}
+	if f.IsGroup == nil || f.IsGroup.Eq == nil || *f.IsGroup.Eq != true {
+		t.Error("expected isGroup filter")
+	}
+}
+
 // Verify the filter types are correctly shaped (compile-time check + runtime spot check).
 func TestBuildIssueFilter_Project_UUID(t *testing.T) {
 	uuid := "a1b2c3d4-e5f6-7890-abcd-ef1234567890"

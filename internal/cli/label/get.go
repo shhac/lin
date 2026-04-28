@@ -6,7 +6,6 @@ import (
 	"github.com/Khan/genqlient/graphql"
 	"github.com/spf13/cobra"
 
-	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/filters"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
@@ -25,10 +24,7 @@ func registerGet(label *cobra.Command) {
 		Short: "Get a single label by ID or exact name",
 		Args:  cobra.ExactArgs(1),
 		Run: func(_ *cobra.Command, args []string) {
-			if err := validateType(typeFlag); err != nil {
-				output.WriteError(err)
-			}
-			if err := rejectTeamForProject(typeFlag, teamFlag); err != nil {
+			if err := validateLabelTypeFlags(typeFlag, teamFlag); err != nil {
 				output.WriteError(err)
 			}
 
@@ -69,13 +65,12 @@ func getIssueLabel(ctx context.Context, client graphql.Client, input, teamID str
 
 	nodes := resp.IssueLabels.Nodes
 	if len(nodes) == 0 {
-		output.WriteError(apierrors.Newf(apierrors.FixableByAgent, "label not found: %q", input).
-			WithHint("try `lin label search` to find candidates"))
+		output.WriteError(labelNotFoundErr("label", input, "try `lin label search` to find candidates"))
 	}
 	if len(nodes) > 1 {
-		output.WriteError(apierrors.Newf(apierrors.FixableByAgent,
-			"%d labels match %q — pass a UUID or use --team to disambiguate", len(nodes), input).
-			WithHint("`lin label list --name <name>` shows all matches with team info"))
+		output.WriteError(ambiguousLabelErr("label", input, len(nodes),
+			"pass a UUID or use --team to disambiguate",
+			"`lin label list --name <name>` shows all matches with team info"))
 	}
 
 	output.PrintJSON(mapIssueLabel(nodes[0].IssueLabelFields))
@@ -96,13 +91,13 @@ func getProjectLabel(ctx context.Context, client graphql.Client, input string) {
 
 	nodes := resp.ProjectLabels.Nodes
 	if len(nodes) == 0 {
-		output.WriteError(apierrors.Newf(apierrors.FixableByAgent, "project label not found: %q", input).
-			WithHint("try `lin label search --type project` to find candidates"))
+		output.WriteError(labelNotFoundErr("project label", input,
+			"try `lin label search --type project` to find candidates"))
 	}
 	if len(nodes) > 1 {
-		output.WriteError(apierrors.Newf(apierrors.FixableByAgent,
-			"%d project labels match %q — pass a UUID to disambiguate", len(nodes), input).
-			WithHint("`lin label list --type project --name <name>` shows all matches"))
+		output.WriteError(ambiguousLabelErr("project label", input, len(nodes),
+			"pass a UUID to disambiguate",
+			"`lin label list --type project --name <name>` shows all matches"))
 	}
 
 	output.PrintJSON(mapProjectLabel(nodes[0].ProjectLabelFields))

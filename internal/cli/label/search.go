@@ -25,10 +25,7 @@ func registerSearch(label *cobra.Command) {
 	page := output.AddPageFlags(cmd)
 
 	cmd.Run = func(_ *cobra.Command, args []string) {
-		if err := validateType(typeFlag); err != nil {
-			output.WriteError(err)
-		}
-		if err := rejectTeamForProject(typeFlag, teamFlag); err != nil {
+		if err := validateLabelTypeFlags(typeFlag, teamFlag); err != nil {
 			output.WriteError(err)
 		}
 
