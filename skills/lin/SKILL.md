@@ -185,11 +185,14 @@ lin team get ENG                         # includes estimate config + valid valu
 lin team states ENG                      # workflow states (discover valid status values)
 lin user me
 lin user list --team ENG
-lin label list --team ENG                # all labels under a team (incl. workspace-wide)
+lin label list --team ENG                # issue labels under a team (incl. workspace-wide)
 lin label list --name "Bug"              # exact-name match (case-insensitive); shows team for each result
 lin label search "perf"                  # substring search (case- and accent-insensitive)
 lin label get "Test coverage" --team ENG # single label; --team disambiguates duplicate names
 lin label get <uuid>                     # always unique
+lin label list --type project            # workspace-wide project labels (no --team — projects labels aren't team-scoped)
+lin label search "discovery" --type project
+lin label get "Discovery" --type project
 lin cycle list ENG --current
 lin cycle get <id>
 ```

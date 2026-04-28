@@ -403,6 +403,8 @@ State types: `triage` | `backlog` | `unstarted` | `started` | `completed` | `can
 
 ## Labels (`label list`, `label search`, `label get`)
 
+Issue labels (`--type issue`, default):
+
 ```json
 {
   "id": "...",
@@ -415,7 +417,22 @@ State types: `triage` | `backlog` | `unstarted` | `started` | `completed` | `can
 }
 ```
 
-`description`, `isGroup`, `team`, and `parent` are omitted when not set. Workspace-wide labels have no `team`.
+`description`, `isGroup`, `team`, and `parent` are omitted when not set. Workspace-wide issue labels have no `team`.
+
+Project labels (`--type project`):
+
+```json
+{
+  "id": "...",
+  "name": "Discovery",
+  "color": "#4cb782",
+  "description": "Discovery-phase work",
+  "isGroup": false,
+  "parent": { "id": "...", "name": "Phase" }
+}
+```
+
+Project labels are workspace-scoped — there is no `team` field.
 
 ## Priority values
 

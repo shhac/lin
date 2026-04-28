@@ -12,7 +12,10 @@ import (
 )
 
 func registerSearch(label *cobra.Command) {
-	var teamFlag string
+	var (
+		typeFlag string
+		teamFlag string
+	)
 
 	cmd := &cobra.Command{
 		Use:   "search <text>",
@@ -22,29 +25,29 @@ func registerSearch(label *cobra.Command) {
 	page := output.AddPageFlags(cmd)
 
 	cmd.Run = func(_ *cobra.Command, args []string) {
+		if err := validateType(typeFlag); err != nil {
+			output.WriteError(err)
+		}
+		if err := rejectTeamForProject(typeFlag, teamFlag); err != nil {
+			output.WriteError(err)
+		}
+
 		client := linear.GetClient()
 		ctx := context.Background()
+
+		if typeFlag == labelTypeProject {
+			runProjectLabelList(ctx, client, page, filters.ProjectLabelFilterOpts{Search: args[0]})
+			return
+		}
 
 		teamID, err := resolvers.ResolveOptionalTeamID(client, teamFlag)
 		if err != nil {
 			output.PrintError(err.Error())
 		}
-
-		filter := filters.BuildIssueLabelFilter(filters.IssueLabelFilterOpts{Search: args[0]}, teamID)
-
-		resp, err := linear.IssueLabelList(ctx, client, page.Size(), page.Cursor(), filter)
-		if err != nil {
-			output.HandleGraphQLError(err)
-		}
-
-		items := make([]map[string]any, len(resp.IssueLabels.Nodes))
-		for i, n := range resp.IssueLabels.Nodes {
-			items[i] = mapIssueLabel(n.IssueLabelFields)
-		}
-
-		output.PrintPage(items, resp.IssueLabels.PageInfo.HasNextPage, resp.IssueLabels.PageInfo.EndCursor)
+		runIssueLabelList(ctx, client, page, filters.IssueLabelFilterOpts{Search: args[0]}, teamID)
 	}
 
-	cmd.Flags().StringVar(&teamFlag, "team", "", "Restrict search to a single team (key, name, or UUID)")
+	addTypeFlag(cmd, &typeFlag)
+	cmd.Flags().StringVar(&teamFlag, "team", "", "Restrict search to a single team (issue labels only; key, name, or UUID)")
 	label.AddCommand(cmd)
 }

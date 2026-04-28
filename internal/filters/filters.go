@@ -109,6 +109,31 @@ func BuildIssueLabelFilter(opts IssueLabelFilterOpts, teamID string) *linear.Iss
 	return f
 }
 
+type ProjectLabelFilterOpts struct {
+	Name    string // exact match (case-insensitive)
+	Search  string // substring match (case+accent insensitive)
+	IsGroup *bool
+}
+
+func BuildProjectLabelFilter(opts ProjectLabelFilterOpts) *linear.ProjectLabelFilter {
+	f := &linear.ProjectLabelFilter{}
+
+	if opts.Name != "" {
+		f.Name = eqIgnoreCase(opts.Name)
+	}
+	if opts.Search != "" {
+		f.Name = containsIgnoreCaseAndAccent(opts.Search)
+	}
+	if opts.IsGroup != nil {
+		f.IsGroup = &linear.BooleanComparator{Eq: opts.IsGroup}
+	}
+
+	if reflect.DeepEqual(*f, linear.ProjectLabelFilter{}) {
+		return nil
+	}
+	return f
+}
+
 type IssueFilterOpts struct {
 	Project      string
 	Team         string

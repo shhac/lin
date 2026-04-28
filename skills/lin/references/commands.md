@@ -146,9 +146,12 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 
 ## Labels
 
-- `lin label list [--team] [--name <text>] [--is-group[=false]]` — list labels (filterable). Output includes `team{id,key,name}` and `parent{id,name}` when present.
-- `lin label search <text> [--team]` — substring search by name (case- and accent-insensitive).
-- `lin label get <id|name> [--team]` — single label by UUID or exact name. Use `--team` (or a UUID) to disambiguate when a name is shared across teams.
+`IssueLabel` and `ProjectLabel` are distinct Linear entities; the same name can exist in both. Pass `--type project` to operate on project labels; the default is `issue`.
+
+- `lin label list [--type issue|project] [--team] [--name <text>] [--is-group[=false]]` — list labels (filterable). Issue-label output includes `team{id,key,name}` and `parent{id,name}` when present; project-label output omits `team` (project labels are workspace-only).
+- `lin label search <text> [--type issue|project] [--team]` — substring search by name (case- and accent-insensitive).
+- `lin label get <id|name> [--type issue|project] [--team]` — single label by UUID or exact name. Use `--team` (or a UUID) to disambiguate when a name is shared across teams (issue labels only).
+- `--team` is rejected with `--type=project` (project labels are workspace-scoped).
 
 ## Cycles
 

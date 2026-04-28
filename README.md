@@ -101,9 +101,9 @@ lin
 │   ├── me
 │   └── usage
 ├── label
-│   ├── list [--team] [--name] [--is-group]
-│   ├── search <text> [--team]
-│   ├── get <id|name> [--team]
+│   ├── list [--type issue|project] [--team] [--name] [--is-group]
+│   ├── search <text> [--type issue|project] [--team]
+│   ├── get <id|name> [--type issue|project] [--team]
 │   └── usage
 ├── cycle
 │   ├── list <team>

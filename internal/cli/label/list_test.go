@@ -58,6 +58,49 @@ func TestMapLabel_GroupLabel(t *testing.T) {
 	}
 }
 
+func TestMapProjectLabel_MinimalFields(t *testing.T) {
+	got := mapProjectLabel(linear.ProjectLabelFields{
+		Id:    "plabel-1",
+		Name:  "Discovery",
+		Color: "#abcdef",
+	})
+	if got["id"] != "plabel-1" {
+		t.Errorf("id = %v", got["id"])
+	}
+	if got["name"] != "Discovery" {
+		t.Errorf("name = %v", got["name"])
+	}
+	if got["color"] != "#abcdef" {
+		t.Errorf("color = %v", got["color"])
+	}
+	if _, ok := got["team"]; ok {
+		t.Error("project labels should never expose a team field")
+	}
+}
+
+func TestMapProjectLabel_GroupAndParent(t *testing.T) {
+	got := mapProjectLabel(linear.ProjectLabelFields{
+		Id:      "plabel-1",
+		Name:    "Quality",
+		Color:   "#000",
+		IsGroup: true,
+		Parent: &linear.ProjectLabelFieldsParentProjectLabel{
+			Id:   "parent-1",
+			Name: "Quality Group",
+		},
+	})
+	if got["isGroup"] != true {
+		t.Errorf("isGroup = %v", got["isGroup"])
+	}
+	parent, ok := got["parent"].(map[string]any)
+	if !ok {
+		t.Fatalf("parent not a map: %T", got["parent"])
+	}
+	if parent["name"] != "Quality Group" {
+		t.Errorf("parent.name = %v", parent["name"])
+	}
+}
+
 func TestMapLabel_TeamAndParent(t *testing.T) {
 	got := mapIssueLabel(linear.IssueLabelFields{
 		Id:    "x",

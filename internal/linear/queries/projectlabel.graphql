@@ -1,0 +1,21 @@
+fragment ProjectLabelFields on ProjectLabel {
+  id
+  name
+  color
+  description
+  isGroup
+  parent { id name }
+}
+
+query ProjectLabelList(
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+  # @genqlient(omitempty: true)
+  $filter: ProjectLabelFilter,
+) {
+  projectLabels(first: $first, after: $after, filter: $filter) {
+    nodes { ...ProjectLabelFields }
+    pageInfo { ...PageInfoFields }
+  }
+}

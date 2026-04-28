@@ -401,6 +401,53 @@ func TestBuildIssueLabelFilter_AllOptsCombined(t *testing.T) {
 	}
 }
 
+func TestBuildProjectLabelFilter_Empty(t *testing.T) {
+	if f := BuildProjectLabelFilter(ProjectLabelFilterOpts{}); f != nil {
+		t.Errorf("expected nil filter for empty opts, got %+v", f)
+	}
+}
+
+func TestBuildProjectLabelFilter_Name(t *testing.T) {
+	f := BuildProjectLabelFilter(ProjectLabelFilterOpts{Name: "Engineering"})
+	if f == nil {
+		t.Fatal("expected non-nil filter")
+	}
+	if f.Name == nil || f.Name.EqIgnoreCase == nil || *f.Name.EqIgnoreCase != "Engineering" {
+		t.Errorf("expected EqIgnoreCase=Engineering, got %+v", f.Name)
+	}
+}
+
+func TestBuildProjectLabelFilter_Search(t *testing.T) {
+	f := BuildProjectLabelFilter(ProjectLabelFilterOpts{Search: "eng"})
+	if f == nil {
+		t.Fatal("expected non-nil filter")
+	}
+	if f.Name == nil || f.Name.ContainsIgnoreCaseAndAccent == nil || *f.Name.ContainsIgnoreCaseAndAccent != "eng" {
+		t.Errorf("expected substring filter, got %+v", f.Name)
+	}
+}
+
+func TestBuildProjectLabelFilter_IsGroup(t *testing.T) {
+	tru := true
+	f := BuildProjectLabelFilter(ProjectLabelFilterOpts{IsGroup: &tru})
+	if f == nil {
+		t.Fatal("expected non-nil filter")
+	}
+	if f.IsGroup == nil || f.IsGroup.Eq == nil || *f.IsGroup.Eq != true {
+		t.Errorf("expected isGroup=true, got %+v", f.IsGroup)
+	}
+}
+
+func TestBuildProjectLabelFilter_SearchOverwritesName(t *testing.T) {
+	f := BuildProjectLabelFilter(ProjectLabelFilterOpts{Name: "Engineering", Search: "eng"})
+	if f == nil {
+		t.Fatal("expected non-nil filter")
+	}
+	if f.Name == nil || f.Name.ContainsIgnoreCaseAndAccent == nil {
+		t.Error("expected search to overwrite name")
+	}
+}
+
 // Verify the filter types are correctly shaped (compile-time check + runtime spot check).
 func TestBuildIssueFilter_Project_UUID(t *testing.T) {
 	uuid := "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
