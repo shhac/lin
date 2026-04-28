@@ -9,21 +9,21 @@ import (
 	"github.com/shhac/lin/internal/linear"
 )
 
-type ResolvedLabel struct {
+type ResolvedIssueLabel struct {
 	ID      string
 	Name    string
 	TeamKey string // empty for workspace-wide labels
 }
 
-func ResolveLabels(client graphql.Client, input, teamID string) ([]string, error) {
+func ResolveIssueLabels(client graphql.Client, input, teamID string) ([]string, error) {
 	inputs := splitAndTrim(input)
-	labels, err := fetchLabels(client, teamID)
+	labels, err := fetchIssueLabels(client, teamID)
 	if err != nil {
 		return nil, err
 	}
 	ids := make([]string, 0, len(inputs))
 	for _, raw := range inputs {
-		l, err := resolveOneLabel(raw, labels, teamID != "")
+		l, err := resolveOneIssueLabel(raw, labels, teamID != "")
 		if err != nil {
 			return nil, err
 		}
@@ -32,31 +32,31 @@ func ResolveLabels(client graphql.Client, input, teamID string) ([]string, error
 	return ids, nil
 }
 
-func fetchOrgLabels(client graphql.Client) ([]ResolvedLabel, error) {
-	nodes, err := linear.FetchAll(func(first int, after *string) ([]linear.LabelFields, bool, *string, error) {
-		resp, err := linear.LabelList(ctx(), client, first, after, nil)
+func fetchOrgIssueLabels(client graphql.Client) ([]ResolvedIssueLabel, error) {
+	nodes, err := linear.FetchAll(func(first int, after *string) ([]linear.IssueLabelFields, bool, *string, error) {
+		resp, err := linear.IssueLabelList(ctx(), client, first, after, nil)
 		if err != nil {
 			return nil, false, nil, err
 		}
-		out := make([]linear.LabelFields, len(resp.IssueLabels.Nodes))
+		out := make([]linear.IssueLabelFields, len(resp.IssueLabels.Nodes))
 		for i, n := range resp.IssueLabels.Nodes {
-			out[i] = n.LabelFields
+			out[i] = n.IssueLabelFields
 		}
 		return out, resp.IssueLabels.PageInfo.HasNextPage, resp.IssueLabels.PageInfo.EndCursor, nil
 	})
 	if err != nil {
 		return nil, err
 	}
-	labels := make([]ResolvedLabel, len(nodes))
+	labels := make([]ResolvedIssueLabel, len(nodes))
 	for i, l := range nodes {
-		labels[i] = ResolvedLabel{ID: l.Id, Name: l.Name, TeamKey: teamKeyOf(l)}
+		labels[i] = ResolvedIssueLabel{ID: l.Id, Name: l.Name, TeamKey: teamKeyOfIssueLabel(l)}
 	}
 	return labels, nil
 }
 
-func fetchLabels(client graphql.Client, teamID string) ([]ResolvedLabel, error) {
+func fetchIssueLabels(client graphql.Client, teamID string) ([]ResolvedIssueLabel, error) {
 	if teamID == "" {
-		return fetchOrgLabels(client)
+		return fetchOrgIssueLabels(client)
 	}
 
 	teamNodes, err := linear.FetchAll(func(first int, after *string) ([]linear.TeamLabelsTeamLabelsIssueLabelConnectionNodesIssueLabel, bool, *string, error) {
@@ -69,16 +69,16 @@ func fetchLabels(client graphql.Client, teamID string) ([]ResolvedLabel, error) 
 	if err != nil {
 		return nil, err
 	}
-	orgLabels, err := fetchOrgLabels(client)
+	orgLabels, err := fetchOrgIssueLabels(client)
 	if err != nil {
 		return nil, err
 	}
 
 	seen := map[string]bool{}
-	labels := make([]ResolvedLabel, 0, len(teamNodes)+len(orgLabels))
+	labels := make([]ResolvedIssueLabel, 0, len(teamNodes)+len(orgLabels))
 	for _, n := range teamNodes {
 		seen[n.Id] = true
-		labels = append(labels, ResolvedLabel{ID: n.Id, Name: n.Name, TeamKey: teamKeyOf(n.LabelFields)})
+		labels = append(labels, ResolvedIssueLabel{ID: n.Id, Name: n.Name, TeamKey: teamKeyOfIssueLabel(n.IssueLabelFields)})
 	}
 	for _, l := range orgLabels {
 		if !seen[l.ID] {
@@ -88,21 +88,21 @@ func fetchLabels(client graphql.Client, teamID string) ([]ResolvedLabel, error) 
 	return labels, nil
 }
 
-func teamKeyOf(l linear.LabelFields) string {
+func teamKeyOfIssueLabel(l linear.IssueLabelFields) string {
 	if l.Team == nil {
 		return ""
 	}
 	return l.Team.Key
 }
 
-func resolveOneLabel(input string, labels []ResolvedLabel, teamScoped bool) (ResolvedLabel, error) {
+func resolveOneIssueLabel(input string, labels []ResolvedIssueLabel, teamScoped bool) (ResolvedIssueLabel, error) {
 	for _, l := range labels {
 		if l.ID == input {
 			return l, nil
 		}
 	}
 	lower := strings.ToLower(input)
-	var matches []ResolvedLabel
+	var matches []ResolvedIssueLabel
 	for _, l := range labels {
 		if strings.ToLower(l.Name) == lower {
 			matches = append(matches, l)
@@ -113,12 +113,12 @@ func resolveOneLabel(input string, labels []ResolvedLabel, teamScoped bool) (Res
 		return matches[0], nil
 	}
 	if len(matches) == 0 {
-		return ResolvedLabel{}, labelNotFoundErr(input, labels)
+		return ResolvedIssueLabel{}, issueLabelNotFoundErr(input, labels)
 	}
-	return ResolvedLabel{}, ambiguousLabelErr(input, matches, teamScoped)
+	return ResolvedIssueLabel{}, ambiguousIssueLabelErr(input, matches, teamScoped)
 }
 
-func labelNotFoundErr(input string, labels []ResolvedLabel) error {
+func issueLabelNotFoundErr(input string, labels []ResolvedIssueLabel) error {
 	names := make([]string, len(labels))
 	for i, l := range labels {
 		names[i] = l.Name
@@ -126,7 +126,7 @@ func labelNotFoundErr(input string, labels []ResolvedLabel) error {
 	return fmt.Errorf("label not found: %q, available labels: %s", input, strings.Join(names, ", "))
 }
 
-func ambiguousLabelErr(input string, matches []ResolvedLabel, teamScoped bool) error {
+func ambiguousIssueLabelErr(input string, matches []ResolvedIssueLabel, teamScoped bool) error {
 	parts := make([]string, len(matches))
 	for i, l := range matches {
 		if l.TeamKey != "" {

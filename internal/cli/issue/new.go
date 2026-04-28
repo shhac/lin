@@ -175,7 +175,7 @@ func applyLabels(client graphql.Client, input *linear.IssueCreateInput, labels, 
 	if labels == "" {
 		return nil
 	}
-	ids, err := resolvers.ResolveLabels(client, labels, teamID)
+	ids, err := resolvers.ResolveIssueLabels(client, labels, teamID)
 	if err != nil {
 		return err
 	}

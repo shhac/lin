@@ -55,7 +55,7 @@ query TeamLabels(
 ) {
   team(id: $id) {
     labels(first: $first, after: $after) {
-      nodes { ...LabelFields }
+      nodes { ...IssueLabelFields }
       pageInfo { ...PageInfoFields }
     }
   }

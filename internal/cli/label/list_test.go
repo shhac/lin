@@ -7,7 +7,7 @@ import (
 )
 
 func TestMapLabel_MinimalFields(t *testing.T) {
-	got := mapLabel(linear.LabelFields{
+	got := mapIssueLabel(linear.IssueLabelFields{
 		Id:    "label-1",
 		Name:  "Bug",
 		Color: "#ff0000",
@@ -37,7 +37,7 @@ func TestMapLabel_MinimalFields(t *testing.T) {
 
 func TestMapLabel_EmptyDescriptionString(t *testing.T) {
 	empty := ""
-	got := mapLabel(linear.LabelFields{Id: "x", Name: "y", Color: "#000", Description: &empty})
+	got := mapIssueLabel(linear.IssueLabelFields{Id: "x", Name: "y", Color: "#000", Description: &empty})
 	if _, ok := got["description"]; ok {
 		t.Error("empty-string description should be omitted")
 	}
@@ -45,30 +45,30 @@ func TestMapLabel_EmptyDescriptionString(t *testing.T) {
 
 func TestMapLabel_PopulatedDescription(t *testing.T) {
 	desc := "Tests added or improved"
-	got := mapLabel(linear.LabelFields{Id: "x", Name: "y", Color: "#000", Description: &desc})
+	got := mapIssueLabel(linear.IssueLabelFields{Id: "x", Name: "y", Color: "#000", Description: &desc})
 	if got["description"] != desc {
 		t.Errorf("description = %v", got["description"])
 	}
 }
 
 func TestMapLabel_GroupLabel(t *testing.T) {
-	got := mapLabel(linear.LabelFields{Id: "x", Name: "y", Color: "#000", IsGroup: true})
+	got := mapIssueLabel(linear.IssueLabelFields{Id: "x", Name: "y", Color: "#000", IsGroup: true})
 	if got["isGroup"] != true {
 		t.Errorf("isGroup = %v", got["isGroup"])
 	}
 }
 
 func TestMapLabel_TeamAndParent(t *testing.T) {
-	got := mapLabel(linear.LabelFields{
+	got := mapIssueLabel(linear.IssueLabelFields{
 		Id:    "x",
 		Name:  "y",
 		Color: "#000",
-		Team: &linear.LabelFieldsTeam{
+		Team: &linear.IssueLabelFieldsTeam{
 			Id:   "team-1",
 			Key:  "ENG",
 			Name: "Engineering",
 		},
-		Parent: &linear.LabelFieldsParentIssueLabel{
+		Parent: &linear.IssueLabelFieldsParentIssueLabel{
 			Id:   "parent-1",
 			Name: "Quality",
 		},

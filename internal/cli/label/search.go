@@ -30,16 +30,16 @@ func registerSearch(label *cobra.Command) {
 			output.PrintError(err.Error())
 		}
 
-		filter := filters.BuildIssueLabelFilter(filters.LabelFilterOpts{Search: args[0]}, teamID)
+		filter := filters.BuildIssueLabelFilter(filters.IssueLabelFilterOpts{Search: args[0]}, teamID)
 
-		resp, err := linear.LabelList(ctx, client, page.Size(), page.Cursor(), filter)
+		resp, err := linear.IssueLabelList(ctx, client, page.Size(), page.Cursor(), filter)
 		if err != nil {
 			output.HandleGraphQLError(err)
 		}
 
 		items := make([]map[string]any, len(resp.IssueLabels.Nodes))
 		for i, n := range resp.IssueLabels.Nodes {
-			items[i] = mapLabel(n.LabelFields)
+			items[i] = mapIssueLabel(n.IssueLabelFields)
 		}
 
 		output.PrintPage(items, resp.IssueLabels.PageInfo.HasNextPage, resp.IssueLabels.PageInfo.EndCursor)

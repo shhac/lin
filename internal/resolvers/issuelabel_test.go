@@ -7,11 +7,11 @@ import (
 	"github.com/shhac/lin/internal/testutil"
 )
 
-func TestResolveLabels_SingleByName(t *testing.T) {
+func TestResolveIssueLabels_SingleByName(t *testing.T) {
 	mock := testutil.NewMockLinear()
 	defer mock.Close()
 
-	mock.Handle("LabelList", map[string]any{
+	mock.Handle("IssueLabelList", map[string]any{
 		"issueLabels": map[string]any{
 			"nodes": []map[string]any{
 				{"id": "aaaaaaaa-1111-2222-3333-444444444444", "name": "Bug", "color": "#ff0000"},
@@ -21,7 +21,7 @@ func TestResolveLabels_SingleByName(t *testing.T) {
 		},
 	})
 
-	ids, err := ResolveLabels(mock.Client(), "Bug", "")
+	ids, err := ResolveIssueLabels(mock.Client(), "Bug", "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -30,11 +30,11 @@ func TestResolveLabels_SingleByName(t *testing.T) {
 	}
 }
 
-func TestResolveLabels_ByID(t *testing.T) {
+func TestResolveIssueLabels_ByID(t *testing.T) {
 	mock := testutil.NewMockLinear()
 	defer mock.Close()
 
-	mock.Handle("LabelList", map[string]any{
+	mock.Handle("IssueLabelList", map[string]any{
 		"issueLabels": map[string]any{
 			"nodes": []map[string]any{
 				{"id": "aaaaaaaa-1111-2222-3333-444444444444", "name": "Bug", "color": "#ff0000"},
@@ -43,7 +43,7 @@ func TestResolveLabels_ByID(t *testing.T) {
 		},
 	})
 
-	ids, err := ResolveLabels(mock.Client(), "aaaaaaaa-1111-2222-3333-444444444444", "")
+	ids, err := ResolveIssueLabels(mock.Client(), "aaaaaaaa-1111-2222-3333-444444444444", "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -52,11 +52,11 @@ func TestResolveLabels_ByID(t *testing.T) {
 	}
 }
 
-func TestResolveLabels_CommaSeparated(t *testing.T) {
+func TestResolveIssueLabels_CommaSeparated(t *testing.T) {
 	mock := testutil.NewMockLinear()
 	defer mock.Close()
 
-	mock.Handle("LabelList", map[string]any{
+	mock.Handle("IssueLabelList", map[string]any{
 		"issueLabels": map[string]any{
 			"nodes": []map[string]any{
 				{"id": "aaaaaaaa-1111-2222-3333-444444444444", "name": "Bug", "color": "#ff0000"},
@@ -67,7 +67,7 @@ func TestResolveLabels_CommaSeparated(t *testing.T) {
 		},
 	})
 
-	ids, err := ResolveLabels(mock.Client(), "Bug, Feature", "")
+	ids, err := ResolveIssueLabels(mock.Client(), "Bug, Feature", "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -82,11 +82,11 @@ func TestResolveLabels_CommaSeparated(t *testing.T) {
 	}
 }
 
-func TestResolveLabels_NotFound(t *testing.T) {
+func TestResolveIssueLabels_NotFound(t *testing.T) {
 	mock := testutil.NewMockLinear()
 	defer mock.Close()
 
-	mock.Handle("LabelList", map[string]any{
+	mock.Handle("IssueLabelList", map[string]any{
 		"issueLabels": map[string]any{
 			"nodes": []map[string]any{
 				{"id": "aaaaaaaa-1111-2222-3333-444444444444", "name": "Bug", "color": "#ff0000"},
@@ -95,7 +95,7 @@ func TestResolveLabels_NotFound(t *testing.T) {
 		},
 	})
 
-	_, err := ResolveLabels(mock.Client(), "NonExistent", "")
+	_, err := ResolveIssueLabels(mock.Client(), "NonExistent", "")
 	if err == nil {
 		t.Fatal("expected error for not found label")
 	}
@@ -107,11 +107,11 @@ func TestResolveLabels_NotFound(t *testing.T) {
 	}
 }
 
-func TestResolveLabels_Ambiguous(t *testing.T) {
+func TestResolveIssueLabels_Ambiguous(t *testing.T) {
 	mock := testutil.NewMockLinear()
 	defer mock.Close()
 
-	mock.Handle("LabelList", map[string]any{
+	mock.Handle("IssueLabelList", map[string]any{
 		"issueLabels": map[string]any{
 			"nodes": []map[string]any{
 				{
@@ -131,7 +131,7 @@ func TestResolveLabels_Ambiguous(t *testing.T) {
 		},
 	})
 
-	_, err := ResolveLabels(mock.Client(), "Bug", "")
+	_, err := ResolveIssueLabels(mock.Client(), "Bug", "")
 	if err == nil {
 		t.Fatal("expected error for ambiguous label")
 	}
@@ -146,7 +146,7 @@ func TestResolveLabels_Ambiguous(t *testing.T) {
 	}
 }
 
-func TestResolveLabels_WithTeamScope(t *testing.T) {
+func TestResolveIssueLabels_WithTeamScope(t *testing.T) {
 	mock := testutil.NewMockLinear()
 	defer mock.Close()
 
@@ -161,7 +161,7 @@ func TestResolveLabels_WithTeamScope(t *testing.T) {
 			},
 		},
 	})
-	mock.Handle("LabelList", map[string]any{
+	mock.Handle("IssueLabelList", map[string]any{
 		"issueLabels": map[string]any{
 			"nodes": []map[string]any{
 				{"id": "22222222-aaaa-bbbb-cccc-dddddddddddd", "name": "Global Label", "color": "#0000ff"},
@@ -170,7 +170,7 @@ func TestResolveLabels_WithTeamScope(t *testing.T) {
 		},
 	})
 
-	ids, err := ResolveLabels(mock.Client(), "Team Bug", teamID)
+	ids, err := ResolveIssueLabels(mock.Client(), "Team Bug", teamID)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -179,11 +179,11 @@ func TestResolveLabels_WithTeamScope(t *testing.T) {
 	}
 }
 
-func TestResolveLabels_CaseInsensitive(t *testing.T) {
+func TestResolveIssueLabels_CaseInsensitive(t *testing.T) {
 	mock := testutil.NewMockLinear()
 	defer mock.Close()
 
-	mock.Handle("LabelList", map[string]any{
+	mock.Handle("IssueLabelList", map[string]any{
 		"issueLabels": map[string]any{
 			"nodes": []map[string]any{
 				{"id": "aaaaaaaa-1111-2222-3333-444444444444", "name": "Bug", "color": "#ff0000"},
@@ -192,7 +192,7 @@ func TestResolveLabels_CaseInsensitive(t *testing.T) {
 		},
 	})
 
-	ids, err := ResolveLabels(mock.Client(), "bug", "")
+	ids, err := ResolveIssueLabels(mock.Client(), "bug", "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

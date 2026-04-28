@@ -35,20 +35,20 @@ func registerList(label *cobra.Command) {
 			output.PrintError(err.Error())
 		}
 
-		opts := filters.LabelFilterOpts{Name: nameFlag}
+		opts := filters.IssueLabelFilterOpts{Name: nameFlag}
 		if cmd.Flags().Changed("is-group") {
 			opts.IsGroup = ptr.To(groupFlag)
 		}
 		filter := filters.BuildIssueLabelFilter(opts, teamID)
 
-		resp, err := linear.LabelList(ctx, client, page.Size(), page.Cursor(), filter)
+		resp, err := linear.IssueLabelList(ctx, client, page.Size(), page.Cursor(), filter)
 		if err != nil {
 			output.HandleGraphQLError(err)
 		}
 
 		items := make([]map[string]any, len(resp.IssueLabels.Nodes))
 		for i, n := range resp.IssueLabels.Nodes {
-			items[i] = mapLabel(n.LabelFields)
+			items[i] = mapIssueLabel(n.IssueLabelFields)
 		}
 
 		output.PrintPage(items, resp.IssueLabels.PageInfo.HasNextPage, resp.IssueLabels.PageInfo.EndCursor)
@@ -60,7 +60,7 @@ func registerList(label *cobra.Command) {
 	label.AddCommand(cmd)
 }
 
-func mapLabel(l linear.LabelFields) map[string]any {
+func mapIssueLabel(l linear.IssueLabelFields) map[string]any {
 	m := map[string]any{
 		"id":    l.Id,
 		"name":  l.Name,

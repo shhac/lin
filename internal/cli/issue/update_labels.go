@@ -21,7 +21,7 @@ func registerUpdateLabels(parent *cobra.Command) {
 
 			teamID := resolveIssueTeamID(ctx, client, args[0])
 
-			labelIds, err := resolvers.ResolveLabels(client, args[1], teamID)
+			labelIds, err := resolvers.ResolveIssueLabels(client, args[1], teamID)
 			if err != nil {
 				output.PrintError(err.Error())
 			}

@@ -34,10 +34,10 @@ func registerGet(label *cobra.Command) {
 			if filters.IsUUID(input) {
 				filter = &linear.IssueLabelFilter{Id: &linear.IDComparator{Eq: ptr.To(input)}}
 			} else {
-				filter = filters.BuildIssueLabelFilter(filters.LabelFilterOpts{Name: input}, teamID)
+				filter = filters.BuildIssueLabelFilter(filters.IssueLabelFilterOpts{Name: input}, teamID)
 			}
 
-			resp, err := linear.LabelList(ctx, client, 50, nil, filter)
+			resp, err := linear.IssueLabelList(ctx, client, 50, nil, filter)
 			if err != nil {
 				output.HandleGraphQLError(err)
 			}
@@ -53,7 +53,7 @@ func registerGet(label *cobra.Command) {
 					WithHint("`lin label list --name <name>` shows all matches with team info"))
 			}
 
-			output.PrintJSON(mapLabel(nodes[0].LabelFields))
+			output.PrintJSON(mapIssueLabel(nodes[0].IssueLabelFields))
 		},
 	}
 

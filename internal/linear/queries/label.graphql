@@ -1,4 +1,4 @@
-fragment LabelFields on IssueLabel {
+fragment IssueLabelFields on IssueLabel {
   id
   name
   color
@@ -8,7 +8,7 @@ fragment LabelFields on IssueLabel {
   parent { id name }
 }
 
-query LabelList(
+query IssueLabelList(
   $first: Int!,
   # @genqlient(omitempty: true)
   $after: String,
@@ -16,7 +16,7 @@ query LabelList(
   $filter: IssueLabelFilter,
 ) {
   issueLabels(first: $first, after: $after, filter: $filter) {
-    nodes { ...LabelFields }
+    nodes { ...IssueLabelFields }
     pageInfo { ...PageInfoFields }
   }
 }
