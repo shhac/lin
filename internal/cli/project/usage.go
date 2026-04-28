@@ -16,7 +16,7 @@ SEARCH & LIST:
 
 GET:
   project get <id>             Project summary: id, slugId, url, name, description, content,
-                               status, progress, lead, startDate, targetDate, milestones[]
+                               status, progress, lead, startDate, targetDate, labels[], milestones[]
   project issues <id>          Issues in a project
     [--status] [--assignee] [--priority] [--limit] [--cursor]
 

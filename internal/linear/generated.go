@@ -10966,6 +10966,8 @@ type ProjectGetProject struct {
 	UpdatedAt string `json:"updatedAt"`
 	// The user who leads the project. The project lead is typically responsible for posting status updates and driving the project to completion. Null if no lead is assigned.
 	Lead *ProjectGetProjectLeadUser `json:"lead,omitempty"`
+	// Labels associated with this project.
+	Labels ProjectGetProjectLabelsProjectLabelConnection `json:"labels"`
 	// Milestones associated with the project.
 	ProjectMilestones ProjectGetProjectProjectMilestonesProjectMilestoneConnection `json:"projectMilestones"`
 }
@@ -11018,9 +11020,43 @@ func (v *ProjectGetProject) GetUpdatedAt() string { return v.UpdatedAt }
 // GetLead returns ProjectGetProject.Lead, and is useful for accessing the field via an interface.
 func (v *ProjectGetProject) GetLead() *ProjectGetProjectLeadUser { return v.Lead }
 
+// GetLabels returns ProjectGetProject.Labels, and is useful for accessing the field via an interface.
+func (v *ProjectGetProject) GetLabels() ProjectGetProjectLabelsProjectLabelConnection {
+	return v.Labels
+}
+
 // GetProjectMilestones returns ProjectGetProject.ProjectMilestones, and is useful for accessing the field via an interface.
 func (v *ProjectGetProject) GetProjectMilestones() ProjectGetProjectProjectMilestonesProjectMilestoneConnection {
 	return v.ProjectMilestones
+}
+
+// ProjectGetProjectLabelsProjectLabelConnection includes the requested fields of the GraphQL type ProjectLabelConnection.
+type ProjectGetProjectLabelsProjectLabelConnection struct {
+	Nodes []ProjectGetProjectLabelsProjectLabelConnectionNodesProjectLabel `json:"nodes,omitempty"`
+}
+
+// GetNodes returns ProjectGetProjectLabelsProjectLabelConnection.Nodes, and is useful for accessing the field via an interface.
+func (v *ProjectGetProjectLabelsProjectLabelConnection) GetNodes() []ProjectGetProjectLabelsProjectLabelConnectionNodesProjectLabel {
+	return v.Nodes
+}
+
+// ProjectGetProjectLabelsProjectLabelConnectionNodesProjectLabel includes the requested fields of the GraphQL type ProjectLabel.
+// The GraphQL type's documentation follows.
+//
+// A label that can be applied to projects for categorization. Project labels are workspace-level and can be organized into groups with a parent-child hierarchy. Only child labels (not group labels) can be directly applied to projects.
+type ProjectGetProjectLabelsProjectLabelConnectionNodesProjectLabel struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The label's name.
+	Name string `json:"name"`
+}
+
+// GetId returns ProjectGetProjectLabelsProjectLabelConnectionNodesProjectLabel.Id, and is useful for accessing the field via an interface.
+func (v *ProjectGetProjectLabelsProjectLabelConnectionNodesProjectLabel) GetId() string { return v.Id }
+
+// GetName returns ProjectGetProjectLabelsProjectLabelConnectionNodesProjectLabel.Name, and is useful for accessing the field via an interface.
+func (v *ProjectGetProjectLabelsProjectLabelConnectionNodesProjectLabel) GetName() string {
+	return v.Name
 }
 
 // ProjectGetProjectLeadUser includes the requested fields of the GraphQL type User.
@@ -17992,6 +18028,12 @@ query ProjectGet ($id: String!) {
 		lead {
 			id
 			name
+		}
+		labels {
+			nodes {
+				id
+				name
+			}
 		}
 		projectMilestones {
 			nodes {

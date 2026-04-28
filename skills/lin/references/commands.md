@@ -17,7 +17,7 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 
 - `lin project search <text>` — search projects by name
 - `lin project list [--team] [--status] [--limit] [--cursor]` — list projects
-- `lin project get <id>` — project summary with lead, milestones, url, and content (markdown body, truncated by default)
+- `lin project get <id>` — project summary with lead, labels, milestones, url, and content (markdown body, truncated by default)
 - `lin project issues <id> [filters]` — issues in a project
 - `lin project update title <id> <value>`
 - `lin project update status <id> <value>` — backlog | planned | started | paused | completed | canceled

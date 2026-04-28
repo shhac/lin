@@ -50,6 +50,12 @@ func registerGet(parent *cobra.Command) {
 				}
 			}
 
+			labels := make([]map[string]any, len(p.Labels.Nodes))
+			for i, l := range p.Labels.Nodes {
+				labels[i] = map[string]any{"id": l.Id, "name": l.Name}
+			}
+			result["labels"] = labels
+
 			milestones := make([]map[string]any, len(p.ProjectMilestones.Nodes))
 			for i, m := range p.ProjectMilestones.Nodes {
 				milestones[i] = map[string]any{

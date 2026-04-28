@@ -157,6 +157,8 @@ Includes comment count, branch name, and attachments (e.g., linked GitHub PRs):
 
 Use `project get <id>` with `--expand content` or `--full` for the full markdown body.
 
+`project get <id>` also returns `labels: [{id, name}]` (project labels — distinct from issue labels) and `milestones: [{id, name, targetDate}]`.
+
 ## Initiative list items
 
 ```json

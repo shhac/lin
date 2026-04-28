@@ -18,6 +18,7 @@ query ProjectGet($id: String!) {
     createdAt
     updatedAt
     lead { id name }
+    labels { nodes { id name } }
     projectMilestones {
       nodes { id name targetDate }
     }
