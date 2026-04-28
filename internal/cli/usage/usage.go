@@ -19,7 +19,7 @@ COMMANDS:
   project list [--team] [--status]        List projects
   project get <id>                        Project summary + milestones + content
   project issues <id>                     Issues in a project
-  project update <field> <id> <value>     Update (title|status|description|lead)
+  project update <field> <id> <value>     Update (title|status|description|lead|labels|...)
   project new <name> --team <t> [options]  Create project
   project delete <id>                     Delete (trash) a project
   project unarchive <id>                  Restore trashed/archived project
@@ -63,7 +63,7 @@ COMMANDS:
   user list [--team]                      List users
   user me                                 Current user
 
-  label list [--team]                     List labels
+  label list [--type issue|project] [--team]  List labels (default --type=issue; --team is issue-only)
   cycle list <team>                       List cycles
   cycle get <id>                          Cycle details
 
