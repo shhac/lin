@@ -76,9 +76,9 @@ func BuildNullableProjectFilter(input string) *linear.NullableProjectFilter {
 }
 
 type IssueLabelFilterOpts struct {
-	Name   string // exact match (case-insensitive)
-	Search string // substring match (case+accent insensitive)
-	Team   string // team key/name/UUID
+	Name    string // exact match (case-insensitive)
+	Search  string // substring match (case+accent insensitive)
+	Team    string // team key/name/UUID
 	IsGroup *bool
 }
 
@@ -135,14 +135,14 @@ func BuildProjectLabelFilter(opts ProjectLabelFilterOpts) *linear.ProjectLabelFi
 }
 
 type IssueFilterOpts struct {
-	Project      string
-	Team         string
-	Assignee     string
-	Status       string
-	Priority     string
-	Label        string
-	Cycle        string
-	UpdatedAfter string
+	Project       string
+	Team          string
+	Assignee      string
+	Status        string
+	Priority      string
+	Label         string
+	Cycle         string
+	UpdatedAfter  string
 	UpdatedBefore string
 	CreatedAfter  string
 	CreatedBefore string

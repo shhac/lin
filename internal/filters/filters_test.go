@@ -483,4 +483,3 @@ func TestBuildIssueFilter_Project_Name(t *testing.T) {
 		t.Error("expected name match for non-UUID project input")
 	}
 }
-

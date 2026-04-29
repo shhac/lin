@@ -3,6 +3,7 @@ package label
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/cli/shared"
 	"github.com/shhac/lin/internal/output"
 )
 
@@ -17,7 +18,7 @@ func Register(parent *cobra.Command) {
 	registerList(label)
 	registerSearch(label)
 	registerGet(label)
-	registerUsage(label)
+	shared.RegisterUsage(label, "label", usageText)
 
 	parent.AddCommand(label)
 }

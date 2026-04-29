@@ -76,7 +76,7 @@ func registerWorkspaceRemove(workspace *cobra.Command) {
 			newDefault := config.GetDefaultWorkspace()
 			result := map[string]any{
 				"ok":                true,
-				"removed":          alias,
+				"removed":           alias,
 				"default_workspace": nilIfEmpty(newDefault),
 			}
 			if wasDefault {

@@ -1,11 +1,5 @@
 package project
 
-import (
-	"fmt"
-
-	"github.com/spf13/cobra"
-)
-
 const usageText = `lin project — Project operations (search, list, get, create, update)
 
 SEARCH & LIST:
@@ -50,15 +44,3 @@ TEAM: Team key (ENG), name, or UUID.
 LEAD: Name, email, or user ID.
 PROJECT STATUS: backlog|planned|started|paused|completed|canceled
 PAGINATION: --limit <n> --cursor <token> on search, list, and issues.`
-
-func registerUsage(parent *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "usage",
-		Short: "Print detailed project command documentation (LLM-optimized)",
-		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(usageText)
-		},
-	}
-	parent.AddCommand(cmd)
-}

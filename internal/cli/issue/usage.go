@@ -1,11 +1,5 @@
 package issue
 
-import (
-	"fmt"
-
-	"github.com/spf13/cobra"
-)
-
 const usageText = `lin issue — Issue operations (search, list, create, update, comment, relate, archive, attach, history)
 
 SEARCH & LIST:
@@ -57,14 +51,3 @@ ATTACHMENTS:
 
 IDS: Issue keys (ENG-123) or UUIDs. PRIORITY: none|urgent|high|medium|low
 PAGINATION: --limit <n> --cursor <token> on search and list.`
-
-func registerUsage(parent *cobra.Command) {
-	parent.AddCommand(&cobra.Command{
-		Use:   "usage",
-		Short: "Print detailed issue command documentation (LLM-optimized)",
-		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(usageText)
-		},
-	})
-}

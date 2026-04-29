@@ -1,11 +1,5 @@
 package document
 
-import (
-	"fmt"
-
-	"github.com/spf13/cobra"
-)
-
 const usageText = `lin document — Document operations (search, list, get, create, update)
 
 SEARCH:
@@ -39,15 +33,3 @@ PROJECT: Accepts UUID, slug ID, or name (case-insensitive).
 CREATOR: Filter by user ID, name, display name, or email.
 CONTENT: Markdown format. Full content returned by "get"; truncated in list/search.
 PAGINATION: --limit <n> --cursor <token> on search and list.`
-
-func registerUsage(parent *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "usage",
-		Short: "Print detailed document command documentation (LLM-optimized)",
-		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(usageText)
-		},
-	}
-	parent.AddCommand(cmd)
-}

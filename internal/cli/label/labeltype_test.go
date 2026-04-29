@@ -37,11 +37,11 @@ func TestValidateType(t *testing.T) {
 
 func TestRejectTeamForProject(t *testing.T) {
 	tests := []struct {
-		name      string
-		typeFlag  string
-		teamFlag  string
-		wantErr   bool
-		wantHint  bool
+		name     string
+		typeFlag string
+		teamFlag string
+		wantErr  bool
+		wantHint bool
 	}{
 		{"project + team is rejected", "project", "ENG", true, true},
 		{"project + empty team is allowed", "project", "", false, false},

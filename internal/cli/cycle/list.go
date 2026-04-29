@@ -133,4 +133,3 @@ func pickCycle(
 	}
 	return best, found
 }
-

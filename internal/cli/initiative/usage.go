@@ -1,12 +1,5 @@
 package initiative
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/spf13/cobra"
-)
-
 const usageText = `lin initiative — Manage Linear initiatives (replaces roadmap)
 
 SEARCH & LIST:
@@ -50,15 +43,3 @@ LIFECYCLE:
 IDS: <id> accepts UUID, slug ID, or initiative name.
 PAGINATION: --limit <n> --cursor <token> on list and projects.
 STATUS: planned | active | completed`
-
-func registerUsage(parent *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "usage",
-		Short: "Print detailed initiative command documentation (LLM-optimized)",
-		Args:  cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
-			fmt.Println(strings.TrimSpace(usageText))
-		},
-	}
-	parent.AddCommand(cmd)
-}

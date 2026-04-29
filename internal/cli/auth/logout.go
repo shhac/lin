@@ -37,9 +37,9 @@ func registerLogout(auth *cobra.Command) {
 
 			result := map[string]any{
 				"ok":                   true,
-				"removed":             nilIfEmpty(defaultWs),
+				"removed":              nilIfEmpty(defaultWs),
 				"remaining_workspaces": remaining,
-				"default_workspace":   nilIfEmpty(newDefault),
+				"default_workspace":    nilIfEmpty(newDefault),
 			}
 			output.PrintJSON(result)
 		},

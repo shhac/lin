@@ -170,11 +170,11 @@ func TestSelectLinkOp_DerivedArgsValidation(t *testing.T) {
 
 func TestParseGitLabMRURL(t *testing.T) {
 	cases := []struct {
-		name        string
-		url         string
-		wantPath    string
-		wantNum     int
-		wantErr     bool
+		name     string
+		url      string
+		wantPath string
+		wantNum  int
+		wantErr  bool
 	}{
 		{
 			name:     "simple project",

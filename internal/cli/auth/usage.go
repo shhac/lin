@@ -1,12 +1,5 @@
 package auth
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/spf13/cobra"
-)
-
 const usageText = `lin auth — Authentication and workspace management
 
 SUBCOMMANDS:
@@ -41,15 +34,3 @@ WORKSPACE:
   remove <alias> — deletes a workspace profile. Warns if removing the default.
 
 OUTPUT: JSON to stdout. Errors: { "error": "..." } to stderr.`
-
-func registerUsage(auth *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "usage",
-		Short: "Print detailed auth command documentation (LLM-optimized)",
-		Args:  cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
-			fmt.Println(strings.TrimSpace(usageText))
-		},
-	}
-	auth.AddCommand(cmd)
-}

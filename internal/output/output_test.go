@@ -244,4 +244,3 @@ func TestPruneEmpty_PreservesEmptySliceAtTopLevel(t *testing.T) {
 		t.Errorf("expected [] at top level, got %v", got)
 	}
 }
-

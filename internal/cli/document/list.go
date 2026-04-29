@@ -66,4 +66,3 @@ func registerList(parent *cobra.Command) {
 	cmd.Flags().BoolVar(&includeArchived, "include-archived", false, "Include archived documents")
 	parent.AddCommand(cmd)
 }
-

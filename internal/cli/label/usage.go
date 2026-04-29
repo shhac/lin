@@ -1,12 +1,5 @@
 package label
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/spf13/cobra"
-)
-
 const usageText = `lin label — Search, list, and inspect Linear labels (issue or project)
 
 SUBCOMMANDS:
@@ -33,15 +26,3 @@ NOTES:
   IssueLabel and ProjectLabel are distinct Linear entities; the same name can exist in both.
   Use the resulting issue label name (with --team) or UUID with "issue new --labels" / "issue update labels".
   Use a project label name or UUID with "project update labels".`
-
-func registerUsage(label *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "usage",
-		Short: "Print detailed label command documentation (LLM-optimized)",
-		Args:  cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
-			fmt.Println(strings.TrimSpace(usageText))
-		},
-	}
-	label.AddCommand(cmd)
-}

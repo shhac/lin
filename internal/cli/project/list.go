@@ -58,4 +58,3 @@ func registerList(parent *cobra.Command) {
 	cmd.Flags().StringVar(&status, "status", "", "Filter by status")
 	parent.AddCommand(cmd)
 }
-

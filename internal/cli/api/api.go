@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strings"
 
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/cli/shared"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
 )
@@ -21,7 +21,7 @@ func Register(parent *cobra.Command) {
 	output.HandleUnknownCommand(apiCmd, "Run 'lin api usage' for help")
 
 	registerQuery(apiCmd)
-	registerUsage(apiCmd)
+	shared.RegisterUsage(apiCmd, "api", apiUsageText)
 
 	parent.AddCommand(apiCmd)
 }
@@ -62,18 +62,6 @@ func registerQuery(apiCmd *cobra.Command) {
 	}
 
 	cmd.Flags().StringVar(&variables, "variables", "", "JSON-encoded variables object")
-	apiCmd.AddCommand(cmd)
-}
-
-func registerUsage(apiCmd *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "usage",
-		Short: "Print detailed api command documentation (LLM-optimized)",
-		Args:  cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
-			fmt.Println(strings.TrimSpace(apiUsageText))
-		},
-	}
 	apiCmd.AddCommand(cmd)
 }
 

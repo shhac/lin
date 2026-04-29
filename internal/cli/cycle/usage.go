@@ -1,12 +1,5 @@
 package cycle
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/spf13/cobra"
-)
-
 const usageText = `lin cycle — List and inspect Linear cycles (sprints)
 
 SUBCOMMANDS:
@@ -35,15 +28,3 @@ NOTES:
   --next returns the nearest future cycle (startsAt > now).
   --previous returns the most recently ended cycle (endsAt < now).
   Cycle IDs are UUIDs. Use "cycle list ENG" to find cycle IDs.`
-
-func registerUsage(cycle *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "usage",
-		Short: "Print detailed cycle command documentation (LLM-optimized)",
-		Args:  cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
-			fmt.Println(strings.TrimSpace(usageText))
-		},
-	}
-	cycle.AddCommand(cmd)
-}

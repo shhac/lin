@@ -3,6 +3,7 @@ package issue
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/cli/shared"
 	"github.com/shhac/lin/internal/output"
 )
 
@@ -23,6 +24,6 @@ func Register(parent *cobra.Command) {
 	registerArchive(issue)
 	registerAttachment(issue)
 	registerHistory(issue)
-	registerUsage(issue)
+	shared.RegisterUsage(issue, "issue", usageText)
 	output.HandleUnknownCommand(issue, "To view an issue: lin issue get <id>")
 }

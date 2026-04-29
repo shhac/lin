@@ -3,6 +3,7 @@ package team
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/cli/shared"
 	"github.com/shhac/lin/internal/output"
 )
 
@@ -17,7 +18,7 @@ func Register(parent *cobra.Command) {
 	registerList(team)
 	registerGet(team)
 	registerStates(team)
-	registerUsage(team)
+	shared.RegisterUsage(team, "team", usageText)
 
 	parent.AddCommand(team)
 }

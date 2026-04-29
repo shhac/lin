@@ -1,12 +1,5 @@
 package team
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/spf13/cobra"
-)
-
 const usageText = `lin team — Manage Linear teams and discover workflow configuration
 
 SUBCOMMANDS:
@@ -34,15 +27,3 @@ ESTIMATE TYPES: notUsed | exponential | fibonacci | linear | tShirt
 WORKFLOW STATE TYPES: triage | backlog | unstarted | started | completed | canceled
   Use "team states <team>" to discover valid status names for issue updates.
   State names are team-specific (e.g., "In Progress", "Todo", "Done").`
-
-func registerUsage(team *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "usage",
-		Short: "Print detailed team command documentation (LLM-optimized)",
-		Args:  cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
-			fmt.Println(strings.TrimSpace(usageText))
-		},
-	}
-	team.AddCommand(cmd)
-}

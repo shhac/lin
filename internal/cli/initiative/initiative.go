@@ -3,6 +3,7 @@ package initiative
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/cli/shared"
 	"github.com/shhac/lin/internal/output"
 )
 
@@ -23,6 +24,6 @@ func Register(parent *cobra.Command) {
 	registerArchive(initiative)
 	registerUnarchive(initiative)
 	registerDelete(initiative)
-	registerUsage(initiative)
+	shared.RegisterUsage(initiative, "initiative", usageText)
 	output.HandleUnknownCommand(initiative, "Run 'lin initiative usage' for help")
 }

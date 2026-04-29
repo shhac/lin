@@ -85,4 +85,3 @@ func runProjectLabelList(ctx context.Context, client graphql.Client, page *outpu
 	}
 	output.PrintPage(items, resp.ProjectLabels.PageInfo.HasNextPage, resp.ProjectLabels.PageInfo.EndCursor)
 }
-

@@ -3,6 +3,7 @@ package cycle
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/cli/shared"
 	"github.com/shhac/lin/internal/output"
 )
 
@@ -16,7 +17,7 @@ func Register(parent *cobra.Command) {
 
 	registerList(cycle)
 	registerGet(cycle)
-	registerUsage(cycle)
+	shared.RegisterUsage(cycle, "cycle", usageText)
 
 	parent.AddCommand(cycle)
 }

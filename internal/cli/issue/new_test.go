@@ -157,4 +157,3 @@ func TestBuildIssueCreateInput_InvalidPriority(t *testing.T) {
 		t.Errorf("unexpected error: %v", err)
 	}
 }
-

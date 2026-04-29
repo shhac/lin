@@ -1,12 +1,5 @@
 package user
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/spf13/cobra"
-)
-
 const usageText = `lin user — Look up Linear workspace users
 
 SUBCOMMANDS:
@@ -33,15 +26,3 @@ NOTES:
   operations like --assignee filtering.
   When --team is specified, returns only members of that team.
   Search matches against name, email, and displayName (case-insensitive).`
-
-func registerUsage(user *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "usage",
-		Short: "Print detailed user command documentation (LLM-optimized)",
-		Args:  cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
-			fmt.Println(strings.TrimSpace(usageText))
-		},
-	}
-	user.AddCommand(cmd)
-}

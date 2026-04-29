@@ -77,4 +77,3 @@ func mapTeamMember(m linear.TeamMembersTeamMembersUserConnectionNodesUser) map[s
 		"email": m.Email,
 	}
 }
-

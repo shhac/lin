@@ -124,15 +124,15 @@ func TestResolve_EnvOverridesConfig(t *testing.T) {
 
 func TestSource(t *testing.T) {
 	tests := []struct {
-		name     string
-		envKey   string
-		cfg      *config.Config
-		wantSrc  string
+		name    string
+		envKey  string
+		cfg     *config.Config
+		wantSrc string
 	}{
 		{
-			name:   "environment source",
-			envKey: "lin_env_key",
-			cfg:    &config.Config{Workspaces: map[string]config.Workspace{}},
+			name:    "environment source",
+			envKey:  "lin_env_key",
+			cfg:     &config.Config{Workspaces: map[string]config.Workspace{}},
 			wantSrc: "environment",
 		},
 		{

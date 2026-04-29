@@ -59,4 +59,3 @@ func registerIssues(parent *cobra.Command) {
 	cmd.Flags().StringVar(&priority, "priority", "", "Filter by priority")
 	parent.AddCommand(cmd)
 }
-

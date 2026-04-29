@@ -77,5 +77,3 @@ func registerList(parent *cobra.Command) {
 	cmd.Flags().StringVar(&createdBefore, "created-before", "", "Created before date (YYYY-MM-DD)")
 	parent.AddCommand(cmd)
 }
-
-

@@ -113,11 +113,11 @@ func registerRelationAdd(parent *cobra.Command) {
 
 			rel := resp.IssueRelationCreate.IssueRelation
 			output.PrintJSON(map[string]any{
-				"id":                      rel.Id,
-				"type":                    rel.Type,
-				"issueIdentifier":         rel.Issue.Identifier,
-				"relatedIssueIdentifier":  rel.RelatedIssue.Identifier,
-				"created":                 resp.IssueRelationCreate.Success,
+				"id":                     rel.Id,
+				"type":                   rel.Type,
+				"issueIdentifier":        rel.Issue.Identifier,
+				"relatedIssueIdentifier": rel.RelatedIssue.Identifier,
+				"created":                resp.IssueRelationCreate.Success,
 			})
 		},
 	}

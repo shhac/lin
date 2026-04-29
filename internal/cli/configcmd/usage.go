@@ -1,13 +1,6 @@
 package configcmd
 
-import (
-	"fmt"
-	"strings"
-
-	"github.com/spf13/cobra"
-)
-
-const configUsageText = `lin config — View and update persistent CLI settings
+const usageText = `lin config — View and update persistent CLI settings
 
 SUBCOMMANDS:
   config get [key]            Show current settings (omit key for all)
@@ -31,15 +24,3 @@ EXAMPLES:
 STORAGE: Settings persisted in ~/.config/lin/config.json alongside auth credentials.
 
 OUTPUT: JSON to stdout. Unknown keys return error with valid key list.`
-
-func registerUsage(cfg *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "usage",
-		Short: "Print detailed config command documentation (LLM-optimized)",
-		Args:  cobra.NoArgs,
-		Run: func(_ *cobra.Command, _ []string) {
-			fmt.Println(strings.TrimSpace(configUsageText))
-		},
-	}
-	cfg.AddCommand(cmd)
-}

@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/cli/shared"
 	"github.com/shhac/lin/internal/output"
 )
 
@@ -17,7 +18,7 @@ func Register(parent *cobra.Command) {
 	registerList(user)
 	registerMe(user)
 	registerSearch(user)
-	registerUsage(user)
+	shared.RegisterUsage(user, "user", usageText)
 
 	parent.AddCommand(user)
 }

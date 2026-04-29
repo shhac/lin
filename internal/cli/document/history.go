@@ -33,10 +33,10 @@ func registerHistory(parent *cobra.Command) {
 			items := make([]map[string]any, len(history))
 			for i, h := range history {
 				items[i] = map[string]any{
-					"id":                       h.Id,
-					"actorIds":                 h.ActorIds,
-					"contentDataSnapshotAt":    h.ContentDataSnapshotAt,
-					"createdAt":                h.CreatedAt,
+					"id":                    h.Id,
+					"actorIds":              h.ActorIds,
+					"contentDataSnapshotAt": h.ContentDataSnapshotAt,
+					"createdAt":             h.CreatedAt,
 				}
 			}
 

@@ -3,6 +3,7 @@ package auth
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/cli/shared"
 	"github.com/shhac/lin/internal/output"
 )
 
@@ -18,7 +19,7 @@ func Register(parent *cobra.Command) {
 	registerStatus(auth)
 	registerLogout(auth)
 	registerWorkspace(auth)
-	registerUsage(auth)
+	shared.RegisterUsage(auth, "auth", usageText)
 
 	parent.AddCommand(auth)
 }

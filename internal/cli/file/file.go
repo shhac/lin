@@ -2,11 +2,11 @@ package file
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/cli/shared"
 	"github.com/shhac/lin/internal/credential"
 	dl "github.com/shhac/lin/internal/download"
 	"github.com/shhac/lin/internal/linear"
@@ -23,7 +23,7 @@ func Register(parent *cobra.Command) {
 
 	registerUpload(file)
 	registerDownload(file)
-	registerUsage(file)
+	shared.RegisterUsage(file, "file", usageText)
 
 	parent.AddCommand(file)
 }
@@ -104,12 +104,7 @@ func registerDownload(parent *cobra.Command) {
 	parent.AddCommand(cmd)
 }
 
-func registerUsage(parent *cobra.Command) {
-	cmd := &cobra.Command{
-		Use:   "usage",
-		Short: "Print detailed file command documentation (LLM-optimized)",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(`lin file — File operations (upload, download)
+const usageText = `lin file — File operations (upload, download)
 
 UPLOAD:
   file upload <paths...>                  Upload one or more files to Linear
@@ -135,9 +130,4 @@ OUTPUT:
 
 NOTES:
   --output, --output-dir, and --stdout are mutually exclusive.
-  Without --force, download refuses to overwrite existing files.`)
-		},
-	}
-
-	parent.AddCommand(cmd)
-}
+  Without --force, download refuses to overwrite existing files.`

@@ -39,12 +39,12 @@ func registerGet(parent *cobra.Command) {
 			}
 
 			result := map[string]any{
-				"id":        i.Id,
-				"slugId":    i.SlugId,
-				"url":       i.Url,
-				"name":      i.Name,
-				"status":    i.Status,
-				"owner":     owner,
+				"id":     i.Id,
+				"slugId": i.SlugId,
+				"url":    i.Url,
+				"name":   i.Name,
+				"status": i.Status,
+				"owner":  owner,
 				"creator": map[string]any{
 					"id":   i.Creator.Id,
 					"name": i.Creator.Name,

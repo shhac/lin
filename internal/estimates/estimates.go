@@ -6,9 +6,9 @@ import (
 )
 
 type Config struct {
-	Type     string `json:"type"`
-	AllowZero bool  `json:"allowZero"`
-	Extended  bool  `json:"extended"`
+	Type      string `json:"type"`
+	AllowZero bool   `json:"allowZero"`
+	Extended  bool   `json:"extended"`
 }
 
 type scale struct {
