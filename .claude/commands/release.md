@@ -13,7 +13,7 @@ Perform a full release: version bump, build, GitHub release, and Homebrew tap up
 
 ## Instructions
 
-You are performing a release of the `lin` CLI. Follow these steps exactly.
+You are performing a release of the `lin` CLI (Go version). Follow these steps exactly.
 
 ### Pre-flight
 
@@ -44,7 +44,13 @@ git tag "v${new_version}"
 git push origin main "v${new_version}"
 ```
 
-### Step 2: Cross-compile
+### Step 2: Build with goreleaser
+
+```bash
+goreleaser release --clean
+```
+
+If `goreleaser` is not installed, build manually:
 
 ```bash
 rm -rf dist/
@@ -54,7 +60,7 @@ GOOS=linux GOARCH=amd64 go build -ldflags="-s -w -X main.version=${new_version}"
 GOOS=linux GOARCH=arm64 go build -ldflags="-s -w -X main.version=${new_version}" -o "dist/lin-linux-arm64" ./cmd/lin
 GOOS=windows GOARCH=amd64 go build -ldflags="-s -w -X main.version=${new_version}" -o "dist/lin-windows-amd64.exe" ./cmd/lin
 
-# Create tarballs + checksums
+# Create tarballs
 cd dist
 for bin in lin-darwin-arm64 lin-darwin-amd64 lin-linux-amd64 lin-linux-arm64; do
   tar czf "${bin}.tar.gz" "$bin"
@@ -63,16 +69,20 @@ shasum -a 256 *.tar.gz lin-windows-amd64.exe > checksums-sha256.txt
 cd ..
 ```
 
-Test the native binary before proceeding:
+Smoke-test the native binary before proceeding (auth-free — proves the binary
+loads and the command tree wired up correctly):
 
 ```bash
 ./dist/lin-darwin-arm64 --version
-./dist/lin-darwin-arm64 user me
+./dist/lin-darwin-arm64 usage
 ```
 
 ### Step 3: Create GitHub release
 
+If goreleaser handled it, skip this step. Otherwise:
+
 ```bash
+# Generate release notes
 prev_tag=$(git tag --sort=-v:refname | head -2 | tail -1)
 notes=$(git log --pretty=format:"- %s" "${prev_tag}..v${new_version}" --no-merges | grep -v "^- v[0-9]")
 
@@ -91,11 +101,20 @@ The Homebrew formula lives in `../homebrew-tap` relative to this repo's root.
 ls ../homebrew-tap/Formula/lin.rb
 ```
 
-Read checksums from `dist/checksums-sha256.txt` and update the formula:
+**If it doesn't exist:** Create it by copying the pattern from `../homebrew-tap/Formula/agent-sql.rb`, replacing:
+- Class name: `Lin`
+- desc: `"Linear CLI for humans and LLMs"`
+- homepage: `https://github.com/shhac/lin`
+- All `agent-sql` references → `lin`
+- Version, URLs, and SHA256 values
+- Test: assert_match version and "lin" in help output
+
+**If it exists:** Read checksums from `dist/checksums-sha256.txt` and update the formula:
 
 1. Read `../homebrew-tap/Formula/lin.rb`
 2. Update version, URLs (use `v${new_version}`), SHA256 values, assert_match version
-3. Commit and push:
+3. Note: Go binaries use `amd64` not `x64` — update the tarball names accordingly
+4. Commit and push:
    ```bash
    cd ../homebrew-tap
    git add Formula/lin.rb
@@ -112,6 +131,6 @@ Show the user:
 
 - New version number
 - GitHub release URL
-- Homebrew tap commit
+- Homebrew tap commit (if applicable)
 - `brew install shhac/tap/lin` command for new users
 - `brew upgrade shhac/tap/lin` command for existing users
