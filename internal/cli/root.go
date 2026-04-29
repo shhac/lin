@@ -50,8 +50,8 @@ func newRootCmd(version string) *cobra.Command {
 		},
 	}
 
-	root.PersistentFlags().StringVar(&flagExpand, "expand", "", "Expand truncated fields (comma-separated: description,body,content)")
-	root.PersistentFlags().BoolVar(&flagFull, "full", false, "Show full content for all truncated fields")
+	root.PersistentFlags().StringVarP(&flagExpand, "expand", "e", "", "Expand truncated fields (comma-separated: description,body,content)")
+	root.PersistentFlags().BoolVarP(&flagFull, "full", "F", false, "Show full content for all truncated fields")
 
 	api.Register(root)
 	auth.Register(root)
