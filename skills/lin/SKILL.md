@@ -9,6 +9,7 @@ description: |
   - Linking external resources (GitHub PRs/issues, GitLab MRs, Slack/Discord messages) to Linear issues
   - Checking project status, milestones, or team members
   Triggers: "linear issue", "linear project", "linear initiative", "linear document", "linear ticket", "linear search", "create issue", "create document", "update issue", "update document", "linear team", "linear cycle", "linear comment", "reply to comment", "attach file", "upload file", "download file", "linear file", "linear download", "linear label", "search labels", "find label", "label by name", "attach github pr", "attach pull request", "link pr to issue", "link slack message", "link gitlab mr", "linear attachment"
+allowed-tools: Bash(lin *) Read Grep Glob
 ---
 
 # Linear automation with `lin`
