@@ -12,8 +12,11 @@ import (
 	"regexp"
 )
 
-var pointerFieldRE = regexp.MustCompile(`(\*\w+)\s+` + "`" + `json:"([^,"]+)"` + "`")
-var sliceFieldRE = regexp.MustCompile(`(\[\]\w+)\s+` + "`" + `json:"([^,"]+)"` + "`")
+// Match pointer/slice types including composites like *map[string]interface{}.
+// The previous `\w+` form missed those, leaving nil JSON-bound fields serialized
+// as `"field": null`, which Linear's API rejects with "Argument Validation Error".
+var pointerFieldRE = regexp.MustCompile(`(\*[\w\[\]{}*]+)\s+` + "`" + `json:"([^,"]+)"` + "`")
+var sliceFieldRE = regexp.MustCompile(`(\[\][\w\[\]{}*]+)\s+` + "`" + `json:"([^,"]+)"` + "`")
 
 func main() {
 	args := os.Args[1:]

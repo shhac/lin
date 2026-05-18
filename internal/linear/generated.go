@@ -219,13 +219,13 @@ type AttachmentCreateInput struct {
 	// An icon url to display with the attachment. Should be of jpg or png format. Maximum of 1MB in size. Dimensions should be 20x20px for optimal display quality.
 	IconUrl *string `json:"iconUrl,omitempty"`
 	// Attachment metadata object with string and number values.
-	Metadata *map[string]interface{} `json:"metadata"`
+	Metadata *map[string]interface{} `json:"metadata,omitempty"`
 	// Indicates if attachments for the same source application should be grouped in the Linear UI.
 	GroupBySource *bool `json:"groupBySource,omitempty"`
 	// Create a linked comment with markdown body.
 	CommentBody *string `json:"commentBody,omitempty"`
 	// [Internal] Create a linked comment with Prosemirror body. Please use `commentBody` instead.
-	CommentBodyData *map[string]interface{} `json:"commentBodyData"`
+	CommentBodyData *map[string]interface{} `json:"commentBodyData,omitempty"`
 	// Create attachment as a user with the provided name. This option is only available to OAuth applications creating attachments in `actor=application` mode.
 	CreateAsUser *string `json:"createAsUser,omitempty"`
 }
@@ -902,7 +902,7 @@ type CommentCreateInput struct {
 	// The comment content in markdown format.
 	Body *string `json:"body,omitempty"`
 	// [Internal] The comment content as a Prosemirror document.
-	BodyData *map[string]interface{} `json:"bodyData"`
+	BodyData *map[string]interface{} `json:"bodyData,omitempty"`
 	// The issue to associate the comment with. Can be a UUID or issue identifier (e.g., 'LIN-123').
 	IssueId *string `json:"issueId,omitempty"`
 	// The project update to associate the comment with.
@@ -1382,7 +1382,7 @@ type CommentUpdateInput struct {
 	// The comment content.
 	Body *string `json:"body,omitempty"`
 	// [Internal] The comment content as a Prosemirror document.
-	BodyData *map[string]interface{} `json:"bodyData"`
+	BodyData *map[string]interface{} `json:"bodyData,omitempty"`
 	// [INTERNAL] The user who resolved this thread.
 	ResolvingUserId *string `json:"resolvingUserId,omitempty"`
 	// [INTERNAL] The child comment that resolves this thread.
@@ -2342,7 +2342,7 @@ type DocumentCreateInput struct {
 	// The color of the icon.
 	Color *string `json:"color,omitempty"`
 	// [Internal] The document content as a Prosemirror document.
-	ContentData *map[string]interface{} `json:"contentData"`
+	ContentData *map[string]interface{} `json:"contentData,omitempty"`
 	// The document content as markdown.
 	Content *string `json:"content,omitempty"`
 	// Related project for the document.
@@ -3034,7 +3034,7 @@ type DocumentUpdateInput struct {
 	// The color of the icon.
 	Color *string `json:"color,omitempty"`
 	// [Internal] The document content as a Prosemirror document.
-	ContentData *map[string]interface{} `json:"contentData"`
+	ContentData *map[string]interface{} `json:"contentData,omitempty"`
 	// The document content as markdown.
 	Content *string `json:"content,omitempty"`
 	// Related project for the document.
@@ -5333,7 +5333,7 @@ type IssueCreateInput struct {
 	// The issue description in markdown format.
 	Description *string `json:"description,omitempty"`
 	// [Internal] The issue description as a Prosemirror document.
-	DescriptionData *map[string]interface{} `json:"descriptionData"`
+	DescriptionData *map[string]interface{} `json:"descriptionData,omitempty"`
 	// The identifier of the user to assign the issue to.
 	AssigneeId *string `json:"assigneeId,omitempty"`
 	// The identifier of the agent user to delegate the issue to.
@@ -8319,7 +8319,7 @@ type IssueUpdateInput struct {
 	// The issue description in markdown format.
 	Description *string `json:"description,omitempty"`
 	// [Internal] The issue description as a Prosemirror document.
-	DescriptionData *map[string]interface{} `json:"descriptionData"`
+	DescriptionData *map[string]interface{} `json:"descriptionData,omitempty"`
 	// The identifier of the user to assign the issue to.
 	AssigneeId *string `json:"assigneeId,omitempty"`
 	// The identifier of the agent user to delegate the issue to.
@@ -13240,7 +13240,7 @@ var AllSLADayCountType = []SLADayCountType{
 // [INTERNAL] Comparator for Salesforce metadata.
 type SalesforceMetadataIntegrationComparator struct {
 	// Salesforce Case metadata filter
-	CaseMetadata *map[string]interface{} `json:"caseMetadata"`
+	CaseMetadata *map[string]interface{} `json:"caseMetadata,omitempty"`
 }
 
 // GetCaseMetadata returns SalesforceMetadataIntegrationComparator.CaseMetadata, and is useful for accessing the field via an interface.
