@@ -12,11 +12,15 @@ func TestHTTPPutWithHeaders_OK(t *testing.T) {
 	var seenMethod string
 	var seenLength int64
 	var seenHeader string
+	var seenContentType string
+	var seenCacheControl string
 	var seenBody string
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		seenMethod = r.Method
 		seenLength = r.ContentLength
 		seenHeader = r.Header.Get("X-Test")
+		seenContentType = r.Header.Get("Content-Type")
+		seenCacheControl = r.Header.Get("Cache-Control")
 		body, _ := io.ReadAll(r.Body)
 		seenBody = string(body)
 		w.WriteHeader(http.StatusOK)
@@ -24,7 +28,7 @@ func TestHTTPPutWithHeaders_OK(t *testing.T) {
 	defer srv.Close()
 
 	body := strings.NewReader("payload-bytes")
-	err := httpPutWithHeaders(srv.URL, body, int64(body.Len()), map[string]string{"X-Test": "yes"})
+	err := httpPutWithHeaders(srv.URL, body, int64(body.Len()), "text/plain", map[string]string{"X-Test": "yes"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -37,6 +41,12 @@ func TestHTTPPutWithHeaders_OK(t *testing.T) {
 	if seenHeader != "yes" {
 		t.Errorf("X-Test header = %q, want %q", seenHeader, "yes")
 	}
+	if seenContentType != "text/plain" {
+		t.Errorf("Content-Type header = %q, want %q", seenContentType, "text/plain")
+	}
+	if seenCacheControl != "public, max-age=31536000" {
+		t.Errorf("Cache-Control header = %q, want %q", seenCacheControl, "public, max-age=31536000")
+	}
 	if seenBody != "payload-bytes" {
 		t.Errorf("body = %q", seenBody)
 	}
@@ -45,16 +55,20 @@ func TestHTTPPutWithHeaders_OK(t *testing.T) {
 func TestHTTPPutWithHeaders_RemoteError(t *testing.T) {
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusForbidden)
+		_, _ = w.Write([]byte("signature mismatch"))
 	}))
 	defer srv.Close()
 
 	body := strings.NewReader("payload")
-	err := httpPutWithHeaders(srv.URL, body, int64(body.Len()), nil)
+	err := httpPutWithHeaders(srv.URL, body, int64(body.Len()), "application/octet-stream", nil)
 	if err == nil {
 		t.Fatal("expected error for 403")
 	}
 	if !strings.Contains(err.Error(), "403") {
 		t.Errorf("error = %v, want to contain 403", err)
+	}
+	if !strings.Contains(err.Error(), "signature mismatch") {
+		t.Errorf("error = %v, want to contain response body", err)
 	}
 }
 

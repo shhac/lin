@@ -65,7 +65,7 @@ func uploadOne(client graphql.Client, filePath string) (UploadedFile, error) {
 	}
 	defer func() { _ = f.Close() }()
 
-	if err := httpPutWithHeaders(uf.UploadUrl, f, int64(size), headers); err != nil {
+	if err := httpPutWithHeaders(uf.UploadUrl, f, int64(size), contentType, headers); err != nil {
 		return UploadedFile{}, fmt.Errorf("upload failed for %s: %v", filename, err)
 	}
 
@@ -76,14 +76,16 @@ func uploadOne(client graphql.Client, filePath string) (UploadedFile, error) {
 	}, nil
 }
 
-// httpPutWithHeaders streams body to url via HTTP PUT with the given headers
-// and content length. Returns nil on 2xx, otherwise an error describing the
-// response. Body is fully drained.
-func httpPutWithHeaders(url string, body io.Reader, contentLength int64, headers map[string]string) error {
+// httpPutWithHeaders streams body to url via HTTP PUT with Linear's required
+// upload headers and content length. Returns nil on 2xx, otherwise an error
+// describing the response. Body is fully drained.
+func httpPutWithHeaders(url string, body io.Reader, contentLength int64, contentType string, headers map[string]string) error {
 	req, err := http.NewRequest("PUT", url, body)
 	if err != nil {
 		return err
 	}
+	req.Header.Set("Content-Type", contentType)
+	req.Header.Set("Cache-Control", "public, max-age=31536000")
 	for k, v := range headers {
 		req.Header.Set(k, v)
 	}
@@ -94,9 +96,13 @@ func httpPutWithHeaders(url string, body io.Reader, contentLength int64, headers
 		return err
 	}
 	defer func() { _ = resp.Body.Close() }()
+	responseBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4*1024))
 	_, _ = io.Copy(io.Discard, resp.Body)
 
 	if resp.StatusCode >= 300 {
+		if len(responseBody) > 0 {
+			return fmt.Errorf("%d %s: %s", resp.StatusCode, resp.Status, strings.TrimSpace(string(responseBody)))
+		}
 		return fmt.Errorf("%d %s", resp.StatusCode, resp.Status)
 	}
 	return nil
