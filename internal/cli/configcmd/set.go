@@ -22,15 +22,12 @@ func registerSet(cfg *cobra.Command) {
 				return
 			}
 
-			parsed, err := def.parse(value)
+			settings := config.GetSettings()
+			parsed, err := def.apply(settings, value)
 			if err != nil {
 				output.PrintError(err.Error())
 				return
 			}
-
-			intVal := parsed.(int)
-			settings := config.GetSettings()
-			def.set(settings, intVal)
 
 			if err := config.UpdateSettings(settings); err != nil {
 				output.PrintError(err.Error())

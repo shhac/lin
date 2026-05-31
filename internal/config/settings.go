@@ -21,6 +21,12 @@ func UpdateSettings(partial *Settings) error {
 	if partial.Pagination != nil {
 		cfg.Settings.Pagination = partial.Pagination
 	}
+	if partial.Output != nil {
+		cfg.Settings.Output = partial.Output
+	}
+	if partial.Request != nil {
+		cfg.Settings.Request = partial.Request
+	}
 	return Write(cfg)
 }
 

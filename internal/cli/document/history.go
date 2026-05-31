@@ -40,7 +40,7 @@ func registerHistory(parent *cobra.Command) {
 				}
 			}
 
-			output.PrintJSON(map[string]any{"items": items})
+			output.PrintList(items)
 		},
 	}
 

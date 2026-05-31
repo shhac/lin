@@ -33,4 +33,4 @@ WORKSPACE:
   switch <alias> — sets the active workspace. Alias must match a stored workspace.
   remove <alias> — deletes a workspace profile. Warns if removing the default.
 
-OUTPUT: JSON to stdout. Errors: { "error": "..." } to stderr.`
+OUTPUT: workspace list follows list output defaults (JSONL unless --format is set). Other auth commands return JSON objects. Errors: { "error": "..." } to stderr.`

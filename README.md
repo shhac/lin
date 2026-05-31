@@ -2,7 +2,7 @@
 
 Linear CLI for humans and LLMs.
 
-- **Structured JSON output** — all output is JSON to stdout, errors to stderr
+- **Structured output** — JSONL for lists/searches, JSON for single items, errors to stderr
 - **LLM-optimized** — `lin usage` prints concise docs in <1,000 tokens
 - **Zero runtime deps** — single static binary via `go build`
 - **Smart IDs** — accepts issue keys (`ENG-123`), UUIDs, or URL fragments
@@ -122,8 +122,10 @@ Each top-level command also has a `usage` subcommand for detailed, LLM-friendly 
 
 ## Output
 
-- Lists → `{ "items": [...], "pagination"?: { "hasMore", "nextCursor" } }`
-- Single items → JSON objects
+- Lists/searches → JSONL by default, one object per line
+- Pagination in JSONL → `{"@pagination":{"has_more":true,"next_cursor":"..."}}`
+- Single items → pretty JSON objects
+- `--format json|yaml|jsonl` overrides the default; JSON list envelopes use `{ "data": [...], "pagination"?: ... }`
 - Errors → `{ "error": "...", "fixable_by": "agent|human|retry", "hint": "..." }` to stderr + non-zero exit
 - Empty/null fields are pruned automatically
 

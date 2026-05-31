@@ -39,10 +39,10 @@ func registerList(cycle *cobra.Command) {
 			}
 			c := resp.Team.ActiveCycle
 			if c == nil {
-				output.PrintJSON([]any{})
+				output.PrintList([]any{})
 				return
 			}
-			output.PrintJSON([]any{mapCycleSummary(c.Id, c.Number, c.Name, c.StartsAt, c.EndsAt)})
+			output.PrintList([]any{mapCycleSummary(c.Id, c.Number, c.Name, c.StartsAt, c.EndsAt)})
 			return
 		}
 
@@ -56,18 +56,18 @@ func registerList(cycle *cobra.Command) {
 
 		if next {
 			if n, ok := findNextCycle(nodes, now); ok {
-				output.PrintJSON([]any{mapCycleSummary(n.Id, n.Number, n.Name, n.StartsAt, n.EndsAt)})
+				output.PrintList([]any{mapCycleSummary(n.Id, n.Number, n.Name, n.StartsAt, n.EndsAt)})
 			} else {
-				output.PrintJSON([]any{})
+				output.PrintList([]any{})
 			}
 			return
 		}
 
 		if previous {
 			if p, ok := findPreviousCycle(nodes, now); ok {
-				output.PrintJSON([]any{mapCycleSummary(p.Id, p.Number, p.Name, p.StartsAt, p.EndsAt)})
+				output.PrintList([]any{mapCycleSummary(p.Id, p.Number, p.Name, p.StartsAt, p.EndsAt)})
 			} else {
-				output.PrintJSON([]any{})
+				output.PrintList([]any{})
 			}
 			return
 		}

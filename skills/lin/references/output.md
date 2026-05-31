@@ -2,7 +2,13 @@
 
 ## General
 
-All commands print JSON to stdout. Errors print structured JSON to stderr with non-zero exit:
+Commands print structured output to stdout:
+
+- List/search commands default to JSONL (one JSON object per line).
+- Single-item commands default to pretty JSON.
+- Use `--format json|yaml|jsonl` to override.
+
+Errors print structured JSON to stderr with non-zero exit:
 
 ```json
 {
@@ -44,19 +50,31 @@ The `*Length` field is always present when the source field has content, regardl
 
 Truncatable fields: `description`, `body`, `content`. Global flags: `--expand <field,...>` or `--full`.
 
-## List output
+## List Output
 
-List commands return:
+List/search commands default to JSONL:
+
+```jsonl
+{"id":"...","title":"Fix login redirect"}
+{"id":"...","title":"Ship project"}
+{"@pagination":{"has_more":true,"next_cursor":"abc123"}}
+```
+
+The `@pagination` line is omitted when there are no more pages.
+
+With `--format json`, list commands return an envelope:
 
 ```json
 {
-  "items": [ ... ],
+  "data": [ ... ],
   "pagination": {
-    "hasMore": true,
-    "nextCursor": "abc123"
+    "has_more": true,
+    "next_cursor": "abc123"
   }
 }
 ```
+
+With `--format yaml`, the same envelope is emitted as YAML.
 
 When there are no more pages, the `pagination` key is omitted entirely.
 
@@ -295,17 +313,8 @@ Priority values are numeric: 0 (none), 1 (urgent), 2 (high), 3 (medium), 4 (low)
 
 Content edit history entries for a document:
 
-```json
-{
-  "items": [
-    {
-      "id": "...",
-      "actorIds": ["user-uuid-1", "user-uuid-2"],
-      "contentDataSnapshotAt": "2025-01-15T10:30:00.000Z",
-      "createdAt": "2025-01-15T10:30:00.000Z"
-    }
-  ]
-}
+```jsonl
+{"id":"...","actorIds":["user-uuid-1","user-uuid-2"],"contentDataSnapshotAt":"2025-01-15T10:30:00.000Z","createdAt":"2025-01-15T10:30:00.000Z"}
 ```
 
 Not paginated. Actor IDs are user UUIDs (resolve with `lin user list`).
@@ -320,6 +329,8 @@ When `--file` is used with `comment new` or `comment edit`, files are uploaded t
 Local file paths never appear in the output. The `--file` flag is repeatable for multiple attachments.
 
 ## File upload (`file upload`)
+
+`file upload` is a single command result, so it defaults to a JSON array. Use `--format jsonl` to emit one uploaded asset per line.
 
 ```json
 [
@@ -353,40 +364,28 @@ Filename is inferred from `Content-Disposition` header, then `Content-Type` MIME
 
 ## Issue relations (`issue relation list`)
 
-```json
-[
-  { "id": "...", "type": "blocks", "relatedIssue": "ENG-124" },
-  { "id": "...", "type": "blocked_by", "relatedIssue": "ENG-122" },
-  { "id": "...", "type": "duplicate", "relatedIssue": "ENG-100" }
-]
+```jsonl
+{"id":"...","type":"blocks","relatedIssue":"ENG-124"}
+{"id":"...","type":"blocked_by","relatedIssue":"ENG-122"}
+{"id":"...","type":"duplicate","relatedIssue":"ENG-100"}
 ```
 
 `blocked_by` is displayed for inverse "blocks" relations. Relation types: `blocks`, `duplicate`, `related`.
 
 ## Workflow states (`team states`)
 
-```json
-[
-  { "id": "...", "name": "Todo", "type": "unstarted", "color": "#e2e2e2", "position": 0 },
-  { "id": "...", "name": "In Progress", "type": "started", "color": "#5e6ad2", "position": 1 },
-  { "id": "...", "name": "Done", "type": "completed", "color": "#5e6ad2", "position": 2 }
-]
+```jsonl
+{"id":"...","name":"Todo","type":"unstarted","color":"#e2e2e2","position":0}
+{"id":"...","name":"In Progress","type":"started","color":"#5e6ad2","position":1}
+{"id":"...","name":"Done","type":"completed","color":"#5e6ad2","position":2}
 ```
 
 State types: `triage` | `backlog` | `unstarted` | `started` | `completed` | `canceled`
 
 ## Issue attachments (`issue attachment list`)
 
-```json
-[
-  {
-    "id": "...",
-    "title": "PR #456",
-    "url": "https://github.com/...",
-    "subtitle": "Fixes login bug",
-    "sourceType": "github_pr"
-  }
-]
+```jsonl
+{"id":"...","title":"PR #456","url":"https://github.com/...","subtitle":"Fixes login bug","sourceType":"github_pr"}
 ```
 
 `sourceType` reflects the integration that created the attachment (`url`, `github_pr`, `github`, `gitlab_mr`, `slack`, `discord`, `api`, …). Rich integrations (GitHub PR, Slack message, etc.) sync metadata back to Linear automatically.

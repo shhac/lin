@@ -82,7 +82,8 @@ EXAMPLES:
   lin api query 'query($id: String!) { issue(id: $id) { id title } }' --variables '{"id":"ENG-123"}'
 
 OUTPUT:
-  Raw JSON response from Linear's GraphQL API (data field only, empty fields pruned).
+  Raw response from Linear's GraphQL API (data field only, empty fields pruned).
+  Uses global --format json|yaml|jsonl.
   Errors print to stderr as { "error": "..." }.
 
 WHEN TO USE:

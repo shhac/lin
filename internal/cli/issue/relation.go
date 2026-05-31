@@ -78,7 +78,7 @@ func registerRelationList(parent *cobra.Command) {
 				})
 			}
 
-			output.PrintJSON(mapped)
+			output.PrintList(mapped)
 		},
 	})
 }

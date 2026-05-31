@@ -13,10 +13,16 @@ SETTING KEYS:
                                Default: 200. Must be a non-negative integer (0 = no truncation).
   pagination.defaultPageSize   Default number of results for list/search commands
                                Default: 50. Must be an integer between 1 and 250.
+  output.defaultFormat          Default output format when --format is omitted
+                               Values: json, yaml, jsonl.
+  request.timeoutMS             Default request timeout in milliseconds
+                               Default: 0 (no client timeout). Must be non-negative.
 
 EXAMPLES:
   config set truncation.maxLength 500       Show more content before truncating
   config set pagination.defaultPageSize 20  Fetch fewer results per page
+  config set output.defaultFormat json       Return JSON envelopes by default
+  config set request.timeoutMS 10000         Set a 10 second API timeout
   config get truncation.maxLength           Check current truncation setting
   config reset truncation.maxLength         Reset truncation to default (200)
   config reset                              Reset all settings to defaults

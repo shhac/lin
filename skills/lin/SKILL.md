@@ -16,7 +16,7 @@ allowed-tools: Bash(lin *) Read Grep Glob
 
 `lin` is a CLI binary installed on `$PATH`. Invoke it directly (e.g. `lin issue list --team ENG`).
 
-All output is JSON to stdout. Errors go to stderr as `{ "error": "...", "fixable_by": "agent|human|retry", "hint": "..." }` with non-zero exit.
+List/search output is JSONL by default; single-item output is pretty JSON. Use `--format json|yaml|jsonl` to override. Errors go to stderr as `{ "error": "...", "fixable_by": "agent|human|retry", "hint": "..." }` with non-zero exit.
 
 ## IMPORTANT: Never access the Linear API directly
 
@@ -224,9 +224,25 @@ All commands accept multiple ID formats:
 
 ## Pagination
 
-List commands return `{ "items": [...], "pagination"?: { "hasMore": true, "nextCursor": "..." } }`.
+List/search commands default to JSONL: one item per line. If another page exists, the final line is `{"@pagination":{"has_more":true,"next_cursor":"..."}}`.
+
+Use `--format json` for an envelope: `{ "data": [...], "pagination"?: { "has_more": true, "next_cursor": "..." } }`.
 
 Use `--limit <n>` and `--cursor <token>` to paginate.
+
+## Global flags and defaults
+
+- `--format json|yaml|jsonl`: override output format for this invocation
+- `--timeout <ms>`: request timeout in milliseconds
+- `--debug`: log redacted HTTP request records to stderr
+- `--expand <field,...>` / `--full`: expand truncated long text fields
+
+Persist commonly-used defaults with:
+
+```bash
+lin config set output.defaultFormat jsonl
+lin config set request.timeoutMS 10000
+```
 
 ## Per-command usage docs
 
@@ -261,4 +277,4 @@ Always prefer structured commands first — they handle pagination, ID resolutio
 ## References
 
 - [references/commands.md](references/commands.md): full command map + all flags
-- [references/output.md](references/output.md): JSON output shapes + field details
+- [references/output.md](references/output.md): structured output shapes + field details

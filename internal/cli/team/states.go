@@ -55,7 +55,7 @@ func registerStates(team *cobra.Command) {
 				}
 			}
 
-			output.PrintJSON(items)
+			output.PrintList(items)
 		},
 	}
 	team.AddCommand(cmd)

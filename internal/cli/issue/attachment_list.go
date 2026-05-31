@@ -28,7 +28,7 @@ func registerAttachmentList(parent *cobra.Command) {
 				items[i] = mapAttachment(a)
 			}
 
-			output.PrintJSON(items)
+			output.PrintList(items)
 		},
 	})
 }

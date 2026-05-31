@@ -194,5 +194,19 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 
 | Flag                   | Description                                                         |
 | ---------------------- | ------------------------------------------------------------------- |
+| `--format <fmt>`       | Output format: json, yaml, jsonl                                    |
+| `--timeout <ms>`       | Request timeout in milliseconds                                     |
+| `--debug`              | Log redacted HTTP request records to stderr                         |
 | `--expand <field,...>` | Expand specific truncated fields (e.g. `--expand description,body`) |
 | `--full`               | Expand all truncated fields                                         |
+
+## Persistent config keys
+
+Use `lin config set <key> <value>` to persist defaults:
+
+| Key                          | Values / meaning                         |
+| ---------------------------- | ---------------------------------------- |
+| `output.defaultFormat`       | `json`, `yaml`, or `jsonl`               |
+| `request.timeoutMS`          | Request timeout in milliseconds          |
+| `pagination.defaultPageSize` | Default page size for paginated commands |
+| `truncation.maxLength`       | Default truncation length for long text  |

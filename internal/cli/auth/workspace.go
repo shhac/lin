@@ -38,7 +38,7 @@ func registerWorkspaceList(workspace *cobra.Command) {
 					"default": alias == defaultWs,
 				})
 			}
-			output.PrintJSON(map[string]any{"items": items})
+			output.PrintList(items)
 		},
 	}
 	workspace.AddCommand(cmd)

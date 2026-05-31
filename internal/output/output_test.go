@@ -1,9 +1,13 @@
 package output
 
 import (
+	"bytes"
+	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/shhac/lin/internal/config"
+	apierrors "github.com/shhac/lin/internal/errors"
 )
 
 func TestPruneEmpty_NilFields(t *testing.T) {
@@ -242,5 +246,77 @@ func TestPruneEmpty_PreservesEmptySliceAtTopLevel(t *testing.T) {
 	}
 	if arr, ok := got.([]any); !ok || len(arr) != 0 {
 		t.Errorf("expected [] at top level, got %v", got)
+	}
+}
+
+func TestPrintPaginated_DefaultsToNDJSON(t *testing.T) {
+	tmp := t.TempDir()
+	config.SetConfigDir(tmp)
+	defer config.SetConfigDir("")
+	if err := ConfigureFormat(""); err != nil {
+		t.Fatalf("ConfigureFormat: %v", err)
+	}
+
+	var stdout bytes.Buffer
+	restore := SetWritersForTest(&stdout, nil)
+	defer restore()
+
+	PrintPaginated([]map[string]any{
+		{"id": "A"},
+		{"id": "B"},
+	}, &Pagination{HasMore: true, NextCursor: "cursor-1"})
+
+	lines := strings.Split(strings.TrimSpace(stdout.String()), "\n")
+	if len(lines) != 3 {
+		t.Fatalf("got %d lines: %q", len(lines), stdout.String())
+	}
+	for _, line := range lines {
+		var decoded map[string]any
+		if err := json.Unmarshal([]byte(line), &decoded); err != nil {
+			t.Fatalf("invalid JSONL line %q: %v", line, err)
+		}
+	}
+	if !strings.Contains(lines[2], `"@pagination"`) {
+		t.Fatalf("last line should be pagination metadata: %q", lines[2])
+	}
+}
+
+func TestPrintPaginated_JSONFormatUsesDataEnvelope(t *testing.T) {
+	tmp := t.TempDir()
+	config.SetConfigDir(tmp)
+	defer config.SetConfigDir("")
+	if err := ConfigureFormat("json"); err != nil {
+		t.Fatalf("ConfigureFormat: %v", err)
+	}
+	defer ConfigureFormat("")
+
+	var stdout bytes.Buffer
+	restore := SetWritersForTest(&stdout, nil)
+	defer restore()
+
+	PrintPaginated([]map[string]any{{"id": "A"}}, &Pagination{HasMore: true, NextCursor: "cursor-1"})
+
+	var decoded map[string]any
+	if err := json.Unmarshal(stdout.Bytes(), &decoded); err != nil {
+		t.Fatalf("invalid JSON: %v\n%s", err, stdout.String())
+	}
+	if _, ok := decoded["data"]; !ok {
+		t.Fatalf("expected data envelope, got %#v", decoded)
+	}
+	if _, ok := decoded["items"]; ok {
+		t.Fatalf("did not expect legacy items envelope: %#v", decoded)
+	}
+}
+
+func TestWriteErrorToDoesNotExit(t *testing.T) {
+	var stderr bytes.Buffer
+	WriteErrorTo(&stderr, apierrors.New("bad input", apierrors.FixableByAgent).WithHint("try again"))
+
+	var decoded map[string]any
+	if err := json.Unmarshal(stderr.Bytes(), &decoded); err != nil {
+		t.Fatalf("invalid JSON: %v", err)
+	}
+	if decoded["error"] != "bad input" || decoded["fixable_by"] != "agent" || decoded["hint"] != "try again" {
+		t.Fatalf("unexpected error payload: %#v", decoded)
 	}
 }

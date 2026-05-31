@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-const usageText = `lin — Linear CLI (JSON output, LLM-friendly)
+const usageText = `lin — Linear CLI (JSON/JSONL output, LLM-friendly)
 
 COMMANDS:
   auth login <api-key> [--alias <name>]   Store API key (auto-detects workspace)
@@ -78,13 +78,16 @@ FILTERS (issue list/search): --team --status --assignee --priority --label --cyc
 FILTERS (document list): --project --creator --limit
 
 PAGINATION: --limit <n> --cursor <token>
-  { "items": [...], "pagination": { "hasMore": true, "nextCursor": "..." } }
+  List/search commands default to JSONL: one item per line.
+  If more pages exist, last line is { "@pagination": { "has_more": true, "next_cursor": "..." } }.
 
-OUTPUT: JSON to stdout. Errors: { "error": "..." } to stderr with valid values.
+OUTPUT: list/search → JSONL by default; single items → pretty JSON.
+  Override with --format json|yaml|jsonl. JSON list envelopes use { "data": [...], "pagination"?: ... }.
+  Errors: { "error": "...", "fixable_by": "agent|human|retry", "hint": "..." } to stderr.
 
 TRUNCATION: description/body/content truncated to ~200 chars + companion *Length field.
   --expand <field,...>  Expand specific    --full  Expand all
-  Defaults: config set truncation.maxLength|pagination.defaultPageSize <n>
+  Defaults: config set truncation.maxLength|pagination.defaultPageSize|output.defaultFormat|request.timeoutMS <value>
 
 PRIORITY: none|urgent|high|medium|low
 PROJECT STATUS: backlog|planned|started|paused|completed|canceled

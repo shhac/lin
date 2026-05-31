@@ -9,20 +9,30 @@ import (
 	"net/http"
 )
 
-var defaultAPIURL = "https://api.linear.app/graphql"
+const initialAPIURL = "https://api.linear.app/graphql"
+
+var defaultAPIURL = initialAPIURL
 
 // setAPIURL overrides the endpoint (for tests).
 func setAPIURL(url string) { defaultAPIURL = url }
 
 type Client struct {
-	apiKey string
-	http   *http.Client
+	apiKey  string
+	baseURL string
+	http    *http.Client
 }
 
 func NewClient(apiKey string) *Client {
+	return NewClientWithHTTP(apiKey, &http.Client{})
+}
+
+func NewClientWithHTTP(apiKey string, client *http.Client) *Client {
+	if client == nil {
+		client = &http.Client{}
+	}
 	return &Client{
 		apiKey: apiKey,
-		http:   &http.Client{},
+		http:   client,
 	}
 }
 
@@ -46,7 +56,7 @@ func (c *Client) do(ctx context.Context, query string, variables any, result any
 		return fmt.Errorf("marshal request: %w", err)
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, defaultAPIURL, bytes.NewReader(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.endpointURL(), bytes.NewReader(body))
 	if err != nil {
 		return fmt.Errorf("create request: %w", err)
 	}
@@ -84,6 +94,13 @@ func (c *Client) do(ctx context.Context, query string, variables any, result any
 	}
 
 	return nil
+}
+
+func (c *Client) endpointURL() string {
+	if c.baseURL != "" {
+		return c.baseURL
+	}
+	return endpointURL()
 }
 
 // RawQuery executes an arbitrary GraphQL query and returns the raw data.

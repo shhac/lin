@@ -20,13 +20,18 @@ import (
 	"github.com/shhac/lin/internal/cli/user"
 	"github.com/shhac/lin/internal/config"
 	apierrors "github.com/shhac/lin/internal/errors"
+	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
 	"github.com/shhac/lin/internal/truncation"
 )
 
 var (
-	flagExpand string
-	flagFull   bool
+	flagExpand  string
+	flagFull    bool
+	flagFormat  string
+	flagTimeout int
+	flagDebug   bool
+	flagBaseURL string
 )
 
 func newRootCmd(version string) *cobra.Command {
@@ -36,7 +41,7 @@ func newRootCmd(version string) *cobra.Command {
 		Version:       version,
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 			cfg := config.Read()
 			var maxLen int
 			if cfg.Settings != nil && cfg.Settings.Truncation != nil && cfg.Settings.Truncation.MaxLength != nil {
@@ -47,11 +52,29 @@ func newRootCmd(version string) *cobra.Command {
 				Full:      flagFull,
 				MaxLength: maxLen,
 			})
+			if err := output.ConfigureFormat(flagFormat); err != nil {
+				return err
+			}
+			timeout := flagTimeout
+			if timeout == 0 && cfg.Settings != nil && cfg.Settings.Request != nil && cfg.Settings.Request.TimeoutMS != nil {
+				timeout = *cfg.Settings.Request.TimeoutMS
+			}
+			linear.Configure(linear.Options{
+				BaseURL:   flagBaseURL,
+				TimeoutMS: timeout,
+				Debug:     flagDebug,
+			})
+			return nil
 		},
 	}
 
 	root.PersistentFlags().StringVarP(&flagExpand, "expand", "e", "", "Expand truncated fields (comma-separated: description,body,content)")
 	root.PersistentFlags().BoolVarP(&flagFull, "full", "F", false, "Show full content for all truncated fields")
+	root.PersistentFlags().StringVarP(&flagFormat, "format", "f", "", "Output format: json, yaml, jsonl")
+	root.PersistentFlags().IntVarP(&flagTimeout, "timeout", "t", 0, "Request timeout in milliseconds")
+	root.PersistentFlags().BoolVarP(&flagDebug, "debug", "d", false, "Log redacted HTTP request records to stderr")
+	root.PersistentFlags().StringVar(&flagBaseURL, "base-url", "", "Linear API base URL override for tests")
+	_ = root.PersistentFlags().MarkHidden("base-url")
 
 	api.Register(root)
 	auth.Register(root)
@@ -75,6 +98,10 @@ func newRootCmd(version string) *cobra.Command {
 func Execute(version string) error {
 	err := newRootCmd(version).Execute()
 	if err != nil {
+		var apiErr *apierrors.APIError
+		if apierrors.As(err, &apiErr) {
+			output.WriteError(apiErr)
+		}
 		msg := err.Error()
 		if strings.Contains(msg, "unknown command") || strings.Contains(msg, "unknown flag") {
 			output.WriteError(apierrors.New(msg, apierrors.FixableByAgent).

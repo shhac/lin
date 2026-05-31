@@ -21,9 +21,19 @@ type PaginationSettings struct {
 	DefaultPageSize *int `json:"defaultPageSize,omitempty"`
 }
 
+type OutputSettings struct {
+	DefaultFormat string `json:"defaultFormat,omitempty"`
+}
+
+type RequestSettings struct {
+	TimeoutMS *int `json:"timeoutMS,omitempty"`
+}
+
 type Settings struct {
 	Truncation *TruncationSettings `json:"truncation,omitempty"`
 	Pagination *PaginationSettings `json:"pagination,omitempty"`
+	Output     *OutputSettings     `json:"output,omitempty"`
+	Request    *RequestSettings    `json:"request,omitempty"`
 }
 
 type Config struct {
