@@ -1,14 +1,9 @@
 ---
 name: lin
 description: |
-  Linear CLI for humans and LLMs. Use when:
-  - Looking up Linear issues, projects, initiatives, documents, cycles, teams, or labels
-  - Searching Linear issues, projects, initiatives, documents, or labels by text
-  - Creating or updating Linear issues, initiatives, or documents
-  - Adding comments to Linear issues (with threaded replies and file attachments)
-  - Linking external resources (GitHub PRs/issues, GitLab MRs, Slack/Discord messages) to Linear issues
-  - Checking project status, milestones, or team members
-  Triggers: "linear issue", "linear project", "linear initiative", "linear document", "linear ticket", "linear search", "create issue", "create document", "update issue", "update document", "linear team", "linear cycle", "linear comment", "reply to comment", "attach file", "upload file", "download file", "linear file", "linear download", "linear label", "search labels", "find label", "label by name", "attach github pr", "attach pull request", "link pr to issue", "link slack message", "link gitlab mr", "linear attachment"
+  Linear CLI for humans and LLMs. Use when looking up, searching, creating, or updating Linear issues, projects, initiatives, documents, cycles, teams, labels, comments, files, or external links. Triggers: "linear", "linear issue", "linear project", "linear initiative", "linear document", "linear ticket", "linear search", "linear team", "linear cycle", "linear comment", "linear label", "linear file", "attach github pr", "link pr to issue", "link slack message".
+when_to_use: |
+  Use when the user asks to inspect or change Linear issues, projects, initiatives, documents, cycles, teams, labels, comments, file attachments, or links to GitHub PRs/issues, GitLab MRs, Slack, or Discord messages.
 allowed-tools: Bash(lin *) Read Grep Glob
 ---
 
