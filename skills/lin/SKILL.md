@@ -163,7 +163,7 @@ lin customer requests --team ENG --important   # important requests routed to a 
 # Customers
 lin customer list --tier Enterprise --status Active
 lin customer search "acme"
-lin customer get acme-corp         # UUID, slug, or name; includes approximateNeedCount
+lin customer get acme-corp                     # UUID, slug, or name; includes approximateNeedCount
 lin customer statuses                          # workspace lifecycle statuses
 lin customer tiers                             # workspace tiers/segments
 
