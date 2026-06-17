@@ -551,3 +551,52 @@ func TestBuildCustomerNeedFilter_CustomerAndStatus(t *testing.T) {
 		t.Errorf("state name = %+v", f.Issue)
 	}
 }
+
+func TestBuildCustomerFilter_OwnerMe(t *testing.T) {
+	f := BuildCustomerFilter(CustomerFilterOpts{Owner: "me"})
+	if f == nil || f.Owner == nil {
+		t.Fatal("expected owner filter")
+	}
+	if f.Owner.IsMe == nil || f.Owner.IsMe.Eq == nil || !*f.Owner.IsMe.Eq {
+		t.Errorf("expected IsMe comparator with Eq=true, got %+v", f.Owner)
+	}
+}
+
+func TestBuildCustomerFilter_AllOptsCombined(t *testing.T) {
+	f := BuildCustomerFilter(CustomerFilterOpts{
+		Tier:    "Enterprise",
+		Status:  "Active",
+		Owner:   "dana@example.com",
+		Domain:  "acme.example",
+		Revenue: "25000",
+	})
+	if f == nil {
+		t.Fatal("expected non-nil filter")
+	}
+	if f.Tier == nil || f.Status == nil || f.Owner == nil || f.Domains == nil || f.Revenue == nil {
+		t.Errorf("expected every facet set, got %+v", f)
+	}
+	if f.Owner.Or == nil {
+		t.Error("expected owner Or branches for a non-me owner")
+	}
+}
+
+func TestBuildCustomerNeedFilter_ProjectAndDates(t *testing.T) {
+	f := BuildCustomerNeedFilter(CustomerNeedFilterOpts{
+		Project:       "my-project",
+		CreatedAfter:  "2026-01-01",
+		CreatedBefore: "2026-02-01",
+	})
+	if f == nil || f.Project == nil {
+		t.Fatal("expected project filter")
+	}
+	if f.CreatedAt == nil || f.CreatedAt.Gte == nil || *f.CreatedAt.Gte != "2026-01-01" {
+		t.Errorf("createdAt gte = %+v", f.CreatedAt)
+	}
+	if f.CreatedAt.Lte == nil || *f.CreatedAt.Lte != "2026-02-01" {
+		t.Errorf("createdAt lte = %+v", f.CreatedAt)
+	}
+	if f.Issue != nil {
+		t.Error("expected no issue sub-filter when only project/dates set")
+	}
+}

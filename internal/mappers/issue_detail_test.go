@@ -64,8 +64,20 @@ func TestMapIssueDetail_Full(t *testing.T) {
 			},
 		},
 	}
+	issue.Needs = linear.IssueGetIssueNeedsCustomerNeedConnection{
+		Nodes: []linear.IssueGetIssueNeedsCustomerNeedConnectionNodesCustomerNeed{
+			{Id: "n1", Priority: 1}, {Id: "n2", Priority: 0}, {Id: "n3", Priority: 1},
+		},
+	}
 
 	got := MapIssueDetail(issue)
+
+	if got["customerRequestCount"] != 3 {
+		t.Errorf("customerRequestCount = %v, want 3", got["customerRequestCount"])
+	}
+	if got["customerImportantCount"] != 2 {
+		t.Errorf("customerImportantCount = %v, want 2", got["customerImportantCount"])
+	}
 
 	assertField(t, got, "id", "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee")
 	assertField(t, got, "identifier", "ENG-200")
@@ -144,5 +156,11 @@ func TestMapIssueDetail_NoOptionalFields(t *testing.T) {
 	}
 	if got["commentCount"] != 0 {
 		t.Errorf("commentCount = %v, want 0", got["commentCount"])
+	}
+	if got["customerRequestCount"] != 0 {
+		t.Errorf("customerRequestCount = %v, want 0", got["customerRequestCount"])
+	}
+	if got["customerImportantCount"] != 0 {
+		t.Errorf("customerImportantCount = %v, want 0", got["customerImportantCount"])
 	}
 }
