@@ -19,6 +19,7 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 - `lin project list [--team] [--status] [--limit] [--cursor]` — list projects
 - `lin project get <id>` — project summary with lead, labels, milestones, url, and content (markdown body, truncated by default)
 - `lin project issues <id> [filters]` — issues in a project
+- `lin project requests <id> [--important] [--limit] [--cursor]` — customer requests linked to the project
 - `lin project update title <id> <value>`
 - `lin project update status <id> <value>` — backlog | planned | started | paused | completed | canceled
 - `lin project update description <id> <value>`
@@ -85,7 +86,8 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 - `lin issue search <text> [filters]` — full-text search
 - `lin issue list [filters]` — list issues (returns status, assignee, team, branchName)
   - Date filters: `--updated-after`, `--updated-before`, `--created-after`, `--created-before` (YYYY-MM-DD)
-- `lin issue get <id>` — full issue details with commentCount, branchName, attachments (PR links)
+- `lin issue get <id>` — full issue details with commentCount, customerRequestCount, customerImportantCount, branchName, attachments (PR links)
+- `lin issue requests <id> [--important] [--limit] [--cursor]` — customer requests linked to the issue
 - `lin issue new <title> --team <team> [--priority <p>] [--status <s>] [--assignee <name|email|id>] [--project <p>] [--labels <names|ids>]`
 - `lin issue update title <id> <value>`
 - `lin issue update status <id> <value>` — team-specific workflow state names

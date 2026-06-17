@@ -54,6 +54,7 @@ lin
 │   ├── list [--team] [--status]
 │   ├── get <id>
 │   ├── issues <id> [filters]
+│   ├── requests <id> [--important]
 │   ├── new <name> --team <teams>
 │   ├── update title|status|description|content|lead|start-date|target-date|priority|icon|color|labels <id> <value>
 │   ├── delete|unarchive <id>
@@ -87,6 +88,7 @@ lin
 │   ├── update title|status|assignee|priority|project|labels|estimate|description|due-date|cycle|parent <id> <value>
 │   ├── comment list|new|get|edit|replies <id> [<body>]
 │   ├── relation list|add|remove
+│   ├── requests <id> [--important]
 │   ├── archive|unarchive|delete <id>
 │   ├── attachment list|add|remove   # add: --github-pr|--github-issue|--gitlab-mr|--slack [--sync-thread]|--discord
 │   ├── history <id> [--limit] [--cursor]

@@ -8,7 +8,11 @@ SEARCH & LIST:
     [--updated-after|before] [--created-after|before] (YYYY-MM-DD)
 
 GET:
-  issue get <id>             Full details + labels, attachments, branchName, commentCount
+  issue get <id>             Full details + labels, attachments, branchName, commentCount,
+                             customerRequestCount, customerImportantCount
+
+CUSTOMER REQUESTS:
+  issue requests <id> [--important] [--limit] [--cursor]   Customer requests linked to the issue
 
 CREATE:
   issue new <title> --team <key|name|UUID>    --team required

@@ -21,6 +21,7 @@ func Register(parent *cobra.Command) {
 	registerUpdate(issue)
 	registerComment(issue)
 	registerRelation(issue)
+	registerRequests(issue)
 	registerArchive(issue)
 	registerAttachment(issue)
 	registerHistory(issue)

@@ -13,6 +13,8 @@ GET:
                                status, progress, lead, startDate, targetDate, labels[], milestones[]
   project issues <id>          Issues in a project
     [--status] [--assignee] [--priority] [--limit] [--cursor]
+  project requests <id>        Customer requests linked to the project
+    [--important] [--limit] [--cursor]
 
 CREATE:
   project new <name> --team <teams>       --team required (comma-separated for multi-team)

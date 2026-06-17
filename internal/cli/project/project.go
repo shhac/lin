@@ -18,6 +18,7 @@ func Register(parent *cobra.Command) {
 	registerList(project)
 	registerGet(project)
 	registerIssues(project)
+	registerRequests(project)
 	registerNew(project)
 	registerUpdate(project)
 	registerDelete(project)

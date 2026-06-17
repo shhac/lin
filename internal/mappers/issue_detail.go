@@ -42,26 +42,35 @@ func MapIssueDetail(issue linear.IssueGetIssue) map[string]any {
 		parentObj = map[string]any{"id": issue.Parent.Id, "identifier": issue.Parent.Identifier}
 	}
 
+	importantCount := 0
+	for _, n := range issue.Needs.Nodes {
+		if n.Priority == 1 {
+			importantCount++
+		}
+	}
+
 	return map[string]any{
-		"id":            issue.Id,
-		"identifier":    issue.Identifier,
-		"url":           issue.Url,
-		"title":         issue.Title,
-		"description":   issue.Description,
-		"branchName":    issue.BranchName,
-		"status":        statusObj,
-		"assignee":      assigneeObj,
-		"team":          teamObj,
-		"project":       projectObj,
-		"priority":      issue.Priority,
-		"priorityLabel": issue.PriorityLabel,
-		"commentCount":  len(issue.Comments.Nodes),
-		"labels":        labels,
-		"attachments":   attachmentMaps,
-		"parent":        parentObj,
-		"estimate":      issue.Estimate,
-		"dueDate":       issue.DueDate,
-		"createdAt":     issue.CreatedAt,
-		"updatedAt":     issue.UpdatedAt,
+		"id":                     issue.Id,
+		"identifier":             issue.Identifier,
+		"url":                    issue.Url,
+		"title":                  issue.Title,
+		"description":            issue.Description,
+		"branchName":             issue.BranchName,
+		"status":                 statusObj,
+		"assignee":               assigneeObj,
+		"team":                   teamObj,
+		"project":                projectObj,
+		"priority":               issue.Priority,
+		"priorityLabel":          issue.PriorityLabel,
+		"commentCount":           len(issue.Comments.Nodes),
+		"customerRequestCount":   len(issue.Needs.Nodes),
+		"customerImportantCount": importantCount,
+		"labels":                 labels,
+		"attachments":            attachmentMaps,
+		"parent":                 parentObj,
+		"estimate":               issue.Estimate,
+		"dueDate":                issue.DueDate,
+		"createdAt":              issue.CreatedAt,
+		"updatedAt":              issue.UpdatedAt,
 	}
 }

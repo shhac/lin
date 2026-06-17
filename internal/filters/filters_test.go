@@ -483,3 +483,71 @@ func TestBuildIssueFilter_Project_Name(t *testing.T) {
 		t.Error("expected name match for non-UUID project input")
 	}
 }
+
+func TestBuildCustomerFilter_Empty(t *testing.T) {
+	if f := BuildCustomerFilter(CustomerFilterOpts{}); f != nil {
+		t.Fatal("expected nil filter for empty opts")
+	}
+}
+
+func TestBuildCustomerFilter_TierStatusRevenue(t *testing.T) {
+	f := BuildCustomerFilter(CustomerFilterOpts{Tier: "Enterprise", Status: "Active", Revenue: "10000"})
+	if f == nil {
+		t.Fatal("expected non-nil filter")
+	}
+	if f.Tier == nil || *f.Tier.DisplayName.EqIgnoreCase != "Enterprise" {
+		t.Errorf("tier = %+v", f.Tier)
+	}
+	if f.Status == nil || *f.Status.Name.EqIgnoreCase != "Active" {
+		t.Errorf("status = %+v", f.Status)
+	}
+	if f.Revenue == nil || f.Revenue.Gte == nil || *f.Revenue.Gte != 10000 {
+		t.Errorf("revenue = %+v", f.Revenue)
+	}
+}
+
+func TestBuildCustomerFilter_SearchAndDomain(t *testing.T) {
+	f := BuildCustomerFilter(CustomerFilterOpts{Search: "acme", Domain: "acme.example"})
+	if f == nil || f.Name == nil || *f.Name.ContainsIgnoreCaseAndAccent != "acme" {
+		t.Errorf("name search = %+v", f.Name)
+	}
+	if f.Domains == nil || f.Domains.Some == nil || *f.Domains.Some.EqIgnoreCase != "acme.example" {
+		t.Errorf("domains = %+v", f.Domains)
+	}
+}
+
+func TestBuildCustomerNeedFilter_Empty(t *testing.T) {
+	if f := BuildCustomerNeedFilter(CustomerNeedFilterOpts{}); f != nil {
+		t.Fatal("expected nil filter for empty opts")
+	}
+}
+
+func TestBuildCustomerNeedFilter_Important(t *testing.T) {
+	f := BuildCustomerNeedFilter(CustomerNeedFilterOpts{Important: true})
+	if f == nil || f.Priority == nil || f.Priority.Eq == nil || *f.Priority.Eq != 1 {
+		t.Errorf("priority = %+v", f)
+	}
+}
+
+func TestBuildCustomerNeedFilter_UnassignedTriage(t *testing.T) {
+	f := BuildCustomerNeedFilter(CustomerNeedFilterOpts{Unassigned: true, Triage: true})
+	if f == nil || f.Issue == nil {
+		t.Fatal("expected issue sub-filter")
+	}
+	if f.Issue.Assignee == nil || f.Issue.Assignee.Null == nil || !*f.Issue.Assignee.Null {
+		t.Errorf("assignee null = %+v", f.Issue.Assignee)
+	}
+	if f.Issue.State == nil || f.Issue.State.Type == nil || *f.Issue.State.Type.Eq != "triage" {
+		t.Errorf("state type = %+v", f.Issue.State)
+	}
+}
+
+func TestBuildCustomerNeedFilter_CustomerAndStatus(t *testing.T) {
+	f := BuildCustomerNeedFilter(CustomerNeedFilterOpts{Customer: "Acme Corp", Status: "In Progress"})
+	if f == nil || f.Customer == nil || *f.Customer.Name.EqIgnoreCase != "Acme Corp" {
+		t.Errorf("customer = %+v", f.Customer)
+	}
+	if f.Issue == nil || f.Issue.State == nil || *f.Issue.State.Name.EqIgnoreCase != "In Progress" {
+		t.Errorf("state name = %+v", f.Issue)
+	}
+}

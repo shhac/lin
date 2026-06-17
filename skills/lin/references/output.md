@@ -146,7 +146,7 @@ Issues in list output include inline context to reduce follow-up calls:
 
 ## Issue overview (`issue get`)
 
-Includes comment count, branch name, and attachments (e.g., linked GitHub PRs):
+Includes comment count, customer request counts, branch name, and attachments (e.g., linked GitHub PRs):
 
 ```json
 {
@@ -155,9 +155,35 @@ Includes comment count, branch name, and attachments (e.g., linked GitHub PRs):
   "title": "Fix login redirect",
   "branchName": "alice/eng-123-fix-login-redirect",
   "commentCount": 3,
+  "customerRequestCount": 5,
+  "customerImportantCount": 2,
   "attachments": [{ "title": "PR #456", "url": "https://github.com/...", "sourceType": "github_pr" }]
 }
 ```
+
+`customerRequestCount` / `customerImportantCount` count the customer requests
+linked to the issue (and how many are flagged important). List them with
+`lin issue requests <id>`. Counts are computed over the first 250 linked
+requests.
+
+## Customer requests (`issue requests`, `project requests`, `customer requests`)
+
+Each item links a customer to either an issue or a project (never both):
+
+```json
+{
+  "id": "...",
+  "important": true,
+  "createdAt": "2026-02-01T09:00:00.000Z",
+  "body": "Customer asked for SSO support",
+  "url": "https://intercom.example/conversations/123",
+  "customer": { "id": "...", "name": "Acme Corp" },
+  "issue": { "identifier": "ENG-123", "title": "Add SSO" }
+}
+```
+
+`important` is derived from the request priority (`1` = important). A
+project-linked request carries `project` instead of `issue`.
 
 ## Project list items
 
