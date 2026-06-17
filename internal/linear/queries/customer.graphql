@@ -1,0 +1,68 @@
+# --- Queries ---
+
+query CustomerGet($id: String!) {
+  customer(id: $id) {
+    id
+    name
+    slugId
+    url
+    domains
+    externalIds
+    revenue
+    size
+    approximateNeedCount
+    createdAt
+    updatedAt
+    owner { id name }
+    status { id name }
+    tier { id displayName }
+  }
+}
+
+query CustomerList(
+  # @genqlient(omitempty: true)
+  $filter: CustomerFilter,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  customers(filter: $filter, first: $first, after: $after) {
+    nodes { ...CustomerSummaryFields }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query CustomerNeeds(
+  # @genqlient(omitempty: true)
+  $filter: CustomerNeedFilter,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  customerNeeds(filter: $filter, first: $first, after: $after) {
+    nodes { ...CustomerNeedSummaryFields }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query CustomerStatuses(
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  customerStatuses(first: $first, after: $after) {
+    nodes { id name displayName color position description }
+    pageInfo { ...PageInfoFields }
+  }
+}
+
+query CustomerTiers(
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  customerTiers(first: $first, after: $after) {
+    nodes { id name displayName color position description }
+    pageInfo { ...PageInfoFields }
+  }
+}

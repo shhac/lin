@@ -21,7 +21,24 @@ query IssueGet($id: String!) {
     team { id key name }
     project { id name }
     comments(first: 250) { nodes { id } }
+    needs(first: 250) { nodes { id priority } }
     attachments { nodes { id title url subtitle sourceType } }
+  }
+}
+
+query IssueNeeds(
+  $id: String!,
+  # @genqlient(omitempty: true)
+  $filter: CustomerNeedFilter,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  issue(id: $id) {
+    needs(filter: $filter, first: $first, after: $after) {
+      nodes { ...CustomerNeedSummaryFields }
+      pageInfo { ...PageInfoFields }
+    }
   }
 }
 

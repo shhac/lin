@@ -3,6 +3,7 @@ package filters
 import (
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/shhac/lin/internal/linear"
@@ -160,20 +161,7 @@ func BuildIssueFilter(opts IssueFilterOpts) *linear.IssueFilter {
 	}
 
 	if opts.Assignee != "" {
-		lower := strings.ToLower(opts.Assignee)
-		if lower == "me" {
-			f.Assignee = &linear.NullableUserFilter{IsMe: &linear.BooleanComparator{Eq: ptr.To(true)}}
-		} else {
-			branches := []linear.NullableUserFilter{
-				{Name: eqIgnoreCase(opts.Assignee)},
-				{DisplayName: eqIgnoreCase(opts.Assignee)},
-				{Email: eqIgnoreCase(opts.Assignee)},
-			}
-			if IsUUID(opts.Assignee) {
-				branches = append([]linear.NullableUserFilter{{Id: &linear.IDComparator{Eq: ptr.To(opts.Assignee)}}}, branches...)
-			}
-			f.Assignee = &linear.NullableUserFilter{Or: branches}
-		}
+		f.Assignee = BuildNullableUserFilter(opts.Assignee)
 	}
 
 	if opts.Status != "" {
@@ -220,6 +208,154 @@ func BuildIssueFilter(opts IssueFilterOpts) *linear.IssueFilter {
 	}
 
 	if reflect.DeepEqual(*f, linear.IssueFilter{}) {
+		return nil
+	}
+	return f
+}
+
+// BuildNullableUserFilter builds a user filter accepting "me", a UUID, name,
+// display name, or email. Shared by issue assignee and customer owner filters.
+func BuildNullableUserFilter(input string) *linear.NullableUserFilter {
+	if strings.EqualFold(input, "me") {
+		return &linear.NullableUserFilter{IsMe: &linear.BooleanComparator{Eq: ptr.To(true)}}
+	}
+	branches := []linear.NullableUserFilter{
+		{Name: eqIgnoreCase(input)},
+		{DisplayName: eqIgnoreCase(input)},
+		{Email: eqIgnoreCase(input)},
+	}
+	if IsUUID(input) {
+		branches = append([]linear.NullableUserFilter{{Id: &linear.IDComparator{Eq: ptr.To(input)}}}, branches...)
+	}
+	return &linear.NullableUserFilter{Or: branches}
+}
+
+// BuildNullableCustomerFilter builds a customer filter for use in
+// CustomerNeedFilter.Customer, matching a UUID or exact name.
+func BuildNullableCustomerFilter(input string) *linear.NullableCustomerFilter {
+	if IsUUID(input) {
+		return &linear.NullableCustomerFilter{Id: &linear.IDComparator{Eq: ptr.To(input)}}
+	}
+	return &linear.NullableCustomerFilter{Name: eqIgnoreCase(input)}
+}
+
+// BuildCustomerNameFilter builds a customers() filter matching an exact name,
+// used as the resolver fallback when an input is not a UUID or slug.
+func BuildCustomerNameFilter(input string) *linear.CustomerFilter {
+	return &linear.CustomerFilter{Name: eqIgnoreCase(input)}
+}
+
+type CustomerFilterOpts struct {
+	Search  string // name substring (case+accent insensitive)
+	Name    string // name exact (case-insensitive)
+	Tier    string // tier display name
+	Status  string // status name
+	Owner   string // owner: me/name/display name/email/UUID
+	Domain  string // email domain (exact)
+	Revenue string // minimum revenue (gte)
+}
+
+func BuildCustomerFilter(opts CustomerFilterOpts) *linear.CustomerFilter {
+	f := &linear.CustomerFilter{}
+
+	if opts.Name != "" {
+		f.Name = eqIgnoreCase(opts.Name)
+	}
+	if opts.Search != "" {
+		f.Name = containsIgnoreCaseAndAccent(opts.Search)
+	}
+	if opts.Tier != "" {
+		f.Tier = &linear.CustomerTierFilter{DisplayName: eqIgnoreCase(opts.Tier)}
+	}
+	if opts.Status != "" {
+		f.Status = &linear.CustomerStatusFilter{Name: eqIgnoreCase(opts.Status)}
+	}
+	if opts.Owner != "" {
+		f.Owner = BuildNullableUserFilter(opts.Owner)
+	}
+	if opts.Domain != "" {
+		f.Domains = &linear.StringArrayComparator{Some: &linear.StringItemComparator{EqIgnoreCase: ptr.To(opts.Domain)}}
+	}
+	if opts.Revenue != "" {
+		if n, err := strconv.ParseFloat(opts.Revenue, 64); err == nil {
+			f.Revenue = &linear.NumberComparator{Gte: &n}
+		}
+	}
+
+	if reflect.DeepEqual(*f, linear.CustomerFilter{}) {
+		return nil
+	}
+	return f
+}
+
+type CustomerNeedFilterOpts struct {
+	Customer      string // customer UUID or name
+	Project       string // project UUID, slug, or name
+	Important     bool   // priority == 1
+	Unassigned    bool   // linked issue has no assignee
+	Triage        bool   // linked issue state type == triage
+	Status        string // linked issue state name
+	Label         string // linked issue label
+	Team          string // linked issue team
+	CreatedAfter  string
+	CreatedBefore string
+}
+
+func BuildCustomerNeedFilter(opts CustomerNeedFilterOpts) *linear.CustomerNeedFilter {
+	f := &linear.CustomerNeedFilter{}
+
+	if opts.Important {
+		f.Priority = &linear.NumberComparator{Eq: ptr.To(1.0)}
+	}
+	if opts.Customer != "" {
+		f.Customer = BuildNullableCustomerFilter(opts.Customer)
+	}
+	if opts.Project != "" {
+		f.Project = BuildNullableProjectFilter(opts.Project)
+	}
+	if opts.CreatedAfter != "" || opts.CreatedBefore != "" {
+		dc := &linear.DateComparator{}
+		if opts.CreatedAfter != "" {
+			dc.Gte = ptr.To(opts.CreatedAfter)
+		}
+		if opts.CreatedBefore != "" {
+			dc.Lte = ptr.To(opts.CreatedBefore)
+		}
+		f.CreatedAt = dc
+	}
+
+	issue := &linear.NullableIssueFilter{}
+	issueSet := false
+	if opts.Unassigned {
+		issue.Assignee = &linear.NullableUserFilter{Null: ptr.To(true)}
+		issueSet = true
+	}
+	if opts.Triage || opts.Status != "" {
+		state := &linear.WorkflowStateFilter{}
+		if opts.Triage {
+			state.Type = &linear.StringComparator{Eq: ptr.To("triage")}
+		}
+		if opts.Status != "" {
+			state.Name = eqIgnoreCase(opts.Status)
+		}
+		issue.State = state
+		issueSet = true
+	}
+	if opts.Label != "" {
+		issue.Labels = &linear.IssueLabelCollectionFilter{
+			Some: &linear.IssueLabelFilter{Name: eqIgnoreCase(opts.Label)},
+		}
+		issueSet = true
+	}
+	if opts.Team != "" {
+		issue.Team = BuildTeamFilter(opts.Team)
+		issueSet = true
+	}
+	if issueSet {
+		f.Issue = issue
+	}
+
+	if reflect.DeepEqual(*f, linear.CustomerNeedFilter{}) {
 		return nil
 	}
 	return f

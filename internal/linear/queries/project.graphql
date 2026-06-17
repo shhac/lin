@@ -66,6 +66,22 @@ query ProjectIssues(
   }
 }
 
+query ProjectNeeds(
+  $id: String!,
+  # @genqlient(omitempty: true)
+  $filter: CustomerNeedFilter,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  project(id: $id) {
+    needs(filter: $filter, first: $first, after: $after) {
+      nodes { ...CustomerNeedSummaryFields }
+      pageInfo { ...PageInfoFields }
+    }
+  }
+}
+
 # --- Mutations ---
 
 mutation ProjectCreate($input: ProjectCreateInput!) {

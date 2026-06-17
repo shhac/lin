@@ -71,3 +71,26 @@ fragment DocSearchSummaryFields on DocumentSearchResult {
   creator { id name }
   project { id name }
 }
+
+fragment CustomerSummaryFields on Customer {
+  id
+  name
+  slugId
+  url
+  revenue
+  approximateNeedCount
+  owner { id name }
+  status { id name }
+  tier { id displayName }
+}
+
+fragment CustomerNeedSummaryFields on CustomerNeed {
+  id
+  priority
+  body
+  url
+  createdAt
+  customer { id name }
+  issue { identifier title }
+  project { id name }
+}
