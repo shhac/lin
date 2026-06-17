@@ -1,9 +1,9 @@
 ---
 name: lin
 description: |
-  Linear CLI for humans and LLMs. Use when looking up, searching, creating, or updating Linear issues, projects, initiatives, documents, cycles, teams, labels, comments, files, or external links. Triggers: "linear", "linear issue", "linear project", "linear initiative", "linear document", "linear ticket", "linear search", "linear team", "linear cycle", "linear comment", "linear label", "linear file", "attach github pr", "link pr to issue", "link slack message".
+  Linear CLI for humans and LLMs. Use when looking up, searching, creating, or updating Linear issues, projects, initiatives, documents, cycles, teams, labels, comments, customers, customer requests, files, or external links. Triggers: "linear", "linear issue", "linear project", "linear initiative", "linear document", "linear ticket", "linear search", "linear team", "linear cycle", "linear comment", "linear label", "linear file", "linear customer", "customer request", "customer need", "customer feedback", "attach github pr", "link pr to issue", "link slack message".
 when_to_use: |
-  Use when the user asks to inspect or change Linear issues, projects, initiatives, documents, cycles, teams, labels, comments, file attachments, or links to GitHub PRs/issues, GitLab MRs, Slack, or Discord messages.
+  Use when the user asks to inspect or change Linear issues, projects, initiatives, documents, cycles, teams, labels, comments, customers, customer requests, file attachments, or links to GitHub PRs/issues, GitLab MRs, Slack, or Discord messages.
 allowed-tools: Bash(lin *) Read Grep Glob
 ---
 
@@ -141,6 +141,37 @@ lin project unarchive <id>               # restore trashed/archived project
 ```
 
 The `--project` filter on issue commands also accepts slug or name.
+
+## Customer requests
+
+A customer request (Linear "customer need") links a customer to an issue or
+project. A request has **no status of its own** — its state is the linked
+issue's state, so "in triage" and "unassigned" are filters on the linked issue.
+Importance is a flag on the request itself (`important: true` ⇒ priority 1).
+Requests have no labels; categorize by the linked issue's labels or the
+customer's tier/status. Customers accept UUID, slug, or name.
+
+```bash
+# Triage workflow — answer "what needs attention?"
+lin customer requests                          # all requests, newest first
+lin customer requests --important              # flagged important
+lin customer requests --unassigned             # linked issue has no assignee
+lin customer requests --triage                 # linked issue still in triage
+lin customer requests --customer "Acme Corp"   # everything one customer asked for
+lin customer requests --team ENG --important   # important requests routed to a team
+
+# Customers
+lin customer list --tier Enterprise --status Active
+lin customer search "acme"
+lin customer get acme-corp         # UUID, slug, or name; includes approximateNeedCount
+lin customer statuses                          # workspace lifecycle statuses
+lin customer tiers                             # workspace tiers/segments
+
+# From the other direction
+lin issue requests ENG-123                     # requests linked to one issue
+lin project requests <id>                      # requests linked to one project
+lin issue get ENG-123                          # includes customerRequestCount + customerImportantCount
+```
 
 ## Initiatives (replaces roadmaps)
 

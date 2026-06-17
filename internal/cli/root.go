@@ -8,6 +8,7 @@ import (
 	"github.com/shhac/lin/internal/cli/api"
 	"github.com/shhac/lin/internal/cli/auth"
 	"github.com/shhac/lin/internal/cli/configcmd"
+	"github.com/shhac/lin/internal/cli/customer"
 	"github.com/shhac/lin/internal/cli/cycle"
 	"github.com/shhac/lin/internal/cli/document"
 	"github.com/shhac/lin/internal/cli/file"
@@ -83,6 +84,7 @@ func newRootCmd(version string) *cobra.Command {
 	document.Register(root)
 	file.Register(root)
 	issue.Register(root)
+	customer.Register(root)
 	team.Register(root)
 	user.Register(root)
 	label.Register(root)

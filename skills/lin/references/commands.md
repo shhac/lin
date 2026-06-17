@@ -136,6 +136,31 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
   - `--discord` — force Discord message integration (channel + message IDs derived from URL)
 - `lin issue attachment remove <attachment-id>` — remove any attachment, regardless of source type
 
+## Customers
+
+- `lin customer list [--tier] [--status] [--owner] [--domain] [--revenue] [--limit] [--cursor]` — list customers (filter by tier display name, status name, owner, email domain, or minimum revenue)
+- `lin customer search <text>` — match customers by name substring
+- `lin customer get <id|slug>` — customer detail: tier, status, owner, domains, externalIds, revenue, size, approximateNeedCount
+- `lin customer statuses` — workspace customer lifecycle statuses (e.g. Active, Churned)
+- `lin customer tiers` — workspace customer tiers/segments (e.g. Enterprise, Pro, Free)
+
+## Customer Requests
+
+A customer request (Linear "customer need") links a customer to an issue or project; it has no status of its own, so triage/assignment filters apply to the linked issue.
+
+- `lin customer requests [filters] [--limit] [--cursor]` — list customer requests across the workspace
+  - `--customer <id|slug|name>` — scope to one customer
+  - `--project <id|slug|name>` — scope to one project
+  - `--important` — only important requests (priority = 1)
+  - `--unassigned` — linked issue has no assignee
+  - `--triage` — linked issue is in a triage state
+  - `--status <name>` — linked issue status name
+  - `--label <name>` — linked issue label
+  - `--team <key|name>` — linked issue team
+  - `--created-after`, `--created-before` (YYYY-MM-DD)
+- `lin issue requests <id> [--important]` — requests linked to a specific issue
+- `lin project requests <id> [--important]` — requests linked to a specific project
+
 ## Teams
 
 - `lin team list` — list teams (id, name, key)

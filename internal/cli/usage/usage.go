@@ -40,7 +40,7 @@ COMMANDS:
 
   issue search <text>                     Full-text search
   issue list [filters]                    List issues (status, assignee, team, branchName)
-  issue get <id>                          Full details + commentCount, attachments, branchName
+  issue get <id>                          Full details + commentCount, customerRequestCount, attachments, branchName
   issue new <title> --team <t> [options]  Create issue
   issue update <field> <id> <value>       Update (title|status|assignee|priority|project|labels|estimate|description)
   issue comment list <issue-id>           List comments with authors
@@ -54,6 +54,15 @@ COMMANDS:
   issue attachment list <issue-id>        List attachments
   issue attachment add <id> --url <u> --title <t>    Add URL attachment
   issue attachment remove <attachment-id> Remove attachment
+  issue requests <id>                     Customer requests linked to the issue
+
+  customer list [filters]                 List customers (tier, status, owner, domain, revenue)
+  customer search <text>                  Search customers by name
+  customer get <id|slug>                  Customer detail + request count
+  customer requests [filters]             Customer requests (--important|--unassigned|--triage|--customer|...)
+  customer statuses                       Workspace customer statuses
+  customer tiers                          Workspace customer tiers
+  project requests <id>                   Customer requests linked to a project
 
   team list                               List teams (id, name, key)
   team get <id>                           Team details + members + estimate config

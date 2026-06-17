@@ -93,6 +93,14 @@ lin
 │   ├── attachment list|add|remove   # add: --github-pr|--github-issue|--gitlab-mr|--slack [--sync-thread]|--discord
 │   ├── history <id> [--limit] [--cursor]
 │   └── usage
+├── customer
+│   ├── list [--tier] [--status] [--owner] [--domain] [--revenue]
+│   ├── search <text>
+│   ├── get <id|slug>
+│   ├── requests [--customer] [--project] [--important] [--unassigned] [--triage] [--status] [--label] [--team] [--created-after|before]
+│   ├── statuses
+│   ├── tiers
+│   └── usage
 ├── team
 │   ├── list
 │   ├── get <id>
