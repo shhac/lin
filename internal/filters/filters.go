@@ -185,27 +185,8 @@ func BuildIssueFilter(opts IssueFilterOpts) *linear.IssueFilter {
 		f.Cycle = &linear.NullableCycleFilter{Id: &linear.IDComparator{Eq: ptr.To(opts.Cycle)}}
 	}
 
-	if opts.UpdatedAfter != "" || opts.UpdatedBefore != "" {
-		dc := &linear.DateComparator{}
-		if opts.UpdatedAfter != "" {
-			dc.Gte = ptr.To(opts.UpdatedAfter)
-		}
-		if opts.UpdatedBefore != "" {
-			dc.Lte = ptr.To(opts.UpdatedBefore)
-		}
-		f.UpdatedAt = dc
-	}
-
-	if opts.CreatedAfter != "" || opts.CreatedBefore != "" {
-		dc := &linear.DateComparator{}
-		if opts.CreatedAfter != "" {
-			dc.Gte = ptr.To(opts.CreatedAfter)
-		}
-		if opts.CreatedBefore != "" {
-			dc.Lte = ptr.To(opts.CreatedBefore)
-		}
-		f.CreatedAt = dc
-	}
+	f.UpdatedAt = buildDateRange(opts.UpdatedAfter, opts.UpdatedBefore)
+	f.CreatedAt = buildDateRange(opts.CreatedAfter, opts.CreatedBefore)
 
 	if reflect.DeepEqual(*f, linear.IssueFilter{}) {
 		return nil
@@ -228,6 +209,22 @@ func BuildNullableUserFilter(input string) *linear.NullableUserFilter {
 		branches = append([]linear.NullableUserFilter{{Id: &linear.IDComparator{Eq: ptr.To(input)}}}, branches...)
 	}
 	return &linear.NullableUserFilter{Or: branches}
+}
+
+// buildDateRange builds a DateComparator from optional after/before bounds
+// (YYYY-MM-DD), returning nil when neither is set.
+func buildDateRange(after, before string) *linear.DateComparator {
+	if after == "" && before == "" {
+		return nil
+	}
+	dc := &linear.DateComparator{}
+	if after != "" {
+		dc.Gte = ptr.To(after)
+	}
+	if before != "" {
+		dc.Lte = ptr.To(before)
+	}
+	return dc
 }
 
 // BuildNullableCustomerFilter builds a customer filter for use in
@@ -313,22 +310,22 @@ func BuildCustomerNeedFilter(opts CustomerNeedFilterOpts) *linear.CustomerNeedFi
 	if opts.Project != "" {
 		f.Project = BuildNullableProjectFilter(opts.Project)
 	}
-	if opts.CreatedAfter != "" || opts.CreatedBefore != "" {
-		dc := &linear.DateComparator{}
-		if opts.CreatedAfter != "" {
-			dc.Gte = ptr.To(opts.CreatedAfter)
-		}
-		if opts.CreatedBefore != "" {
-			dc.Lte = ptr.To(opts.CreatedBefore)
-		}
-		f.CreatedAt = dc
-	}
+	f.CreatedAt = buildDateRange(opts.CreatedAfter, opts.CreatedBefore)
+	f.Issue = buildNeedIssueFilter(opts)
 
+	if reflect.DeepEqual(*f, linear.CustomerNeedFilter{}) {
+		return nil
+	}
+	return f
+}
+
+// buildNeedIssueFilter assembles the issue sub-filter for a customer-need
+// query from the issue-scoped opts, returning nil when none are set.
+func buildNeedIssueFilter(opts CustomerNeedFilterOpts) *linear.NullableIssueFilter {
 	issue := &linear.NullableIssueFilter{}
-	issueSet := false
+
 	if opts.Unassigned {
 		issue.Assignee = &linear.NullableUserFilter{Null: ptr.To(true)}
-		issueSet = true
 	}
 	if opts.Triage || opts.Status != "" {
 		state := &linear.WorkflowStateFilter{}
@@ -339,24 +336,18 @@ func BuildCustomerNeedFilter(opts CustomerNeedFilterOpts) *linear.CustomerNeedFi
 			state.Name = eqIgnoreCase(opts.Status)
 		}
 		issue.State = state
-		issueSet = true
 	}
 	if opts.Label != "" {
 		issue.Labels = &linear.IssueLabelCollectionFilter{
 			Some: &linear.IssueLabelFilter{Name: eqIgnoreCase(opts.Label)},
 		}
-		issueSet = true
 	}
 	if opts.Team != "" {
 		issue.Team = BuildTeamFilter(opts.Team)
-		issueSet = true
-	}
-	if issueSet {
-		f.Issue = issue
 	}
 
-	if reflect.DeepEqual(*f, linear.CustomerNeedFilter{}) {
+	if reflect.DeepEqual(*issue, linear.NullableIssueFilter{}) {
 		return nil
 	}
-	return f
+	return issue
 }
