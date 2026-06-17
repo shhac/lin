@@ -23,3 +23,19 @@ func Register(parent *cobra.Command) {
 	shared.RegisterUsage(customer, "customer", usageText)
 	output.HandleUnknownCommand(customer, "To view a customer: lin customer get <id|slug>")
 }
+
+// referenceItem builds the output map shared by the customer statuses and
+// tiers reference-list commands, which expose the same fields.
+func referenceItem(id, name, displayName, color string, position float64, description *string) map[string]any {
+	item := map[string]any{
+		"id":          id,
+		"name":        name,
+		"displayName": displayName,
+		"color":       color,
+		"position":    position,
+	}
+	if description != nil {
+		item["description"] = *description
+	}
+	return item
+}

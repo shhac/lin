@@ -27,17 +27,7 @@ func registerTiers(parent *cobra.Command) {
 
 		items := make([]any, len(resp.CustomerTiers.Nodes))
 		for i, n := range resp.CustomerTiers.Nodes {
-			item := map[string]any{
-				"id":          n.Id,
-				"name":        n.Name,
-				"displayName": n.DisplayName,
-				"color":       n.Color,
-				"position":    n.Position,
-			}
-			if n.Description != nil {
-				item["description"] = *n.Description
-			}
-			items[i] = item
+			items[i] = referenceItem(n.Id, n.Name, n.DisplayName, n.Color, n.Position, n.Description)
 		}
 
 		output.PrintPage(items, resp.CustomerTiers.PageInfo.HasNextPage, resp.CustomerTiers.PageInfo.EndCursor)
