@@ -15,6 +15,7 @@ func registerList(parent *cobra.Command) {
 	var (
 		team   string
 		status string
+		lead   string
 	)
 
 	cmd := &cobra.Command{
@@ -28,18 +29,11 @@ func registerList(parent *cobra.Command) {
 		client := linear.GetClient()
 		ctx := context.Background()
 
-		var filter *linear.ProjectFilter
-		if team != "" || status != "" {
-			filter = &linear.ProjectFilter{}
-			if team != "" {
-				filter.AccessibleTeams = &linear.TeamCollectionFilter{
-					Some: filters.BuildTeamFilter(team),
-				}
-			}
-			if status != "" {
-				filter.State = filters.EqIgnoreCase(status)
-			}
-		}
+		filter := filters.BuildProjectListFilter(filters.ProjectListFilterOpts{
+			Team:   team,
+			Status: status,
+			Lead:   lead,
+		})
 
 		resp, err := linear.ProjectList(ctx, client, filter, page.Size(), page.Cursor())
 		if err != nil {
@@ -55,6 +49,7 @@ func registerList(parent *cobra.Command) {
 	}
 
 	cmd.Flags().StringVar(&team, "team", "", "Filter by team name or ID")
-	cmd.Flags().StringVar(&status, "status", "", "Filter by status")
+	cmd.Flags().StringVar(&status, "status", "", "Filter by status type (started, planned, …) or custom status name")
+	cmd.Flags().StringVar(&lead, "lead", "", "Filter by lead: me, name, email, or user ID")
 	parent.AddCommand(cmd)
 }

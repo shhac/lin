@@ -600,3 +600,53 @@ func TestBuildCustomerNeedFilter_ProjectAndDates(t *testing.T) {
 		t.Error("expected no issue sub-filter when only project/dates set")
 	}
 }
+
+func TestBuildProjectListFilter_Empty(t *testing.T) {
+	if f := BuildProjectListFilter(ProjectListFilterOpts{}); f != nil {
+		t.Fatal("expected nil filter for empty opts")
+	}
+}
+
+func TestBuildProjectListFilter_Status(t *testing.T) {
+	f := BuildProjectListFilter(ProjectListFilterOpts{Status: "started"})
+	if f == nil || f.Status == nil {
+		t.Fatal("expected status filter")
+	}
+	// Regression: must NOT use the deprecated top-level State field, which the
+	// server silently ignores.
+	if f.State != nil {
+		t.Error("expected State (deprecated) to be nil; status must filter via Status")
+	}
+	if len(f.Status.Or) != 2 {
+		t.Fatalf("expected 2 OR branches (type, name), got %d", len(f.Status.Or))
+	}
+	if f.Status.Or[0].Type == nil || *f.Status.Or[0].Type.EqIgnoreCase != "started" {
+		t.Error("expected first branch to match status type=started")
+	}
+	if f.Status.Or[1].Name == nil || *f.Status.Or[1].Name.EqIgnoreCase != "started" {
+		t.Error("expected second branch to match status name=started")
+	}
+}
+
+func TestBuildProjectListFilter_LeadMe(t *testing.T) {
+	f := BuildProjectListFilter(ProjectListFilterOpts{Lead: "me"})
+	if f == nil || f.Lead == nil {
+		t.Fatal("expected lead filter")
+	}
+	if f.Lead.IsMe == nil || *f.Lead.IsMe.Eq != true {
+		t.Error("expected lead IsMe comparator with Eq=true")
+	}
+}
+
+func TestBuildProjectListFilter_TeamAndLeadEmail(t *testing.T) {
+	f := BuildProjectListFilter(ProjectListFilterOpts{Team: "ENG", Lead: "paul@example.com"})
+	if f == nil {
+		t.Fatal("expected non-nil filter")
+	}
+	if f.AccessibleTeams == nil || f.AccessibleTeams.Some == nil {
+		t.Fatal("expected accessible-teams filter")
+	}
+	if f.Lead == nil || len(f.Lead.Or) == 0 {
+		t.Fatal("expected lead OR branches for non-me input")
+	}
+}

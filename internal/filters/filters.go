@@ -76,6 +76,37 @@ func BuildNullableProjectFilter(input string) *linear.NullableProjectFilter {
 	}
 }
 
+type ProjectListFilterOpts struct {
+	Team   string // team key/name/UUID — matched against accessible teams
+	Status string // status type (e.g. "started") or custom status name
+	Lead   string // lead: me/name/display name/email/UUID
+}
+
+// BuildProjectListFilter assembles the filter for `project list`. Status is
+// matched against the project status entity's type OR name (Linear's deprecated
+// top-level `state` string field is ignored by the server, so it must not be used).
+func BuildProjectListFilter(opts ProjectListFilterOpts) *linear.ProjectFilter {
+	f := &linear.ProjectFilter{}
+
+	if opts.Team != "" {
+		f.AccessibleTeams = &linear.TeamCollectionFilter{Some: BuildTeamFilter(opts.Team)}
+	}
+	if opts.Status != "" {
+		f.Status = &linear.ProjectStatusFilter{Or: []linear.ProjectStatusFilter{
+			{Type: eqIgnoreCase(opts.Status)},
+			{Name: eqIgnoreCase(opts.Status)},
+		}}
+	}
+	if opts.Lead != "" {
+		f.Lead = BuildNullableUserFilter(opts.Lead)
+	}
+
+	if reflect.DeepEqual(*f, linear.ProjectFilter{}) {
+		return nil
+	}
+	return f
+}
+
 type IssueLabelFilterOpts struct {
 	Name    string // exact match (case-insensitive)
 	Search  string // substring match (case+accent insensitive)
