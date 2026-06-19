@@ -26,7 +26,7 @@ type debugTransport struct {
 }
 
 func (t *debugTransport) RoundTrip(req *http.Request) (*http.Response, error) {
-	fmt.Fprintf(output.Stderr(), "debug: %s %s\n", req.Method, req.URL.Redacted())
+	_, _ = fmt.Fprintf(output.Stderr(), "debug: %s %s\n", req.Method, req.URL.Redacted())
 	return t.wrapped.RoundTrip(req)
 }
 
