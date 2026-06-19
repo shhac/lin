@@ -51,12 +51,13 @@ lin
 │   └── workspace list|switch|remove
 ├── project
 │   ├── search <text>
-│   ├── list [--team] [--status]
+│   ├── list [--team] [--status] [--lead]
 │   ├── get <id>
 │   ├── issues <id> [filters]
 │   ├── requests <id> [--important]
 │   ├── new <name> --team <teams>
 │   ├── update title|status|description|content|lead|start-date|target-date|priority|icon|color|labels <id> <value>
+│   ├── post new|list|get <project|update-id> [<body>] [--health]
 │   ├── delete|unarchive <id>
 │   └── usage
 ├── initiative

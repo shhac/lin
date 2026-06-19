@@ -59,6 +59,7 @@ lin issue new "Fix login redirect" --team ENG --priority high --status "Todo" --
 lin issue update status ENG-123 "In Progress"
 lin issue update assignee ENG-123 "alice@example.com"
 lin issue update priority ENG-123 urgent
+lin issue update project ENG-123 "Bundles self-serve"   # move to a project (name, slug, or UUID)
 lin issue update estimate ENG-123 5      # validated against team's estimate scale
 lin issue update due-date ENG-123 2025-03-15
 lin issue update cycle ENG-123 <cycle-uuid>
@@ -126,7 +127,8 @@ Project commands accept UUID, slug ID, or name.
 
 ```bash
 lin project search "migration"
-lin project list --status started
+lin project list --status started                  # filters by status type OR custom status name
+lin project list --lead me --status started        # "projects I lead that are In Progress"
 lin project get "CRM Actions"            # accepts UUID, slug, or name — includes content (markdown body)
 lin project issues <id>
 lin project new "New Feature" --team ENG --status planned --lead "alice@example.com"
@@ -138,6 +140,16 @@ lin project update priority <id> high
 lin project update labels <id> "Discovery, Roadmap"   # replaces project labels (project labels, not issue labels)
 lin project delete <id>                  # moves to trash
 lin project unarchive <id>               # restore trashed/archived project
+```
+
+**Project updates (health/status posts)** — Linear's timeline posts with a health
+signal, distinct from `project update <field>` which edits a project field:
+
+```bash
+lin project post new "Bundles self-serve" "🎉 Bundles is live!" --health on-track
+lin project post list "Bundles self-serve"   # newest first, paginated
+lin project post get <update-id>
+# --health: on-track | at-risk | off-track
 ```
 
 The `--project` filter on issue commands also accepts slug or name.

@@ -16,7 +16,7 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 ## Projects
 
 - `lin project search <text>` — search projects by name
-- `lin project list [--team] [--status] [--limit] [--cursor]` — list projects
+- `lin project list [--team] [--status] [--lead] [--limit] [--cursor]` — list projects. `--status` matches a status type (started, planned, …) or a custom status name; `--lead` accepts me, name, email, or user ID
 - `lin project get <id>` — project summary with lead, labels, milestones, url, and content (markdown body, truncated by default)
 - `lin project issues <id> [filters]` — issues in a project
 - `lin project requests <id> [--important] [--limit] [--cursor]` — customer requests linked to the project
@@ -34,6 +34,14 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 - `lin project new <name> [--team <keys>] [--description <text>] [--lead <user>] [--start-date <YYYY-MM-DD>] [--target-date <YYYY-MM-DD>] [--status <status>] [--content <markdown>]`
 - `lin project delete <id>` — delete project (move to trash)
 - `lin project unarchive <id>` — restore trashed/archived project
+
+### Project updates (health/status posts)
+
+Linear "project updates" are timeline posts carrying a health signal — distinct from `lin project update <field>`, which edits a project field.
+
+- `lin project post new <project> <body> [--health <health>]` — post a project update. `--health`: on-track | at-risk | off-track
+- `lin project post list <project> [--limit] [--cursor]` — list project updates (newest first)
+- `lin project post get <update-id>` — get a single project update
 
 ## Initiatives
 

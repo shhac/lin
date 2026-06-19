@@ -203,6 +203,21 @@ Use `project get <id>` with `--expand content` or `--full` for the full markdown
 
 `project get <id>` also returns `labels: [{id, name}]` (project labels — distinct from issue labels) and `milestones: [{id, name, targetDate}]`.
 
+## Project updates (`project post list` / `project post get`)
+
+```json
+{
+  "id": "...",
+  "url": "https://linear.app/.../projectUpdate/...",
+  "health": "onTrack",
+  "body": "🎉 Bundles is live!",
+  "createdAt": "2026-06-19T10:00:00.000Z",
+  "user": { "id": "...", "name": "Paul Somers" }
+}
+```
+
+`health` is one of `onTrack`, `atRisk`, `offTrack`. `editedAt` is present only if the update was edited. `project post get` additionally returns `project: {id, slugId, name}`. `project post new` returns `{created, id, url, health, createdAt}`.
+
 ## Initiative list items
 
 ```json

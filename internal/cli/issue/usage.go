@@ -25,6 +25,7 @@ UPDATE (each is a subcommand):
   issue update cycle <id> <cycle-id>  |  parent <id> <parent-id>
   status: team-scoped (use "team states <team>"). labels: comma-separated names or IDs.
   estimate: validated against team scale. assignee: name/email/ID.
+  project: moves the issue to a project — accepts project name, slug, or UUID.
 
 COMMENTS (--parent 1 level):
   issue comment list <id> [--limit] [--cursor]

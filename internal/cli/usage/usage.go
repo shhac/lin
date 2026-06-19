@@ -16,10 +16,13 @@ COMMANDS:
   auth workspace list|switch|remove       Manage workspaces
 
   project search <text>                   Search projects
-  project list [--team] [--status]        List projects
+  project list [--team] [--status] [--lead]  List projects
   project get <id>                        Project summary + milestones + content
   project issues <id>                     Issues in a project
-  project update <field> <id> <value>     Update (title|status|description|lead|labels|...)
+  project update <field> <id> <value>     Update a field (title|status|description|lead|labels|...)
+  project post new <project> <body> [--health]  Post a project update (health/status feed)
+  project post list <project>             List project updates
+  project post get <update-id>            Get a project update
   project new <name> --team <t> [options]  Create project
   project delete <id>                     Delete (trash) a project
   project unarchive <id>                  Restore trashed/archived project
