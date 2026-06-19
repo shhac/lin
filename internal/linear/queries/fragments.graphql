@@ -52,6 +52,16 @@ fragment ProjectSearchSummaryFields on ProjectSearchResult {
   lead { name }
 }
 
+fragment ProjectUpdateSummaryFields on ProjectUpdate {
+  id
+  url
+  health
+  body
+  createdAt
+  editedAt
+  user { id name }
+}
+
 fragment DocSummaryFields on Document {
   id
   slugId

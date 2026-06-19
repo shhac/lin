@@ -13584,6 +13584,421 @@ type ProjectNeedsResponse struct {
 // GetProject returns ProjectNeedsResponse.Project, and is useful for accessing the field via an interface.
 func (v *ProjectNeedsResponse) GetProject() ProjectNeedsProject { return v.Project }
 
+// ProjectPostCreateProjectUpdateCreateProjectUpdatePayload includes the requested fields of the GraphQL type ProjectUpdatePayload.
+// The GraphQL type's documentation follows.
+//
+// The result of a project update mutation.
+type ProjectPostCreateProjectUpdateCreateProjectUpdatePayload struct {
+	// Whether the operation was successful.
+	Success bool `json:"success"`
+	// The project update that was created or updated.
+	ProjectUpdate ProjectPostCreateProjectUpdateCreateProjectUpdatePayloadProjectUpdate `json:"projectUpdate"`
+}
+
+// GetSuccess returns ProjectPostCreateProjectUpdateCreateProjectUpdatePayload.Success, and is useful for accessing the field via an interface.
+func (v *ProjectPostCreateProjectUpdateCreateProjectUpdatePayload) GetSuccess() bool {
+	return v.Success
+}
+
+// GetProjectUpdate returns ProjectPostCreateProjectUpdateCreateProjectUpdatePayload.ProjectUpdate, and is useful for accessing the field via an interface.
+func (v *ProjectPostCreateProjectUpdateCreateProjectUpdatePayload) GetProjectUpdate() ProjectPostCreateProjectUpdateCreateProjectUpdatePayloadProjectUpdate {
+	return v.ProjectUpdate
+}
+
+// ProjectPostCreateProjectUpdateCreateProjectUpdatePayloadProjectUpdate includes the requested fields of the GraphQL type ProjectUpdate.
+// The GraphQL type's documentation follows.
+//
+// A status update posted to a project. Project updates communicate progress, health, and blockers to stakeholders. Each update captures the project's health at the time of writing and includes a rich-text body with the update content.
+type ProjectPostCreateProjectUpdateCreateProjectUpdatePayloadProjectUpdate struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The URL to the project update.
+	Url string `json:"url"`
+	// The health of the project at the time this update was posted. Possible values are onTrack, atRisk, or offTrack.
+	Health ProjectUpdateHealthType `json:"health"`
+	// The time at which the entity was created.
+	CreatedAt string `json:"createdAt"`
+}
+
+// GetId returns ProjectPostCreateProjectUpdateCreateProjectUpdatePayloadProjectUpdate.Id, and is useful for accessing the field via an interface.
+func (v *ProjectPostCreateProjectUpdateCreateProjectUpdatePayloadProjectUpdate) GetId() string {
+	return v.Id
+}
+
+// GetUrl returns ProjectPostCreateProjectUpdateCreateProjectUpdatePayloadProjectUpdate.Url, and is useful for accessing the field via an interface.
+func (v *ProjectPostCreateProjectUpdateCreateProjectUpdatePayloadProjectUpdate) GetUrl() string {
+	return v.Url
+}
+
+// GetHealth returns ProjectPostCreateProjectUpdateCreateProjectUpdatePayloadProjectUpdate.Health, and is useful for accessing the field via an interface.
+func (v *ProjectPostCreateProjectUpdateCreateProjectUpdatePayloadProjectUpdate) GetHealth() ProjectUpdateHealthType {
+	return v.Health
+}
+
+// GetCreatedAt returns ProjectPostCreateProjectUpdateCreateProjectUpdatePayloadProjectUpdate.CreatedAt, and is useful for accessing the field via an interface.
+func (v *ProjectPostCreateProjectUpdateCreateProjectUpdatePayloadProjectUpdate) GetCreatedAt() string {
+	return v.CreatedAt
+}
+
+// ProjectPostCreateResponse is returned by ProjectPostCreate on success.
+type ProjectPostCreateResponse struct {
+	// Creates a new project update.
+	ProjectUpdateCreate ProjectPostCreateProjectUpdateCreateProjectUpdatePayload `json:"projectUpdateCreate"`
+}
+
+// GetProjectUpdateCreate returns ProjectPostCreateResponse.ProjectUpdateCreate, and is useful for accessing the field via an interface.
+func (v *ProjectPostCreateResponse) GetProjectUpdateCreate() ProjectPostCreateProjectUpdateCreateProjectUpdatePayload {
+	return v.ProjectUpdateCreate
+}
+
+// ProjectPostGetProjectUpdate includes the requested fields of the GraphQL type ProjectUpdate.
+// The GraphQL type's documentation follows.
+//
+// A status update posted to a project. Project updates communicate progress, health, and blockers to stakeholders. Each update captures the project's health at the time of writing and includes a rich-text body with the update content.
+type ProjectPostGetProjectUpdate struct {
+	ProjectUpdateSummaryFields `json:"-"`
+	// The project that this status update was posted to.
+	Project ProjectPostGetProjectUpdateProject `json:"project"`
+}
+
+// GetProject returns ProjectPostGetProjectUpdate.Project, and is useful for accessing the field via an interface.
+func (v *ProjectPostGetProjectUpdate) GetProject() ProjectPostGetProjectUpdateProject {
+	return v.Project
+}
+
+// GetId returns ProjectPostGetProjectUpdate.Id, and is useful for accessing the field via an interface.
+func (v *ProjectPostGetProjectUpdate) GetId() string { return v.ProjectUpdateSummaryFields.Id }
+
+// GetUrl returns ProjectPostGetProjectUpdate.Url, and is useful for accessing the field via an interface.
+func (v *ProjectPostGetProjectUpdate) GetUrl() string { return v.ProjectUpdateSummaryFields.Url }
+
+// GetHealth returns ProjectPostGetProjectUpdate.Health, and is useful for accessing the field via an interface.
+func (v *ProjectPostGetProjectUpdate) GetHealth() ProjectUpdateHealthType {
+	return v.ProjectUpdateSummaryFields.Health
+}
+
+// GetBody returns ProjectPostGetProjectUpdate.Body, and is useful for accessing the field via an interface.
+func (v *ProjectPostGetProjectUpdate) GetBody() string { return v.ProjectUpdateSummaryFields.Body }
+
+// GetCreatedAt returns ProjectPostGetProjectUpdate.CreatedAt, and is useful for accessing the field via an interface.
+func (v *ProjectPostGetProjectUpdate) GetCreatedAt() string {
+	return v.ProjectUpdateSummaryFields.CreatedAt
+}
+
+// GetEditedAt returns ProjectPostGetProjectUpdate.EditedAt, and is useful for accessing the field via an interface.
+func (v *ProjectPostGetProjectUpdate) GetEditedAt() *string {
+	return v.ProjectUpdateSummaryFields.EditedAt
+}
+
+// GetUser returns ProjectPostGetProjectUpdate.User, and is useful for accessing the field via an interface.
+func (v *ProjectPostGetProjectUpdate) GetUser() ProjectUpdateSummaryFieldsUser {
+	return v.ProjectUpdateSummaryFields.User
+}
+
+func (v *ProjectPostGetProjectUpdate) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*ProjectPostGetProjectUpdate
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.ProjectPostGetProjectUpdate = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ProjectUpdateSummaryFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalProjectPostGetProjectUpdate struct {
+	Project ProjectPostGetProjectUpdateProject `json:"project"`
+
+	Id string `json:"id"`
+
+	Url string `json:"url"`
+
+	Health ProjectUpdateHealthType `json:"health"`
+
+	Body string `json:"body"`
+
+	CreatedAt string `json:"createdAt"`
+
+	EditedAt *string `json:"editedAt,omitempty"`
+
+	User ProjectUpdateSummaryFieldsUser `json:"user"`
+}
+
+func (v *ProjectPostGetProjectUpdate) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *ProjectPostGetProjectUpdate) __premarshalJSON() (*__premarshalProjectPostGetProjectUpdate, error) {
+	var retval __premarshalProjectPostGetProjectUpdate
+
+	retval.Project = v.Project
+	retval.Id = v.ProjectUpdateSummaryFields.Id
+	retval.Url = v.ProjectUpdateSummaryFields.Url
+	retval.Health = v.ProjectUpdateSummaryFields.Health
+	retval.Body = v.ProjectUpdateSummaryFields.Body
+	retval.CreatedAt = v.ProjectUpdateSummaryFields.CreatedAt
+	retval.EditedAt = v.ProjectUpdateSummaryFields.EditedAt
+	retval.User = v.ProjectUpdateSummaryFields.User
+	return &retval, nil
+}
+
+// ProjectPostGetProjectUpdateProject includes the requested fields of the GraphQL type Project.
+// The GraphQL type's documentation follows.
+//
+// A project is a collection of issues working toward a shared goal. Projects have start and target dates, milestones, status tracking, and progress metrics. They can span multiple teams and be grouped under initiatives.
+type ProjectPostGetProjectUpdateProject struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The project's unique URL slug, used to construct human-readable URLs.
+	SlugId string `json:"slugId"`
+	// The name of the project.
+	Name string `json:"name"`
+}
+
+// GetId returns ProjectPostGetProjectUpdateProject.Id, and is useful for accessing the field via an interface.
+func (v *ProjectPostGetProjectUpdateProject) GetId() string { return v.Id }
+
+// GetSlugId returns ProjectPostGetProjectUpdateProject.SlugId, and is useful for accessing the field via an interface.
+func (v *ProjectPostGetProjectUpdateProject) GetSlugId() string { return v.SlugId }
+
+// GetName returns ProjectPostGetProjectUpdateProject.Name, and is useful for accessing the field via an interface.
+func (v *ProjectPostGetProjectUpdateProject) GetName() string { return v.Name }
+
+// ProjectPostGetResponse is returned by ProjectPostGet on success.
+type ProjectPostGetResponse struct {
+	// Returns a single project update by its identifier.
+	ProjectUpdate ProjectPostGetProjectUpdate `json:"projectUpdate"`
+}
+
+// GetProjectUpdate returns ProjectPostGetResponse.ProjectUpdate, and is useful for accessing the field via an interface.
+func (v *ProjectPostGetResponse) GetProjectUpdate() ProjectPostGetProjectUpdate {
+	return v.ProjectUpdate
+}
+
+// ProjectPostListProject includes the requested fields of the GraphQL type Project.
+// The GraphQL type's documentation follows.
+//
+// A project is a collection of issues working toward a shared goal. Projects have start and target dates, milestones, status tracking, and progress metrics. They can span multiple teams and be grouped under initiatives.
+type ProjectPostListProject struct {
+	// Project updates associated with the project.
+	ProjectUpdates ProjectPostListProjectProjectUpdatesProjectUpdateConnection `json:"projectUpdates"`
+}
+
+// GetProjectUpdates returns ProjectPostListProject.ProjectUpdates, and is useful for accessing the field via an interface.
+func (v *ProjectPostListProject) GetProjectUpdates() ProjectPostListProjectProjectUpdatesProjectUpdateConnection {
+	return v.ProjectUpdates
+}
+
+// ProjectPostListProjectProjectUpdatesProjectUpdateConnection includes the requested fields of the GraphQL type ProjectUpdateConnection.
+type ProjectPostListProjectProjectUpdatesProjectUpdateConnection struct {
+	Nodes    []ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate `json:"nodes,omitempty"`
+	PageInfo ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo             `json:"pageInfo"`
+}
+
+// GetNodes returns ProjectPostListProjectProjectUpdatesProjectUpdateConnection.Nodes, and is useful for accessing the field via an interface.
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnection) GetNodes() []ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate {
+	return v.Nodes
+}
+
+// GetPageInfo returns ProjectPostListProjectProjectUpdatesProjectUpdateConnection.PageInfo, and is useful for accessing the field via an interface.
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnection) GetPageInfo() ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo {
+	return v.PageInfo
+}
+
+// ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate includes the requested fields of the GraphQL type ProjectUpdate.
+// The GraphQL type's documentation follows.
+//
+// A status update posted to a project. Project updates communicate progress, health, and blockers to stakeholders. Each update captures the project's health at the time of writing and includes a rich-text body with the update content.
+type ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate struct {
+	ProjectUpdateSummaryFields `json:"-"`
+}
+
+// GetId returns ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate.Id, and is useful for accessing the field via an interface.
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate) GetId() string {
+	return v.ProjectUpdateSummaryFields.Id
+}
+
+// GetUrl returns ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate.Url, and is useful for accessing the field via an interface.
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate) GetUrl() string {
+	return v.ProjectUpdateSummaryFields.Url
+}
+
+// GetHealth returns ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate.Health, and is useful for accessing the field via an interface.
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate) GetHealth() ProjectUpdateHealthType {
+	return v.ProjectUpdateSummaryFields.Health
+}
+
+// GetBody returns ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate.Body, and is useful for accessing the field via an interface.
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate) GetBody() string {
+	return v.ProjectUpdateSummaryFields.Body
+}
+
+// GetCreatedAt returns ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate.CreatedAt, and is useful for accessing the field via an interface.
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate) GetCreatedAt() string {
+	return v.ProjectUpdateSummaryFields.CreatedAt
+}
+
+// GetEditedAt returns ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate.EditedAt, and is useful for accessing the field via an interface.
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate) GetEditedAt() *string {
+	return v.ProjectUpdateSummaryFields.EditedAt
+}
+
+// GetUser returns ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate.User, and is useful for accessing the field via an interface.
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate) GetUser() ProjectUpdateSummaryFieldsUser {
+	return v.ProjectUpdateSummaryFields.User
+}
+
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.ProjectUpdateSummaryFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate struct {
+	Id string `json:"id"`
+
+	Url string `json:"url"`
+
+	Health ProjectUpdateHealthType `json:"health"`
+
+	Body string `json:"body"`
+
+	CreatedAt string `json:"createdAt"`
+
+	EditedAt *string `json:"editedAt,omitempty"`
+
+	User ProjectUpdateSummaryFieldsUser `json:"user"`
+}
+
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate) __premarshalJSON() (*__premarshalProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate, error) {
+	var retval __premarshalProjectPostListProjectProjectUpdatesProjectUpdateConnectionNodesProjectUpdate
+
+	retval.Id = v.ProjectUpdateSummaryFields.Id
+	retval.Url = v.ProjectUpdateSummaryFields.Url
+	retval.Health = v.ProjectUpdateSummaryFields.Health
+	retval.Body = v.ProjectUpdateSummaryFields.Body
+	retval.CreatedAt = v.ProjectUpdateSummaryFields.CreatedAt
+	retval.EditedAt = v.ProjectUpdateSummaryFields.EditedAt
+	retval.User = v.ProjectUpdateSummaryFields.User
+	return &retval, nil
+}
+
+// ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo includes the requested fields of the GraphQL type PageInfo.
+type ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo struct {
+	PageInfoFields `json:"-"`
+}
+
+// GetHasNextPage returns ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo.HasNextPage, and is useful for accessing the field via an interface.
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo) GetHasNextPage() bool {
+	return v.PageInfoFields.HasNextPage
+}
+
+// GetEndCursor returns ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo.EndCursor, and is useful for accessing the field via an interface.
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo) GetEndCursor() *string {
+	return v.PageInfoFields.EndCursor
+}
+
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.PageInfoFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo struct {
+	HasNextPage bool `json:"hasNextPage"`
+
+	EndCursor *string `json:"endCursor,omitempty"`
+}
+
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *ProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo) __premarshalJSON() (*__premarshalProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo, error) {
+	var retval __premarshalProjectPostListProjectProjectUpdatesProjectUpdateConnectionPageInfo
+
+	retval.HasNextPage = v.PageInfoFields.HasNextPage
+	retval.EndCursor = v.PageInfoFields.EndCursor
+	return &retval, nil
+}
+
+// ProjectPostListResponse is returned by ProjectPostList on success.
+type ProjectPostListResponse struct {
+	// Returns a single project by its identifier or URL slug.
+	Project ProjectPostListProject `json:"project"`
+}
+
+// GetProject returns ProjectPostListResponse.Project, and is useful for accessing the field via an interface.
+func (v *ProjectPostListResponse) GetProject() ProjectPostListProject { return v.Project }
+
 // ProjectSearchResponse is returned by ProjectSearch on success.
 type ProjectSearchResponse struct {
 	// Search projects by text query using full-text and vector search. Results are ranked by relevance unless an orderBy parameter is specified. Rate-limited to 30 requests per minute.
@@ -13993,6 +14408,55 @@ func (v *ProjectUnarchiveResponse) GetProjectUnarchive() ProjectUnarchiveProject
 	return v.ProjectUnarchive
 }
 
+// Input for creating a new project update.
+type ProjectUpdateCreateInput struct {
+	// The identifier. If none is provided, the backend will generate one.
+	Id *string `json:"id,omitempty"`
+	// The content of the project update in markdown format.
+	Body *string `json:"body,omitempty"`
+	// [Internal] The content of the project update as a Prosemirror document.
+	BodyData *map[string]interface{} `json:"bodyData,omitempty"`
+	// The project to associate the project update with.
+	ProjectId string `json:"projectId"`
+	// The health of the project at the time of the update.
+	Health *ProjectUpdateHealthType `json:"health,omitempty"`
+	// Whether the diff between the current update and the previous one should be hidden.
+	IsDiffHidden *bool `json:"isDiffHidden,omitempty"`
+}
+
+// GetId returns ProjectUpdateCreateInput.Id, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateCreateInput) GetId() *string { return v.Id }
+
+// GetBody returns ProjectUpdateCreateInput.Body, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateCreateInput) GetBody() *string { return v.Body }
+
+// GetBodyData returns ProjectUpdateCreateInput.BodyData, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateCreateInput) GetBodyData() *map[string]interface{} { return v.BodyData }
+
+// GetProjectId returns ProjectUpdateCreateInput.ProjectId, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateCreateInput) GetProjectId() string { return v.ProjectId }
+
+// GetHealth returns ProjectUpdateCreateInput.Health, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateCreateInput) GetHealth() *ProjectUpdateHealthType { return v.Health }
+
+// GetIsDiffHidden returns ProjectUpdateCreateInput.IsDiffHidden, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateCreateInput) GetIsDiffHidden() *bool { return v.IsDiffHidden }
+
+// The health type when the project update is created.
+type ProjectUpdateHealthType string
+
+const (
+	ProjectUpdateHealthTypeOntrack  ProjectUpdateHealthType = "onTrack"
+	ProjectUpdateHealthTypeAtrisk   ProjectUpdateHealthType = "atRisk"
+	ProjectUpdateHealthTypeOfftrack ProjectUpdateHealthType = "offTrack"
+)
+
+var AllProjectUpdateHealthType = []ProjectUpdateHealthType{
+	ProjectUpdateHealthTypeOntrack,
+	ProjectUpdateHealthTypeAtrisk,
+	ProjectUpdateHealthTypeOfftrack,
+}
+
 // Input for updating an existing project. All fields are optional; only provided fields will be updated. Setting a field to null (where supported) will clear the value.
 type ProjectUpdateInput struct {
 	// [DEPRECATED] The state of the project.
@@ -14189,6 +14653,65 @@ type ProjectUpdateResponse struct {
 func (v *ProjectUpdateResponse) GetProjectUpdate() ProjectUpdateProjectUpdateProjectPayload {
 	return v.ProjectUpdate
 }
+
+// ProjectUpdateSummaryFields includes the GraphQL fields of ProjectUpdate requested by the fragment ProjectUpdateSummaryFields.
+// The GraphQL type's documentation follows.
+//
+// A status update posted to a project. Project updates communicate progress, health, and blockers to stakeholders. Each update captures the project's health at the time of writing and includes a rich-text body with the update content.
+type ProjectUpdateSummaryFields struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The URL to the project update.
+	Url string `json:"url"`
+	// The health of the project at the time this update was posted. Possible values are onTrack, atRisk, or offTrack.
+	Health ProjectUpdateHealthType `json:"health"`
+	// The update content in markdown format.
+	Body string `json:"body"`
+	// The time at which the entity was created.
+	CreatedAt string `json:"createdAt"`
+	// The time the update was edited.
+	EditedAt *string `json:"editedAt,omitempty"`
+	// The user who wrote the update.
+	User ProjectUpdateSummaryFieldsUser `json:"user"`
+}
+
+// GetId returns ProjectUpdateSummaryFields.Id, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateSummaryFields) GetId() string { return v.Id }
+
+// GetUrl returns ProjectUpdateSummaryFields.Url, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateSummaryFields) GetUrl() string { return v.Url }
+
+// GetHealth returns ProjectUpdateSummaryFields.Health, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateSummaryFields) GetHealth() ProjectUpdateHealthType { return v.Health }
+
+// GetBody returns ProjectUpdateSummaryFields.Body, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateSummaryFields) GetBody() string { return v.Body }
+
+// GetCreatedAt returns ProjectUpdateSummaryFields.CreatedAt, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateSummaryFields) GetCreatedAt() string { return v.CreatedAt }
+
+// GetEditedAt returns ProjectUpdateSummaryFields.EditedAt, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateSummaryFields) GetEditedAt() *string { return v.EditedAt }
+
+// GetUser returns ProjectUpdateSummaryFields.User, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateSummaryFields) GetUser() ProjectUpdateSummaryFieldsUser { return v.User }
+
+// ProjectUpdateSummaryFieldsUser includes the requested fields of the GraphQL type User.
+// The GraphQL type's documentation follows.
+//
+// A user that belongs to a workspace. Users can have different roles (admin, member, guest, or app) that determine their level of access. Users can be members of multiple teams, and can be active or deactivated. Guest users have limited access scoped to specific teams they are invited to.
+type ProjectUpdateSummaryFieldsUser struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The user's full name.
+	Name string `json:"name"`
+}
+
+// GetId returns ProjectUpdateSummaryFieldsUser.Id, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateSummaryFieldsUser) GetId() string { return v.Id }
+
+// GetName returns ProjectUpdateSummaryFieldsUser.Name, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateSummaryFieldsUser) GetName() string { return v.Name }
 
 // Collection filtering options for filtering projects by project updates.
 type ProjectUpdatesCollectionFilter struct {
@@ -17246,6 +17769,38 @@ func (v *__ProjectNeedsInput) GetFirst() int { return v.First }
 
 // GetAfter returns __ProjectNeedsInput.After, and is useful for accessing the field via an interface.
 func (v *__ProjectNeedsInput) GetAfter() *string { return v.After }
+
+// __ProjectPostCreateInput is used internally by genqlient
+type __ProjectPostCreateInput struct {
+	Input ProjectUpdateCreateInput `json:"input"`
+}
+
+// GetInput returns __ProjectPostCreateInput.Input, and is useful for accessing the field via an interface.
+func (v *__ProjectPostCreateInput) GetInput() ProjectUpdateCreateInput { return v.Input }
+
+// __ProjectPostGetInput is used internally by genqlient
+type __ProjectPostGetInput struct {
+	Id string `json:"id"`
+}
+
+// GetId returns __ProjectPostGetInput.Id, and is useful for accessing the field via an interface.
+func (v *__ProjectPostGetInput) GetId() string { return v.Id }
+
+// __ProjectPostListInput is used internally by genqlient
+type __ProjectPostListInput struct {
+	Id    string  `json:"id"`
+	First int     `json:"first"`
+	After *string `json:"after,omitempty"`
+}
+
+// GetId returns __ProjectPostListInput.Id, and is useful for accessing the field via an interface.
+func (v *__ProjectPostListInput) GetId() string { return v.Id }
+
+// GetFirst returns __ProjectPostListInput.First, and is useful for accessing the field via an interface.
+func (v *__ProjectPostListInput) GetFirst() int { return v.First }
+
+// GetAfter returns __ProjectPostListInput.After, and is useful for accessing the field via an interface.
+func (v *__ProjectPostListInput) GetAfter() *string { return v.After }
 
 // __ProjectSearchInput is used internally by genqlient
 type __ProjectSearchInput struct {
@@ -20358,6 +20913,158 @@ func ProjectNeeds(
 	}
 
 	data_ = &ProjectNeedsResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The mutation executed by ProjectPostCreate.
+const ProjectPostCreate_Operation = `
+mutation ProjectPostCreate ($input: ProjectUpdateCreateInput!) {
+	projectUpdateCreate(input: $input) {
+		success
+		projectUpdate {
+			id
+			url
+			health
+			createdAt
+		}
+	}
+}
+`
+
+func ProjectPostCreate(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	input ProjectUpdateCreateInput,
+) (data_ *ProjectPostCreateResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ProjectPostCreate",
+		Query:  ProjectPostCreate_Operation,
+		Variables: &__ProjectPostCreateInput{
+			Input: input,
+		},
+	}
+
+	data_ = &ProjectPostCreateResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by ProjectPostGet.
+const ProjectPostGet_Operation = `
+query ProjectPostGet ($id: String!) {
+	projectUpdate(id: $id) {
+		... ProjectUpdateSummaryFields
+		project {
+			id
+			slugId
+			name
+		}
+	}
+}
+fragment ProjectUpdateSummaryFields on ProjectUpdate {
+	id
+	url
+	health
+	body
+	createdAt
+	editedAt
+	user {
+		id
+		name
+	}
+}
+`
+
+func ProjectPostGet(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	id string,
+) (data_ *ProjectPostGetResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ProjectPostGet",
+		Query:  ProjectPostGet_Operation,
+		Variables: &__ProjectPostGetInput{
+			Id: id,
+		},
+	}
+
+	data_ = &ProjectPostGetResponse{}
+	resp_ := &graphql.Response{Data: data_}
+
+	err_ = client_.MakeRequest(
+		ctx_,
+		req_,
+		resp_,
+	)
+
+	return data_, err_
+}
+
+// The query executed by ProjectPostList.
+const ProjectPostList_Operation = `
+query ProjectPostList ($id: String!, $first: Int!, $after: String) {
+	project(id: $id) {
+		projectUpdates(first: $first, after: $after) {
+			nodes {
+				... ProjectUpdateSummaryFields
+			}
+			pageInfo {
+				... PageInfoFields
+			}
+		}
+	}
+}
+fragment ProjectUpdateSummaryFields on ProjectUpdate {
+	id
+	url
+	health
+	body
+	createdAt
+	editedAt
+	user {
+		id
+		name
+	}
+}
+fragment PageInfoFields on PageInfo {
+	hasNextPage
+	endCursor
+}
+`
+
+func ProjectPostList(
+	ctx_ context.Context,
+	client_ graphql.Client,
+	id string,
+	first int,
+	after *string,
+) (data_ *ProjectPostListResponse, err_ error) {
+	req_ := &graphql.Request{
+		OpName: "ProjectPostList",
+		Query:  ProjectPostList_Operation,
+		Variables: &__ProjectPostListInput{
+			Id:    id,
+			First: first,
+			After: after,
+		},
+	}
+
+	data_ = &ProjectPostListResponse{}
 	resp_ := &graphql.Response{Data: data_}
 
 	err_ = client_.MakeRequest(

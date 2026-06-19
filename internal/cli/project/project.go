@@ -21,6 +21,7 @@ func Register(parent *cobra.Command) {
 	registerRequests(project)
 	registerNew(project)
 	registerUpdate(project)
+	registerPost(project)
 	registerDelete(project)
 	registerUnarchive(project)
 	shared.RegisterUsage(project, "project", usageText)

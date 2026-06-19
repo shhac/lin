@@ -1,6 +1,11 @@
 package mappers
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/shhac/lin/internal/linear"
+	"github.com/shhac/lin/internal/ptr"
+)
 
 func TestMapProjectSummary_Full(t *testing.T) {
 	input := ProjectSummaryInput{
@@ -39,6 +44,52 @@ func TestMapProjectSummary_Full(t *testing.T) {
 	}
 	if got["targetDate"] != "2025-06-30" {
 		t.Errorf("targetDate = %v", got["targetDate"])
+	}
+}
+
+func TestFromProjectUpdateSummary(t *testing.T) {
+	f := linear.ProjectUpdateSummaryFields{
+		Id:        "uuuuuuuu-1111-2222-3333-444444444444",
+		Url:       "https://linear.app/test/projectUpdate/abc",
+		Health:    linear.ProjectUpdateHealthTypeOntrack,
+		Body:      "Shipped the thing",
+		CreatedAt: "2026-06-19T10:00:00.000Z",
+		EditedAt:  ptr.To("2026-06-19T11:00:00.000Z"),
+		User: linear.ProjectUpdateSummaryFieldsUser{
+			Id:   "user-1",
+			Name: "Grace Hopper",
+		},
+	}
+	got := FromProjectUpdateSummary(f)
+
+	if got["id"] != f.Id {
+		t.Errorf("id = %v", got["id"])
+	}
+	if got["health"] != "onTrack" {
+		t.Errorf("health = %v, want onTrack (string)", got["health"])
+	}
+	if got["body"] != "Shipped the thing" {
+		t.Errorf("body = %v", got["body"])
+	}
+	if got["editedAt"] != "2026-06-19T11:00:00.000Z" {
+		t.Errorf("editedAt = %v", got["editedAt"])
+	}
+	user, ok := got["user"].(map[string]any)
+	if !ok || user["name"] != "Grace Hopper" {
+		t.Errorf("user = %v", got["user"])
+	}
+}
+
+func TestFromProjectUpdateSummary_NoEditedAt(t *testing.T) {
+	f := linear.ProjectUpdateSummaryFields{
+		Id:        "uuuuuuuu-1111-2222-3333-444444444444",
+		Health:    linear.ProjectUpdateHealthTypeAtrisk,
+		CreatedAt: "2026-06-19T10:00:00.000Z",
+		User:      linear.ProjectUpdateSummaryFieldsUser{Id: "user-1", Name: "Ada"},
+	}
+	got := FromProjectUpdateSummary(f)
+	if _, ok := got["editedAt"]; ok {
+		t.Error("editedAt should be absent when nil")
 	}
 }
 

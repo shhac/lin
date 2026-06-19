@@ -50,6 +50,27 @@ query ProjectSearch(
   }
 }
 
+query ProjectPostList(
+  $id: String!,
+  $first: Int!,
+  # @genqlient(omitempty: true)
+  $after: String,
+) {
+  project(id: $id) {
+    projectUpdates(first: $first, after: $after) {
+      nodes { ...ProjectUpdateSummaryFields }
+      pageInfo { ...PageInfoFields }
+    }
+  }
+}
+
+query ProjectPostGet($id: String!) {
+  projectUpdate(id: $id) {
+    ...ProjectUpdateSummaryFields
+    project { id slugId name }
+  }
+}
+
 query ProjectIssues(
   $id: String!,
   # @genqlient(omitempty: true)
@@ -99,6 +120,18 @@ mutation ProjectCreate($input: ProjectCreateInput!) {
 mutation ProjectUpdate($id: String!, $input: ProjectUpdateInput!) {
   projectUpdate(id: $id, input: $input) {
     success
+  }
+}
+
+mutation ProjectPostCreate($input: ProjectUpdateCreateInput!) {
+  projectUpdateCreate(input: $input) {
+    success
+    projectUpdate {
+      id
+      url
+      health
+      createdAt
+    }
   }
 }
 

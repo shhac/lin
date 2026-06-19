@@ -59,6 +59,23 @@ func FromProjectSummaryFields(f linear.ProjectSummaryFields) ProjectSummaryInput
 	return input
 }
 
+// FromProjectUpdateSummary converts the genqlient ProjectUpdateSummaryFields
+// fragment (used by ProjectPostList / ProjectPostGet) into the standard output map.
+func FromProjectUpdateSummary(f linear.ProjectUpdateSummaryFields) map[string]any {
+	m := map[string]any{
+		"id":        f.Id,
+		"url":       f.Url,
+		"health":    string(f.Health),
+		"body":      f.Body,
+		"createdAt": f.CreatedAt,
+		"user":      map[string]any{"id": f.User.Id, "name": f.User.Name},
+	}
+	if f.EditedAt != nil {
+		m["editedAt"] = *f.EditedAt
+	}
+	return m
+}
+
 // FromProjectSearchSummaryFields converts the genqlient ProjectSearchSummaryFields
 // fragment (used by ProjectSearch) into a ProjectSummaryInput.
 func FromProjectSearchSummaryFields(f linear.ProjectSearchSummaryFields) ProjectSummaryInput {
