@@ -6,7 +6,6 @@ package keychain
 
 import (
 	"errors"
-	"os/exec"
 	"runtime"
 
 	"github.com/shhac/lib-agent-cli/creds"
@@ -49,16 +48,10 @@ func Delete(account string) error {
 }
 
 // DeleteAll removes every entry for the service, including orphans not tracked
-// in config. creds.Keychain deletes per-account only, so this account-less
-// sweep stays on the `security` CLI directly. macOS only; no-op elsewhere.
+// in config. macOS only; no-op elsewhere.
 func DeleteAll() {
 	if runtime.GOOS != "darwin" {
 		return
 	}
-	for {
-		err := exec.Command("security", "delete-generic-password", "-s", service).Run()
-		if err != nil {
-			break
-		}
-	}
+	_ = kc.DeleteAll()
 }
