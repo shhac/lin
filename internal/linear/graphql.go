@@ -83,8 +83,3 @@ func GetRawClient() *Client {
 	client.baseURL = endpointURL()
 	return client
 }
-
-// GetAPIKey returns the resolved API key, exiting if unavailable.
-func GetAPIKey() string {
-	return mustResolveAPIKey()
-}

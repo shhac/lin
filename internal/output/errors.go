@@ -1,7 +1,6 @@
 package output
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"os"
@@ -13,10 +12,12 @@ import (
 	apierrors "github.com/shhac/lin/internal/errors"
 )
 
+// PrintError emits a structured error envelope on stderr and exits. The bare
+// string is treated as agent-fixable (validation/resolver/usage errors the
+// calling agent can correct), so the JSON always carries fixable_by per the
+// documented {error, fixable_by, hint} contract.
 func PrintError(msg string) {
-	enc := json.NewEncoder(Stderr())
-	enc.SetEscapeHTML(false)
-	_ = enc.Encode(map[string]string{"error": msg})
+	WriteErrorTo(Stderr(), apierrors.New(msg, apierrors.FixableByAgent))
 	os.Exit(1)
 }
 

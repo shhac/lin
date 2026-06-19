@@ -84,7 +84,7 @@ func projectLabelNotFoundErr(input string, labels []ResolvedProjectLabel) error 
 	for i, l := range labels {
 		names[i] = l.Name
 	}
-	return fmt.Errorf("project label not found: %q, available labels: %s", input, strings.Join(names, ", "))
+	return fmt.Errorf("project label not found: %q, available labels: %s", input, formatChoices(names))
 }
 
 func ambiguousProjectLabelErr(input string, matches []ResolvedProjectLabel) error {
@@ -92,5 +92,5 @@ func ambiguousProjectLabelErr(input string, matches []ResolvedProjectLabel) erro
 	for i, l := range matches {
 		parts[i] = fmt.Sprintf("%s (id: %s)", l.Name, l.ID)
 	}
-	return fmt.Errorf("ambiguous project label: %q matches %d labels: %s, use the label ID to disambiguate", input, len(matches), strings.Join(parts, ", "))
+	return fmt.Errorf("ambiguous project label: %q matches %d labels: %s, use the label ID to disambiguate", input, len(matches), formatChoices(parts))
 }

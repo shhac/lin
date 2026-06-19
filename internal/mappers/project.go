@@ -28,15 +28,9 @@ func MapProjectSummary(s ProjectSummaryInput) map[string]any {
 		"status":   s.State,
 		"progress": s.Progress,
 	}
-	if s.LeadName != "" {
-		m["lead"] = s.LeadName
-	}
-	if s.StartDate != "" {
-		m["startDate"] = s.StartDate
-	}
-	if s.TargetDate != "" {
-		m["targetDate"] = s.TargetDate
-	}
+	setIfNotEmpty(m, "lead", s.LeadName)
+	setIfNotEmpty(m, "startDate", s.StartDate)
+	setIfNotEmpty(m, "targetDate", s.TargetDate)
 	return m
 }
 
@@ -70,9 +64,7 @@ func FromProjectUpdateSummary(f linear.ProjectUpdateSummaryFields) map[string]an
 		"createdAt": f.CreatedAt,
 		"user":      map[string]any{"id": f.User.Id, "name": f.User.Name},
 	}
-	if f.EditedAt != nil {
-		m["editedAt"] = *f.EditedAt
-	}
+	setIfNotNil(m, "editedAt", f.EditedAt)
 	return m
 }
 

@@ -53,7 +53,7 @@ func userNotFoundErr(input string, users []linear.UserListUsersUserConnectionNod
 	for i, u := range users {
 		names[i] = fmt.Sprintf("%s <%s>", u.Name, u.Email)
 	}
-	return fmt.Errorf("user not found: %q, known users: %s", input, strings.Join(names, ", "))
+	return fmt.Errorf("user not found: %q, known users: %s", input, formatChoices(names))
 }
 
 func ambiguousUserErr(input string, matches []ResolvedUser) error {
@@ -61,5 +61,5 @@ func ambiguousUserErr(input string, matches []ResolvedUser) error {
 	for i, u := range matches {
 		parts[i] = fmt.Sprintf("%s <%s> (%s)", u.Name, u.Email, u.ID)
 	}
-	return fmt.Errorf("ambiguous user: %q matches %d users: %s, use a unique name, email, or ID", input, len(matches), strings.Join(parts, ", "))
+	return fmt.Errorf("ambiguous user: %q matches %d users: %s, use a unique name, email, or ID", input, len(matches), formatChoices(parts))
 }

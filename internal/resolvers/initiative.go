@@ -44,7 +44,7 @@ func ResolveInitiative(client graphql.Client, input string) (ResolvedInitiative,
 	}
 	hint := "none"
 	if len(names) > 0 {
-		hint = strings.Join(names, ", ")
+		hint = formatChoices(names)
 	}
 	return ResolvedInitiative{}, fmt.Errorf("initiative not found: %q, known initiatives: %s, provide a UUID, slug ID, or exact name", input, hint)
 }

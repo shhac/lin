@@ -123,7 +123,7 @@ func issueLabelNotFoundErr(input string, labels []ResolvedIssueLabel) error {
 	for i, l := range labels {
 		names[i] = l.Name
 	}
-	return fmt.Errorf("label not found: %q, available labels: %s", input, strings.Join(names, ", "))
+	return fmt.Errorf("label not found: %q, available labels: %s", input, formatChoices(names))
 }
 
 func ambiguousIssueLabelErr(input string, matches []ResolvedIssueLabel, teamScoped bool) error {
@@ -139,5 +139,5 @@ func ambiguousIssueLabelErr(input string, matches []ResolvedIssueLabel, teamScop
 	if !teamScoped {
 		hint = ", tip: use --team to narrow scope"
 	}
-	return fmt.Errorf("ambiguous label: %q matches %d labels: %s, use the label ID to disambiguate%s", input, len(matches), strings.Join(parts, ", "), hint)
+	return fmt.Errorf("ambiguous label: %q matches %d labels: %s, use the label ID to disambiguate%s", input, len(matches), formatChoices(parts), hint)
 }

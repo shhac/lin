@@ -320,3 +320,21 @@ func TestWriteErrorToDoesNotExit(t *testing.T) {
 		t.Fatalf("unexpected error payload: %#v", decoded)
 	}
 }
+
+// A bare-message error (the shape PrintError produces) must still carry
+// fixable_by per the documented {error, fixable_by, hint} contract.
+func TestWriteErrorToBareMessageHasFixableBy(t *testing.T) {
+	var stderr bytes.Buffer
+	WriteErrorTo(&stderr, apierrors.New("bad input", apierrors.FixableByAgent))
+
+	var decoded map[string]any
+	if err := json.Unmarshal(stderr.Bytes(), &decoded); err != nil {
+		t.Fatalf("invalid JSON: %v", err)
+	}
+	if decoded["error"] != "bad input" {
+		t.Fatalf("unexpected error message: %#v", decoded)
+	}
+	if decoded["fixable_by"] != "agent" {
+		t.Fatalf("bare error must default fixable_by to agent, got %#v", decoded)
+	}
+}

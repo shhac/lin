@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Khan/genqlient/graphql"
 
@@ -59,7 +58,7 @@ func ResolveTeam(client graphql.Client, input string) (ResolvedTeam, error) {
 	}
 	hint := "none"
 	if len(keys) > 0 {
-		hint = strings.Join(keys, ", ")
+		hint = formatChoices(keys)
 	}
 	return ResolvedTeam{}, fmt.Errorf("team not found: %q, known teams: %s, provide a UUID, key, or exact name", input, hint)
 }

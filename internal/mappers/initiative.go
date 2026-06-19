@@ -42,11 +42,7 @@ func MapInitiativeSummary(s InitiativeSummaryInput) map[string]any {
 		"status": s.Status,
 		"owner":  s.OwnerName,
 	}
-	if s.Health != nil {
-		m["health"] = *s.Health
-	}
-	if s.TargetDate != nil {
-		m["targetDate"] = *s.TargetDate
-	}
+	setIfNotNil(m, "health", s.Health)
+	setIfNotNil(m, "targetDate", s.TargetDate)
 	return m
 }
