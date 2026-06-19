@@ -1,24 +1,35 @@
+// Package keychain wraps the shared creds.Keychain backend, keyed by lin's
+// reverse-domain service. The exported funcs keep their historical
+// (string, error) / error signatures so callers in internal/credential and
+// internal/config don't change.
 package keychain
 
 import (
+	"errors"
 	"os/exec"
 	"runtime"
-	"strings"
+
+	"github.com/shhac/lib-agent-cli/creds"
 )
 
 const service = "app.paulie.lin"
+
+var kc = creds.NewKeychain(service)
+
+// errNotFound preserves the legacy contract where a missing entry is reported
+// as an error (callers check `err == nil && key != ""`).
+var errNotFound = errors.New("keychain: entry not found")
 
 // Get retrieves a keychain entry. macOS only; returns "" on other platforms.
 func Get(account string) (string, error) {
 	if runtime.GOOS != "darwin" {
 		return "", nil
 	}
-	out, err := exec.Command("security", "find-generic-password",
-		"-s", service, "-a", account, "-w").Output()
-	if err != nil {
-		return "", err
+	v, ok := kc.Get(account)
+	if !ok {
+		return "", errNotFound
 	}
-	return strings.TrimSpace(string(out)), nil
+	return v, nil
 }
 
 // Store saves a keychain entry. macOS only; no-op on other platforms.
@@ -26,8 +37,7 @@ func Store(account, password string) error {
 	if runtime.GOOS != "darwin" {
 		return nil
 	}
-	return exec.Command("security", "add-generic-password",
-		"-s", service, "-a", account, "-w", password, "-U").Run()
+	return kc.Set(account, password)
 }
 
 // Delete removes a keychain entry. macOS only; no-op on other platforms.
@@ -35,11 +45,12 @@ func Delete(account string) error {
 	if runtime.GOOS != "darwin" {
 		return nil
 	}
-	return exec.Command("security", "delete-generic-password",
-		"-s", service, "-a", account).Run()
+	return kc.Delete(account)
 }
 
-// DeleteAll removes all keychain entries for the service. macOS only; no-op on other platforms.
+// DeleteAll removes every entry for the service, including orphans not tracked
+// in config. creds.Keychain deletes per-account only, so this account-less
+// sweep stays on the `security` CLI directly. macOS only; no-op elsewhere.
 func DeleteAll() {
 	if runtime.GOOS != "darwin" {
 		return
