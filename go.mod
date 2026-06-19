@@ -4,6 +4,8 @@ go 1.26.2
 
 require (
 	github.com/Khan/genqlient v0.8.1
+	github.com/shhac/lib-agent-cli v0.2.0
+	github.com/shhac/lib-agent-output v0.4.3
 	github.com/spf13/cobra v1.10.2
 	github.com/vektah/gqlparser/v2 v2.5.19
 	gopkg.in/yaml.v2 v2.4.0

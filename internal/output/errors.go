@@ -9,6 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	out "github.com/shhac/lib-agent-output"
 	apierrors "github.com/shhac/lin/internal/errors"
 )
 
@@ -24,20 +25,7 @@ func PrintErrorf(format string, args ...any) {
 }
 
 func WriteErrorTo(w io.Writer, err error) {
-	var aerr *apierrors.APIError
-	if !apierrors.As(err, &aerr) {
-		aerr = apierrors.Wrap(err, apierrors.FixableByAgent)
-	}
-	payload := map[string]any{
-		"error":      aerr.Message,
-		"fixable_by": string(aerr.FixableBy),
-	}
-	if aerr.Hint != "" {
-		payload["hint"] = aerr.Hint
-	}
-	enc := json.NewEncoder(w)
-	enc.SetEscapeHTML(false)
-	_ = enc.Encode(payload)
+	out.WriteError(w, err)
 }
 
 // WriteError writes a structured error to stderr and exits.
