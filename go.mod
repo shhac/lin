@@ -4,11 +4,11 @@ go 1.26.2
 
 require (
 	github.com/Khan/genqlient v0.8.1
-	github.com/shhac/lib-agent-cli v0.4.0
+	github.com/shhac/lib-agent-cli v0.4.2
 	github.com/shhac/lib-agent-output v0.4.3
 	github.com/spf13/cobra v1.10.2
 	github.com/vektah/gqlparser/v2 v2.5.19
-	gopkg.in/yaml.v2 v2.4.0
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -22,4 +22,5 @@ require (
 	golang.org/x/mod v0.35.0 // indirect
 	golang.org/x/sync v0.20.0 // indirect
 	golang.org/x/tools v0.44.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

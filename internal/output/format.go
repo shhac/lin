@@ -1,13 +1,11 @@
 package output
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"sync"
 
-	"gopkg.in/yaml.v2"
-
+	_ "github.com/shhac/lib-agent-cli/yaml" // registers the YAML encoder (yaml.v3) for out.FormatYAML
 	out "github.com/shhac/lib-agent-output"
 	"github.com/shhac/lin/internal/config"
 	"github.com/shhac/lin/internal/truncation"
@@ -33,20 +31,6 @@ func ParseFormat(s string) (Format, error) {
 			WithHint("use --format json, --format yaml, or --format jsonl")
 	}
 	return f, nil
-}
-
-// init registers lin's YAML encoder (yaml.v2) with lib-agent-output, so YAML
-// support stays in this CLI while the core library remains dependency-free.
-func init() {
-	out.RegisterEncoder(out.FormatYAML, func(v any) ([]byte, error) {
-		var buf bytes.Buffer
-		enc := yaml.NewEncoder(&buf)
-		if err := enc.Encode(v); err != nil {
-			return nil, err
-		}
-		_ = enc.Close()
-		return buf.Bytes(), nil
-	})
 }
 
 var (
