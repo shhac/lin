@@ -21,6 +21,15 @@ func (t *loginTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	return http.DefaultTransport.RoundTrip(req)
 }
 
+// authClient builds the pre-credential GraphQL client login/status use to look
+// up the viewer. It hits the fixed Linear endpoint directly rather than the
+// configurable linear.Configure one, because these commands run before the key
+// is stored and resolved.
+func authClient(apiKey string) graphql.Client {
+	httpClient := &http.Client{Transport: &loginTransport{apiKey: apiKey}}
+	return graphql.NewClient("https://api.linear.app/graphql", httpClient)
+}
+
 func registerLogin(auth *cobra.Command) {
 	var alias string
 
@@ -31,8 +40,7 @@ func registerLogin(auth *cobra.Command) {
 		Run: func(_ *cobra.Command, args []string) {
 			apiKey := args[0]
 
-			httpClient := &http.Client{Transport: &loginTransport{apiKey: apiKey}}
-			client := graphql.NewClient("https://api.linear.app/graphql", httpClient)
+			client := authClient(apiKey)
 
 			ctx := context.Background()
 			resp, err := linear.Viewer(ctx, client)

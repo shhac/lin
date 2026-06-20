@@ -2,9 +2,7 @@ package auth
 
 import (
 	"context"
-	"net/http"
 
-	"github.com/Khan/genqlient/graphql"
 	"github.com/spf13/cobra"
 
 	"github.com/shhac/lin/internal/config"
@@ -25,8 +23,7 @@ func registerStatus(auth *cobra.Command) {
 				return
 			}
 
-			httpClient := &http.Client{Transport: &loginTransport{apiKey: apiKey}}
-			client := graphql.NewClient("https://api.linear.app/graphql", httpClient)
+			client := authClient(apiKey)
 
 			ctx := context.Background()
 			resp, err := linear.Viewer(ctx, client)
