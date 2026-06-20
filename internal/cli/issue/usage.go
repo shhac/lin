@@ -29,8 +29,8 @@ UPDATE (each is a subcommand):
 
 COMMENTS (--parent 1 level):
   issue comment list <id> [--limit] [--cursor]
-  issue comment new <id> <body> [--parent <cid>]
-  issue comment edit <cid> <body>
+  issue comment new <id> <body> [--parent <cid>] [--file <path>]...
+  issue comment edit <cid> <body> [--file <path>]...
   issue comment get <cid>  |  replies <cid>
 
 RELATIONS:

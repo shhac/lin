@@ -32,7 +32,7 @@ COMMANDS:
   initiative get <id>                     Initiative summary + health + owner
   initiative projects <id>                Projects in an initiative
   initiative new <name> [options]         Create initiative
-  initiative update <field> <id> <value>  Update (name|status|description|owner|...)
+  initiative update <field> <id> <value>  Update (name|status|description|owner|content|color|icon|target-date)
   initiative archive|unarchive|delete <id> Lifecycle operations
 
   document search <text>                  Full-text search
@@ -55,7 +55,7 @@ COMMANDS:
   issue relation remove <relation-id>     Remove relation
   issue archive|unarchive|delete <id>     Archive, restore, or trash
   issue attachment list <issue-id>        List attachments
-  issue attachment add <id> --url <u> --title <t>    Add URL attachment
+  issue attachment add <id> <url> [--title <t>]       Add URL attachment
   issue attachment remove <attachment-id> Remove attachment
   issue requests <id>                     Customer requests linked to the issue
 

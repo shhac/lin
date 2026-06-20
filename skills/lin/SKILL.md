@@ -193,7 +193,13 @@ lin initiative list --status active
 lin initiative get <id>                  # status, health, owner, projects
 lin initiative projects <id>             # projects linked to initiative
 lin initiative new "Q3 Launch" --status planned --owner "alice@example.com"
+lin initiative update name <id> "New Name"
 lin initiative update status <id> active
+lin initiative update description <id> "Updated description"
+lin initiative update owner <id> "alice@example.com"
+lin initiative update content <id> "# Updated body"
+lin initiative update color <id> "#FF5500"
+lin initiative update icon <id> "🚀"
 lin initiative update target-date <id> 2025-06-30
 lin initiative archive <id>
 lin initiative unarchive <id>

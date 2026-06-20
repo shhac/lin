@@ -50,7 +50,13 @@ Linear "project updates" are timeline posts carrying a health signal — distinc
 - `lin initiative get <id>` — initiative summary with status, health, owner, projects
 - `lin initiative projects <id> [--limit] [--cursor]` — projects linked to an initiative
 - `lin initiative new <name> [--status <status>] [--owner <user>] [--target-date <YYYY-MM-DD>]`
+- `lin initiative update name <id> <value>`
 - `lin initiative update status <id> <value>` — planned | active | completed
+- `lin initiative update description <id> <value>`
+- `lin initiative update owner <id> <user>` — user name, email, or ID
+- `lin initiative update content <id> <value>` — markdown body
+- `lin initiative update color <id> <hex>`
+- `lin initiative update icon <id> <emoji>`
 - `lin initiative update target-date <id> <YYYY-MM-DD>`
 - `lin initiative archive <id>` — archive an initiative
 - `lin initiative unarchive <id>` — unarchive an initiative
@@ -177,6 +183,7 @@ A customer request (Linear "customer need") links a customer to an issue or proj
 
 ## Users
 
+- `lin user search <text>` — search users by name, email, or display name
 - `lin user list [--team]` — list users
 - `lin user me` — current authenticated user
 
