@@ -6,6 +6,7 @@ import (
 
 	"github.com/Khan/genqlient/graphql"
 
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
 )
 
@@ -46,5 +47,5 @@ func ResolveInitiative(client graphql.Client, input string) (ResolvedInitiative,
 	if len(names) > 0 {
 		hint = formatChoices(names)
 	}
-	return ResolvedInitiative{}, fmt.Errorf("initiative not found: %q, known initiatives: %s, provide a UUID, slug ID, or exact name", input, hint)
+	return ResolvedInitiative{}, apierrors.Newf(apierrors.FixableByAgent, "initiative not found: %q, known initiatives: %s, provide a UUID, slug ID, or exact name", input, hint)
 }

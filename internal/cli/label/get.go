@@ -38,9 +38,9 @@ func registerGet(label *cobra.Command) {
 
 			return shared.GetEntities(args, func(client graphql.Client, input string) (any, error) {
 				if typeFlag == labelTypeProject {
-					return getProjectLabel(context.Background(), client, input)
+					return getProjectLabel(client, input)
 				}
-				return getIssueLabel(context.Background(), client, input, teamID)
+				return getIssueLabel(client, input, teamID)
 			})
 		},
 	}
@@ -50,7 +50,8 @@ func registerGet(label *cobra.Command) {
 	label.AddCommand(cmd)
 }
 
-func getIssueLabel(ctx context.Context, client graphql.Client, input, teamID string) (any, error) {
+func getIssueLabel(client graphql.Client, input, teamID string) (any, error) {
+	ctx := context.Background()
 	var filter *linear.IssueLabelFilter
 	if filters.IsUUID(input) {
 		filter = &linear.IssueLabelFilter{Id: &linear.IDComparator{Eq: ptr.To(input)}}
@@ -76,7 +77,8 @@ func getIssueLabel(ctx context.Context, client graphql.Client, input, teamID str
 	return mapIssueLabel(nodes[0].IssueLabelFields), nil
 }
 
-func getProjectLabel(ctx context.Context, client graphql.Client, input string) (any, error) {
+func getProjectLabel(client graphql.Client, input string) (any, error) {
+	ctx := context.Background()
 	var filter *linear.ProjectLabelFilter
 	if filters.IsUUID(input) {
 		filter = &linear.ProjectLabelFilter{Id: &linear.IDComparator{Eq: ptr.To(input)}}

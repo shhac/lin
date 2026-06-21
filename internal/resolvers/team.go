@@ -5,6 +5,7 @@ import (
 
 	"github.com/Khan/genqlient/graphql"
 
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/filters"
 	"github.com/shhac/lin/internal/linear"
 )
@@ -60,5 +61,5 @@ func ResolveTeam(client graphql.Client, input string) (ResolvedTeam, error) {
 	if len(keys) > 0 {
 		hint = formatChoices(keys)
 	}
-	return ResolvedTeam{}, fmt.Errorf("team not found: %q, known teams: %s, provide a UUID, key, or exact name", input, hint)
+	return ResolvedTeam{}, apierrors.Newf(apierrors.FixableByAgent, "team not found: %q, known teams: %s, provide a UUID, key, or exact name", input, hint)
 }

@@ -21,10 +21,7 @@ func registerGet(parent *cobra.Command) {
 			return shared.GetEntities(args, func(client graphql.Client, id string) (any, error) {
 				resolved, err := resolvers.ResolveInitiative(client, id)
 				if err != nil {
-					// ResolveInitiative returns plain fmt.Errorf; wrap so EntityGet
-					// treats a missing initiative as an item-level @unresolved, not a
-					// command-level failure.
-					return nil, apierrors.Wrap(err, apierrors.FixableByAgent)
+					return nil, err
 				}
 
 				resp, err := linear.InitiativeGet(context.Background(), client, resolved.ID)

@@ -21,10 +21,7 @@ func registerGet(parent *cobra.Command) {
 			return shared.GetEntities(args, func(client graphql.Client, id string) (any, error) {
 				resolved, err := resolvers.ResolveDocument(client, id)
 				if err != nil {
-					// ResolveDocument returns plain fmt.Errorf; wrap so EntityGet
-					// treats a missing document as an item-level @unresolved, not a
-					// command-level failure.
-					return nil, apierrors.Wrap(err, apierrors.FixableByAgent)
+					return nil, err
 				}
 
 				resp, err := linear.DocumentGet(context.Background(), client, resolved.ID)

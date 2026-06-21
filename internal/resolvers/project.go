@@ -1,10 +1,9 @@
 package resolvers
 
 import (
-	"fmt"
-
 	"github.com/Khan/genqlient/graphql"
 
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/filters"
 	"github.com/shhac/lin/internal/linear"
 )
@@ -28,7 +27,7 @@ func ResolveProject(client graphql.Client, input string) (ResolvedProject, error
 		return ResolvedProject{}, err
 	}
 	if len(listResp.Projects.Nodes) == 0 {
-		return ResolvedProject{}, fmt.Errorf("project not found: %q, provide a UUID, slug ID, or exact name", input)
+		return ResolvedProject{}, apierrors.Newf(apierrors.FixableByAgent, "project not found: %q, provide a UUID, slug ID, or exact name", input)
 	}
 	p := listResp.Projects.Nodes[0]
 	return ResolvedProject{ID: p.Id, Name: p.Name, SlugId: p.SlugId}, nil
