@@ -34,6 +34,31 @@ A single `get <id>` is just the one-element case (NDJSON one line by default; wa
 
 Item-level misses stay on stdout and exit 0; only a command-level failure (auth, network) goes to stderr with exit 1 and empty stdout.
 
+## Pretty cards (`--format pretty`)
+
+`get` commands for the rich read-and-view entities — `issue`, `project`, `initiative`, `document`, `customer` — accept `--format pretty` for a human-readable terminal card instead of JSON. It's for a person reading an entity, not for scripting (the JSON/NDJSON formats remain the machine contract).
+
+- Multiple ids stack as cards separated by a full-width rule; an unresolved id renders as a compact `✗ <id> — <reason>` error card rather than the `@unresolved` JSON.
+- `--width <n>` forces the card width (0 = auto-detect terminal; falls back to 80 when piped).
+- Color is emitted only on a color-capable terminal and dropped under `NO_COLOR`, `TERM=dumb`, or when piped/redirected.
+- `--full` additionally fetches and renders relations (References) and comments (Comments) for `issue get`.
+- `pretty` is flag-only and per-command: it is not a valid `output.defaultFormat`, and other commands reject it with the standard unknown-format error.
+
+```text
+ENG-123  In Progress · High · 3pts                     updated 2 hours ago
+──────────────────────────────────────────────────────────────────────────
+Fix flaky checkout test
+
+Assignee  Alex Rivera                Team      Engineering (ENG)
+Project   Checkout Reliability       Parent    ENG-100
+
+─ Description ────────────────────────────────────────────────────────────
+The checkout test fails intermittently under load.
+
+git branch: alex/eng-123-fix-flaky-checkout-test
+https://linear.app/acme/issue/ENG-123
+```
+
 Converted get commands: `issue get`, `issue comment get`, `project get`, `project post get`, `initiative get`, `document get`, `team get`, `cycle get`, `customer get`, `label get`, `config get`.
 
 `config get` follows the same shape over local settings: no args lists every setting as NDJSON lines; `config get <key>...` returns one `{"key":"...","value":...}` line per key (or `{"@unresolved":{…}}` for an unknown key); `--format json` collapses to the `{"data":[…]}` envelope.

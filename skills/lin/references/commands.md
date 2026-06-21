@@ -242,11 +242,12 @@ Converted: `issue get`, `issue comment get`, `project get`, `project post get`, 
 
 | Flag                   | Description                                                         |
 | ---------------------- | ------------------------------------------------------------------- |
-| `--format <fmt>`       | Output format: json, yaml, jsonl                                    |
+| `--format <fmt>`       | Output format: json, yaml, jsonl (get commands also accept `pretty`) |
+| `--width <n>`          | Card width for `--format pretty` (0 = auto-detect terminal)         |
 | `--timeout <ms>`       | Request timeout in milliseconds                                     |
 | `--debug`              | Log redacted HTTP request records to stderr                         |
 | `--expand <field,...>` | Expand specific truncated fields (e.g. `--expand description,body`) |
-| `--full`               | Expand all truncated fields                                         |
+| `--full`               | Expand all truncated fields; with `--format pretty`, also fetches relations + comments for `issue get` |
 
 ## Persistent config keys
 

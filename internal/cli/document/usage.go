@@ -15,6 +15,7 @@ GET:
     Returns: title, content, url, icon, color, project, creator, updatedBy, timestamps
     NDJSON by default (one line per id; --format json for a single object).
     Missing ids emit {"@unresolved":{...}} on stdout (exit 0).
+    --format pretty renders a human-readable card (--width <n>).
 
 CREATE:
   document new <title>                      Create document

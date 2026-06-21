@@ -100,6 +100,11 @@ OUTPUT: list/search → JSONL by default; get <id>... → NDJSON by default (one
   Item-level misses exit 0 (stdout @unresolved line); command-level failures exit 1 (stderr).
   Errors: { "error": "...", "fixable_by": "agent|human|retry", "hint": "..." } to stderr.
 
+PRETTY: get commands (issue, project, initiative, document, customer) accept --format pretty
+  for a human-readable terminal card — for reading an entity, not for scripting. --width <n>
+  sets the card width (0 = auto-detect). Color is used on a terminal and dropped when piped or
+  NO_COLOR is set. With --full, issue pretty also renders relations and comments.
+
 TRUNCATION: description/body/content truncated to ~200 chars + companion *Length field.
   --expand <field,...>  Expand specific    --full  Expand all
   Defaults: config set truncation.maxLength|pagination.defaultPageSize|output.defaultFormat|request.timeoutMS <value>

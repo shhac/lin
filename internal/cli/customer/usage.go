@@ -16,6 +16,7 @@ GET:
                              revenue, size, approximateNeedCount
                              NDJSON by default (one line per id; --format json for a single object).
                              Missing ids emit {"@unresolved":{...}} on stdout (exit 0).
+                             --format pretty renders a human-readable card (--width <n>).
 
 CUSTOMER REQUESTS:
   customer requests [filters] [--limit] [--cursor]

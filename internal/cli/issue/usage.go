@@ -12,6 +12,8 @@ GET:
                              customerRequestCount, customerImportantCount
                              NDJSON by default (one line per id; --format json for a single object).
                              Missing ids emit {"@unresolved":{...}} on stdout (exit 0).
+                             --format pretty renders a human-readable terminal card (--width <n>
+                             to set width); with --full it also shows relations and comments.
 
 CUSTOMER REQUESTS:
   issue requests <id> [--important] [--limit] [--cursor]   Customer requests linked to the issue

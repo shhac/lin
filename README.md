@@ -137,6 +137,7 @@ Each top-level command also has a `usage` subcommand for detailed, LLM-friendly 
 - Pagination in JSONL → `{"@pagination":{"has_more":true,"next_cursor":"..."}}`
 - `get <id>...` → NDJSON by default (one line per id — the record, or `{"@unresolved":{...}}` for a missing id); pass `--format json` for a pretty object
 - `--format json|yaml|jsonl` overrides any command; JSON list/get envelopes use `{ "data": [...], "pagination"?: ... }` / `{ "data": [...], "@unresolved": [...] }`
+- `--format pretty` (get commands: issue, project, initiative, document, customer) → human-readable terminal card for reading an entity (not for scripting); `--width <n>` sets width, and `--full` adds relations + comments for `issue get`
 - Item-level misses (not found) → `@unresolved` line on stdout, exit 0; command-level failures → stderr, exit 1
 - Errors → `{ "error": "...", "fixable_by": "agent|human|retry", "hint": "..." }` to stderr + non-zero exit
 - Empty/null fields are pruned automatically

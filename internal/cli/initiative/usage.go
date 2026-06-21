@@ -17,6 +17,7 @@ GET:
                                  owner{id,name}, creator{id,name}
                                  NDJSON by default (one line per id; --format json for a single object).
                                  Missing ids emit {"@unresolved":{...}} on stdout (exit 0).
+                                 --format pretty renders a human-readable card (--width <n>).
   initiative projects <id>       Projects linked to an initiative
     [--limit] [--cursor]
     Returns per item: id, slugId, url, name, status, progress,

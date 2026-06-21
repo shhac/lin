@@ -15,6 +15,7 @@ GET:
                                status, progress, lead, startDate, targetDate, labels[], milestones[]
                                NDJSON by default (one line per id; --format json for a single object).
                                Missing ids emit {"@unresolved":{...}} on stdout (exit 0).
+                               --format pretty renders a human-readable card (--width <n>).
   project issues <id>          Issues in a project
     [--status] [--assignee] [--priority] [--limit] [--cursor]
   project requests <id>        Customer requests linked to the project

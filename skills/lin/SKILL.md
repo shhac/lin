@@ -258,6 +258,14 @@ lin --expand description,content project get <id>        # expand multiple
 
 These are global flags — place them before the command or after it.
 
+To read an entity in a terminal (not for scripting), use `--format pretty`:
+
+```bash
+lin issue get ENG-123 --format pretty                    # human-readable card
+lin --full issue get ENG-123 --format pretty             # + relations and comments
+lin project get <id> --format pretty --width 100         # set card width
+```
+
 ## IDs
 
 All commands accept multiple ID formats:
@@ -278,9 +286,11 @@ Use `--limit <n>` and `--cursor <token>` to paginate.
 ## Global flags and defaults
 
 - `--format json|yaml|jsonl`: override output format for this invocation
+- `--format pretty` (get commands only): human-readable terminal card for reading an entity — not for scripting. Supported on `issue`, `project`, `initiative`, `document`, and `customer` get. Color is used on a terminal and dropped when piped or `NO_COLOR` is set.
+- `--width <n>`: card width for `--format pretty` (0 = auto-detect terminal)
 - `--timeout <ms>`: request timeout in milliseconds
 - `--debug`: log redacted HTTP request records to stderr
-- `--expand <field,...>` / `--full`: expand truncated long text fields
+- `--expand <field,...>` / `--full`: expand truncated long text fields. With `--format pretty`, `--full` also fetches relations and comments for `issue get`.
 
 Persist commonly-used defaults with:
 
