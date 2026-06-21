@@ -8,9 +8,10 @@ package pretty
 
 import (
 	"os"
-	"strings"
 
 	"golang.org/x/term"
+
+	output "github.com/shhac/lib-agent-output"
 )
 
 // Width bounds. Cards stay readable on very wide terminals (capped) and don't
@@ -34,16 +35,12 @@ func TerminalWidth(flagWidth int) int {
 	return defaultWidth
 }
 
-// ColorCapable reports whether ANSI styling should be emitted: stdout is a
-// terminal, NO_COLOR is unset (https://no-color.org), and TERM isn't "dumb".
+// ColorCapable reports whether ANSI styling should be emitted for the pretty
+// card. It defers to the family color decision (the global --color flag, plus
+// NO_COLOR/TERM=dumb and whether stdout is a terminal) so every surface — the
+// JSON formats and this human renderer — shares one policy.
 func ColorCapable() bool {
-	if _, ok := os.LookupEnv("NO_COLOR"); ok {
-		return false
-	}
-	if strings.EqualFold(os.Getenv("TERM"), "dumb") {
-		return false
-	}
-	return term.IsTerminal(int(os.Stdout.Fd()))
+	return output.Enabled(os.Stdout)
 }
 
 func clamp(v, lo, hi int) int {
