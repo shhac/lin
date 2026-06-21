@@ -3,28 +3,28 @@ package customer
 import (
 	"context"
 
+	"github.com/Khan/genqlient/graphql"
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/cli/shared"
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/mappers"
-	"github.com/shhac/lin/internal/output"
 )
 
 func registerGet(parent *cobra.Command) {
 	cmd := &cobra.Command{
-		Use:   "get <id|slug>",
+		Use:   "get <id|slug>...",
 		Short: "Get customer details: tier, status, owner, domains, revenue, request count",
-		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			ctx := context.Background()
-
-			resp, err := linear.CustomerGet(ctx, client, args[0])
-			if err != nil {
-				output.HandleGraphQLError(err)
-			}
-
-			output.PrintJSON(mappers.MapCustomerDetail(resp.Customer))
+		Args:  cobra.MinimumNArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return shared.GetEntities(args, func(client graphql.Client, id string) (any, error) {
+				resp, err := linear.CustomerGet(context.Background(), client, id)
+				if err != nil {
+					return nil, apierrors.ClassifyGraphQLError(err)
+				}
+				return mappers.MapCustomerDetail(resp.Customer), nil
+			})
 		},
 	}
 

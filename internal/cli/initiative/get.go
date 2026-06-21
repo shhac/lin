@@ -3,75 +3,79 @@ package initiative
 import (
 	"context"
 
+	"github.com/Khan/genqlient/graphql"
 	"github.com/spf13/cobra"
 
+	"github.com/shhac/lin/internal/cli/shared"
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
-	"github.com/shhac/lin/internal/output"
 	"github.com/shhac/lin/internal/resolvers"
 )
 
 func registerGet(parent *cobra.Command) {
 	cmd := &cobra.Command{
-		Use:   "get <id>",
+		Use:   "get <id>...",
 		Short: "Initiative summary: name, description, status, health, owner",
-		Args:  cobra.ExactArgs(1),
-		Run: func(_ *cobra.Command, args []string) {
-			client := linear.GetClient()
-
-			resolved, err := resolvers.ResolveInitiative(client, args[0])
-			if err != nil {
-				output.PrintError(err.Error())
-			}
-
-			resp, err := linear.InitiativeGet(context.Background(), client, resolved.ID)
-			if err != nil {
-				output.HandleGraphQLError(err)
-			}
-
-			i := resp.Initiative
-
-			var owner any
-			if i.Owner != nil {
-				owner = map[string]any{
-					"id":   i.Owner.Id,
-					"name": i.Owner.Name,
+		Args:  cobra.MinimumNArgs(1),
+		RunE: func(_ *cobra.Command, args []string) error {
+			return shared.GetEntities(args, func(client graphql.Client, id string) (any, error) {
+				resolved, err := resolvers.ResolveInitiative(client, id)
+				if err != nil {
+					// ResolveInitiative returns plain fmt.Errorf; wrap so EntityGet
+					// treats a missing initiative as an item-level @unresolved, not a
+					// command-level failure.
+					return nil, apierrors.Wrap(err, apierrors.FixableByAgent)
 				}
-			}
 
-			result := map[string]any{
-				"id":     i.Id,
-				"slugId": i.SlugId,
-				"url":    i.Url,
-				"name":   i.Name,
-				"status": i.Status,
-				"owner":  owner,
-				"creator": map[string]any{
-					"id":   i.Creator.Id,
-					"name": i.Creator.Name,
-				},
-				"createdAt": i.CreatedAt,
-				"updatedAt": i.UpdatedAt,
-			}
-			if i.Description != nil {
-				result["description"] = *i.Description
-			}
-			if i.Content != nil {
-				result["content"] = *i.Content
-			}
-			if i.Health != nil {
-				result["health"] = *i.Health
-			}
-			if i.TargetDate != nil {
-				result["targetDate"] = *i.TargetDate
-			}
-			if i.StartedAt != nil {
-				result["startedAt"] = *i.StartedAt
-			}
-			if i.CompletedAt != nil {
-				result["completedAt"] = *i.CompletedAt
-			}
+				resp, err := linear.InitiativeGet(context.Background(), client, resolved.ID)
+				if err != nil {
+					return nil, apierrors.ClassifyGraphQLError(err)
+				}
 
-			output.PrintJSON(result)
+				i := resp.Initiative
+
+				var owner any
+				if i.Owner != nil {
+					owner = map[string]any{
+						"id":   i.Owner.Id,
+						"name": i.Owner.Name,
+					}
+				}
+
+				result := map[string]any{
+					"id":     i.Id,
+					"slugId": i.SlugId,
+					"url":    i.Url,
+					"name":   i.Name,
+					"status": i.Status,
+					"owner":  owner,
+					"creator": map[string]any{
+						"id":   i.Creator.Id,
+						"name": i.Creator.Name,
+					},
+					"createdAt": i.CreatedAt,
+					"updatedAt": i.UpdatedAt,
+				}
+				if i.Description != nil {
+					result["description"] = *i.Description
+				}
+				if i.Content != nil {
+					result["content"] = *i.Content
+				}
+				if i.Health != nil {
+					result["health"] = *i.Health
+				}
+				if i.TargetDate != nil {
+					result["targetDate"] = *i.TargetDate
+				}
+				if i.StartedAt != nil {
+					result["startedAt"] = *i.StartedAt
+				}
+				if i.CompletedAt != nil {
+					result["completedAt"] = *i.CompletedAt
+				}
+				return result, nil
+			})
 		},
 	}
 	parent.AddCommand(cmd)
