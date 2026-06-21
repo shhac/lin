@@ -9,6 +9,8 @@ import (
 	"github.com/shhac/lin/internal/cli/shared"
 	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
+	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/output/pretty"
 	"github.com/shhac/lin/internal/resolvers"
 )
 
@@ -18,7 +20,7 @@ func registerGet(parent *cobra.Command) {
 		Short: "Project summary: status, progress, lead, dates, milestones",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return shared.GetEntities(args, func(client graphql.Client, id string) (any, error) {
+			getOne := func(client graphql.Client, id string) (any, error) {
 				resolved, err := resolvers.ResolveProject(client, id)
 				if err != nil {
 					return nil, err
@@ -67,9 +69,16 @@ func registerGet(parent *cobra.Command) {
 				result["milestones"] = milestones
 
 				return result, nil
-			})
+			}
+			if output.WantsPretty() {
+				return shared.GetEntitiesPretty(args, getOne, func(item any, opts pretty.Options) string {
+					return renderProjectCard(item.(map[string]any), opts)
+				})
+			}
+			return shared.GetEntities(args, getOne)
 		},
 	}
+	output.AllowPretty(cmd)
 
 	parent.AddCommand(cmd)
 }

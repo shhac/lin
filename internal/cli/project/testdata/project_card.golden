@@ -1,0 +1,16 @@
+Checkout Reliability                                          75% complete
+──────────────────────────────────────────────────────────────────────────
+Reduce checkout flakiness and improve conversion.
+
+Status  Started                      Lead    Alex Rivera
+Start   2026-06-01                   Target  2026-09-30
+Labels  infra · reliability
+
+─ Content ────────────────────────────────────────────────────────────────
+Harden the retry path and add load tests across the checkout flow.
+
+─ Milestones ─────────────────────────────────────────────────────────────
+• Alpha  (2026-07-15)
+• Beta  (2026-08-20)
+
+https://linear.app/acme/project/checkout-reliability

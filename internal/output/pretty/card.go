@@ -132,6 +132,19 @@ func (c *Builder) Blockquote(header, body string) {
 
 func runeLen(s string) int { return utf8.RuneCountInString(s) }
 
+// Capitalize upper-cases the first rune of s, leaving the rest unchanged. Used
+// to present lowercase enum values (e.g. a project state "started") as "Started".
+func Capitalize(s string) string {
+	if s == "" {
+		return s
+	}
+	r := []rune(s)
+	if r[0] >= 'a' && r[0] <= 'z' {
+		r[0] -= 'a' - 'A'
+	}
+	return string(r)
+}
+
 // wrap breaks s into lines no wider than width, splitting on spaces and
 // preserving existing newlines (paragraphs). A word longer than width is left
 // intact on its own line rather than hard-split.

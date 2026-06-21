@@ -1,8 +1,31 @@
 package pretty
 
+import "fmt"
+
 // Helpers for reading the raw map[string]any a mapper produces. Values keep
 // their Go types (mappers run before any JSON round-trip), so strings may be
 // string or *string, numbers float64/int or their pointers.
+
+// Text reads a field that may be a string, *string, or a named string-backed
+// enum type (e.g. InitiativeStatus), returning "" for nil/absent. Use it for
+// status/health-style fields whose Go type isn't a plain string.
+func Text(m map[string]any, key string) string {
+	switch v := m[key].(type) {
+	case nil:
+		return ""
+	case string:
+		return v
+	case *string:
+		if v != nil {
+			return *v
+		}
+		return ""
+	case fmt.Stringer:
+		return v.String()
+	default:
+		return fmt.Sprintf("%v", v)
+	}
+}
 
 // Str reads a string field, dereferencing *string and returning "" for nil.
 func Str(m map[string]any, key string) string {
