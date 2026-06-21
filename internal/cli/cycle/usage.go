@@ -4,7 +4,7 @@ const usageText = `lin cycle — List and inspect Linear cycles (sprints)
 
 SUBCOMMANDS:
   cycle list <team>          List cycles for a team
-  cycle get <id>             Cycle details with all issues
+  cycle get <id>...          Cycle details with all issues (NDJSON by default; one line per id)
 
 ARGUMENTS:
   <team>    Team key or name (list)

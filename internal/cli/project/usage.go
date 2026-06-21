@@ -11,8 +11,10 @@ SEARCH & LIST:
     --lead accepts me, name, email, or user ID.
 
 GET:
-  project get <id>             Project summary: id, slugId, url, name, description, content,
+  project get <id>...          Project summary: id, slugId, url, name, description, content,
                                status, progress, lead, startDate, targetDate, labels[], milestones[]
+                               NDJSON by default (one line per id; --format json for a single object).
+                               Missing ids emit {"@unresolved":{...}} on stdout (exit 0).
   project issues <id>          Issues in a project
     [--status] [--assignee] [--priority] [--limit] [--cursor]
   project requests <id>        Customer requests linked to the project
@@ -43,7 +45,7 @@ POST (project updates — the health/status feed posts, distinct from "update"
 which edits a field):
   project post new <project> <body> [--health <health>]   Post a project update
   project post list <project> [--limit] [--cursor]         List updates (newest first)
-  project post get <update-id>                             Get one project update
+  project post get <update-id>...                          Get one or more project updates (NDJSON by default)
 
 LIFECYCLE:
   project delete <id>          Delete (trash) a project

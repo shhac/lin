@@ -17,19 +17,19 @@ COMMANDS:
 
   project search <text>                   Search projects
   project list [--team] [--status] [--lead]  List projects
-  project get <id>                        Project summary + milestones + content
+  project get <id>...                     Project summary + milestones + content (NDJSON)
   project issues <id>                     Issues in a project
   project update <field> <id> <value>     Update a field (title|status|description|lead|labels|...)
   project post new <project> <body> [--health]  Post a project update (health/status feed)
   project post list <project>             List project updates
-  project post get <update-id>            Get a project update
+  project post get <update-id>...         Get project update(s) (NDJSON)
   project new <name> --team <t> [options]  Create project
   project delete <id>                     Delete (trash) a project
   project unarchive <id>                  Restore trashed/archived project
 
   initiative search <text>                Search initiatives by name
   initiative list [--status]              List initiatives
-  initiative get <id>                     Initiative summary + health + owner
+  initiative get <id>...                  Initiative summary + health + owner (NDJSON)
   initiative projects <id>                Projects in an initiative
   initiative new <name> [options]         Create initiative
   initiative update <field> <id> <value>  Update (name|status|description|owner|content|color|icon|target-date)
@@ -37,18 +37,18 @@ COMMANDS:
 
   document search <text>                  Full-text search
   document list [--project] [--creator]   List documents
-  document get <id>                       Full details + content (markdown)
+  document get <id>...                    Full details + content (markdown) (NDJSON)
   document new <title>                    Create document
   document update title|content|project <id> <value>  Update field
 
   issue search <text>                     Full-text search
   issue list [filters]                    List issues (status, assignee, team, branchName)
-  issue get <id>                          Full details + commentCount, customerRequestCount, attachments, branchName
+  issue get <id>...                       Full details + commentCount, customerRequestCount, attachments, branchName (NDJSON)
   issue new <title> --team <t> [options]  Create issue
   issue update <field> <id> <value>       Update (title|status|assignee|priority|project|labels|estimate|description)
   issue comment list <issue-id>           List comments with authors
   issue comment new <issue-id> <body>     Add comment
-  issue comment get <comment-id>          Get a specific comment
+  issue comment get <comment-id>...       Get specific comment(s) (NDJSON)
   issue comment edit <comment-id> <body>  Edit a comment
   issue relation list <issue-id>          List relations
   issue relation add <id> --type <t> --related <id>  Add (blocks|duplicate|related)
@@ -61,14 +61,14 @@ COMMANDS:
 
   customer list [filters]                 List customers (tier, status, owner, domain, revenue)
   customer search <text>                  Search customers by name
-  customer get <id|slug>                  Customer detail + request count
+  customer get <id|slug>...               Customer detail + request count (NDJSON)
   customer requests [filters]             Customer requests (--important|--unassigned|--triage|--customer|...)
   customer statuses                       Workspace customer statuses
   customer tiers                          Workspace customer tiers
   project requests <id>                   Customer requests linked to a project
 
   team list                               List teams (id, name, key)
-  team get <id>                           Team details + members + estimate config
+  team get <id>...                        Team details + members + estimate config (NDJSON)
   team states <team>                      List workflow states (valid status values)
 
   user search <text>                      Search by name, email, or display name
@@ -77,7 +77,7 @@ COMMANDS:
 
   label list [--type issue|project] [--team]  List labels (default --type=issue; --team is issue-only)
   cycle list <team>                       List cycles
-  cycle get <id>                          Cycle details
+  cycle get <id>...                       Cycle details (NDJSON)
 
   config get|set|reset|list-keys           Persistent settings
 
@@ -93,8 +93,11 @@ PAGINATION: --limit <n> --cursor <token>
   List/search commands default to JSONL: one item per line.
   If more pages exist, last line is { "@pagination": { "has_more": true, "next_cursor": "..." } }.
 
-OUTPUT: list/search → JSONL by default; single items → pretty JSON.
-  Override with --format json|yaml|jsonl. JSON list envelopes use { "data": [...], "pagination"?: ... }.
+OUTPUT: list/search → JSONL by default; get <id>... → NDJSON by default (one line per id —
+  the record, or {"@unresolved":{...}} for a missing id). Pass --format json for a pretty object.
+  --format json|yaml|jsonl overrides any command. JSON list envelopes: { "data": [...], "pagination"?: ... }.
+  get --format json|yaml → { "data": [...], "@unresolved": [...] } envelope.
+  Item-level misses exit 0 (stdout @unresolved line); command-level failures exit 1 (stderr).
   Errors: { "error": "...", "fixable_by": "agent|human|retry", "hint": "..." } to stderr.
 
 TRUNCATION: description/body/content truncated to ~200 chars + companion *Length field.

@@ -12,8 +12,10 @@ LIST & SEARCH:
   customer search <text>     Name substring match [--limit] [--cursor]
 
 GET:
-  customer get <id|slug>     Detail: tier, status, owner, domains, externalIds,
+  customer get <id|slug>...  Detail: tier, status, owner, domains, externalIds,
                              revenue, size, approximateNeedCount
+                             NDJSON by default (one line per id; --format json for a single object).
+                             Missing ids emit {"@unresolved":{...}} on stdout (exit 0).
 
 CUSTOMER REQUESTS:
   customer requests [filters] [--limit] [--cursor]

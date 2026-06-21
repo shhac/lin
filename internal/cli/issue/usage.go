@@ -8,8 +8,10 @@ SEARCH & LIST:
     [--updated-after|before] [--created-after|before] (YYYY-MM-DD)
 
 GET:
-  issue get <id>             Full details + labels, attachments, branchName, commentCount,
+  issue get <id>...          Full details + labels, attachments, branchName, commentCount,
                              customerRequestCount, customerImportantCount
+                             NDJSON by default (one line per id; --format json for a single object).
+                             Missing ids emit {"@unresolved":{...}} on stdout (exit 0).
 
 CUSTOMER REQUESTS:
   issue requests <id> [--important] [--limit] [--cursor]   Customer requests linked to the issue
@@ -31,7 +33,7 @@ COMMENTS (--parent 1 level):
   issue comment list <id> [--limit] [--cursor]
   issue comment new <id> <body> [--parent <cid>] [--file <path>]...
   issue comment edit <cid> <body> [--file <path>]...
-  issue comment get <cid>  |  replies <cid>
+  issue comment get <cid>...  |  replies <cid>
 
 RELATIONS:
   issue relation list <id>      Both directions (blocks, blocked_by, duplicate, related)

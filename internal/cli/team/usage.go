@@ -4,7 +4,7 @@ const usageText = `lin team — Manage Linear teams and discover workflow config
 
 SUBCOMMANDS:
   team list                  List all teams (id, name, key)
-  team get <id>              Team details, members, and estimate config
+  team get <id>...           Team details, members, and estimate config (NDJSON by default; one line per id)
   team states <team>         List workflow states (valid status values for issue updates)
 
 ARGUMENTS:

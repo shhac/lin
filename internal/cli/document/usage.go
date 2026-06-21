@@ -11,8 +11,10 @@ LIST:
     [--project <p>] [--creator <u>] [--include-archived]
 
 GET:
-  document get <id>                         Full details + content (markdown)
+  document get <id>...                      Full details + content (markdown)
     Returns: title, content, url, icon, color, project, creator, updatedBy, timestamps
+    NDJSON by default (one line per id; --format json for a single object).
+    Missing ids emit {"@unresolved":{...}} on stdout (exit 0).
 
 CREATE:
   document new <title>                      Create document

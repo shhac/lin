@@ -5,7 +5,7 @@
 Commands print structured output to stdout:
 
 - List/search commands default to JSONL (one JSON object per line).
-- Single-item commands default to pretty JSON.
+- `get <id>...` commands default to NDJSON (one line per id — see **Get** section below).
 - Use `--format json|yaml|jsonl` to override.
 
 Errors print structured JSON to stderr with non-zero exit:
@@ -23,6 +23,20 @@ Errors print structured JSON to stderr with non-zero exit:
 Empty/null fields are pruned automatically — missing keys mean no value, not `null`.
 
 Error messages include valid values when input is invalid (e.g., unknown status names list all valid states).
+
+## Get (single + multi)
+
+`get <id>...` takes one or more ids and returns one result per id, in input order. Default output is NDJSON: one line per id — the record, or `{"@unresolved":{"id":"...","reason":"...","fixable_by":"..."}}` for an id that couldn't be resolved (e.g. not found / bad id).
+
+`--format json|yaml` collapses to one `{"data":[…],"@unresolved":[…]}` envelope.
+
+A single `get <id>` is just the one-element case (NDJSON one line by default; was pretty JSON before — pass `--format json` for the object).
+
+Item-level misses stay on stdout and exit 0; only a command-level failure (auth, network) goes to stderr with exit 1 and empty stdout.
+
+Converted get commands: `issue get`, `issue comment get`, `project get`, `project post get`, `initiative get`, `document get`, `team get`, `cycle get`, `customer get`, `label get`.
+
+Not converted (singletons or special): `user me` (singleton), `config get` (local key lookup).
 
 ## Truncation
 
@@ -80,7 +94,13 @@ When there are no more pages, the `pagination` key is omitted entirely.
 
 ## Single item output
 
-Single-item commands (e.g., `issue get`, `team get`) return the object directly:
+`get <id>` (one id) emits one NDJSON line — the record directly (not wrapped). Pass `--format json` to get a pretty JSON object instead.
+
+```jsonl
+{"id":"...","title":"...","status":"In Progress"}
+```
+
+With `--format json`:
 
 ```json
 {

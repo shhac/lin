@@ -52,7 +52,7 @@ lin
 ├── project
 │   ├── search <text>
 │   ├── list [--team] [--status] [--lead]
-│   ├── get <id>
+│   ├── get <id>...
 │   ├── issues <id> [filters]
 │   ├── requests <id> [--important]
 │   ├── new <name> --team <teams>
@@ -63,7 +63,7 @@ lin
 ├── initiative
 │   ├── search <text>
 │   ├── list [--status planned|active|completed]
-│   ├── get <id>
+│   ├── get <id>...
 │   ├── projects <id>
 │   ├── new <name> [options]
 │   ├── update name|description|owner|status|target-date|content|color|icon <id> <value>
@@ -72,7 +72,7 @@ lin
 ├── document
 │   ├── search <text>
 │   ├── list [--project] [--creator]
-│   ├── get <id>
+│   ├── get <id>...
 │   ├── new <title> [--project] [--content]
 │   ├── update title|content|project|icon|color <id> <value>
 │   ├── history <id>
@@ -84,7 +84,7 @@ lin
 ├── issue
 │   ├── search <text>
 │   ├── list [filters]
-│   ├── get <id>
+│   ├── get <id>...
 │   ├── new <title> --team <team>
 │   ├── update title|status|assignee|priority|project|labels|estimate|description|due-date|cycle|parent <id> <value>
 │   ├── comment list|new|get|edit|replies <id> [<body>]
@@ -97,14 +97,14 @@ lin
 ├── customer
 │   ├── list [--tier] [--status] [--owner] [--domain] [--revenue]
 │   ├── search <text>
-│   ├── get <id|slug>
+│   ├── get <id|slug>...
 │   ├── requests [--customer] [--project] [--important] [--unassigned] [--triage] [--status] [--label] [--team] [--created-after|before]
 │   ├── statuses
 │   ├── tiers
 │   └── usage
 ├── team
 │   ├── list
-│   ├── get <id>
+│   ├── get <id>...
 │   ├── states <team>
 │   └── usage
 ├── user
@@ -114,11 +114,11 @@ lin
 ├── label
 │   ├── list [--type issue|project] [--team] [--name] [--is-group]
 │   ├── search <text> [--type issue|project] [--team]
-│   ├── get <id|name> [--type issue|project] [--team]
+│   ├── get <id|name>... [--type issue|project] [--team]
 │   └── usage
 ├── cycle
 │   ├── list <team>
-│   ├── get <id>
+│   ├── get <id>...
 │   └── usage
 ├── api
 │   ├── query <graphql> [--variables <json>]
@@ -135,8 +135,9 @@ Each top-level command also has a `usage` subcommand for detailed, LLM-friendly 
 
 - Lists/searches → JSONL by default, one object per line
 - Pagination in JSONL → `{"@pagination":{"has_more":true,"next_cursor":"..."}}`
-- Single items → pretty JSON objects
-- `--format json|yaml|jsonl` overrides the default; JSON list envelopes use `{ "data": [...], "pagination"?: ... }`
+- `get <id>...` → NDJSON by default (one line per id — the record, or `{"@unresolved":{...}}` for a missing id); pass `--format json` for a pretty object
+- `--format json|yaml|jsonl` overrides any command; JSON list/get envelopes use `{ "data": [...], "pagination"?: ... }` / `{ "data": [...], "@unresolved": [...] }`
+- Item-level misses (not found) → `@unresolved` line on stdout, exit 0; command-level failures → stderr, exit 1
 - Errors → `{ "error": "...", "fixable_by": "agent|human|retry", "hint": "..." }` to stderr + non-zero exit
 - Empty/null fields are pruned automatically
 

@@ -11,7 +11,7 @@ allowed-tools: Bash(lin *) Read Grep Glob
 
 `lin` is a CLI binary installed on `$PATH`. Invoke it directly (e.g. `lin issue list --team ENG`).
 
-List/search output is JSONL by default; single-item output is pretty JSON. Use `--format json|yaml|jsonl` to override. Errors go to stderr as `{ "error": "...", "fixable_by": "agent|human|retry", "hint": "..." }` with non-zero exit.
+List/search output is JSONL by default. `get <id>...` commands default to NDJSON (one line per id — the record, or `{"@unresolved":{...}}` for a missing id); pass `--format json` to get a pretty object. Use `--format json|yaml|jsonl` to override any command. Errors go to stderr as `{ "error": "...", "fixable_by": "agent|human|retry", "hint": "..." }` with non-zero exit.
 
 ## IMPORTANT: Never access the Linear API directly
 
@@ -48,7 +48,8 @@ Generate a personal API key at **Settings > Account > Security > Personal API Ke
 ```bash
 lin issue search "auth bug"
 lin issue list --team ENG --status "In Progress" --assignee "alice@example.com"
-lin issue get ENG-123             # includes branchName, commentCount, attachments (PR links)
+lin issue get ENG-123             # NDJSON by default; includes branchName, commentCount, attachments (PR links)
+lin issue get ENG-123 ENG-456     # multi-get: one NDJSON line per id (or @unresolved for missing)
 lin issue comment list ENG-123
 ```
 

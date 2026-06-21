@@ -17,7 +17,7 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 
 - `lin project search <text>` — search projects by name
 - `lin project list [--team] [--status] [--lead] [--limit] [--cursor]` — list projects. `--status` matches a status type (started, planned, …) or a custom status name; `--lead` accepts me, name, email, or user ID
-- `lin project get <id>` — project summary with lead, labels, milestones, url, and content (markdown body, truncated by default)
+- `lin project get <id>...` — project summary with lead, labels, milestones, url, and content (markdown body, truncated by default)
 - `lin project issues <id> [filters]` — issues in a project
 - `lin project requests <id> [--important] [--limit] [--cursor]` — customer requests linked to the project
 - `lin project update title <id> <value>`
@@ -41,13 +41,13 @@ Linear "project updates" are timeline posts carrying a health signal — distinc
 
 - `lin project post new <project> <body> [--health <health>]` — post a project update. `--health`: on-track | at-risk | off-track
 - `lin project post list <project> [--limit] [--cursor]` — list project updates (newest first)
-- `lin project post get <update-id>` — get a single project update
+- `lin project post get <update-id>...` — get one or more project updates (NDJSON by default)
 
 ## Initiatives
 
 - `lin initiative search <text> [--limit] [--cursor]` — search initiatives by name
 - `lin initiative list [--status] [--limit] [--cursor]` — list initiatives (status: planned | active | completed)
-- `lin initiative get <id>` — initiative summary with status, health, owner, projects
+- `lin initiative get <id>...` — initiative summary with status, health, owner, projects
 - `lin initiative projects <id> [--limit] [--cursor]` — projects linked to an initiative
 - `lin initiative new <name> [--status <status>] [--owner <user>] [--target-date <YYYY-MM-DD>]`
 - `lin initiative update name <id> <value>`
@@ -66,7 +66,7 @@ Linear "project updates" are timeline posts carrying a health signal — distinc
 
 - `lin document search <text> [--include-comments] [--include-archived] [--limit] [--cursor]` — full-text search
 - `lin document list [--project <name|slug|id>] [--creator <name|email|id>] [--include-archived] [--limit] [--cursor]` — list documents
-- `lin document get <id>` — full document details + markdown content (accepts UUID or slug ID)
+- `lin document get <id>...` — full document details + markdown content (accepts UUID or slug ID)
 - `lin document new <title> [--project <name|slug|id>] [--content <markdown>] [--icon <emoji>] [--color <hex>]`
 - `lin document update title <id> <value>`
 - `lin document update content <id> <value>`
@@ -100,7 +100,7 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 - `lin issue search <text> [filters]` — full-text search
 - `lin issue list [filters]` — list issues (returns status, assignee, team, branchName)
   - Date filters: `--updated-after`, `--updated-before`, `--created-after`, `--created-before` (YYYY-MM-DD)
-- `lin issue get <id>` — full issue details with commentCount, customerRequestCount, customerImportantCount, branchName, attachments (PR links)
+- `lin issue get <id>...` — full issue details with commentCount, customerRequestCount, customerImportantCount, branchName, attachments (PR links)
 - `lin issue requests <id> [--important] [--limit] [--cursor]` — customer requests linked to the issue
 - `lin issue new <title> --team <team> [--priority <p>] [--status <s>] [--assignee <name|email|id>] [--project <p>] [--labels <names|ids>]`
 - `lin issue update title <id> <value>`
@@ -119,7 +119,7 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 
 - `lin issue comment list <issue-id> [--limit] [--cursor]` — list comments with authors, parent ref, childCount (paginated)
 - `lin issue comment new <issue-id> <body> [--parent <comment-id>] [--file <path>]` — add comment (--parent for threaded reply, 1 level max; --file repeatable for uploads)
-- `lin issue comment get <comment-id>` — get comment with author, issue ref, parent ref, and childCount
+- `lin issue comment get <comment-id>...` — get comment(s) with author, issue ref, parent ref, and childCount
 - `lin issue comment edit <comment-id> <body> [--file <path>]` — edit a comment (--file repeatable)
 - `lin issue comment replies <comment-id> [--limit] [--cursor]` — list replies to a comment (paginated)
 
@@ -154,7 +154,7 @@ Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without
 
 - `lin customer list [--tier] [--status] [--owner] [--domain] [--revenue] [--limit] [--cursor]` — list customers (filter by tier display name, status name, owner, email domain, or minimum revenue)
 - `lin customer search <text>` — match customers by name substring
-- `lin customer get <id|slug>` — customer detail: tier, status, owner, domains, externalIds, revenue, size, approximateNeedCount
+- `lin customer get <id|slug>...` — customer detail: tier, status, owner, domains, externalIds, revenue, size, approximateNeedCount
 - `lin customer statuses` — workspace customer lifecycle statuses (e.g. Active, Churned)
 - `lin customer tiers` — workspace customer tiers/segments (e.g. Enterprise, Pro, Free)
 
@@ -178,7 +178,7 @@ A customer request (Linear "customer need") links a customer to an issue or proj
 ## Teams
 
 - `lin team list` — list teams (id, name, key)
-- `lin team get <id>` — team details + members + estimate config (type, valid values)
+- `lin team get <id>...` — team details + members + estimate config (type, valid values)
 - `lin team states <team>` — list workflow states (id, name, type, color, position)
 
 ## Users
@@ -193,13 +193,13 @@ A customer request (Linear "customer need") links a customer to an issue or proj
 
 - `lin label list [--type issue|project] [--team] [--name <text>] [--is-group[=false]]` — list labels (filterable). Issue-label output includes `team{id,key,name}` and `parent{id,name}` when present; project-label output omits `team` (project labels are workspace-only).
 - `lin label search <text> [--type issue|project] [--team]` — substring search by name (case- and accent-insensitive).
-- `lin label get <id|name> [--type issue|project] [--team]` — single label by UUID or exact name. Use `--team` (or a UUID) to disambiguate when a name is shared across teams (issue labels only).
+- `lin label get <id|name>... [--type issue|project] [--team]` — one or more labels by UUID or exact name. Use `--team` (or a UUID) to disambiguate when a name is shared across teams (issue labels only).
 - `--team` is rejected with `--type=project` (project labels are workspace-scoped).
 
 ## Cycles
 
 - `lin cycle list <team> [--current] [--next] [--previous]` — list cycles
-- `lin cycle get <id>` — cycle details + issues
+- `lin cycle get <id>...` — cycle details + issues
 
 ## Usage
 
@@ -217,6 +217,12 @@ A customer request (Linear "customer need") links a customer to an issue or proj
 ## API (raw GraphQL)
 
 - `lin api query <graphql> [--variables <json>]` — execute raw GraphQL query (escape hatch for unsupported operations)
+
+## Get contract (single + multi)
+
+`get <id>...` takes one or more ids and returns one result per id, in input order. Default output is NDJSON: one line per id — the record, or `{"@unresolved":{"id":"...","reason":"...","fixable_by":"..."}}` for an id that couldn't be resolved. `--format json|yaml` collapses to one `{"data":[…],"@unresolved":[…]}` envelope. Item-level misses stay on stdout with exit 0; only a command-level failure (auth, network) goes to stderr with exit 1.
+
+Converted: `issue get`, `issue comment get`, `project get`, `project post get`, `initiative get`, `document get`, `team get`, `cycle get`, `customer get`, `label get`. Not converted (singletons/special): `user me`, `config get`.
 
 ## Common filters (list/search commands)
 

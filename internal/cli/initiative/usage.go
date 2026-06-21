@@ -11,10 +11,12 @@ SEARCH & LIST:
     Returns per item: id, slugId, url, name, status, health, targetDate, owner
 
 GET:
-  initiative get <id>            Initiative summary: id, slugId, url, name,
+  initiative get <id>...         Initiative summary: id, slugId, url, name,
                                  description, content, status, health, targetDate,
                                  startedAt, completedAt, createdAt, updatedAt,
                                  owner{id,name}, creator{id,name}
+                                 NDJSON by default (one line per id; --format json for a single object).
+                                 Missing ids emit {"@unresolved":{...}} on stdout (exit 0).
   initiative projects <id>       Projects linked to an initiative
     [--limit] [--cursor]
     Returns per item: id, slugId, url, name, status, progress,

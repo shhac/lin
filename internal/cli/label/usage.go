@@ -5,7 +5,7 @@ const usageText = `lin label — Search, list, and inspect Linear labels (issue 
 SUBCOMMANDS:
   label list [--type <t>] [--team <team>] [--name <text>] [--is-group[=false]]   List labels (filterable)
   label search <text> [--type <t>] [--team <team>]                               Substring search (case- and accent-insensitive)
-  label get <id|name> [--type <t>] [--team <team>]                               Single label by UUID or exact name
+  label get <id|name>... [--type <t>] [--team <team>]                            One or more labels by UUID or exact name (NDJSON by default)
 
 OPTIONS:
   --type <t>        Label type: "issue" (default) or "project"
