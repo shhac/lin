@@ -3,7 +3,7 @@ package configcmd
 const usageText = `lin config — View and update persistent CLI settings
 
 SUBCOMMANDS:
-  config get [key]            Show current settings (omit key for all)
+  config get [key...]         Show current settings as NDJSON (omit key for all)
   config set <key> <value>    Update a setting
   config reset [key]          Reset to defaults (omit key to reset all)
   config list-keys            List all available setting keys with descriptions
@@ -29,4 +29,7 @@ EXAMPLES:
 
 STORAGE: Settings persisted in ~/.config/lin/config.json alongside auth credentials.
 
-OUTPUT: JSON to stdout. Unknown keys return error with valid key list.`
+OUTPUT: NDJSON to stdout by default — config get with no args emits one line per
+setting; config get <key>... emits one {"key","value"} line per key (or an
+{"@unresolved"} line for an unknown key). Pass --format json for a {"data":[...]}
+envelope. config set/reset still report status as before.`

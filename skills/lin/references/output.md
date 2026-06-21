@@ -34,9 +34,11 @@ A single `get <id>` is just the one-element case (NDJSON one line by default; wa
 
 Item-level misses stay on stdout and exit 0; only a command-level failure (auth, network) goes to stderr with exit 1 and empty stdout.
 
-Converted get commands: `issue get`, `issue comment get`, `project get`, `project post get`, `initiative get`, `document get`, `team get`, `cycle get`, `customer get`, `label get`.
+Converted get commands: `issue get`, `issue comment get`, `project get`, `project post get`, `initiative get`, `document get`, `team get`, `cycle get`, `customer get`, `label get`, `config get`.
 
-Not converted (singletons or special): `user me` (singleton), `config get` (local key lookup).
+`config get` follows the same shape over local settings: no args lists every setting as NDJSON lines; `config get <key>...` returns one `{"key":"...","value":...}` line per key (or `{"@unresolved":{…}}` for an unknown key); `--format json` collapses to the `{"data":[…]}` envelope.
+
+Not converted (singletons or special): `user me` (singleton).
 
 ## Truncation
 

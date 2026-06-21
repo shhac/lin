@@ -222,7 +222,7 @@ A customer request (Linear "customer need") links a customer to an issue or proj
 
 `get <id>...` takes one or more ids and returns one result per id, in input order. Default output is NDJSON: one line per id — the record, or `{"@unresolved":{"id":"...","reason":"...","fixable_by":"..."}}` for an id that couldn't be resolved. `--format json|yaml` collapses to one `{"data":[…],"@unresolved":[…]}` envelope. Item-level misses stay on stdout with exit 0; only a command-level failure (auth, network) goes to stderr with exit 1.
 
-Converted: `issue get`, `issue comment get`, `project get`, `project post get`, `initiative get`, `document get`, `team get`, `cycle get`, `customer get`, `label get`. Not converted (singletons/special): `user me`, `config get`.
+Converted: `issue get`, `issue comment get`, `project get`, `project post get`, `initiative get`, `document get`, `team get`, `cycle get`, `customer get`, `label get`, `config get` (over local settings: no args lists all as NDJSON, `config get <key>...` is one `{key,value}` line per key, `--format json` gives the `{data:[…]}` envelope). Not converted (singletons/special): `user me`.
 
 ## Common filters (list/search commands)
 
