@@ -60,7 +60,7 @@ func testOpts(width int) pretty.Options {
 // off. Regenerate with: UPDATE_GOLDEN=1 go test ./internal/cli/issue/.
 func TestRenderIssueCardGolden(t *testing.T) {
 	const width = 74
-	got := renderIssueCard(sampleIssue(), testOpts(width))
+	got := renderIssueCard(issueCard{detail: sampleIssue()}, testOpts(width))
 
 	golden := filepath.Join("testdata", "issue_card.golden")
 	if os.Getenv("UPDATE_GOLDEN") != "" {
@@ -104,7 +104,7 @@ func TestRenderIssueCardMinimal(t *testing.T) {
 		"createdAt":     "2026-06-21T11:00:00Z",
 		"updatedAt":     "2026-06-21T11:30:00Z",
 	}
-	got := renderIssueCard(d, testOpts(74))
+	got := renderIssueCard(issueCard{detail: d}, testOpts(74))
 
 	if strings.Contains(got, "Assignee  Unassigned") == false {
 		t.Errorf("expected Unassigned assignee row, got:\n%s", got)
@@ -116,10 +116,48 @@ func TestRenderIssueCardMinimal(t *testing.T) {
 	}
 }
 
+// TestRenderIssueCardFullGolden snapshots the --full card with References and
+// Comments sections. Regenerate with UPDATE_GOLDEN=1.
+func TestRenderIssueCardFullGolden(t *testing.T) {
+	const width = 74
+	card := issueCard{
+		detail: sampleIssue(),
+		relations: []relationRow{
+			{Type: "blocks", Identifier: "ENG-200"},
+			{Type: "blocked_by", Identifier: "ENG-50"},
+			{Type: "related", Identifier: "ENG-118"},
+		},
+		comments: []commentRow{
+			{Author: "Alex Rivera", CreatedAt: "2026-06-18T13:00:00Z", Body: "Reproduced locally, it's a timing issue in the retry path under load."},
+			{Author: "Sam Lee", CreatedAt: "2026-06-20T09:00:00Z", Body: "Want me to take the retry guard?"},
+		},
+	}
+	got := renderIssueCard(card, testOpts(width))
+
+	golden := filepath.Join("testdata", "issue_card_full.golden")
+	if os.Getenv("UPDATE_GOLDEN") != "" {
+		if err := os.WriteFile(golden, []byte(got), 0o644); err != nil {
+			t.Fatal(err)
+		}
+	}
+	want, err := os.ReadFile(golden)
+	if err != nil {
+		t.Fatalf("read golden (run with UPDATE_GOLDEN=1 to create): %v", err)
+	}
+	if got != string(want) {
+		t.Errorf("full card mismatch:\n--- got ---\n%s\n--- want ---\n%s", got, want)
+	}
+	for _, sub := range []string{"References", "Blocks", "Blocked by", "Related to", "Comments (2)", "▎"} {
+		if !strings.Contains(got, sub) {
+			t.Errorf("full card missing %q", sub)
+		}
+	}
+}
+
 func TestRenderIssueCardColorOn(t *testing.T) {
 	opts := testOpts(74)
 	opts.Color = true
-	got := renderIssueCard(sampleIssue(), opts)
+	got := renderIssueCard(issueCard{detail: sampleIssue()}, opts)
 	if !strings.Contains(got, "\x1b[1m") {
 		t.Error("expected bold ANSI in colored card")
 	}

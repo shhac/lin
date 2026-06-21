@@ -8,11 +8,31 @@ import (
 	"github.com/shhac/lin/internal/output/pretty"
 )
 
-// renderIssueCard renders a single mapped issue (the map[string]any from
-// mappers.MapIssueDetail) as a human-readable card for --format pretty. It reads
-// only the fields the IssueGet query already returns; --full sections (relations,
-// comment bodies) are layered on separately.
-func renderIssueCard(d map[string]any, opts pretty.Options) string {
+// relationRow and commentRow carry the --full data fetched alongside the issue.
+type relationRow struct {
+	Type       string // forward label: blocks | blocked_by | related | duplicate
+	Identifier string
+}
+
+type commentRow struct {
+	Author    string
+	CreatedAt string
+	Body      string
+}
+
+// issueCard bundles the base mapped detail with the optional --full sections.
+// relations and comments are nil unless --full was requested.
+type issueCard struct {
+	detail    map[string]any
+	relations []relationRow
+	comments  []commentRow
+}
+
+// renderIssueCard renders a single issue as a human-readable card for
+// --format pretty. The base sections read only the fields IssueGet returns;
+// References and Comments are rendered when --full populated them.
+func renderIssueCard(card issueCard, opts pretty.Options) string {
+	d := card.detail
 	c := pretty.New(opts)
 
 	renderTitleLine(c, d, opts)
@@ -24,6 +44,8 @@ func renderIssueCard(d map[string]any, opts pretty.Options) string {
 	renderDescription(c, d)
 	renderAttachments(c, d, opts)
 	renderActivity(c, d, opts)
+	renderReferences(c, card.relations, opts)
+	renderComments(c, card.comments, opts)
 	renderFooter(c, d, opts)
 
 	return c.String()
@@ -154,6 +176,57 @@ func renderActivity(c *pretty.Builder, d map[string]any, opts pretty.Options) {
 		} else {
 			c.Line(plural(needs, "customer need"))
 		}
+	}
+}
+
+// relationLabels maps the forward relation type to its display label and a
+// stable display order.
+var relationLabels = []struct{ key, label string }{
+	{"blocks", "Blocks"},
+	{"blocked_by", "Blocked by"},
+	{"related", "Related to"},
+	{"duplicate", "Duplicate of"},
+}
+
+func renderReferences(c *pretty.Builder, rels []relationRow, opts pretty.Options) {
+	if len(rels) == 0 {
+		return
+	}
+	c.Blank()
+	c.Section("References")
+
+	labelW := 0
+	for _, g := range relationLabels {
+		if len(g.label) > labelW {
+			labelW = len(g.label)
+		}
+	}
+	for _, g := range relationLabels {
+		for _, r := range rels {
+			if r.Type != g.key {
+				continue
+			}
+			label := g.label + strings.Repeat(" ", labelW-len(g.label))
+			c.Line(opts.Dim(label) + "  " + r.Identifier)
+		}
+	}
+}
+
+func renderComments(c *pretty.Builder, comments []commentRow, opts pretty.Options) {
+	if len(comments) == 0 {
+		return
+	}
+	c.Blank()
+	c.Section(fmt.Sprintf("Comments (%d)", len(comments)))
+	for i, cm := range comments {
+		if i > 0 {
+			c.Blank()
+		}
+		header := cm.Author
+		if rel := opts.RelTime(cm.CreatedAt); rel != "" {
+			header += opts.Dim(" · " + rel)
+		}
+		c.Blockquote(header, strings.TrimSpace(cm.Body))
 	}
 }
 

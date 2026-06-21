@@ -20,7 +20,7 @@ func registerGet(parent *cobra.Command) {
 		Short: "Get issue details: title, description, status, assignee, labels, relationships",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			getOne := func(client graphql.Client, id string) (any, error) {
+			fetchDetail := func(client graphql.Client, id string) (map[string]any, error) {
 				resp, err := linear.IssueGet(context.Background(), client, id)
 				if err != nil {
 					return nil, apierrors.ClassifyGraphQLError(err)
@@ -28,11 +28,25 @@ func registerGet(parent *cobra.Command) {
 				return mappers.MapIssueDetail(resp.Issue), nil
 			}
 			if output.WantsPretty() {
+				full, _ := cmd.Flags().GetBool("full")
+				getOne := func(client graphql.Client, id string) (any, error) {
+					d, err := fetchDetail(client, id)
+					if err != nil {
+						return nil, err
+					}
+					card := issueCard{detail: d}
+					if full {
+						card.relations, card.comments = fetchFullSections(client, id)
+					}
+					return card, nil
+				}
 				return shared.GetEntitiesPretty(args, getOne, func(item any, opts pretty.Options) string {
-					return renderIssueCard(item.(map[string]any), opts)
+					return renderIssueCard(item.(issueCard), opts)
 				})
 			}
-			return shared.GetEntities(args, getOne)
+			return shared.GetEntities(args, func(client graphql.Client, id string) (any, error) {
+				return fetchDetail(client, id)
+			})
 		},
 	}
 	output.AllowPretty(cmd)
