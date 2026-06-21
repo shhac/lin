@@ -3,6 +3,7 @@ package initiative
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
@@ -10,6 +11,10 @@ import (
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output/pretty"
 )
+
+var ansiRE = regexp.MustCompile("\x1b\\[[0-9;]*m")
+
+func stripANSI(s string) string { return ansiRE.ReplaceAllString(s, "") }
 
 func sampleInitiative() map[string]any {
 	return map[string]any{
@@ -56,5 +61,22 @@ func TestRenderInitiativeCardGolden(t *testing.T) {
 		if !strings.Contains(flat, sub) {
 			t.Errorf("initiative card missing %q", sub)
 		}
+	}
+}
+
+func TestRenderInitiativeCardColorParity(t *testing.T) {
+	plain := renderInitiativeCard(sampleInitiative(), testOpts(74))
+	opts := testOpts(74)
+	opts.Color = true
+	colored := renderInitiativeCard(sampleInitiative(), opts)
+
+	if !strings.Contains(colored, "\x1b[33m") { // yellow "Active"
+		t.Error("expected colored status in initiative card")
+	}
+	if !strings.Contains(colored, "\x1b[32m") { // green "onTrack" health
+		t.Error("expected colored health in initiative card")
+	}
+	if stripANSI(colored) != plain {
+		t.Errorf("colored visible text differs from plain:\n--- stripped ---\n%s\n--- plain ---\n%s", stripANSI(colored), plain)
 	}
 }

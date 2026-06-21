@@ -66,3 +66,18 @@ func (o Options) StatusStyle(stateType, name string) string {
 		return o.style(ansiBlue, name)
 	}
 }
+
+// HealthStyle colors an initiative/project health value (onTrack, atRisk,
+// offTrack) green/yellow/red. Unknown values pass through uncolored.
+func (o Options) HealthStyle(health string) string {
+	switch health {
+	case "onTrack":
+		return o.style(ansiGreen, health)
+	case "atRisk":
+		return o.style(ansiYellow, health)
+	case "offTrack":
+		return o.style(ansiRed, health)
+	default:
+		return health
+	}
+}

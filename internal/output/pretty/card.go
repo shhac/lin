@@ -1,6 +1,7 @@
 package pretty
 
 import (
+	"regexp"
 	"strings"
 	"unicode/utf8"
 )
@@ -96,8 +97,9 @@ func (c *Builder) Grid(pairs [][2]string) {
 	colW := c.opts.Width / 2
 	cell := func(p [2]string) (text string, plainW int) {
 		label := p[0] + strings.Repeat(" ", labelW-runeLen(p[0]))
-		plain := label + "  " + p[1]
-		return c.opts.Dim(label) + "  " + p[1], runeLen(plain)
+		// The value may carry ANSI color, so measure visible width (escapes
+		// stripped) to keep the second column aligned.
+		return c.opts.Dim(label) + "  " + p[1], runeLen(label) + 2 + visLen(p[1])
 	}
 	for i := 0; i < len(pairs); i += 2 {
 		text, plainW := cell(pairs[i])
@@ -131,6 +133,13 @@ func (c *Builder) Blockquote(header, body string) {
 }
 
 func runeLen(s string) int { return utf8.RuneCountInString(s) }
+
+// ansiRE matches ANSI SGR (color/style) escape sequences.
+var ansiRE = regexp.MustCompile("\x1b\\[[0-9;]*m")
+
+// visLen returns the visible width of s in runes, ignoring ANSI escapes, so
+// width math stays correct on already-colored strings.
+func visLen(s string) int { return utf8.RuneCountInString(ansiRE.ReplaceAllString(s, "")) }
 
 // Capitalize upper-cases the first rune of s, leaving the rest unchanged. Used
 // to present lowercase enum values (e.g. a project state "started") as "Started".

@@ -3,12 +3,17 @@ package customer
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/shhac/lin/internal/output/pretty"
 )
+
+var ansiRE = regexp.MustCompile("\x1b\\[[0-9;]*m")
+
+func stripANSI(s string) string { return ansiRE.ReplaceAllString(s, "") }
 
 func sampleCustomer() map[string]any {
 	return map[string]any{
@@ -56,5 +61,19 @@ func TestRenderCustomerCardGolden(t *testing.T) {
 		if !strings.Contains(flat, sub) {
 			t.Errorf("customer card missing %q", sub)
 		}
+	}
+}
+
+func TestRenderCustomerCardColorParity(t *testing.T) {
+	plain := renderCustomerCard(sampleCustomer(), testOpts(74))
+	opts := testOpts(74)
+	opts.Color = true
+	colored := renderCustomerCard(sampleCustomer(), opts)
+
+	if !strings.Contains(colored, "\x1b[32m") { // green "Active" (heuristic)
+		t.Error("expected colored status in customer card")
+	}
+	if stripANSI(colored) != plain {
+		t.Errorf("colored visible text differs from plain:\n--- stripped ---\n%s\n--- plain ---\n%s", stripANSI(colored), plain)
 	}
 }

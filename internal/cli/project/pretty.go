@@ -28,7 +28,7 @@ func renderProjectCard(d map[string]any, opts pretty.Options) string {
 
 	var pairs [][2]string
 	if state := pretty.Text(d, "status"); state != "" {
-		pairs = append(pairs, [2]string{"Status", pretty.Capitalize(state)})
+		pairs = append(pairs, [2]string{"Status", opts.StatusStyle(state, pretty.Capitalize(state))})
 	}
 	if lead := pretty.Submap(d, "lead"); lead != nil {
 		pairs = append(pairs, [2]string{"Lead", pretty.Str(lead, "name")})

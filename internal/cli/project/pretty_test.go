@@ -3,12 +3,17 @@ package project
 import (
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/shhac/lin/internal/output/pretty"
 )
+
+var ansiRE = regexp.MustCompile("\x1b\\[[0-9;]*m")
+
+func stripANSI(s string) string { return ansiRE.ReplaceAllString(s, "") }
 
 func sp(s string) *string { return &s }
 
@@ -63,5 +68,22 @@ func TestRenderProjectCardGolden(t *testing.T) {
 		if !strings.Contains(flat, sub) {
 			t.Errorf("project card missing %q", sub)
 		}
+	}
+}
+
+// TestRenderProjectCardColorParity verifies the colored render carries ANSI and
+// that stripping it reproduces the plain layout exactly — i.e. coloring a grid
+// value (status) doesn't shift column alignment.
+func TestRenderProjectCardColorParity(t *testing.T) {
+	plain := renderProjectCard(sampleProject(), testOpts(74))
+	opts := testOpts(74)
+	opts.Color = true
+	colored := renderProjectCard(sampleProject(), opts)
+
+	if !strings.Contains(colored, "\x1b[33m") { // yellow "Started" (started state)
+		t.Error("expected colored status in project card")
+	}
+	if stripANSI(colored) != plain {
+		t.Errorf("colored visible text differs from plain:\n--- stripped ---\n%s\n--- plain ---\n%s", stripANSI(colored), plain)
 	}
 }

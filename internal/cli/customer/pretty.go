@@ -23,7 +23,8 @@ func renderCustomerCard(d map[string]any, opts pretty.Options) string {
 
 	var pairs [][2]string
 	if status := pretty.Submap(d, "status"); status != nil {
-		pairs = append(pairs, [2]string{"Status", pretty.Str(status, "name")})
+		name := pretty.Str(status, "name")
+		pairs = append(pairs, [2]string{"Status", opts.StatusStyle(customerStatusType(name), name)})
 	}
 	if owner := pretty.Submap(d, "owner"); owner != nil {
 		pairs = append(pairs, [2]string{"Owner", pretty.Str(owner, "name")})
@@ -54,6 +55,22 @@ func renderCustomerCard(d map[string]any, opts pretty.Options) string {
 		c.Line(opts.Accent(url))
 	}
 	return c.String()
+}
+
+// customerStatusType maps a workspace-defined customer status name to a
+// workflow-state type for coloring. Customer statuses are free-form, so this is
+// a best-effort heuristic on common names; unknown names get the neutral color.
+func customerStatusType(name string) string {
+	switch strings.ToLower(name) {
+	case "active", "live", "customer":
+		return "completed" // green
+	case "churned", "inactive", "lost", "cancelled", "canceled":
+		return "canceled" // dim
+	case "prospect", "lead", "trial", "onboarding", "evaluating":
+		return "started" // yellow
+	default:
+		return "backlog" // blue
+	}
 }
 
 // joinAny renders a []any of scalars as a " · "-separated list.

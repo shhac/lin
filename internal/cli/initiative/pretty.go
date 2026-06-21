@@ -22,13 +22,13 @@ func renderInitiativeCard(d map[string]any, opts pretty.Options) string {
 
 	var pairs [][2]string
 	if s := pretty.Text(d, "status"); s != "" {
-		pairs = append(pairs, [2]string{"Status", s})
+		pairs = append(pairs, [2]string{"Status", opts.StatusStyle(initiativeStatusType(s), s)})
 	}
 	if owner := pretty.Submap(d, "owner"); owner != nil {
 		pairs = append(pairs, [2]string{"Owner", pretty.Str(owner, "name")})
 	}
 	if h := pretty.Text(d, "health"); h != "" {
-		pairs = append(pairs, [2]string{"Health", h})
+		pairs = append(pairs, [2]string{"Health", opts.HealthStyle(h)})
 	}
 	if s := pretty.Str(d, "targetDate"); s != "" {
 		pairs = append(pairs, [2]string{"Target", pretty.DateOnly(s)})
@@ -57,4 +57,17 @@ func renderInitiativeCard(d map[string]any, opts pretty.Options) string {
 		c.Line(opts.Accent(url))
 	}
 	return c.String()
+}
+
+// initiativeStatusType maps an initiative lifecycle status (Planned/Active/
+// Completed) to the workflow-state type StatusStyle colors by.
+func initiativeStatusType(status string) string {
+	switch status {
+	case "Active":
+		return "started"
+	case "Completed":
+		return "completed"
+	default: // Planned and any unknown
+		return "backlog"
+	}
 }
