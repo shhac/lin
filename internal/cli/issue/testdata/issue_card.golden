@@ -1,0 +1,23 @@
+ENG-123  In Progress · High · 3pts                     updated 2 hours ago
+──────────────────────────────────────────────────────────────────────────
+Fix flaky checkout test
+
+Assignee  Alex Rivera                Team      Engineering (ENG)
+Project   Checkout Reliability       Parent    ENG-100
+Due       2026-06-30                 Created   3 days ago
+Labels    bug · flaky
+
+─ Description ────────────────────────────────────────────────────────────
+The checkout test fails intermittently under load.
+
+Likely a timing issue in the retry path.
+
+─ Attachments ────────────────────────────────────────────────────────────
+github   Fix #4521 checkout retry  https://github.com/acme/repo/pull/4521
+
+─ Activity ───────────────────────────────────────────────────────────────
+2 comments   → lin issue comment list ENG-123
+1 important customer need (of 3)
+
+git branch: alex/eng-123-fix-flaky-checkout-test
+https://linear.app/acme/issue/ENG-123

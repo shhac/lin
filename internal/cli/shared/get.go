@@ -1,11 +1,15 @@
 package shared
 
 import (
+	"fmt"
+
 	"github.com/Khan/genqlient/graphql"
 	libcli "github.com/shhac/lib-agent-cli/cli"
 
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
+	"github.com/shhac/lin/internal/output/pretty"
 )
 
 // GetEntities runs the family's multi-capable get for the lin domain: it sets
@@ -26,4 +30,35 @@ func GetEntities(args []string, getOne func(client graphql.Client, id string) (a
 	return libcli.EntityGet(output.Stdout(), format, args, func(id string) (any, error) {
 		return getOne(client, id)
 	})
+}
+
+// GetEntitiesPretty is the --format pretty counterpart to GetEntities: it
+// fetches each id with the same getOne, then renders a human-readable card via
+// render, stacking multiple cards with a full-width rule between them. Item-level
+// misses (classified *APIError) render as a compact error card so the batch
+// continues; command-level failures bubble out as the structured stderr error.
+func GetEntitiesPretty(
+	args []string,
+	getOne func(client graphql.Client, id string) (any, error),
+	render func(item any, opts pretty.Options) string,
+) error {
+	client := linear.GetClient()
+	opts := output.PrettyOptions()
+	w := output.Stdout()
+	for i, id := range args {
+		if i > 0 {
+			_, _ = fmt.Fprintf(w, "\n%s\n\n", pretty.Separator(opts))
+		}
+		item, err := getOne(client, id)
+		if err != nil {
+			var apiErr *apierrors.APIError
+			if apierrors.As(err, &apiErr) {
+				_, _ = fmt.Fprintln(w, pretty.ErrorCard(id, apiErr.Message, apiErr.Hint, opts))
+				continue
+			}
+			return err
+		}
+		_, _ = fmt.Fprintln(w, render(item, opts))
+	}
+	return nil
 }

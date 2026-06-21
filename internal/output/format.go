@@ -3,12 +3,14 @@ package output
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"sync"
 
 	_ "github.com/shhac/lib-agent-cli/yaml" // registers the YAML encoder (yaml.v3) for out.FormatYAML
 	out "github.com/shhac/lib-agent-output"
 	"github.com/shhac/lin/internal/config"
 	"github.com/shhac/lin/internal/truncation"
+	"github.com/spf13/cobra"
 )
 
 // Format and its values come from the shared contract; ParseFormat is therefore
@@ -19,6 +21,11 @@ const (
 	FormatJSON   = out.FormatJSON
 	FormatYAML   = out.FormatYAML
 	FormatNDJSON = out.FormatNDJSON
+	// FormatPretty is lin's human-readable card renderer. It is NOT part of the
+	// shared/universal enum (ParseFormat rejects it): it's opt-in per command via
+	// AllowPretty and handled by the command's own render branch, never reaching
+	// the universal encoder. Mirrors the agent-slack "transcript" pattern.
+	FormatPretty Format = "pretty"
 )
 
 // ParseFormat accepts the family's lenient set (json/yaml/jsonl plus the
@@ -38,9 +45,17 @@ var (
 	flagFormat string
 )
 
-func ConfigureFormat(format string) error {
+func ConfigureFormat(cmd *cobra.Command, format string) error {
 	if format != "" {
-		if _, err := ParseFormat(format); err != nil {
+		if strings.EqualFold(format, string(FormatPretty)) {
+			// pretty is flag-only and command-scoped: accept it solely where the
+			// command opted in, otherwise reject with the universal-format error
+			// (which deliberately omits "pretty", since it isn't offered here).
+			if !prettyAllowed(cmd) {
+				return out.New(fmt.Sprintf("unknown format %q, expected: json, yaml, jsonl", format), out.FixableByAgent).
+					WithHint("use --format json, --format yaml, or --format jsonl")
+			}
+		} else if _, err := ParseFormat(format); err != nil {
 			return err
 		}
 	}
@@ -58,6 +73,9 @@ func ResolveFormat(defaultFormat Format) Format {
 	f := flagFormat
 	formatMu.RUnlock()
 	if f != "" {
+		if strings.EqualFold(f, string(FormatPretty)) {
+			return FormatPretty
+		}
 		parsed, err := ParseFormat(f)
 		if err == nil {
 			return parsed

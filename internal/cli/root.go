@@ -39,6 +39,7 @@ type GlobalFlags struct {
 
 	Expand  string
 	Full    bool
+	Width   int    // --format pretty card width (0 = auto-detect)
 	BaseURL string // hidden; overrides the Linear API base URL for tests
 }
 
@@ -53,7 +54,7 @@ func newRootCmd(version string) *cobra.Command {
 		UnknownHint:   "run 'lin usage' for full documentation",
 	})
 
-	root.PersistentPreRunE = func(_ *cobra.Command, _ []string) error {
+	root.PersistentPreRunE = func(cmd *cobra.Command, _ []string) error {
 		cfg := config.Read()
 		var maxLen int
 		if cfg.Settings != nil && cfg.Settings.Truncation != nil && cfg.Settings.Truncation.MaxLength != nil {
@@ -64,9 +65,10 @@ func newRootCmd(version string) *cobra.Command {
 			Full:      g.Full,
 			MaxLength: maxLen,
 		})
-		if err := output.ConfigureFormat(g.Format); err != nil {
+		if err := output.ConfigureFormat(cmd, g.Format); err != nil {
 			return err
 		}
+		output.ConfigureWidth(g.Width)
 		timeout := g.TimeoutMS
 		if timeout == 0 && cfg.Settings != nil && cfg.Settings.Request != nil && cfg.Settings.Request.TimeoutMS != nil {
 			timeout = *cfg.Settings.Request.TimeoutMS
@@ -83,6 +85,7 @@ func newRootCmd(version string) *cobra.Command {
 	pf.StringVarP(&g.Expand, "expand", "e", "", "Expand truncated fields (comma-separated: description,body,content)")
 	pf.BoolVarP(&g.Full, "full", "F", false, "Show full content for all truncated fields")
 	pf.StringVarP(&g.Format, "format", "f", "", "Output format: json, yaml, jsonl")
+	pf.IntVar(&g.Width, "width", 0, "Card width for --format pretty (0 = auto-detect terminal)")
 	pf.IntVarP(&g.TimeoutMS, "timeout", "t", 0, "Request timeout in milliseconds")
 	pf.BoolVarP(&g.Debug, "debug", "d", false, "Log redacted HTTP request records to stderr")
 	pf.StringVar(&g.BaseURL, "base-url", "", "Linear API base URL override for tests")
