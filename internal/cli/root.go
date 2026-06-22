@@ -30,11 +30,11 @@ import (
 )
 
 // GlobalFlags carries lin's persistent flags. The shared
-// --format/--timeout/--debug live in the embedded libcli.Globals; the remaining
-// fields are lin's domain flags. lin keeps its own flag wording, lenient
-// --format parser, and config-aware PersistentPreRunE (its stderr envelopes and
-// help text are mirrored by the skill docs), so it registers the shared flags
-// itself rather than letting NewRoot bind and validate them.
+// --format/--timeout/--debug/--color live in the embedded libcli.Globals (bound
+// and resolved by NewRoot); the remaining fields are lin's domain flags. lin's
+// config-aware setup (config-default format, truncation, width, client) runs in
+// NewRoot's ConfigDefaults hook, and `--format pretty` is opted in per command
+// via output.AllowPretty — so lin no longer hand-rolls format validation.
 type GlobalFlags struct {
 	libcli.Globals // Format, TimeoutMS, Debug
 
@@ -47,55 +47,25 @@ type GlobalFlags struct {
 func newRootCmd(version string) *cobra.Command {
 	g := &GlobalFlags{}
 
-	root := libcli.NewRoot(libcli.Options{
+	var root *cobra.Command
+	root = libcli.NewRoot(libcli.Options{
 		Use:           "lin",
 		Short:         "Linear CLI for humans and LLMs",
 		Version:       version,
+		Globals:       &g.Globals,
 		DefaultFormat: output.FormatNDJSON,
 		UnknownHint:   "run 'lin usage' for full documentation",
+		// lin's config-aware per-run setup runs in the ConfigDefaults hook, which
+		// NewRoot invokes (before --format validation) on every command.
+		ConfigDefaults: func() { applyConfigDefaults(root, g) },
 	})
 
-	root.PersistentPreRunE = func(cmd *cobra.Command, _ []string) error {
-		cfg := config.Read()
-		var maxLen int
-		if cfg.Settings != nil && cfg.Settings.Truncation != nil && cfg.Settings.Truncation.MaxLength != nil {
-			maxLen = *cfg.Settings.Truncation.MaxLength
-		}
-		truncation.Configure(truncation.ConfigOpts{
-			Expand:    g.Expand,
-			Full:      g.Full,
-			MaxLength: maxLen,
-		})
-		if err := output.ConfigureFormat(cmd, g.Format); err != nil {
-			return err
-		}
-		if err := output.ConfigureColor(g.Color); err != nil {
-			return err
-		}
-		output.ConfigureWidth(g.Width)
-		timeout := g.TimeoutMS
-		if timeout == 0 && cfg.Settings != nil && cfg.Settings.Request != nil && cfg.Settings.Request.TimeoutMS != nil {
-			timeout = *cfg.Settings.Request.TimeoutMS
-		}
-		linear.Configure(linear.Options{
-			BaseURL:   g.BaseURL,
-			TimeoutMS: timeout,
-			Debug:     g.Debug,
-		})
-		return nil
-	}
-
+	// NewRoot binds the shared flags (--format/--timeout/--debug/--color) via
+	// Globals; lin registers only its own domain flags here.
 	pf := root.PersistentFlags()
 	pf.StringVarP(&g.Expand, "expand", "e", "", "Expand truncated fields (comma-separated: description,body,content)")
 	pf.BoolVarP(&g.Full, "full", "F", false, "Show full content for all truncated fields")
-	pf.StringVarP(&g.Format, "format", "f", "", "Output format: json, yaml, jsonl")
 	pf.IntVar(&g.Width, "width", 0, "Card width for --format pretty (0 = auto-detect terminal)")
-	pf.IntVarP(&g.TimeoutMS, "timeout", "t", 0, "Request timeout in milliseconds")
-	pf.BoolVarP(&g.Debug, "debug", "d", false, "Log redacted HTTP request records to stderr")
-	pf.StringVar(&g.Color, "color", "auto", "Colorize output: auto (color when the stream is a terminal), always, or never")
-	_ = root.RegisterFlagCompletionFunc("color", func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective) {
-		return []string{"auto", "always", "never"}, cobra.ShellCompDirectiveNoFileComp
-	})
 	pf.StringVar(&g.BaseURL, "base-url", "", "Linear API base URL override for tests")
 	_ = pf.MarkHidden("base-url")
 
@@ -125,6 +95,36 @@ func newRootCmd(version string) *cobra.Command {
 	root.AddCommand(agentmcp.Command(root, agentmcp.WithHiddenFlags("color", "expose")))
 
 	return root
+}
+
+// applyConfigDefaults runs in NewRoot's ConfigDefaults hook (before --format
+// validation). It applies lin's persisted config defaults and per-run setup:
+// truncation, the config-default format (universal only — pretty stays an
+// explicit per-call choice), card width, and the request timeout/client.
+func applyConfigDefaults(root *cobra.Command, g *GlobalFlags) {
+	cfg := config.Read()
+
+	var maxLen int
+	if cfg.Settings != nil && cfg.Settings.Truncation != nil && cfg.Settings.Truncation.MaxLength != nil {
+		maxLen = *cfg.Settings.Truncation.MaxLength
+	}
+	truncation.Configure(truncation.ConfigOpts{Expand: g.Expand, Full: g.Full, MaxLength: maxLen})
+
+	// Apply the persisted default format only when --format wasn't passed; it is
+	// always a universal value (the config setter rejects "pretty"), so NewRoot
+	// validates it cleanly. Record the effective value for ResolveFormat.
+	if !root.PersistentFlags().Changed("format") &&
+		cfg.Settings != nil && cfg.Settings.Output != nil && cfg.Settings.Output.DefaultFormat != "" {
+		g.Format = cfg.Settings.Output.DefaultFormat
+	}
+	output.ConfigureFormat(g.Format)
+	output.ConfigureWidth(g.Width)
+
+	timeout := g.TimeoutMS
+	if timeout == 0 && cfg.Settings != nil && cfg.Settings.Request != nil && cfg.Settings.Request.TimeoutMS != nil {
+		timeout = *cfg.Settings.Request.TimeoutMS
+	}
+	linear.Configure(linear.Options{BaseURL: g.BaseURL, TimeoutMS: timeout, Debug: g.Debug})
 }
 
 // Execute builds the root command and runs it, rendering any bubbled error as

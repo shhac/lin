@@ -8,9 +8,7 @@ import (
 
 	_ "github.com/shhac/lib-agent-cli/yaml" // registers the YAML encoder (yaml.v3) for out.FormatYAML
 	out "github.com/shhac/lib-agent-output"
-	"github.com/shhac/lin/internal/config"
 	"github.com/shhac/lin/internal/truncation"
-	"github.com/spf13/cobra"
 )
 
 // Format and its values come from the shared contract; ParseFormat is therefore
@@ -45,60 +43,32 @@ var (
 	flagFormat string
 )
 
-func ConfigureFormat(cmd *cobra.Command, format string) error {
-	if format != "" {
-		if strings.EqualFold(format, string(FormatPretty)) {
-			// pretty is flag-only and command-scoped: accept it solely where the
-			// command opted in, otherwise reject with the universal-format error
-			// (which deliberately omits "pretty", since it isn't offered here).
-			if !prettyAllowed(cmd) {
-				return out.New(fmt.Sprintf("unknown format %q, expected: json, yaml, jsonl", format), out.FixableByAgent).
-					WithHint("use --format json, --format yaml, or --format jsonl")
-			}
-		} else if _, err := ParseFormat(format); err != nil {
-			return err
-		}
-	}
+// ConfigureFormat records the resolved --format value (the flag, or the config
+// default applied in the root's ConfigDefaults) so ResolveFormat can read it at
+// render time. Validation is libcli.NewRoot's job now — the universal set plus
+// any per-command AllowFormats("pretty") — so this no longer validates.
+func ConfigureFormat(format string) {
 	formatMu.Lock()
 	flagFormat = format
 	formatMu.Unlock()
-	return nil
 }
 
-// ConfigureColor resolves lin's --color flag into the shared color mode. lin
-// registers its own globals (it doesn't route them through libcli.Globals), so
-// it must resolve --color itself the way libcli.NewRoot does for the rest of the
-// family. An unknown value is agent-fixable; the mode is set to the safe auto
-// default even on error, so a bad value never leaves a stale mode in force.
-func ConfigureColor(mode string) error {
-	m, err := out.ParseColorMode(mode)
-	out.SetColorMode(m)
-	return err
-}
-
-// ResolveFormat returns the effective format: the --format flag, else the
-// configured default, else defaultFormat. (lin keeps its one-arg, config-aware
-// contract — the shared two-arg ResolveFormat doesn't read config.)
+// ResolveFormat returns the effective format: the recorded --format value (the
+// flag, or the config default applied in ConfigDefaults), else defaultFormat.
+// "pretty" is mapped here; a command only reaches a pretty value if it opted in
+// via AllowPretty, so NewRoot's validator has already accepted it.
 func ResolveFormat(defaultFormat Format) Format {
 	formatMu.RLock()
 	f := flagFormat
 	formatMu.RUnlock()
-	if f != "" {
-		if strings.EqualFold(f, string(FormatPretty)) {
-			return FormatPretty
-		}
-		parsed, err := ParseFormat(f)
-		if err == nil {
-			return parsed
-		}
+	if f == "" {
 		return defaultFormat
 	}
-	cfg := config.Read()
-	if cfg.Settings != nil && cfg.Settings.Output != nil && cfg.Settings.Output.DefaultFormat != "" {
-		parsed, err := ParseFormat(cfg.Settings.Output.DefaultFormat)
-		if err == nil {
-			return parsed
-		}
+	if strings.EqualFold(f, string(FormatPretty)) {
+		return FormatPretty
+	}
+	if parsed, err := ParseFormat(f); err == nil {
+		return parsed
 	}
 	return defaultFormat
 }

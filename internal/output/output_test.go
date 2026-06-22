@@ -253,9 +253,7 @@ func TestPrintPaginated_DefaultsToNDJSON(t *testing.T) {
 	tmp := t.TempDir()
 	config.SetConfigDir(tmp)
 	defer config.SetConfigDir("")
-	if err := ConfigureFormat(nil, ""); err != nil {
-		t.Fatalf("ConfigureFormat: %v", err)
-	}
+	ConfigureFormat("")
 
 	var stdout bytes.Buffer
 	restore := SetWritersForTest(&stdout, nil)
@@ -285,10 +283,8 @@ func TestPrintPaginated_JSONFormatUsesDataEnvelope(t *testing.T) {
 	tmp := t.TempDir()
 	config.SetConfigDir(tmp)
 	defer config.SetConfigDir("")
-	if err := ConfigureFormat(nil, "json"); err != nil {
-		t.Fatalf("ConfigureFormat: %v", err)
-	}
-	defer ConfigureFormat(nil, "")
+	ConfigureFormat("json")
+	defer ConfigureFormat("")
 
 	var stdout bytes.Buffer
 	restore := SetWritersForTest(&stdout, nil)

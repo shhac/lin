@@ -4,35 +4,19 @@ import (
 	"sync"
 	"time"
 
+	libcli "github.com/shhac/lib-agent-cli/cli"
 	"github.com/spf13/cobra"
 
 	"github.com/shhac/lin/internal/output/pretty"
 )
 
-// prettyAnnotation marks a command (or command group) as accepting
-// --format pretty. lin sets and reads this itself rather than relying on
-// lib-agent-cli's format validator, because lin replaces NewRoot's
-// PersistentPreRunE with its own config-aware one (so libcli's validator isn't
-// in the path).
-const prettyAnnotation = "lin.pretty-format"
-
-// AllowPretty opts cmd into the pretty card format. Call it in the command's
-// registration alongside building the get command.
+// AllowPretty opts cmd into the pretty card format via the family's shared
+// format allow-list, so libcli.NewRoot's validator accepts `--format pretty` on
+// this command (and rejects it elsewhere with the standard error). lin still owns
+// the rendering — this only registers the format choice with lib-agent-cli, the
+// same way agent-deepweb opts into raw/text.
 func AllowPretty(cmd *cobra.Command) {
-	if cmd.Annotations == nil {
-		cmd.Annotations = map[string]string{}
-	}
-	cmd.Annotations[prettyAnnotation] = "1"
-}
-
-// prettyAllowed reports whether cmd or any ancestor opted into pretty.
-func prettyAllowed(cmd *cobra.Command) bool {
-	for c := cmd; c != nil; c = c.Parent() {
-		if c.Annotations[prettyAnnotation] == "1" {
-			return true
-		}
-	}
-	return false
+	libcli.AllowFormats(cmd, string(FormatPretty))
 }
 
 // WantsPretty reports whether the resolved format is the pretty card renderer.
