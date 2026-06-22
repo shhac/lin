@@ -5,6 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	agentmcp "github.com/shhac/lib-agent-mcp"
 	libcli "github.com/shhac/lib-agent-cli/cli"
 
 	"github.com/shhac/lin/internal/cli/api"
@@ -117,6 +118,11 @@ func newRootCmd(version string) *cobra.Command {
 	// usage/help skip-list differ from libcli's default, and the skill docs
 	// mirror the exact stderr envelope. This overrides the root.RunE NewRoot set.
 	output.HandleUnknownCommand(root, "run 'lin usage' for full documentation")
+
+	// Expose the whole command tree as an MCP server (added last, so it reflects
+	// the complete tree). --color/--expose are output-shaping, irrelevant to a
+	// tool call, so hide them from the generated schemas.
+	root.AddCommand(agentmcp.Command(root, agentmcp.WithHiddenFlags("color", "expose")))
 
 	return root
 }
