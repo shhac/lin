@@ -68,6 +68,9 @@ func newRootCmd(version string) *cobra.Command {
 		if err := output.ConfigureFormat(cmd, g.Format); err != nil {
 			return err
 		}
+		if err := output.ConfigureColor(g.Color); err != nil {
+			return err
+		}
 		output.ConfigureWidth(g.Width)
 		timeout := g.TimeoutMS
 		if timeout == 0 && cfg.Settings != nil && cfg.Settings.Request != nil && cfg.Settings.Request.TimeoutMS != nil {
@@ -88,6 +91,10 @@ func newRootCmd(version string) *cobra.Command {
 	pf.IntVar(&g.Width, "width", 0, "Card width for --format pretty (0 = auto-detect terminal)")
 	pf.IntVarP(&g.TimeoutMS, "timeout", "t", 0, "Request timeout in milliseconds")
 	pf.BoolVarP(&g.Debug, "debug", "d", false, "Log redacted HTTP request records to stderr")
+	pf.StringVar(&g.Color, "color", "auto", "Colorize output: auto (color when the stream is a terminal), always, or never")
+	_ = root.RegisterFlagCompletionFunc("color", func(*cobra.Command, []string, string) ([]string, cobra.ShellCompDirective) {
+		return []string{"auto", "always", "never"}, cobra.ShellCompDirectiveNoFileComp
+	})
 	pf.StringVar(&g.BaseURL, "base-url", "", "Linear API base URL override for tests")
 	_ = pf.MarkHidden("base-url")
 

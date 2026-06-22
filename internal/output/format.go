@@ -65,6 +65,17 @@ func ConfigureFormat(cmd *cobra.Command, format string) error {
 	return nil
 }
 
+// ConfigureColor resolves lin's --color flag into the shared color mode. lin
+// registers its own globals (it doesn't route them through libcli.Globals), so
+// it must resolve --color itself the way libcli.NewRoot does for the rest of the
+// family. An unknown value is agent-fixable; the mode is set to the safe auto
+// default even on error, so a bad value never leaves a stale mode in force.
+func ConfigureColor(mode string) error {
+	m, err := out.ParseColorMode(mode)
+	out.SetColorMode(m)
+	return err
+}
+
 // ResolveFormat returns the effective format: the --format flag, else the
 // configured default, else defaultFormat. (lin keeps its one-arg, config-aware
 // contract — the shared two-arg ResolveFormat doesn't read config.)
