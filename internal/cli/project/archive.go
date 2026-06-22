@@ -5,17 +5,23 @@ import (
 
 	"github.com/spf13/cobra"
 
+	libcli "github.com/shhac/lib-agent-cli/cli"
+
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
 	"github.com/shhac/lin/internal/resolvers"
 )
 
 func registerDelete(parent *cobra.Command) {
+	var yes bool
 	cmd := &cobra.Command{
 		Use:   "delete <id>",
 		Short: "Delete (trash) a project",
 		Args:  cobra.ExactArgs(1),
 		Run: func(_ *cobra.Command, args []string) {
+			if err := libcli.RequireConfirm(yes, "delete (trash) project "+args[0]); err != nil {
+				output.WriteError(err)
+			}
 			client := linear.GetClient()
 
 			resolved, err := resolvers.ResolveProject(client, args[0])
@@ -31,6 +37,7 @@ func registerDelete(parent *cobra.Command) {
 			output.PrintJSON(map[string]any{"deleted": resp.ProjectDelete.Success})
 		},
 	}
+	libcli.AddConfirmFlag(cmd, &yes)
 	parent.AddCommand(cmd)
 }
 

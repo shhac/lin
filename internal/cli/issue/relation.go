@@ -6,6 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
+	libcli "github.com/shhac/lib-agent-cli/cli"
+
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
 )
@@ -130,11 +132,15 @@ func registerRelationAdd(parent *cobra.Command) {
 }
 
 func registerRelationRemove(parent *cobra.Command) {
-	parent.AddCommand(&cobra.Command{
+	var yes bool
+	cmd := &cobra.Command{
 		Use:   "remove <relation-id>",
 		Short: "Remove a relation",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			if err := libcli.RequireConfirm(yes, "remove relation "+args[0]); err != nil {
+				output.WriteError(err)
+			}
 			client := linear.GetClient()
 			ctx := context.Background()
 
@@ -145,5 +151,7 @@ func registerRelationRemove(parent *cobra.Command) {
 
 			output.PrintJSON(map[string]any{"deleted": resp.IssueRelationDelete.Success})
 		},
-	})
+	}
+	libcli.AddConfirmFlag(cmd, &yes)
+	parent.AddCommand(cmd)
 }

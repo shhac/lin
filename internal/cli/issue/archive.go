@@ -5,16 +5,22 @@ import (
 
 	"github.com/spf13/cobra"
 
+	libcli "github.com/shhac/lib-agent-cli/cli"
+
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
 )
 
 func registerArchive(parent *cobra.Command) {
-	parent.AddCommand(&cobra.Command{
+	var archiveYes bool
+	archive := &cobra.Command{
 		Use:   "archive <id>",
 		Short: "Archive an issue",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			if err := libcli.RequireConfirm(archiveYes, "archive issue "+args[0]); err != nil {
+				output.WriteError(err)
+			}
 			client := linear.GetClient()
 			ctx := context.Background()
 
@@ -25,7 +31,9 @@ func registerArchive(parent *cobra.Command) {
 
 			output.PrintJSON(map[string]any{"archived": resp.IssueArchive.Success})
 		},
-	})
+	}
+	libcli.AddConfirmFlag(archive, &archiveYes)
+	parent.AddCommand(archive)
 
 	parent.AddCommand(&cobra.Command{
 		Use:   "unarchive <id>",
@@ -44,11 +52,15 @@ func registerArchive(parent *cobra.Command) {
 		},
 	})
 
-	parent.AddCommand(&cobra.Command{
+	var deleteYes bool
+	del := &cobra.Command{
 		Use:   "delete <id>",
 		Short: "Delete an issue (move to trash)",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			if err := libcli.RequireConfirm(deleteYes, "delete issue "+args[0]+" (move to trash)"); err != nil {
+				output.WriteError(err)
+			}
 			client := linear.GetClient()
 			ctx := context.Background()
 
@@ -59,5 +71,7 @@ func registerArchive(parent *cobra.Command) {
 
 			output.PrintJSON(map[string]any{"deleted": resp.IssueDelete.Success})
 		},
-	})
+	}
+	libcli.AddConfirmFlag(del, &deleteYes)
+	parent.AddCommand(del)
 }

@@ -96,17 +96,6 @@ func newRootCmd(version string) *cobra.Command {
 	exposeGroups(root, "issue", "project", "initiative", "document", "file",
 		"customer", "team", "user", "label", "cycle", "api")
 
-	// lin's mutating commands have no --yes confirmation flag (the bridge's usual
-	// destructive signal), so mark the state-removing ones explicitly. This
-	// surfaces destructiveHint on the owning group tool, prompting the MCP host to
-	// confirm before an agent-initiated delete/archive/remove. MCP-only metadata.
-	markDestructive(root,
-		"issue delete", "issue archive",
-		"issue attachment remove", "issue relation remove",
-		"project delete",
-		"initiative delete", "initiative archive",
-	)
-
 	// Expose the command tree as an MCP server (added last, so it reflects the
 	// complete tree and the Expose annotations above). --color/--expose are
 	// output-shaping, irrelevant to a tool call, so hide them from the schemas.
@@ -126,18 +115,6 @@ func exposeGroups(root *cobra.Command, names ...string) {
 	for _, c := range root.Commands() {
 		if want[c.Name()] {
 			agentmcp.Expose(c)
-		}
-	}
-}
-
-// markDestructive annotates the commands at the given space-separated paths
-// (relative to root, e.g. "issue delete") as destructive for the MCP surface. A
-// path that doesn't resolve to a command is skipped silently — the list is a
-// curation, not a registration check.
-func markDestructive(root *cobra.Command, paths ...string) {
-	for _, p := range paths {
-		if cmd, _, err := root.Find(strings.Fields(p)); err == nil && cmd != root {
-			agentmcp.Destructive(cmd)
 		}
 	}
 }

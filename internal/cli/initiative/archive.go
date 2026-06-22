@@ -5,17 +5,23 @@ import (
 
 	"github.com/spf13/cobra"
 
+	libcli "github.com/shhac/lib-agent-cli/cli"
+
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
 	"github.com/shhac/lin/internal/resolvers"
 )
 
 func registerArchive(parent *cobra.Command) {
+	var yes bool
 	cmd := &cobra.Command{
 		Use:   "archive <id>",
 		Short: "Archive an initiative",
 		Args:  cobra.ExactArgs(1),
 		Run: func(_ *cobra.Command, args []string) {
+			if err := libcli.RequireConfirm(yes, "archive initiative "+args[0]); err != nil {
+				output.WriteError(err)
+			}
 			client := linear.GetClient()
 
 			resolved, err := resolvers.ResolveInitiative(client, args[0])
@@ -31,6 +37,7 @@ func registerArchive(parent *cobra.Command) {
 			output.PrintJSON(map[string]any{"archived": resp.InitiativeArchive.Success})
 		},
 	}
+	libcli.AddConfirmFlag(cmd, &yes)
 	parent.AddCommand(cmd)
 }
 
@@ -59,11 +66,15 @@ func registerUnarchive(parent *cobra.Command) {
 }
 
 func registerDelete(parent *cobra.Command) {
+	var yes bool
 	cmd := &cobra.Command{
 		Use:   "delete <id>",
 		Short: "Delete an initiative",
 		Args:  cobra.ExactArgs(1),
 		Run: func(_ *cobra.Command, args []string) {
+			if err := libcli.RequireConfirm(yes, "delete initiative "+args[0]); err != nil {
+				output.WriteError(err)
+			}
 			client := linear.GetClient()
 
 			resolved, err := resolvers.ResolveInitiative(client, args[0])
@@ -79,5 +90,6 @@ func registerDelete(parent *cobra.Command) {
 			output.PrintJSON(map[string]any{"deleted": resp.InitiativeDelete.Success})
 		},
 	}
+	libcli.AddConfirmFlag(cmd, &yes)
 	parent.AddCommand(cmd)
 }
