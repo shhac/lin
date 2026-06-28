@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/shhac/lin/internal/cli/shared"
+	"github.com/shhac/lin/internal/config"
 	"github.com/shhac/lin/internal/credential"
 	dl "github.com/shhac/lin/internal/download"
 	"github.com/shhac/lin/internal/linear"
@@ -75,11 +76,12 @@ func registerDownload(parent *cobra.Command) {
 			}
 
 			result, err := dl.DownloadFile(parsed.URL, dl.DownloadOpts{
-				Output:    flagOutput,
-				OutputDir: flagOutputDir,
-				Stdout:    flagStdout,
-				Force:     flagForce,
-				APIKey:    apiKey,
+				Output:     flagOutput,
+				OutputDir:  flagOutputDir,
+				Stdout:     flagStdout,
+				Force:      flagForce,
+				APIKey:     apiKey,
+				DefaultDir: config.DownloadsDir(),
 			})
 			if err != nil {
 				output.PrintError(err.Error())
@@ -112,9 +114,12 @@ UPLOAD:
 DOWNLOAD:
   file download <url-or-path>             Download a file from Linear
     --output <path>                       Save to specific file path
-    --output-dir <dir>                    Save to directory (default: CWD)
+    --output-dir <dir>                    Save to a directory
     --stdout                              Write file content to stdout
     --force                               Overwrite existing files
+  Default destination is the lin cache (~/.cache/lin/downloads); the absolute
+  path is reported. Over MCP it is also fetchable via the fs tool:
+  fs get cache downloads/<filename>.
 
 URL FORMATS:
   Full URL      https://uploads.linear.app/<org>/<uuid>/<uuid>

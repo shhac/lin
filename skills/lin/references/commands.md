@@ -91,7 +91,9 @@ URL formats for download (all equivalent):
 - Without org: `<uuid>/<uuid>` (org inferred from auth)
 - Single UUID: `<uuid>` (org inferred from auth)
 
-Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without `--force`, download refuses to overwrite existing files.
+Flags `--output`, `--output-dir`, and `--stdout` are mutually exclusive. Without `--force`, download refuses to overwrite existing files. By default (no `--output`/`--output-dir`) the file is saved to the lin cache (`~/.cache/lin/downloads`) and the absolute `path` is reported.
+
+Over MCP (`lin mcp`) the reported `path` is rewritten to a fetchable reference `{"@type":"file","root":"cache","path":"downloads/…"}`; read it with the built-in **`fs`** tool — `fs get cache downloads/<name>` (images return as image blocks), `fs find cache -e png`, `fs ls cache downloads`. The host path is never exposed.
 
 > **Prefer `--file` on comments** when attaching files to issues — `lin issue comment new ENG-123 "text" --file ./image.png` uploads and embeds in one step. Use `lin file upload` when you need a standalone asset URL.
 

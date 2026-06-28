@@ -7,6 +7,7 @@ import (
 
 	agentmcp "github.com/shhac/lib-agent-mcp"
 	libcli "github.com/shhac/lib-agent-cli/cli"
+	"github.com/shhac/lib-agent-cli/xdg"
 
 	"github.com/shhac/lin/internal/cli/api"
 	"github.com/shhac/lin/internal/cli/auth"
@@ -99,7 +100,14 @@ func newRootCmd(version string) *cobra.Command {
 	// Expose the command tree as an MCP server (added last, so it reflects the
 	// complete tree and the Expose annotations above). --color/--expose are
 	// output-shaping, irrelevant to a tool call, so hide them from the schemas.
-	root.AddCommand(agentmcp.Command(root, agentmcp.WithHiddenFlags("color", "expose")))
+	// Expose the cache dir (downloads land in cache/downloads) as a read-only
+	// "cache" root, so an MCP client can read back a file `file download` saved —
+	// e.g. fs get cache downloads/diagram.png — without filesystem access of its
+	// own and without ever seeing the host path.
+	root.AddCommand(agentmcp.Command(root,
+		agentmcp.WithHiddenFlags("color", "expose"),
+		agentmcp.WithFileRoots(xdg.Root("cache", config.CacheDir())),
+	))
 
 	return root
 }

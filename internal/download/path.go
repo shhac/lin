@@ -35,8 +35,13 @@ func resolveDestPath(filename string, opts DownloadOpts, contentType string) (st
 		return destPath, nil
 	}
 
-	cwd, _ := os.Getwd()
-	destPath := filepath.Join(cwd, filename)
+	destDir := opts.DefaultDir
+	if destDir == "" {
+		destDir, _ = os.Getwd()
+	} else if err := os.MkdirAll(destDir, 0o700); err != nil {
+		return "", fmt.Errorf("cannot create download directory: %w", err)
+	}
+	destPath := filepath.Join(destDir, filename)
 	if err := checkOverwrite(destPath, opts.Force); err != nil {
 		return "", err
 	}

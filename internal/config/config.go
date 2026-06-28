@@ -69,6 +69,20 @@ func configPath() string {
 	return filepath.Join(ConfigDir(), "config.json")
 }
 
+// CacheDir is lin's cache directory — regenerable data such as downloaded
+// files, kept separate from ConfigDir (which holds credentials/config). It is
+// exposed to MCP clients as the read-only "cache" file root.
+func CacheDir() string {
+	return xdg.CacheDir("lin")
+}
+
+// DownloadsDir is where `file download` writes by default (a subdir of
+// CacheDir), so a downloaded file is fetchable over MCP via the fs tool's
+// "cache" root as downloads/<name>.
+func DownloadsDir() string {
+	return filepath.Join(CacheDir(), "downloads")
+}
+
 func Read() *Config {
 	cacheMu.Lock()
 	defer cacheMu.Unlock()

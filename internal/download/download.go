@@ -21,6 +21,11 @@ type DownloadOpts struct {
 	Stdout    bool
 	Force     bool
 	APIKey    string
+	// DefaultDir is where the file lands when neither Output nor OutputDir is
+	// set. When empty it falls back to the current directory. The CLI points it
+	// at the cache downloads dir so downloads are MCP-readable; the path is still
+	// reported, and --output/--output-dir/--stdout override it.
+	DefaultDir string
 }
 
 type DownloadResult struct {

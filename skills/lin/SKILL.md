@@ -89,6 +89,15 @@ lin file download <uuid>/<uuid> --stdout | cat > file.bin
 lin file download <uuid>/<uuid> --force       # overwrite existing
 ```
 
+`file download` defaults to the lin cache (`~/.cache/lin/downloads`) and reports
+the absolute `path`; `--output`/`--output-dir`/`--stdout` override it.
+
+**Over MCP (`lin mcp`):** a client has no filesystem, so the reported `path`
+comes back as a fetchable reference (`{"@type":"file","root":"cache","path":"downloads/…"}`)
+that you read with the bridge's built-in **`fs`** tool — e.g.
+`fs get cache downloads/diagram.png` returns the bytes (images as image blocks),
+`fs find cache -e png` / `fs ls cache downloads` discover them. No host path needed.
+
 > **Prefer `--file` on comments** when attaching files to issues. `lin issue comment new ENG-123 "See attached" --file ./screenshot.png` uploads and embeds the file in a single step. Use `lin file upload` only when you need a standalone asset URL (e.g., for issue descriptions or documents).
 
 ## Issue history

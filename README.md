@@ -131,6 +131,11 @@ lin
 
 Each top-level command also has a `usage` subcommand for detailed, LLM-friendly documentation (e.g., `lin issue usage`, `lin project usage`). The top-level `lin usage` gives a broad overview; per-command usage gives full detail on flags, valid values, and return fields.
 
+`lin mcp` runs lin as an MCP server. `file download` defaults to the lin cache
+(`~/.cache/lin/downloads`); over MCP a built-in read-only `fs` tool lets a client
+read those files back without filesystem access — `fs get cache downloads/<name>`
+returns the bytes (images as image blocks).
+
 ## Output
 
 - Lists/searches → JSONL by default, one object per line
