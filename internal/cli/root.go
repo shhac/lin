@@ -24,6 +24,7 @@ import (
 	"github.com/shhac/lin/internal/cli/usage"
 	"github.com/shhac/lin/internal/cli/user"
 	"github.com/shhac/lin/internal/config"
+	"github.com/shhac/lin/internal/credential/keychain"
 	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
@@ -107,6 +108,7 @@ func newRootCmd(version string) *cobra.Command {
 	root.AddCommand(agentmcp.Command(root,
 		agentmcp.WithHiddenFlags("color", "expose"),
 		agentmcp.WithFileRoots(xdg.Root("cache", config.CacheDir())),
+		agentmcp.WithOAuthKeyringService(keychain.MCPKeychainService()),
 	))
 
 	return root

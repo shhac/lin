@@ -15,6 +15,10 @@ const service = "app.paulie.lin"
 
 var kc = creds.NewKeychain(service)
 
+// MCPKeychainService is the Keychain service for the MCP server's local-OAuth
+// secrets — the CLI's service plus a ".mcp" namespace, separate from the API creds.
+func MCPKeychainService() string { return service + ".mcp" }
+
 // errNotFound preserves the legacy contract where a missing entry is reported
 // as an error (callers check `err == nil && key != ""`).
 var errNotFound = errors.New("keychain: entry not found")
