@@ -43,6 +43,8 @@ lin auth workspace remove <alias>
 
 Generate a personal API key at **Settings > Account > Security > Personal API Keys** in the Linear app.
 
+**Multi-user MCP:** one `lin mcp` server can serve several people. Each named principal's calls run pinned to their own workspace (`--workspace <alias>` + fail-closed `LIN_REQUIRE_IDENTITY`). Bind a principal explicitly with `mcp pair add <name> --bind workspace=<alias>`, or leave them unbound to self-enroll — they paste their own Linear API key in the browser during OAuth approval and it is stored under their name. A slot converges on one Linear org; a key for a different org is refused.
+
 ## Looking up issues
 
 ```bash
@@ -297,6 +299,7 @@ Use `--limit <n>` and `--cursor <token>` to paginate.
 - `--format json|yaml|jsonl`: override output format for this invocation
 - `--format pretty` (get commands only): human-readable terminal card for reading an entity — not for scripting. Supported on `issue`, `project`, `initiative`, `document`, and `customer` get. Color is used on a terminal and dropped when piped or `NO_COLOR` is set.
 - `--width <n>`: card width for `--format pretty` (0 = auto-detect terminal)
+- `--workspace <alias>`: act as a specific stored workspace for this invocation, overriding the default. Resolves strictly by alias (unknown alias errors). When `LIN_REQUIRE_IDENTITY` is set, this flag is mandatory and resolution fails closed before any fallback (default workspace / legacy key / `LINEAR_API_KEY`).
 - `--timeout <ms>`: request timeout in milliseconds
 - `--debug`: log redacted HTTP request records to stderr
 - `--expand <field,...>` / `--full`: expand truncated long text fields. With `--format pretty`, `--full` also fetches relations and comments for `issue get`.

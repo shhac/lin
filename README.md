@@ -136,6 +136,18 @@ Each top-level command also has a `usage` subcommand for detailed, LLM-friendly 
 read those files back without filesystem access — `fs get cache downloads/<name>`
 returns the bytes (images as image blocks).
 
+**Multi-user MCP.** One `lin mcp` server can serve several people. Each named
+principal's tool calls run pinned to their own stored workspace via the
+`--workspace` selector, with `LIN_REQUIRE_IDENTITY` set so a call missing its
+identity fails closed instead of falling back to the operator's default. A
+principal is bound to a workspace either explicitly
+(`mcp pair add <name> --bind workspace=<alias>`) or by self-enrollment: a
+principal minted without a binding is prompted, during the browser OAuth
+approval, to paste their own Linear API key. The key is validated, stored under
+the principal's name (keychain-first), and the binding is written automatically.
+A slot converges on one Linear organization — a key resolving to a different org
+is refused rather than silently re-pointed.
+
 ## Output
 
 - Lists/searches → JSONL by default, one object per line

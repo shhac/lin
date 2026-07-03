@@ -12,6 +12,8 @@ Run `lin <command> usage` for detailed per-command docs (e.g., `lin issue usage`
 - `lin auth workspace list` — list all stored workspaces
 - `lin auth workspace switch <alias>` — set default workspace
 - `lin auth workspace remove <alias>` — remove a stored workspace
+- `--workspace <alias>` (global) — act as a specific stored workspace for one command, overriding the default (unknown alias errors)
+- `LIN_REQUIRE_IDENTITY` (env) — make `--workspace` mandatory, failing closed before any fallback; set by `lin mcp` per named principal. Bind principals with `mcp pair add <name> --bind workspace=<alias>`, or let unbound principals self-enroll their own API key in the browser during OAuth approval.
 
 ## Projects
 

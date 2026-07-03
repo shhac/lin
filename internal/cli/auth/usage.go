@@ -15,6 +15,16 @@ AUTH SOURCES (checked in order):
   2. macOS Keychain (service: app.paulie.lin)
   3. Stored config (~/.config/lin/config.json)
 
+WORKSPACE SELECTION:
+  --workspace <alias> (global flag) acts as a specific stored workspace for one
+  invocation, overriding the default. It resolves strictly by alias against the
+  stored workspaces (never env or the default), so an unknown alias errors.
+
+  LIN_REQUIRE_IDENTITY (env, fail-closed): when set, any command that would
+  touch Linear WITHOUT an explicit --workspace errors before any fallback
+  (default workspace, legacy api_key, or LINEAR_API_KEY) can serve it. The MCP
+  server sets this for every named-principal tool call.
+
 LOGIN:
   Validates the API key against the Linear API, auto-detects org name/urlKey.
   --alias sets a custom workspace name (default: org urlKey).

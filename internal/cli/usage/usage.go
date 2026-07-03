@@ -115,6 +115,9 @@ ESTIMATES: Team-specific (fibonacci|linear|exponential|tShirt). Use "team get <i
 
 AUTH: Set LINEAR_API_KEY env var, or: lin auth login <key>
   Multiple workspaces supported. Switch: lin auth workspace switch <alias>
+  --workspace <alias> selects a stored workspace for one command (overrides the
+  default). LIN_REQUIRE_IDENTITY (env) makes --workspace mandatory, failing
+  closed before any fallback — used by the MCP server per named principal.
 
 DETAIL: Run "<command> usage" for detailed command documentation (e.g. "issue usage").`
 
