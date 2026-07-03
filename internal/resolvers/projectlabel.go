@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Khan/genqlient/graphql"
 
@@ -57,40 +56,23 @@ func fetchProjectLabels(client graphql.Client) ([]ResolvedProjectLabel, error) {
 }
 
 func resolveOneProjectLabel(input string, labels []ResolvedProjectLabel) (ResolvedProjectLabel, error) {
-	for _, l := range labels {
-		if l.ID == input {
-			return l, nil
+	match, matches, kind := matchByNameOrID(input, labels,
+		func(l ResolvedProjectLabel) string { return l.ID },
+		func(l ResolvedProjectLabel) string { return l.Name })
+	switch kind {
+	case matchFound:
+		return match, nil
+	case matchNone:
+		names := make([]string, len(labels))
+		for i, l := range labels {
+			names[i] = l.Name
 		}
-	}
-	lower := strings.ToLower(input)
-	var matches []ResolvedProjectLabel
-	for _, l := range labels {
-		if strings.ToLower(l.Name) == lower {
-			matches = append(matches, l)
+		return ResolvedProjectLabel{}, labelNotFoundErr("project label", input, names)
+	default:
+		parts := make([]string, len(matches))
+		for i, l := range matches {
+			parts[i] = fmt.Sprintf("%s (id: %s)", l.Name, l.ID)
 		}
+		return ResolvedProjectLabel{}, ambiguousLabelErr("project label", input, parts, "")
 	}
-
-	if len(matches) == 1 {
-		return matches[0], nil
-	}
-	if len(matches) == 0 {
-		return ResolvedProjectLabel{}, projectLabelNotFoundErr(input, labels)
-	}
-	return ResolvedProjectLabel{}, ambiguousProjectLabelErr(input, matches)
-}
-
-func projectLabelNotFoundErr(input string, labels []ResolvedProjectLabel) error {
-	names := make([]string, len(labels))
-	for i, l := range labels {
-		names[i] = l.Name
-	}
-	return fmt.Errorf("project label not found: %q, available labels: %s", input, formatChoices(names))
-}
-
-func ambiguousProjectLabelErr(input string, matches []ResolvedProjectLabel) error {
-	parts := make([]string, len(matches))
-	for i, l := range matches {
-		parts[i] = fmt.Sprintf("%s (id: %s)", l.Name, l.ID)
-	}
-	return fmt.Errorf("ambiguous project label: %q matches %d labels: %s, use the label ID to disambiguate", input, len(matches), formatChoices(parts))
 }

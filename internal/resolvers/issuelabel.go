@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Khan/genqlient/graphql"
 
@@ -96,48 +95,31 @@ func teamKeyOfIssueLabel(l linear.IssueLabelFields) string {
 }
 
 func resolveOneIssueLabel(input string, labels []ResolvedIssueLabel, teamScoped bool) (ResolvedIssueLabel, error) {
-	for _, l := range labels {
-		if l.ID == input {
-			return l, nil
+	match, matches, kind := matchByNameOrID(input, labels,
+		func(l ResolvedIssueLabel) string { return l.ID },
+		func(l ResolvedIssueLabel) string { return l.Name })
+	switch kind {
+	case matchFound:
+		return match, nil
+	case matchNone:
+		names := make([]string, len(labels))
+		for i, l := range labels {
+			names[i] = l.Name
 		}
-	}
-	lower := strings.ToLower(input)
-	var matches []ResolvedIssueLabel
-	for _, l := range labels {
-		if strings.ToLower(l.Name) == lower {
-			matches = append(matches, l)
+		return ResolvedIssueLabel{}, labelNotFoundErr("label", input, names)
+	default:
+		parts := make([]string, len(matches))
+		for i, l := range matches {
+			if l.TeamKey != "" {
+				parts[i] = fmt.Sprintf("%s (id: %s, team: %s)", l.Name, l.ID, l.TeamKey)
+			} else {
+				parts[i] = fmt.Sprintf("%s (id: %s, workspace)", l.Name, l.ID)
+			}
 		}
-	}
-
-	if len(matches) == 1 {
-		return matches[0], nil
-	}
-	if len(matches) == 0 {
-		return ResolvedIssueLabel{}, issueLabelNotFoundErr(input, labels)
-	}
-	return ResolvedIssueLabel{}, ambiguousIssueLabelErr(input, matches, teamScoped)
-}
-
-func issueLabelNotFoundErr(input string, labels []ResolvedIssueLabel) error {
-	names := make([]string, len(labels))
-	for i, l := range labels {
-		names[i] = l.Name
-	}
-	return fmt.Errorf("label not found: %q, available labels: %s", input, formatChoices(names))
-}
-
-func ambiguousIssueLabelErr(input string, matches []ResolvedIssueLabel, teamScoped bool) error {
-	parts := make([]string, len(matches))
-	for i, l := range matches {
-		if l.TeamKey != "" {
-			parts[i] = fmt.Sprintf("%s (id: %s, team: %s)", l.Name, l.ID, l.TeamKey)
-		} else {
-			parts[i] = fmt.Sprintf("%s (id: %s, workspace)", l.Name, l.ID)
+		hint := ""
+		if !teamScoped {
+			hint = ", tip: use --team to narrow scope"
 		}
+		return ResolvedIssueLabel{}, ambiguousLabelErr("label", input, parts, hint)
 	}
-	hint := ""
-	if !teamScoped {
-		hint = ", tip: use --team to narrow scope"
-	}
-	return fmt.Errorf("ambiguous label: %q matches %d labels: %s, use the label ID to disambiguate%s", input, len(matches), formatChoices(parts), hint)
 }
