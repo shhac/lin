@@ -202,6 +202,69 @@ func TestMCPEnrollConvergenceIsAliasStrict(t *testing.T) {
 	}
 }
 
+// The legacy-user gate: a slot that recorded only a urlKey (no OrgID, as older
+// logins did) still converges — by urlKey — so a foreign key can't re-point it.
+func TestMCPEnrollConvergenceUrlKeyFallback(t *testing.T) {
+	f := newEnrollFixture(t)
+	// Legacy slot: URLKey known, OrgID never recorded — the fallback anchor.
+	if err := config.Write(&config.Config{
+		DefaultWorkspace: "alice",
+		Workspaces: map[string]config.Workspace{
+			"alice": {APIKey: "lin_api_old", Name: "Acme Inc", URLKey: "acme"},
+		},
+	}); err != nil {
+		t.Fatal(err)
+	}
+	config.ClearCache()
+
+	// First call resolves a different urlKey, later calls the matching one.
+	f.fake.queue(
+		viewerBody("org-other", "other", "Other Corp"),
+		viewerBody("org-acme", "acme", "Acme Inc"),
+	)
+
+	// Different urlKey → refused, slot untouched (still legacy, no OrgID).
+	if _, err := f.run(t, "alice", map[string]string{"api_key": "lin_api_bob"}); err == nil ||
+		!strings.Contains(err.Error(), "different Linear organization") {
+		t.Errorf("err = %v, want a different-org refusal via the urlKey fallback", err)
+	}
+	if ws := config.GetWorkspaces()["alice"]; ws.URLKey != "acme" || ws.OrgID != "" || ws.APIKey != "lin_api_old" {
+		t.Errorf("slot mutated by refused enrollment: %+v", ws)
+	}
+
+	config.ClearCache()
+	// Same urlKey → succeeds and now records the OrgID for stronger future checks.
+	res, err := f.run(t, "alice", map[string]string{"api_key": "lin_api_new"})
+	if err != nil {
+		t.Fatalf("same-urlKey re-enroll: %v", err)
+	}
+	if res.Binding["workspace"] != "alice" {
+		t.Errorf("binding = %v", res.Binding)
+	}
+	ws := config.GetWorkspaces()["alice"]
+	if ws.OrgID != "org-acme" {
+		t.Errorf("successful re-enroll should record the OrgID going forward: %+v", ws)
+	}
+	if runtime.GOOS == "darwin" && ws.APIKey != "lin_api_new" {
+		t.Errorf("re-enroll did not update the key in place: %+v", ws)
+	}
+}
+
+// A key Linear accepts but that resolves to no organization is refused, and
+// nothing is stored.
+func TestMCPEnrollNoOrganization(t *testing.T) {
+	f := newEnrollFixture(t)
+	f.fake.queue(viewerBody("", "", ""))
+
+	_, err := f.run(t, "alice", map[string]string{"api_key": "lin_api_alice"})
+	if err == nil || !strings.Contains(err.Error(), "no organization") {
+		t.Errorf("err = %v, want the no-organization refusal", err)
+	}
+	if _, ok := config.GetWorkspaces()["alice"]; ok {
+		t.Error("a key resolving to no organization must not be stored")
+	}
+}
+
 func TestMCPEnrollmentDescriptorShape(t *testing.T) {
 	d := mcpEnrollmentDescriptor()
 	if len(d.Modes) != 1 || d.Modes[0].Key != "api-key" {
