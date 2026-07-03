@@ -55,6 +55,28 @@ func (c *Builder) Header(left, plainLeft, right, plainRight string) {
 	c.line(left + strings.Repeat(" ", gap) + right)
 }
 
+// UpdatedRight builds the dimmed "updated <rel>" right-header cell from an
+// updatedAt timestamp, returning ("", "") when the time is absent or
+// unparseable. The plain (un-styled) form is returned alongside for Header's
+// width math.
+func UpdatedRight(opts Options, updatedAt string) (right, plainRight string) {
+	rel := opts.RelTime(updatedAt)
+	if rel == "" {
+		return "", ""
+	}
+	plainRight = "updated " + rel
+	return opts.Dim(plainRight), plainRight
+}
+
+// FooterURL emits a blank spacer line followed by the accented URL — the
+// standard closing footer for an entity card. A blank url emits only the spacer.
+func (c *Builder) FooterURL(url string) {
+	c.Blank()
+	if url != "" {
+		c.line(c.opts.Accent(url))
+	}
+}
+
 // Title renders a plain, optionally bold, single line.
 func (c *Builder) Title(s string) { c.line(s) }
 

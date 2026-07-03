@@ -1,6 +1,15 @@
 package pretty
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
+
+// TrimFloat formats f without a trailing ".0" or superfluous zeros and never in
+// scientific notation, for point/estimate/revenue values shown in cards.
+func TrimFloat(f float64) string {
+	return strconv.FormatFloat(f, 'f', -1, 64)
+}
 
 // Helpers for reading the raw map[string]any a mapper produces. Values keep
 // their Go types (mappers run before any JSON round-trip), so strings may be

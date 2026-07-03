@@ -11,11 +11,7 @@ import (
 func renderInitiativeCard(d map[string]any, opts pretty.Options) string {
 	c := pretty.New(opts)
 
-	var right, plainRight string
-	if rel := opts.RelTime(pretty.Str(d, "updatedAt")); rel != "" {
-		plainRight = "updated " + rel
-		right = opts.Dim(plainRight)
-	}
+	right, plainRight := pretty.UpdatedRight(opts, pretty.Str(d, "updatedAt"))
 	name := pretty.Str(d, "name")
 	c.Header(opts.Bold(name), name, right, plainRight)
 	c.Rule()
@@ -52,10 +48,7 @@ func renderInitiativeCard(d map[string]any, opts pretty.Options) string {
 		c.Wrapped(content)
 	}
 
-	c.Blank()
-	if url := pretty.Str(d, "url"); url != "" {
-		c.Line(opts.Accent(url))
-	}
+	c.FooterURL(pretty.Str(d, "url"))
 	return c.String()
 }
 

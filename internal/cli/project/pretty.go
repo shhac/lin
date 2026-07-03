@@ -62,10 +62,7 @@ func renderProjectCard(d map[string]any, opts pretty.Options) string {
 		}
 	}
 
-	c.Blank()
-	if url := pretty.Str(d, "url"); url != "" {
-		c.Line(opts.Accent(url))
-	}
+	c.FooterURL(pretty.Str(d, "url"))
 	return c.String()
 }
 

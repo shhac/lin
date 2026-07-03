@@ -2,7 +2,6 @@ package issue
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/shhac/lin/internal/output/pretty"
@@ -68,7 +67,7 @@ func renderTitleLine(c *pretty.Builder, d map[string]any, opts pretty.Options) {
 		}
 	}
 	if est, ok := pretty.Num(d, "estimate"); ok {
-		e := trimFloat(est) + "pts"
+		e := pretty.TrimFloat(est) + "pts"
 		parts = append(parts, e)
 		plainParts = append(plainParts, e)
 	}
@@ -76,11 +75,7 @@ func renderTitleLine(c *pretty.Builder, d map[string]any, opts pretty.Options) {
 	left := parts[0] + "  " + strings.Join(parts[1:], " · ")
 	plainLeft := plainParts[0] + "  " + strings.Join(plainParts[1:], " · ")
 
-	var right, plainRight string
-	if rel := opts.RelTime(pretty.Str(d, "updatedAt")); rel != "" {
-		plainRight = "updated " + rel
-		right = opts.Dim(plainRight)
-	}
+	right, plainRight := pretty.UpdatedRight(opts, pretty.Str(d, "updatedAt"))
 	c.Header(left, plainLeft, right, plainRight)
 }
 
@@ -238,10 +233,6 @@ func renderFooter(c *pretty.Builder, d map[string]any, opts pretty.Options) {
 	if url := pretty.Str(d, "url"); url != "" {
 		c.Line(opts.Accent(url))
 	}
-}
-
-func trimFloat(f float64) string {
-	return strconv.FormatFloat(f, 'f', -1, 64)
 }
 
 func plural(n int, unit string) string {

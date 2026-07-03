@@ -12,11 +12,7 @@ import (
 func renderCustomerCard(d map[string]any, opts pretty.Options) string {
 	c := pretty.New(opts)
 
-	var right, plainRight string
-	if rel := opts.RelTime(pretty.Str(d, "updatedAt")); rel != "" {
-		plainRight = "updated " + rel
-		right = opts.Dim(plainRight)
-	}
+	right, plainRight := pretty.UpdatedRight(opts, pretty.Str(d, "updatedAt"))
 	name := pretty.Str(d, "name")
 	c.Header(opts.Bold(name), name, right, plainRight)
 	c.Rule()
@@ -36,10 +32,10 @@ func renderCustomerCard(d map[string]any, opts pretty.Options) string {
 		pairs = append(pairs, [2]string{"Needs", fmt.Sprintf("~%d", n)})
 	}
 	if r, ok := pretty.Num(d, "revenue"); ok {
-		pairs = append(pairs, [2]string{"Revenue", trimFloat(r)})
+		pairs = append(pairs, [2]string{"Revenue", pretty.TrimFloat(r)})
 	}
 	if s, ok := pretty.Num(d, "size"); ok {
-		pairs = append(pairs, [2]string{"Size", trimFloat(s)})
+		pairs = append(pairs, [2]string{"Size", pretty.TrimFloat(s)})
 	}
 	c.Grid(pairs)
 
@@ -50,10 +46,7 @@ func renderCustomerCard(d map[string]any, opts pretty.Options) string {
 		c.Field("External", ext)
 	}
 
-	c.Blank()
-	if url := pretty.Str(d, "url"); url != "" {
-		c.Line(opts.Accent(url))
-	}
+	c.FooterURL(pretty.Str(d, "url"))
 	return c.String()
 }
 
@@ -84,8 +77,4 @@ func joinAny(v any) string {
 		parts[i] = fmt.Sprintf("%v", it)
 	}
 	return strings.Join(parts, " · ")
-}
-
-func trimFloat(f float64) string {
-	return fmt.Sprintf("%v", f)
 }
