@@ -2,8 +2,9 @@ package resolvers
 
 import (
 	"context"
-	"fmt"
 	"strings"
+
+	apierrors "github.com/shhac/lin/internal/errors"
 )
 
 func ctx() context.Context { return context.Background() }
@@ -49,7 +50,7 @@ func matchByNameOrID[T any](input string, items []T, id, name func(T) string) (m
 // labelNotFoundErr builds the shared "<noun> not found" error for the label
 // resolvers; noun is "label" or "project label" so the message stays exact.
 func labelNotFoundErr(noun, input string, names []string) error {
-	return fmt.Errorf("%s not found: %q, available labels: %s", noun, input, formatChoices(names))
+	return apierrors.Newf(apierrors.FixableByAgent, "%s not found: %q, available labels: %s", noun, input, formatChoices(names))
 }
 
 // ambiguousLabelErr builds the shared "ambiguous <noun>" error. parts are the
@@ -57,7 +58,7 @@ func labelNotFoundErr(noun, input string, names []string) error {
 // render a match, so the caller formats them); hint is an optional trailing
 // suffix (the issue resolver's --team tip).
 func ambiguousLabelErr(noun, input string, parts []string, hint string) error {
-	return fmt.Errorf("ambiguous %s: %q matches %d labels: %s, use the label ID to disambiguate%s", noun, input, len(parts), formatChoices(parts), hint)
+	return apierrors.Newf(apierrors.FixableByAgent, "ambiguous %s: %q matches %d labels: %s, use the label ID to disambiguate%s", noun, input, len(parts), formatChoices(parts), hint)
 }
 
 // formatChoices renders a list of valid options for an error message as a

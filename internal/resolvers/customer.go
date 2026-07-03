@@ -1,10 +1,9 @@
 package resolvers
 
 import (
-	"fmt"
-
 	"github.com/Khan/genqlient/graphql"
 
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/filters"
 	"github.com/shhac/lin/internal/linear"
 )
@@ -29,7 +28,7 @@ func ResolveCustomer(client graphql.Client, input string) (ResolvedCustomer, err
 		return ResolvedCustomer{}, err
 	}
 	if len(listResp.Customers.Nodes) == 0 {
-		return ResolvedCustomer{}, fmt.Errorf("customer not found: %q, provide a UUID, slug ID, or exact name", input)
+		return ResolvedCustomer{}, apierrors.Newf(apierrors.FixableByAgent, "customer not found: %q, provide a UUID, slug ID, or exact name", input)
 	}
 	c := listResp.Customers.Nodes[0]
 	return ResolvedCustomer{ID: c.Id, Name: c.Name, SlugId: c.SlugId}, nil

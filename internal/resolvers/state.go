@@ -1,11 +1,11 @@
 package resolvers
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/Khan/genqlient/graphql"
 
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/ptr"
 )
@@ -37,5 +37,5 @@ func ResolveWorkflowState(client graphql.Client, name, teamID string) (ResolvedW
 			validNames = append(validNames, s.Name)
 		}
 	}
-	return ResolvedWorkflowState{}, fmt.Errorf("unknown status: %q, valid values: %s", name, strings.Join(validNames, " | "))
+	return ResolvedWorkflowState{}, apierrors.Newf(apierrors.FixableByAgent, "unknown status: %q, valid values: %s", name, strings.Join(validNames, " | "))
 }
