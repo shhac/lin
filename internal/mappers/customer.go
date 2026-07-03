@@ -34,8 +34,8 @@ func MapCustomerDetail(c linear.CustomerGetCustomer) map[string]any {
 		"url":                  c.Url,
 		"approximateNeedCount": c.ApproximateNeedCount,
 		"status":               map[string]any{"id": c.Status.Id, "name": c.Status.Name},
-		"domains":              toAnySlice(c.Domains),
-		"externalIds":          toAnySlice(c.ExternalIds),
+		"domains":              c.Domains,
+		"externalIds":          c.ExternalIds,
 		"createdAt":            c.CreatedAt,
 		"updatedAt":            c.UpdatedAt,
 	}
@@ -78,14 +78,6 @@ func MapCustomerNeedSummary(f linear.CustomerNeedSummaryFields) map[string]any {
 	}
 	if f.Project != nil {
 		out["project"] = map[string]any{"id": f.Project.Id, "name": f.Project.Name}
-	}
-	return out
-}
-
-func toAnySlice(s []string) []any {
-	out := make([]any, len(s))
-	for i, v := range s {
-		out[i] = v
 	}
 	return out
 }

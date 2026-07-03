@@ -136,7 +136,7 @@ func TestMapCustomerDetail_Full(t *testing.T) {
 	if got["size"] != 120.0 {
 		t.Errorf("size = %v", got["size"])
 	}
-	domains, ok := got["domains"].([]any)
+	domains, ok := got["domains"].([]string)
 	if !ok || len(domains) != 2 || domains[0] != "acme.example" {
 		t.Errorf("domains = %v", got["domains"])
 	}
