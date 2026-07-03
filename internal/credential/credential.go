@@ -9,13 +9,17 @@ import (
 
 const keychainPlaceholder = "__KEYCHAIN__"
 
+// getKeychain is the keychain lookup, indirected through a package var so a test
+// can stub the placeholder-hit branch without touching a real keychain.
+var getKeychain = keychain.Get
+
 // workspaceKey decodes a stored workspace record into its API key and source
 // ("keychain" or "config"). A keychain placeholder that misses (secret gone or
 // unreadable) returns an empty key — never a fallback to another source, so a
 // caller naming this alias gets that identity or nothing.
 func workspaceKey(alias string, ws config.Workspace) (key, source string) {
 	if ws.APIKey == keychainPlaceholder {
-		if k, err := keychain.Get(alias); err == nil && k != "" {
+		if k, err := getKeychain(alias); err == nil && k != "" {
 			return k, "keychain"
 		}
 		return "", ""

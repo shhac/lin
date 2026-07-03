@@ -1,11 +1,30 @@
 package credential
 
 import (
+	"runtime"
 	"strings"
 	"testing"
 
 	"github.com/shhac/lin/internal/config"
 )
+
+// stubKeychain swaps the package keychain lookup for the duration of a test so
+// the placeholder-hit branch is exercisable without a real keychain.
+func stubKeychain(t *testing.T, fn func(string) (string, error)) {
+	t.Helper()
+	prev := getKeychain
+	getKeychain = fn
+	t.Cleanup(func() { getKeychain = prev })
+}
+
+func placeholderWorkspace() *config.Config {
+	return &config.Config{
+		DefaultWorkspace: "vault",
+		Workspaces: map[string]config.Workspace{
+			"vault": {APIKey: keychainPlaceholder, URLKey: "vault"},
+		},
+	}
+}
 
 // seed writes a config directly (plaintext keys, readable on every platform —
 // no keychain swap) and points resolution at a scratch dir.
@@ -100,6 +119,62 @@ func TestResolveForClient_NoGateNoSelectorUsesDefault(t *testing.T) {
 	}
 	if key != "lin_alpha_key" {
 		t.Errorf("key = %q, want the default alpha key", key)
+	}
+}
+
+// A placeholder slot whose keychain secret is gone resolves to empty — never a
+// fallback to another source. Exercised on non-darwin, where keychain.Get is a
+// pure ("", nil); on darwin it would query the real keychain.
+func TestResolveForClient_PlaceholderKeychainMiss(t *testing.T) {
+	if runtime.GOOS == "darwin" {
+		t.Skip("would query the real macOS keychain; the miss path is covered on other platforms")
+	}
+	seed(t, placeholderWorkspace())
+	SetSelectedWorkspace("vault")
+
+	key, err := ResolveForClient()
+	if err != nil {
+		t.Fatalf("ResolveForClient: %v", err)
+	}
+	if key != "" {
+		t.Errorf("key = %q, want empty (a placeholder miss must never fall back)", key)
+	}
+}
+
+// A placeholder slot whose secret is present resolves to the keychain value.
+func TestResolveForClient_PlaceholderKeychainHit(t *testing.T) {
+	seed(t, placeholderWorkspace())
+	stubKeychain(t, func(account string) (string, error) {
+		if account != "vault" {
+			t.Errorf("keychain queried for %q, want the selected alias vault", account)
+		}
+		return "lin_vault_secret", nil
+	})
+	SetSelectedWorkspace("vault")
+
+	key, err := ResolveForClient()
+	if err != nil {
+		t.Fatalf("ResolveForClient: %v", err)
+	}
+	if key != "lin_vault_secret" {
+		t.Errorf("key = %q, want the keychain secret", key)
+	}
+}
+
+// workspaceKey backs both resolve() and resolveSelector(); its source strings
+// ("keychain"/"config") are what Source() reports, so pin them.
+func TestWorkspaceKey_SourceStrings(t *testing.T) {
+	stubKeychain(t, func(string) (string, error) { return "sekret", nil })
+	if k, src := workspaceKey("vault", config.Workspace{APIKey: keychainPlaceholder}); k != "sekret" || src != "keychain" {
+		t.Errorf("placeholder hit = (%q, %q), want (sekret, keychain)", k, src)
+	}
+	if k, src := workspaceKey("plain", config.Workspace{APIKey: "lin_plain"}); k != "lin_plain" || src != "config" {
+		t.Errorf("plaintext = (%q, %q), want (lin_plain, config)", k, src)
+	}
+
+	stubKeychain(t, func(string) (string, error) { return "", nil })
+	if k, src := workspaceKey("vault", config.Workspace{APIKey: keychainPlaceholder}); k != "" || src != "" {
+		t.Errorf("placeholder miss = (%q, %q), want both empty", k, src)
 	}
 }
 
