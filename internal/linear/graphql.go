@@ -87,14 +87,13 @@ func ClientWithKey(apiKey string) graphql.Client {
 // request). Exits with a JSON error if no key is available.
 func GetClientAndKey() (graphql.Client, string) {
 	apiKey := mustResolveAPIKey()
-	return graphql.NewClient(endpointURL(), httpClient(apiKey)), apiKey
+	return ClientWithKey(apiKey), apiKey
 }
 
 // GetClient returns a genqlient GraphQL client authenticated with the
 // resolved API key. Exits with a JSON error if no key is available.
 func GetClient() graphql.Client {
-	client, _ := GetClientAndKey()
-	return client
+	return ClientWithKey(mustResolveAPIKey())
 }
 
 // GetRawClient returns our custom Client for raw GraphQL queries.
