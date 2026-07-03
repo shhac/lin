@@ -37,37 +37,36 @@ func mcpEnrollmentDescriptor() oauth.CredentialDescriptor {
 
 // mcpEnroll validates the submitted API key against the Viewer query and stores
 // it under alias = principal name. Errors are human-facing form text, not the
-// CLI's structured stderr shape.
-func mcpEnroll() oauth.EnrollFunc {
-	return func(ctx context.Context, req oauth.EnrollRequest) (oauth.EnrollResult, error) {
-		apiKey := strings.TrimSpace(req.Values["api_key"])
-		if apiKey == "" {
-			return oauth.EnrollResult{}, errors.New("enter your Linear API key")
-		}
-
-		resp, err := linear.Viewer(ctx, linear.ClientWithKey(apiKey))
-		if err != nil {
-			return oauth.EnrollResult{}, fmt.Errorf("this API key was rejected by Linear: %v", err)
-		}
-		org := resp.Viewer.Organization
-		if org.UrlKey == "" && org.Id == "" {
-			return oauth.EnrollResult{}, errors.New(
-				"the key was accepted but Linear returned no organization — try a different key")
-		}
-
-		if err := checkOrgConvergence(req.Principal, org.Id, org.UrlKey); err != nil {
-			return oauth.EnrollResult{}, err
-		}
-		if err := config.StoreLogin(req.Principal, config.Workspace{
-			APIKey: apiKey,
-			Name:   org.Name,
-			URLKey: org.UrlKey,
-			OrgID:  org.Id,
-		}); err != nil {
-			return oauth.EnrollResult{}, fmt.Errorf("storing the credentials failed: %v", err)
-		}
-		return oauth.EnrollResult{Binding: map[string]string{bindingKeyWorkspace: req.Principal}}, nil
+// CLI's structured stderr shape. It is an oauth.EnrollFunc, passed directly to
+// WithCredentialEnrollment.
+func mcpEnroll(ctx context.Context, req oauth.EnrollRequest) (oauth.EnrollResult, error) {
+	apiKey := strings.TrimSpace(req.Values["api_key"])
+	if apiKey == "" {
+		return oauth.EnrollResult{}, errors.New("enter your Linear API key")
 	}
+
+	resp, err := linear.Viewer(ctx, linear.ClientWithKey(apiKey))
+	if err != nil {
+		return oauth.EnrollResult{}, fmt.Errorf("this API key was rejected by Linear: %v", err)
+	}
+	org := resp.Viewer.Organization
+	if org.UrlKey == "" && org.Id == "" {
+		return oauth.EnrollResult{}, errors.New(
+			"the key was accepted but Linear returned no organization — try a different key")
+	}
+
+	if err := checkOrgConvergence(req.Principal, org.Id, org.UrlKey); err != nil {
+		return oauth.EnrollResult{}, err
+	}
+	if err := config.StoreLogin(req.Principal, config.Workspace{
+		APIKey: apiKey,
+		Name:   org.Name,
+		URLKey: org.UrlKey,
+		OrgID:  org.Id,
+	}); err != nil {
+		return oauth.EnrollResult{}, fmt.Errorf("storing the credentials failed: %v", err)
+	}
+	return oauth.EnrollResult{Binding: map[string]string{bindingKeyWorkspace: req.Principal}}, nil
 }
 
 // checkOrgConvergence enforces the one-slot-one-identity rule: strictly by

@@ -123,7 +123,7 @@ func newRootCmd(version string) *cobra.Command {
 		// A named principal minted without --bind enrolls their own Linear API
 		// key in the browser during the OAuth approval; the binding
 		// (workspace=<principal>) is written automatically on success.
-		agentmcp.WithCredentialEnrollment(mcpEnrollmentDescriptor(), mcpEnroll()),
+		agentmcp.WithCredentialEnrollment(mcpEnrollmentDescriptor(), mcpEnroll),
 	))
 
 	return root

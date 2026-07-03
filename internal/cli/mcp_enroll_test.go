@@ -70,7 +70,7 @@ func newEnrollFixture(t *testing.T) *enrollFixture {
 	linear.Configure(linear.Options{BaseURL: ts.URL})
 	t.Cleanup(func() { linear.Configure(linear.Options{}) })
 
-	return &enrollFixture{fake: fake, enroll: mcpEnroll()}
+	return &enrollFixture{fake: fake, enroll: mcpEnroll}
 }
 
 func (f *enrollFixture) run(t *testing.T, principal string, values map[string]string) (oauth.EnrollResult, error) {
