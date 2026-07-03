@@ -35,11 +35,11 @@ func registerUpdateEstimate(parent *cobra.Command) {
 				output.HandleGraphQLError(err)
 			}
 
-			cfg := estimates.BuildConfig(
-				teamDetail.Team.IssueEstimationType,
-				teamDetail.Team.IssueEstimationAllowZero,
-				teamDetail.Team.IssueEstimationExtended,
-			)
+			cfg := estimates.Config{
+				Type:      teamDetail.Team.IssueEstimationType,
+				AllowZero: teamDetail.Team.IssueEstimationAllowZero,
+				Extended:  teamDetail.Team.IssueEstimationExtended,
+			}
 			if validateErr := estimates.Validate(cfg, est); validateErr != nil {
 				output.PrintError(validateErr.Error())
 			}

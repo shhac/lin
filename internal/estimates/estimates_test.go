@@ -7,28 +7,28 @@ import (
 
 func TestValidEstimates_Exponential(t *testing.T) {
 	t.Run("base", func(t *testing.T) {
-		cfg := BuildConfig("exponential", false, false)
+		cfg := Config{Type: "exponential"}
 		got := ValidEstimates(cfg)
 		want := []int{1, 2, 4, 8, 16}
 		assertIntSlice(t, got, want)
 	})
 
 	t.Run("with zero", func(t *testing.T) {
-		cfg := BuildConfig("exponential", true, false)
+		cfg := Config{Type: "exponential", AllowZero: true}
 		got := ValidEstimates(cfg)
 		want := []int{0, 1, 2, 4, 8, 16}
 		assertIntSlice(t, got, want)
 	})
 
 	t.Run("extended", func(t *testing.T) {
-		cfg := BuildConfig("exponential", false, true)
+		cfg := Config{Type: "exponential", Extended: true}
 		got := ValidEstimates(cfg)
 		want := []int{1, 2, 4, 8, 16, 32, 64}
 		assertIntSlice(t, got, want)
 	})
 
 	t.Run("zero and extended", func(t *testing.T) {
-		cfg := BuildConfig("exponential", true, true)
+		cfg := Config{Type: "exponential", AllowZero: true, Extended: true}
 		got := ValidEstimates(cfg)
 		want := []int{0, 1, 2, 4, 8, 16, 32, 64}
 		assertIntSlice(t, got, want)
@@ -37,14 +37,14 @@ func TestValidEstimates_Exponential(t *testing.T) {
 
 func TestValidEstimates_Fibonacci(t *testing.T) {
 	t.Run("base", func(t *testing.T) {
-		cfg := BuildConfig("fibonacci", false, false)
+		cfg := Config{Type: "fibonacci"}
 		got := ValidEstimates(cfg)
 		want := []int{1, 2, 3, 5, 8, 13}
 		assertIntSlice(t, got, want)
 	})
 
 	t.Run("extended", func(t *testing.T) {
-		cfg := BuildConfig("fibonacci", false, true)
+		cfg := Config{Type: "fibonacci", Extended: true}
 		got := ValidEstimates(cfg)
 		want := []int{1, 2, 3, 5, 8, 13, 21, 34}
 		assertIntSlice(t, got, want)
@@ -53,14 +53,14 @@ func TestValidEstimates_Fibonacci(t *testing.T) {
 
 func TestValidEstimates_Linear(t *testing.T) {
 	t.Run("base", func(t *testing.T) {
-		cfg := BuildConfig("linear", false, false)
+		cfg := Config{Type: "linear"}
 		got := ValidEstimates(cfg)
 		want := []int{1, 2, 3, 4, 5}
 		assertIntSlice(t, got, want)
 	})
 
 	t.Run("extended", func(t *testing.T) {
-		cfg := BuildConfig("linear", false, true)
+		cfg := Config{Type: "linear", Extended: true}
 		got := ValidEstimates(cfg)
 		want := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
 		assertIntSlice(t, got, want)
@@ -69,14 +69,14 @@ func TestValidEstimates_Linear(t *testing.T) {
 
 func TestValidEstimates_TShirt(t *testing.T) {
 	t.Run("base", func(t *testing.T) {
-		cfg := BuildConfig("tShirt", false, false)
+		cfg := Config{Type: "tShirt"}
 		got := ValidEstimates(cfg)
 		want := []int{1, 2, 3, 4, 5}
 		assertIntSlice(t, got, want)
 	})
 
 	t.Run("extended", func(t *testing.T) {
-		cfg := BuildConfig("tShirt", false, true)
+		cfg := Config{Type: "tShirt", Extended: true}
 		got := ValidEstimates(cfg)
 		want := []int{1, 2, 3, 4, 5, 6}
 		assertIntSlice(t, got, want)
@@ -84,7 +84,7 @@ func TestValidEstimates_TShirt(t *testing.T) {
 }
 
 func TestValidEstimates_UnknownScale(t *testing.T) {
-	cfg := BuildConfig("unknown", false, false)
+	cfg := Config{Type: "unknown"}
 	got := ValidEstimates(cfg)
 	if got != nil {
 		t.Errorf("expected nil for unknown scale, got %v", got)
@@ -92,7 +92,7 @@ func TestValidEstimates_UnknownScale(t *testing.T) {
 }
 
 func TestValidate_Valid(t *testing.T) {
-	cfg := BuildConfig("fibonacci", false, false)
+	cfg := Config{Type: "fibonacci"}
 	for _, v := range []int{1, 2, 3, 5, 8, 13} {
 		if err := Validate(cfg, v); err != nil {
 			t.Errorf("Validate(%d) unexpected error: %v", v, err)
@@ -101,7 +101,7 @@ func TestValidate_Valid(t *testing.T) {
 }
 
 func TestValidate_Invalid(t *testing.T) {
-	cfg := BuildConfig("fibonacci", false, false)
+	cfg := Config{Type: "fibonacci"}
 	err := Validate(cfg, 7)
 	if err == nil {
 		t.Fatal("expected error for invalid estimate")
@@ -112,7 +112,7 @@ func TestValidate_Invalid(t *testing.T) {
 }
 
 func TestValidate_NotUsed(t *testing.T) {
-	cfg := BuildConfig("notUsed", false, false)
+	cfg := Config{Type: "notUsed"}
 	err := Validate(cfg, 1)
 	if err == nil {
 		t.Fatal("expected error for notUsed team")
@@ -123,7 +123,7 @@ func TestValidate_NotUsed(t *testing.T) {
 }
 
 func TestValidate_ZeroNotAllowed(t *testing.T) {
-	cfg := BuildConfig("linear", false, false)
+	cfg := Config{Type: "linear"}
 	err := Validate(cfg, 0)
 	if err == nil {
 		t.Fatal("expected error for zero when not allowed")
@@ -131,7 +131,7 @@ func TestValidate_ZeroNotAllowed(t *testing.T) {
 }
 
 func TestValidate_ZeroAllowed(t *testing.T) {
-	cfg := BuildConfig("linear", true, false)
+	cfg := Config{Type: "linear", AllowZero: true}
 	if err := Validate(cfg, 0); err != nil {
 		t.Errorf("unexpected error when zero is allowed: %v", err)
 	}

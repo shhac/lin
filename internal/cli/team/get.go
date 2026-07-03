@@ -34,7 +34,7 @@ func registerGet(team *cobra.Command) {
 				var validValues []int
 				var display *string
 				if t.IssueEstimationType != "notUsed" {
-					cfg := estimates.BuildConfig(t.IssueEstimationType, t.IssueEstimationAllowZero, t.IssueEstimationExtended)
+					cfg := estimates.Config{Type: t.IssueEstimationType, AllowZero: t.IssueEstimationAllowZero, Extended: t.IssueEstimationExtended}
 					validValues = estimates.ValidEstimates(cfg)
 					d := estimates.FormatScale(t.IssueEstimationType, validValues)
 					display = &d

@@ -27,10 +27,6 @@ var tShirtLabels = map[int]string{
 	0: "None", 1: "XS", 2: "S", 3: "M", 4: "L", 5: "XL", 6: "XXL",
 }
 
-func BuildConfig(estimationType string, allowZero, extended bool) Config {
-	return Config{Type: estimationType, AllowZero: allowZero, Extended: extended}
-}
-
 func ValidEstimates(cfg Config) []int {
 	s, ok := scales[cfg.Type]
 	if !ok {
