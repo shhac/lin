@@ -32,6 +32,24 @@ func GetEntities(args []string, getOne func(client graphql.Client, id string) (a
 	})
 }
 
+// RunGet is the standard get entrypoint for a domain that has a pretty card
+// renderer: it dispatches to GetEntitiesPretty when --format pretty is active
+// (casting each fetched item to the map[string]any the renderer expects) and to
+// GetEntities otherwise. Commands with a bespoke pretty path (e.g. issue's
+// --full sections) call the two entrypoints directly instead.
+func RunGet(
+	args []string,
+	getOne func(client graphql.Client, id string) (any, error),
+	render func(d map[string]any, opts pretty.Options) string,
+) error {
+	if output.WantsPretty() {
+		return GetEntitiesPretty(args, getOne, func(item any, opts pretty.Options) string {
+			return render(item.(map[string]any), opts)
+		})
+	}
+	return GetEntities(args, getOne)
+}
+
 // GetEntitiesPretty is the --format pretty counterpart to GetEntities: it
 // fetches each id with the same getOne, then renders a human-readable card via
 // render, stacking multiple cards with a full-width rule between them. Item-level

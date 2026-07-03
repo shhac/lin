@@ -11,7 +11,6 @@ import (
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
-	"github.com/shhac/lin/internal/output/pretty"
 	"github.com/shhac/lin/internal/resolvers"
 )
 
@@ -33,12 +32,7 @@ func registerGet(parent *cobra.Command) {
 				}
 				return mappers.MapDocumentDetail(resp.Document), nil
 			}
-			if output.WantsPretty() {
-				return shared.GetEntitiesPretty(args, getOne, func(item any, opts pretty.Options) string {
-					return renderDocumentCard(item.(map[string]any), opts)
-				})
-			}
-			return shared.GetEntities(args, getOne)
+			return shared.RunGet(args, getOne, renderDocumentCard)
 		},
 	}
 	output.AllowPretty(cmd)
