@@ -81,11 +81,20 @@ func ClientWithKey(apiKey string) graphql.Client {
 	return graphql.NewClient(endpointURL(), httpClient(apiKey))
 }
 
+// GetClientAndKey returns a genqlient client together with the resolved API key
+// it is authenticated with, resolving the key once. Use it when the caller also
+// needs the raw key (e.g. file downloads issue their own authenticated HTTP
+// request). Exits with a JSON error if no key is available.
+func GetClientAndKey() (graphql.Client, string) {
+	apiKey := mustResolveAPIKey()
+	return graphql.NewClient(endpointURL(), httpClient(apiKey)), apiKey
+}
+
 // GetClient returns a genqlient GraphQL client authenticated with the
 // resolved API key. Exits with a JSON error if no key is available.
 func GetClient() graphql.Client {
-	apiKey := mustResolveAPIKey()
-	return graphql.NewClient(endpointURL(), httpClient(apiKey))
+	client, _ := GetClientAndKey()
+	return client
 }
 
 // GetRawClient returns our custom Client for raw GraphQL queries.

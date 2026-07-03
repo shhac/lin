@@ -8,7 +8,6 @@ import (
 
 	"github.com/shhac/lin/internal/cli/shared"
 	"github.com/shhac/lin/internal/config"
-	"github.com/shhac/lin/internal/credential"
 	dl "github.com/shhac/lin/internal/download"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
@@ -59,14 +58,7 @@ func registerDownload(parent *cobra.Command) {
 		Short: "Download a file from Linear",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			client := linear.GetClient()
-			apiKey, err := credential.ResolveForClient()
-			if err != nil {
-				output.WriteError(err)
-			}
-			if apiKey == "" {
-				output.PrintError("Not authenticated. Run: lin auth login")
-			}
+			client, apiKey := linear.GetClientAndKey()
 
 			orgID, err := dl.GetOrgID(client)
 			if err != nil {
