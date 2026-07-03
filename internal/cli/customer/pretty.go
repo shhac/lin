@@ -66,15 +66,24 @@ func customerStatusType(name string) string {
 	}
 }
 
-// joinAny renders a []any of scalars as a " · "-separated list.
+// joinAny renders a slice of scalars as a " · "-separated list. It accepts the
+// mapper's native []string as well as the []any shape a JSON round-trip yields,
+// so it works whether the card renders the raw map or a decoded one.
 func joinAny(v any) string {
-	items, ok := v.([]any)
-	if !ok || len(items) == 0 {
+	var parts []string
+	switch items := v.(type) {
+	case []string:
+		parts = items
+	case []any:
+		parts = make([]string, len(items))
+		for i, it := range items {
+			parts[i] = fmt.Sprintf("%v", it)
+		}
+	default:
 		return ""
 	}
-	parts := make([]string, len(items))
-	for i, it := range items {
-		parts[i] = fmt.Sprintf("%v", it)
+	if len(parts) == 0 {
+		return ""
 	}
 	return strings.Join(parts, " · ")
 }

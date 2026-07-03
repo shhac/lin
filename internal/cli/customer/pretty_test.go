@@ -77,3 +77,44 @@ func TestRenderCustomerCardColorParity(t *testing.T) {
 		t.Errorf("colored visible text differs from plain:\n--- stripped ---\n%s\n--- plain ---\n%s", stripANSI(colored), plain)
 	}
 }
+
+// renderCustomerCard reads the raw mapper map (no JSON round-trip), so domains
+// and externalIds arrive as the mapper's native []string. This guards against
+// joinAny only handling the post-JSON []any shape.
+func TestRenderCustomerCard_NativeStringSlices(t *testing.T) {
+	d := map[string]any{
+		"name":        "Acme Corp",
+		"url":         "https://linear.app/acme/customer/acme",
+		"status":      map[string]any{"id": "s1", "name": "Active"},
+		"domains":     []string{"acme.example", "acme.test"},
+		"externalIds": []string{"sf-123"},
+	}
+	got := renderCustomerCard(d, testOpts(74))
+	flat := strings.Join(strings.Fields(got), " ")
+	for _, sub := range []string{"Acme Corp", "Domains acme.example · acme.test", "External sf-123"} {
+		if !strings.Contains(flat, sub) {
+			t.Errorf("customer card missing %q in:\n%s", sub, got)
+		}
+	}
+}
+
+func TestJoinAny(t *testing.T) {
+	cases := []struct {
+		name string
+		in   any
+		want string
+	}{
+		{"native []string", []string{"a", "b"}, "a · b"},
+		{"json []any", []any{"a", "b"}, "a · b"},
+		{"empty []string", []string{}, ""},
+		{"non-slice", "nope", ""},
+		{"nil", nil, ""},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			if got := joinAny(tc.in); got != tc.want {
+				t.Errorf("joinAny(%v) = %q, want %q", tc.in, got, tc.want)
+			}
+		})
+	}
+}
