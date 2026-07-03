@@ -15,6 +15,51 @@ type InitiativeSummaryInput struct {
 	OwnerName  *string
 }
 
+// MapInitiativeDetail builds the output map for an initiative get command.
+func MapInitiativeDetail(i linear.InitiativeGetInitiative) map[string]any {
+	var owner any
+	if i.Owner != nil {
+		owner = map[string]any{
+			"id":   i.Owner.Id,
+			"name": i.Owner.Name,
+		}
+	}
+
+	result := map[string]any{
+		"id":     i.Id,
+		"slugId": i.SlugId,
+		"url":    i.Url,
+		"name":   i.Name,
+		"status": i.Status,
+		"owner":  owner,
+		"creator": map[string]any{
+			"id":   i.Creator.Id,
+			"name": i.Creator.Name,
+		},
+		"createdAt": i.CreatedAt,
+		"updatedAt": i.UpdatedAt,
+	}
+	if i.Description != nil {
+		result["description"] = *i.Description
+	}
+	if i.Content != nil {
+		result["content"] = *i.Content
+	}
+	if i.Health != nil {
+		result["health"] = *i.Health
+	}
+	if i.TargetDate != nil {
+		result["targetDate"] = *i.TargetDate
+	}
+	if i.StartedAt != nil {
+		result["startedAt"] = *i.StartedAt
+	}
+	if i.CompletedAt != nil {
+		result["completedAt"] = *i.CompletedAt
+	}
+	return result
+}
+
 // FromInitiativeListFields converts a genqlient InitiativeList node into an InitiativeSummaryInput.
 func FromInitiativeListFields(n linear.InitiativeListInitiativesInitiativeConnectionNodesInitiative) InitiativeSummaryInput {
 	input := InitiativeSummaryInput{

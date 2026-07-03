@@ -33,6 +33,42 @@ func MapDocSummary(s DocSummaryInput) map[string]any {
 	return m
 }
 
+// MapDocumentDetail builds the output map for a document get command.
+func MapDocumentDetail(d linear.DocumentGetDocument) map[string]any {
+	result := map[string]any{
+		"id":        d.Id,
+		"slugId":    d.SlugId,
+		"title":     d.Title,
+		"content":   d.Content,
+		"url":       d.Url,
+		"icon":      d.Icon,
+		"color":     d.Color,
+		"createdAt": d.CreatedAt,
+		"updatedAt": d.UpdatedAt,
+	}
+
+	if d.Project != nil {
+		result["project"] = map[string]any{
+			"id":     d.Project.Id,
+			"name":   d.Project.Name,
+			"slugId": d.Project.SlugId,
+		}
+	}
+	if d.Creator != nil {
+		result["creator"] = map[string]any{
+			"id":   d.Creator.Id,
+			"name": d.Creator.Name,
+		}
+	}
+	if d.UpdatedBy != nil {
+		result["updatedBy"] = map[string]any{
+			"id":   d.UpdatedBy.Id,
+			"name": d.UpdatedBy.Name,
+		}
+	}
+	return result
+}
+
 // FromDocSummaryFields converts the genqlient DocSummaryFields fragment
 // (used by DocumentList) into a DocSummaryInput.
 func FromDocSummaryFields(f linear.DocSummaryFields) DocSummaryInput {

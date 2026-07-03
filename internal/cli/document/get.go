@@ -9,6 +9,7 @@ import (
 	"github.com/shhac/lin/internal/cli/shared"
 	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
+	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
 	"github.com/shhac/lin/internal/output/pretty"
 	"github.com/shhac/lin/internal/resolvers"
@@ -30,40 +31,7 @@ func registerGet(parent *cobra.Command) {
 				if err != nil {
 					return nil, apierrors.ClassifyGraphQLError(err)
 				}
-
-				d := resp.Document
-				result := map[string]any{
-					"id":        d.Id,
-					"slugId":    d.SlugId,
-					"title":     d.Title,
-					"content":   d.Content,
-					"url":       d.Url,
-					"icon":      d.Icon,
-					"color":     d.Color,
-					"createdAt": d.CreatedAt,
-					"updatedAt": d.UpdatedAt,
-				}
-
-				if d.Project != nil {
-					result["project"] = map[string]any{
-						"id":     d.Project.Id,
-						"name":   d.Project.Name,
-						"slugId": d.Project.SlugId,
-					}
-				}
-				if d.Creator != nil {
-					result["creator"] = map[string]any{
-						"id":   d.Creator.Id,
-						"name": d.Creator.Name,
-					}
-				}
-				if d.UpdatedBy != nil {
-					result["updatedBy"] = map[string]any{
-						"id":   d.UpdatedBy.Id,
-						"name": d.UpdatedBy.Name,
-					}
-				}
-				return result, nil
+				return mappers.MapDocumentDetail(resp.Document), nil
 			}
 			if output.WantsPretty() {
 				return shared.GetEntitiesPretty(args, getOne, func(item any, opts pretty.Options) string {

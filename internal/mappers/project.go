@@ -34,6 +34,47 @@ func MapProjectSummary(s ProjectSummaryInput) map[string]any {
 	return m
 }
 
+// MapProjectDetail builds the output map for a project get command.
+func MapProjectDetail(p linear.ProjectGetProject) map[string]any {
+	result := map[string]any{
+		"id":          p.Id,
+		"slugId":      p.SlugId,
+		"url":         p.Url,
+		"name":        p.Name,
+		"description": p.Description,
+		"content":     p.Content,
+		"status":      p.State,
+		"progress":    p.Progress,
+		"startDate":   p.StartDate,
+		"targetDate":  p.TargetDate,
+	}
+
+	if p.Lead != nil {
+		result["lead"] = map[string]any{
+			"id":   p.Lead.Id,
+			"name": p.Lead.Name,
+		}
+	}
+
+	labels := make([]map[string]any, len(p.Labels.Nodes))
+	for i, l := range p.Labels.Nodes {
+		labels[i] = map[string]any{"id": l.Id, "name": l.Name}
+	}
+	result["labels"] = labels
+
+	milestones := make([]map[string]any, len(p.ProjectMilestones.Nodes))
+	for i, m := range p.ProjectMilestones.Nodes {
+		milestones[i] = map[string]any{
+			"id":         m.Id,
+			"name":       m.Name,
+			"targetDate": m.TargetDate,
+		}
+	}
+	result["milestones"] = milestones
+
+	return result
+}
+
 // FromProjectSummaryFields converts the genqlient ProjectSummaryFields fragment
 // (used by ProjectList, InitiativeProjects) into a ProjectSummaryInput.
 func FromProjectSummaryFields(f linear.ProjectSummaryFields) ProjectSummaryInput {
