@@ -60,7 +60,10 @@ func registerDownload(parent *cobra.Command) {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			client := linear.GetClient()
-			apiKey := credential.Resolve()
+			apiKey, err := credential.ResolveForClient()
+			if err != nil {
+				output.WriteError(err)
+			}
 			if apiKey == "" {
 				output.PrintError("Not authenticated. Run: lin auth login")
 			}

@@ -13,6 +13,10 @@ type Workspace struct {
 	APIKey string `json:"api_key"`
 	Name   string `json:"name,omitempty"`
 	URLKey string `json:"urlKey,omitempty"`
+	// OrgID is the Linear organization id this workspace's key resolves to. It
+	// is the strongest identity anchor for MCP enrollment convergence (urlKey
+	// can be renamed); recorded when known, empty for legacy logins.
+	OrgID string `json:"orgId,omitempty"`
 }
 
 type TruncationSettings struct {

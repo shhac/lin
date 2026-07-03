@@ -62,11 +62,23 @@ func httpClient(apiKey string) *http.Client {
 }
 
 func mustResolveAPIKey() string {
-	apiKey := credential.Resolve()
+	apiKey, err := credential.ResolveForClient()
+	if err != nil {
+		output.WriteError(err)
+	}
 	if apiKey == "" {
 		output.PrintError("Not authenticated. Run `lin auth login` to connect your Linear workspace.")
 	}
 	return apiKey
+}
+
+// ClientWithKey returns a GraphQL client authenticated with an explicit API key
+// against the configured endpoint. Used by flows that must validate a key
+// before it is stored — MCP credential enrollment — where the key is not yet
+// resolvable from the store. Honors the linear.Configure base-URL override so
+// tests can point it at a fake endpoint.
+func ClientWithKey(apiKey string) graphql.Client {
+	return graphql.NewClient(endpointURL(), httpClient(apiKey))
 }
 
 // GetClient returns a genqlient GraphQL client authenticated with the

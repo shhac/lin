@@ -24,6 +24,7 @@ import (
 	"github.com/shhac/lin/internal/cli/usage"
 	"github.com/shhac/lin/internal/cli/user"
 	"github.com/shhac/lin/internal/config"
+	"github.com/shhac/lin/internal/credential"
 	"github.com/shhac/lin/internal/credential/keychain"
 	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
@@ -40,10 +41,11 @@ import (
 type GlobalFlags struct {
 	libcli.Globals // Format, TimeoutMS, Debug
 
-	Expand  string
-	Full    bool
-	Width   int    // --format pretty card width (0 = auto-detect)
-	BaseURL string // hidden; overrides the Linear API base URL for tests
+	Expand    string
+	Full      bool
+	Width     int    // --format pretty card width (0 = auto-detect)
+	Workspace string // --workspace: act as a specific stored workspace alias
+	BaseURL   string // hidden; overrides the Linear API base URL for tests
 }
 
 func newRootCmd(version string) *cobra.Command {
@@ -68,6 +70,7 @@ func newRootCmd(version string) *cobra.Command {
 	pf.StringVarP(&g.Expand, "expand", "e", "", "Expand truncated fields (comma-separated: description,body,content)")
 	pf.BoolVarP(&g.Full, "full", "F", false, "Show full content for all truncated fields")
 	pf.IntVar(&g.Width, "width", 0, "Card width for --format pretty (0 = auto-detect terminal)")
+	pf.StringVar(&g.Workspace, "workspace", "", "Act as a specific stored workspace alias (overrides the default)")
 	pf.StringVar(&g.BaseURL, "base-url", "", "Linear API base URL override for tests")
 	_ = pf.MarkHidden("base-url")
 
@@ -109,6 +112,18 @@ func newRootCmd(version string) *cobra.Command {
 		agentmcp.WithHiddenFlags("color", "expose"),
 		agentmcp.WithFileRoots(xdg.Root("cache", config.CacheDir())),
 		agentmcp.WithOAuthKeyringService(keychain.MCPKeychainService()),
+		// Named principals (mcp pair add <name> --bind workspace=<alias>) get
+		// their tool calls pinned to that alias and run fail-closed.
+		agentmcp.WithIdentityBinding(mcpIdentityBinding),
+		// Deliberately no WithFileRootScope: lin's cache is not identity-
+		// namespaced, so the lib's default of hiding file roots from named
+		// principals is the safe behavior — an unscoped shared root would let one
+		// principal read another's downloads.
+		//
+		// A named principal minted without --bind enrolls their own Linear API
+		// key in the browser during the OAuth approval; the binding
+		// (workspace=<principal>) is written automatically on success.
+		agentmcp.WithCredentialEnrollment(mcpEnrollmentDescriptor(), mcpEnroll()),
 	))
 
 	return root
@@ -151,6 +166,10 @@ func applyConfigDefaults(root *cobra.Command, g *GlobalFlags) {
 	}
 	output.ConfigureFormat(g.Format)
 	output.ConfigureWidth(g.Width)
+
+	// Pin credential resolution to the --workspace selector for this invocation
+	// (empty restores the default-workspace behavior).
+	credential.SetSelectedWorkspace(g.Workspace)
 
 	timeout := g.TimeoutMS
 	if timeout == 0 && cfg.Settings != nil && cfg.Settings.Request != nil && cfg.Settings.Request.TimeoutMS != nil {
