@@ -4,6 +4,7 @@ import (
 	"context"
 	"strings"
 
+	"github.com/Khan/genqlient/graphql"
 	"github.com/spf13/cobra"
 
 	"github.com/shhac/lin/internal/linear"
@@ -12,81 +13,35 @@ import (
 	"github.com/shhac/lin/internal/resolvers"
 )
 
+// newProjectOpts collects the flag-bound values for `lin project new`.
+type newProjectOpts struct {
+	Name        string
+	Team        string
+	Description string
+	Lead        string
+	StartDate   string
+	TargetDate  string
+	Status      string
+	Content     string
+}
+
 func registerNew(parent *cobra.Command) {
-	var (
-		team        string
-		description string
-		lead        string
-		startDate   string
-		targetDate  string
-		status      string
-		content     string
-	)
+	var opts newProjectOpts
 
 	cmd := &cobra.Command{
 		Use:   "new <name>",
 		Short: "Create a new project",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		Run: func(_ *cobra.Command, args []string) {
+			opts.Name = args[0]
+
 			client := linear.GetClient()
-			ctx := context.Background()
-			name := args[0]
-
-			if status != "" {
-				normalized, err := projectstatuses.Validate(status)
-				if err != nil {
-					output.PrintError(err.Error())
-				}
-				status = normalized
+			input, err := buildProjectCreateInput(client, opts)
+			if err != nil {
+				output.PrintError(err.Error())
 			}
 
-			var leadId *string
-			if lead != "" {
-				u, err := resolvers.ResolveUser(client, lead)
-				if err != nil {
-					output.PrintError(err.Error())
-				}
-				leadId = &u.ID
-			}
-
-			parts := strings.Split(team, ",")
-			teamIds := make([]string, 0, len(parts))
-			for _, p := range parts {
-				p = strings.TrimSpace(p)
-				if p == "" {
-					continue
-				}
-				t, err := resolvers.ResolveTeam(client, p)
-				if err != nil {
-					output.PrintError(err.Error())
-				}
-				teamIds = append(teamIds, t.ID)
-			}
-
-			input := linear.ProjectCreateInput{
-				Name:    name,
-				TeamIds: teamIds,
-			}
-			if description != "" {
-				input.Description = &description
-			}
-			if leadId != nil {
-				input.LeadId = leadId
-			}
-			if startDate != "" {
-				input.StartDate = &startDate
-			}
-			if targetDate != "" {
-				input.TargetDate = &targetDate
-			}
-			if status != "" {
-				input.State = &status
-			}
-			if content != "" {
-				input.Content = &content
-			}
-
-			resp, err := linear.ProjectCreate(ctx, client, input)
+			resp, err := linear.ProjectCreate(context.Background(), client, input)
 			if err != nil {
 				output.HandleGraphQLError(err)
 			}
@@ -106,13 +61,74 @@ func registerNew(parent *cobra.Command) {
 		},
 	}
 
-	cmd.Flags().StringVar(&team, "team", "", "Team ID(s) or key(s), comma-separated")
+	cmd.Flags().StringVar(&opts.Team, "team", "", "Team ID(s) or key(s), comma-separated")
 	_ = cmd.MarkFlagRequired("team")
-	cmd.Flags().StringVar(&description, "description", "", "Project description")
-	cmd.Flags().StringVar(&lead, "lead", "", "Project lead: name, email, or user ID")
-	cmd.Flags().StringVar(&startDate, "start-date", "", "Start date (YYYY-MM-DD)")
-	cmd.Flags().StringVar(&targetDate, "target-date", "", "Target date (YYYY-MM-DD)")
-	cmd.Flags().StringVar(&status, "status", "", "Status: backlog|planned|started|paused|completed|canceled")
-	cmd.Flags().StringVar(&content, "content", "", "Project content body (markdown)")
+	cmd.Flags().StringVar(&opts.Description, "description", "", "Project description")
+	cmd.Flags().StringVar(&opts.Lead, "lead", "", "Project lead: name, email, or user ID")
+	cmd.Flags().StringVar(&opts.StartDate, "start-date", "", "Start date (YYYY-MM-DD)")
+	cmd.Flags().StringVar(&opts.TargetDate, "target-date", "", "Target date (YYYY-MM-DD)")
+	cmd.Flags().StringVar(&opts.Status, "status", "", "Status: backlog|planned|started|paused|completed|canceled")
+	cmd.Flags().StringVar(&opts.Content, "content", "", "Project content body (markdown)")
 	parent.AddCommand(cmd)
+}
+
+// buildProjectCreateInput resolves human-friendly flag values to Linear IDs and
+// returns the GraphQL input. Any user-input error short-circuits with a
+// descriptive message; resolver errors propagate up unchanged.
+func buildProjectCreateInput(client graphql.Client, opts newProjectOpts) (linear.ProjectCreateInput, error) {
+	teamIds, err := resolveTeamIDs(client, opts.Team)
+	if err != nil {
+		return linear.ProjectCreateInput{}, err
+	}
+
+	input := linear.ProjectCreateInput{
+		Name:    opts.Name,
+		TeamIds: teamIds,
+	}
+	if opts.Description != "" {
+		input.Description = &opts.Description
+	}
+	if opts.Lead != "" {
+		u, err := resolvers.ResolveUser(client, opts.Lead)
+		if err != nil {
+			return linear.ProjectCreateInput{}, err
+		}
+		input.LeadId = &u.ID
+	}
+	if opts.StartDate != "" {
+		input.StartDate = &opts.StartDate
+	}
+	if opts.TargetDate != "" {
+		input.TargetDate = &opts.TargetDate
+	}
+	if opts.Status != "" {
+		normalized, err := projectstatuses.Validate(opts.Status)
+		if err != nil {
+			return linear.ProjectCreateInput{}, err
+		}
+		input.State = &normalized
+	}
+	if opts.Content != "" {
+		input.Content = &opts.Content
+	}
+	return input, nil
+}
+
+// resolveTeamIDs resolves a comma-separated list of team keys/IDs/names to their
+// Linear team IDs, skipping blank entries. Any resolver error short-circuits.
+func resolveTeamIDs(client graphql.Client, csv string) ([]string, error) {
+	parts := strings.Split(csv, ",")
+	teamIds := make([]string, 0, len(parts))
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p == "" {
+			continue
+		}
+		t, err := resolvers.ResolveTeam(client, p)
+		if err != nil {
+			return nil, err
+		}
+		teamIds = append(teamIds, t.ID)
+	}
+	return teamIds, nil
 }
