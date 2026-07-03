@@ -57,13 +57,25 @@ func resolveSelector(alias string) (string, error) {
 	if !ok {
 		return "", unknownWorkspaceError(alias, cfg)
 	}
+	key, _ := workspaceKey(alias, ws)
+	return key, nil
+}
+
+// workspaceKey decodes a stored workspace record into its API key and source
+// ("keychain" or "config"). A keychain placeholder that misses (secret gone or
+// unreadable) returns an empty key — never a fallback to another source, so a
+// caller naming this alias gets that identity or nothing.
+func workspaceKey(alias string, ws config.Workspace) (key, source string) {
 	if ws.APIKey == keychainPlaceholder {
-		if key, err := keychain.Get(alias); err == nil && key != "" {
-			return key, nil
+		if k, err := keychain.Get(alias); err == nil && k != "" {
+			return k, "keychain"
 		}
-		return "", nil
+		return "", ""
 	}
-	return ws.APIKey, nil
+	if ws.APIKey != "" {
+		return ws.APIKey, "config"
+	}
+	return "", ""
 }
 
 func unknownWorkspaceError(alias string, cfg *config.Config) error {
@@ -142,15 +154,9 @@ func resolve() *resolved {
 		return legacy()
 	}
 
-	if workspace.APIKey == keychainPlaceholder {
-		if key, err := keychain.Get(ws); err == nil && key != "" {
-			return &resolved{key: key, source: "keychain"}
-		}
+	key, source := workspaceKey(ws, workspace)
+	if key == "" {
 		return nil
 	}
-	if workspace.APIKey != "" {
-		return &resolved{key: workspace.APIKey, source: "config"}
-	}
-
-	return nil
+	return &resolved{key: key, source: source}
 }
