@@ -61,7 +61,7 @@ func newRootCmd(version string) *cobra.Command {
 		UnknownHint:   "run 'lin usage' for full documentation",
 		// lin's config-aware per-run setup runs in the ConfigDefaults hook, which
 		// NewRoot invokes (before --format validation) on every command.
-		ConfigDefaults: func() { applyConfigDefaults(root, g) },
+		ConfigDefaults: func(_ *cobra.Command) { applyConfigDefaults(root, g) },
 	})
 
 	// NewRoot binds the shared flags (--format/--timeout/--debug/--color) via
