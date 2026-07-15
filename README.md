@@ -18,10 +18,10 @@ brew install shhac/tap/lin
 ### Claude Code / AI agent skill
 
 ```bash
-npx skills add shhac/lin
+npx skills add shhac/agent-skills --skill lin --global
 ```
 
-This installs the `lin` skill so Claude Code (and other AI agents) can discover and use `lin` automatically. See [skills.sh](https://skills.sh) for details.
+Installs the `lin` skill globally so Claude Code (and other AI agents) can discover and use it automatically. It ships from [`shhac/agent-skills`](https://github.com/shhac/agent-skills) — the whole family's skills in one repo, so `npx skills update` checks a single source no matter how many you use. Want several at once? Run `npx skills add shhac/agent-skills --global` and pick from the list.
 
 ## Authentication
 
