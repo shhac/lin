@@ -5,9 +5,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	agentmcp "github.com/shhac/lib-agent-mcp"
 	libcli "github.com/shhac/lib-agent-cli/cli"
 	"github.com/shhac/lib-agent-cli/xdg"
+	agentmcp "github.com/shhac/lib-agent-mcp"
 
 	"github.com/shhac/lin/internal/cli/api"
 	"github.com/shhac/lin/internal/cli/auth"

@@ -3,11 +3,11 @@ package configcmd
 import (
 	"fmt"
 
-	"github.com/spf13/cobra"
 	libcli "github.com/shhac/lib-agent-cli/cli"
-	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/config"
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/output"
+	"github.com/spf13/cobra"
 )
 
 func registerGet(cfg *cobra.Command) {
