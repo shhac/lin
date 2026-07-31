@@ -6,7 +6,7 @@ require (
 	github.com/Khan/genqlient v0.8.1
 	github.com/shhac/lib-agent-cli v0.20.0
 	github.com/shhac/lib-agent-mcp v0.21.1
-	github.com/shhac/lib-agent-output v0.10.0
+	github.com/shhac/lib-agent-output v0.12.0
 	github.com/spf13/cobra v1.10.2
 	github.com/vektah/gqlparser/v2 v2.5.19
 	golang.org/x/term v0.42.0
