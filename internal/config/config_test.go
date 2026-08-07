@@ -2,8 +2,10 @@ package config
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 	"testing"
 )
 
@@ -271,6 +273,59 @@ func TestGetWorkspaces(t *testing.T) {
 	}
 }
 
+// Concurrent StoreLogin calls must not lose each other's workspaces.
+//
+// Read()→mutate→Write() used to be unlocked: two concurrent processes (or, as
+// exercised here, goroutines) each built their write from a snapshot taken
+// before the other landed, so the loser's workspace silently vanished from
+// config.json — and because a workspace's API key can live only in the OS
+// keychain (a placeholder is all config.json holds in that case), a lost
+// workspace entry stranded a live secret that nothing referenced anymore.
+// Mirrors the family's other concurrency regression tests
+// (agent-fathom/internal/credential.TestConcurrentStoresDoNotLoseEntries,
+// agent-vercel/internal/credential.TestConcurrentUpsertsDoNotLoseCredentials).
+//
+// LIN_NO_KEYCHAIN forces the deterministic file-fallback path so this exercises
+// config.json's own locking rather than the OS keychain's.
+func TestConcurrentStoreLoginDoesNotLoseWorkspaces(t *testing.T) {
+	t.Setenv("LIN_NO_KEYCHAIN", "1")
+	SetConfigDir(t.TempDir())
+	defer SetConfigDir("")
+
+	const writers = 20
+	var wg sync.WaitGroup
+	for i := range writers {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			alias := fmt.Sprintf("ws-%02d", i)
+			key := fmt.Sprintf("key-%02d", i)
+			if err := StoreLogin(alias, Workspace{APIKey: key}); err != nil {
+				t.Errorf("StoreLogin(%s): %v", alias, err)
+			}
+		}(i)
+	}
+	wg.Wait()
+
+	ClearCache()
+	got := GetWorkspaces()
+	if len(got) != writers {
+		t.Fatalf("%d of %d concurrent workspaces survived — updates were lost", len(got), writers)
+	}
+	for i := range writers {
+		alias := fmt.Sprintf("ws-%02d", i)
+		want := fmt.Sprintf("key-%02d", i)
+		ws, ok := got[alias]
+		if !ok {
+			t.Errorf("%s missing after concurrent StoreLogin — its update was lost", alias)
+			continue
+		}
+		if ws.APIKey != want {
+			t.Errorf("%s APIKey = %q, want %q", alias, ws.APIKey, want)
+		}
+	}
+}
+
 // --- settings.go tests ---
 
 func TestGetSettings_Empty(t *testing.T) {
@@ -345,5 +400,57 @@ func TestResetSettings(t *testing.T) {
 	}
 	if s.Pagination != nil {
 		t.Error("Pagination should be nil after reset")
+	}
+}
+
+// Concurrent UpdateSettings calls targeting DIFFERENT sub-fields must not
+// clobber each other. Settings isn't keyed like Workspaces, so the lost-update
+// race shows up differently here: two unlocked writers each read the config
+// before the other's write landed, so the second write's merge (cfg.Settings
+// already has Truncation set → keep it, apply Pagination) was applied to a
+// stale copy that never saw the first writer's change — the first writer's
+// field vanished even though its own UpdateSettings call reported success.
+func TestConcurrentUpdateSettingsAppliesAllFields(t *testing.T) {
+	SetConfigDir(t.TempDir())
+	defer SetConfigDir("")
+
+	maxLen := 1
+	pageSize := 2
+	timeoutMS := 3
+	partials := []*Settings{
+		{Truncation: &TruncationSettings{MaxLength: &maxLen}},
+		{Pagination: &PaginationSettings{DefaultPageSize: &pageSize}},
+		{Output: &OutputSettings{DefaultFormat: "json"}},
+		{Request: &RequestSettings{TimeoutMS: &timeoutMS}},
+	}
+
+	const rounds = 5
+	var wg sync.WaitGroup
+	for range rounds {
+		for _, partial := range partials {
+			wg.Add(1)
+			go func(partial *Settings) {
+				defer wg.Done()
+				if err := UpdateSettings(partial); err != nil {
+					t.Errorf("UpdateSettings: %v", err)
+				}
+			}(partial)
+		}
+	}
+	wg.Wait()
+
+	ClearCache()
+	s := GetSettings()
+	if s.Truncation == nil || s.Truncation.MaxLength == nil {
+		t.Error("Truncation was lost to a concurrent write on another field")
+	}
+	if s.Pagination == nil || s.Pagination.DefaultPageSize == nil {
+		t.Error("Pagination was lost to a concurrent write on another field")
+	}
+	if s.Output == nil || s.Output.DefaultFormat == "" {
+		t.Error("Output was lost to a concurrent write on another field")
+	}
+	if s.Request == nil || s.Request.TimeoutMS == nil {
+		t.Error("Request was lost to a concurrent write on another field")
 	}
 }
