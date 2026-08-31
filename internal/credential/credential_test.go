@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
 
@@ -21,14 +20,6 @@ import (
 // `security` CLI and its GUI prompt. Using LIN_NO_KEYCHAIN (not the family-wide
 // LIB_AGENT_NO_KEYCHAIN) also proves the lib's prefix derivation.
 func TestStoreLogin_Headless_FileFallback(t *testing.T) {
-	// On non-darwin platforms keychain.Store is a no-op that succeeds without
-	// touching the backend, so StoreLogin always writes the placeholder and the
-	// opt-out has nothing to bypass. The interesting path — opt-out forcing the
-	// file fallback that would otherwise hit the macOS `security` GUI prompt —
-	// only exists on darwin.
-	if runtime.GOOS != "darwin" {
-		t.Skip("keychain write path is darwin-only")
-	}
 	t.Setenv("LIN_NO_KEYCHAIN", "1")
 	t.Setenv("LINEAR_API_KEY", "")
 	dir := t.TempDir()

@@ -2,11 +2,17 @@
 // reverse-domain service. The exported funcs keep their historical
 // (string, error) / error signatures so callers in internal/credential and
 // internal/config don't change.
+//
+// Platform support and the LIN_NO_KEYCHAIN / LIB_AGENT_NO_KEYCHAIN opt-out are
+// the shared backend's job, not this wrapper's: it has a real store on macOS,
+// Linux and Windows, and reports itself unavailable elsewhere. Do not reinstate
+// a runtime.GOOS gate here — short-circuiting above the backend skips those
+// stores and, worse, turns "no keychain" into a silent successful no-op, which
+// makes StoreLogin swap a live secret for the placeholder and lose it.
 package keychain
 
 import (
 	"errors"
-	"runtime"
 
 	"github.com/shhac/lib-agent-cli/creds"
 )
@@ -23,11 +29,9 @@ func MCPKeychainService() string { return service + ".mcp" }
 // as an error (callers check `err == nil && key != ""`).
 var errNotFound = errors.New("keychain: entry not found")
 
-// Get retrieves a keychain entry. macOS only; returns "" on other platforms.
+// Get retrieves a keychain entry, reporting a miss — including a keychain that
+// is unavailable or opted out — as errNotFound.
 func Get(account string) (string, error) {
-	if runtime.GOOS != "darwin" {
-		return "", nil
-	}
 	v, ok := kc.Get(account)
 	if !ok {
 		return "", errNotFound
@@ -35,27 +39,19 @@ func Get(account string) (string, error) {
 	return v, nil
 }
 
-// Store saves a keychain entry. macOS only; no-op on other platforms.
+// Store saves a keychain entry. An unavailable keychain returns an error rather
+// than reporting a phantom success, so callers fall back to the file store.
 func Store(account, password string) error {
-	if runtime.GOOS != "darwin" {
-		return nil
-	}
 	return kc.Set(account, password)
 }
 
-// Delete removes a keychain entry. macOS only; no-op on other platforms.
+// Delete removes a keychain entry.
 func Delete(account string) error {
-	if runtime.GOOS != "darwin" {
-		return nil
-	}
 	return kc.Delete(account)
 }
 
 // DeleteAll removes every entry for the service, including orphans not tracked
-// in config. macOS only; no-op elsewhere.
+// in config.
 func DeleteAll() {
-	if runtime.GOOS != "darwin" {
-		return
-	}
 	_ = kc.DeleteAll()
 }
