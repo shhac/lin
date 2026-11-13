@@ -25,6 +25,7 @@ func TestResolveProject_DuplicateNamesAreAmbiguous(t *testing.T) {
 
 	_, err := ResolveProject(mock.Client(), "Roadmap")
 	assertAmbiguous(t, err, `ambiguous project: "Roadmap" matches 2 projects`, "aaa111", "bbb222", "use the slug ID or UUID")
+	assertFetchedMoreThanOne(t, mock, "ProjectList")
 }
 
 func TestResolveProject_SlugBeatsNameMatch(t *testing.T) {
@@ -63,6 +64,17 @@ func TestResolveCustomer_DuplicateNamesAreAmbiguous(t *testing.T) {
 
 	_, err := ResolveCustomer(mock.Client(), "acme")
 	assertAmbiguous(t, err, `ambiguous customer: "acme" matches 2 customers`, "acme-1", "acme-2")
+	assertFetchedMoreThanOne(t, mock, "CustomerList")
+}
+
+// The mock returns every node whatever "first" asks for, so the limit is
+// asserted directly: against Linear, first: 1 would hide the second match.
+func assertFetchedMoreThanOne(t *testing.T, mock *testutil.MockLinear, op string) {
+	t.Helper()
+	first, _ := mock.Variables(op)["first"].(float64)
+	if first <= 1 {
+		t.Errorf("%s requested first: %v; it must fetch more than one to detect a duplicate", op, first)
+	}
 }
 
 func TestResolveInitiative_DuplicateNamesAreAmbiguous(t *testing.T) {

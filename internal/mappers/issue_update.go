@@ -20,9 +20,7 @@ func MapIssueUpdateResult(issue linear.IssueUpdateResultFields) map[string]any {
 	}
 	if issue.Cycle != nil {
 		cycle := map[string]any{"id": issue.Cycle.Id, "number": issue.Cycle.Number}
-		if issue.Cycle.Name != nil {
-			cycle["name"] = *issue.Cycle.Name
-		}
+		setIfNotNil(cycle, "name", issue.Cycle.Name)
 		m["cycle"] = cycle
 	}
 	if issue.Parent != nil {
@@ -35,11 +33,7 @@ func MapIssueUpdateResult(issue linear.IssueUpdateResultFields) map[string]any {
 		}
 		m["labels"] = labels
 	}
-	if issue.Estimate != nil {
-		m["estimate"] = *issue.Estimate
-	}
-	if issue.DueDate != nil {
-		m["dueDate"] = *issue.DueDate
-	}
+	setIfNotNil(m, "estimate", issue.Estimate)
+	setIfNotNil(m, "dueDate", issue.DueDate)
 	return m
 }
