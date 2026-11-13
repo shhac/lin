@@ -15,3 +15,10 @@ linters:
       - linters:
           - errcheck
         path: _test\.go
+
+formatters:
+  enable:
+    - gofmt
+  exclusions:
+    paths:
+      - internal/linear/generated.go
