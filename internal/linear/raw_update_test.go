@@ -64,3 +64,35 @@ func TestIssueUpdate_OmitsUnsetFields(t *testing.T) {
 		t.Errorf("input = %#v, want %#v", input, want)
 	}
 }
+
+func TestProjectAndInitiativeClears_SendExplicitNull(t *testing.T) {
+	cases := []struct {
+		op    string
+		field string
+		clear func(*testutil.MockLinear) error
+	}{
+		{"ProjectUpdate", "leadId", func(m *testutil.MockLinear) error {
+			_, err := linear.ProjectClearLead(context.Background(), m.Client(), "p-uuid")
+			return err
+		}},
+		{"InitiativeUpdate", "ownerId", func(m *testutil.MockLinear) error {
+			_, err := linear.InitiativeClearOwner(context.Background(), m.Client(), "i-uuid")
+			return err
+		}},
+	}
+	for _, tc := range cases {
+		t.Run(tc.op, func(t *testing.T) {
+			mock := testutil.NewMockLinear()
+			defer mock.Close()
+			mock.Handle(tc.op, map[string]any{"projectUpdate": map[string]any{"success": true}, "initiativeUpdate": map[string]any{"success": true}})
+
+			if err := tc.clear(mock); err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			input, _ := mock.Variables(tc.op)["input"].(map[string]any)
+			if v, present := input[tc.field]; !present || v != nil || len(input) != 1 {
+				t.Errorf("input = %#v, want only %s: null", input, tc.field)
+			}
+		})
+	}
+}
