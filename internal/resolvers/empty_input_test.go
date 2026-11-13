@@ -24,7 +24,10 @@ func TestResolvers_RejectBlankInput(t *testing.T) {
 		{"document", func(c graphql.Client, in string) error { _, err := ResolveDocument(c, in); return err }},
 		{"initiative", func(c graphql.Client, in string) error { _, err := ResolveInitiative(c, in); return err }},
 		{"user", func(c graphql.Client, in string) error { _, err := ResolveUser(c, in); return err }},
-		{"status", func(c graphql.Client, in string) error { _, err := ResolveWorkflowState(c, in, "team-uuid"); return err }},
+		{"status", func(c graphql.Client, in string) error {
+			_, err := ResolveWorkflowState(c, in, "team-uuid")
+			return err
+		}},
 		{"labels", func(c graphql.Client, in string) error { _, err := ResolveIssueLabels(c, in, ""); return err }},
 		{"labels", func(c graphql.Client, in string) error { _, err := ResolveProjectLabels(c, in); return err }},
 	}

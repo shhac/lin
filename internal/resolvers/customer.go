@@ -1,6 +1,8 @@
 package resolvers
 
 import (
+	"fmt"
+
 	"github.com/Khan/genqlient/graphql"
 
 	apierrors "github.com/shhac/lin/internal/errors"
@@ -26,13 +28,34 @@ func ResolveCustomer(client graphql.Client, input string) (ResolvedCustomer, err
 		}, nil
 	}
 	filter := filters.BuildCustomerNameFilter(input)
-	listResp, err := linear.CustomerList(ctx(), client, filter, 1, nil)
+	listResp, err := linear.CustomerList(ctx(), client, filter, nameMatchLimit, nil)
 	if err != nil {
 		return ResolvedCustomer{}, err
 	}
-	if len(listResp.Customers.Nodes) == 0 {
+	match, matches, kind := matchByNameOrID(input, listResp.Customers.Nodes,
+		func(c linear.CustomerListCustomersCustomerConnectionNodesCustomer) string { return c.SlugId },
+		func(c linear.CustomerListCustomersCustomerConnectionNodesCustomer) string { return c.Name })
+	switch kind {
+	case matchFound:
+		return ResolvedCustomer{ID: match.Id, Name: match.Name, SlugId: match.SlugId}, nil
+	case matchNone:
 		return ResolvedCustomer{}, apierrors.Newf(apierrors.FixableByAgent, "customer not found: %q, provide a UUID, slug ID, or exact name", input)
+	default:
+		parts := make([]string, len(matches))
+		for i, c := range matches {
+			parts[i] = describeCustomer(c.CustomerSummaryFields)
+		}
+		return ResolvedCustomer{}, ambiguousErr("customer", "customers", input, parts, "use the slug ID or UUID")
 	}
-	c := listResp.Customers.Nodes[0]
-	return ResolvedCustomer{ID: c.Id, Name: c.Name, SlugId: c.SlugId}, nil
+}
+
+func describeCustomer(c linear.CustomerSummaryFields) string {
+	desc := fmt.Sprintf("%s (slug: %s", c.Name, c.SlugId)
+	if c.Status.Name != "" {
+		desc += ", status: " + c.Status.Name
+	}
+	if c.Owner != nil {
+		desc += ", owner: " + c.Owner.Name
+	}
+	return desc + ")"
 }

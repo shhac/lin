@@ -65,5 +65,5 @@ func ambiguousUserErr(input string, matches []ResolvedUser) error {
 	for i, u := range matches {
 		parts[i] = fmt.Sprintf("%s <%s> (%s)", u.Name, u.Email, u.ID)
 	}
-	return apierrors.Newf(apierrors.FixableByAgent, "ambiguous user: %q matches %d users: %s, use a unique name, email, or ID", input, len(matches), formatChoices(parts))
+	return ambiguousErr("user", "users", input, parts, "use a unique name, email, or ID")
 }

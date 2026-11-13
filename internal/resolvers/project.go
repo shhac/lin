@@ -1,6 +1,8 @@
 package resolvers
 
 import (
+	"fmt"
+
 	"github.com/Khan/genqlient/graphql"
 
 	apierrors "github.com/shhac/lin/internal/errors"
@@ -25,13 +27,34 @@ func ResolveProject(client graphql.Client, input string) (ResolvedProject, error
 		}, nil
 	}
 	filter := filters.BuildProjectFilter(input)
-	listResp, err := linear.ProjectList(ctx(), client, filter, 1, nil)
+	listResp, err := linear.ProjectList(ctx(), client, filter, nameMatchLimit, nil)
 	if err != nil {
 		return ResolvedProject{}, err
 	}
-	if len(listResp.Projects.Nodes) == 0 {
+	match, matches, kind := matchByNameOrID(input, listResp.Projects.Nodes,
+		func(p linear.ProjectListProjectsProjectConnectionNodesProject) string { return p.SlugId },
+		func(p linear.ProjectListProjectsProjectConnectionNodesProject) string { return p.Name })
+	switch kind {
+	case matchFound:
+		return ResolvedProject{ID: match.Id, Name: match.Name, SlugId: match.SlugId}, nil
+	case matchNone:
 		return ResolvedProject{}, apierrors.Newf(apierrors.FixableByAgent, "project not found: %q, provide a UUID, slug ID, or exact name", input)
+	default:
+		parts := make([]string, len(matches))
+		for i, p := range matches {
+			parts[i] = describeProject(p.ProjectSummaryFields)
+		}
+		return ResolvedProject{}, ambiguousErr("project", "projects", input, parts, "use the slug ID or UUID")
 	}
-	p := listResp.Projects.Nodes[0]
-	return ResolvedProject{ID: p.Id, Name: p.Name, SlugId: p.SlugId}, nil
+}
+
+func describeProject(p linear.ProjectSummaryFields) string {
+	desc := fmt.Sprintf("%s (slug: %s", p.Name, p.SlugId)
+	if p.State != "" {
+		desc += ", state: " + p.State
+	}
+	if p.Lead != nil {
+		desc += ", lead: " + p.Lead.Name
+	}
+	return desc + ")"
 }

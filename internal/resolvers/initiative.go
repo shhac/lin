@@ -2,7 +2,6 @@ package resolvers
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Khan/genqlient/graphql"
 
@@ -36,11 +35,18 @@ func ResolveInitiative(client graphql.Client, input string) (ResolvedInitiative,
 	if err != nil {
 		return ResolvedInitiative{}, err
 	}
-	lower := strings.ToLower(input)
-	for _, i := range initiatives {
-		if i.SlugId == input || strings.ToLower(i.Name) == lower {
-			return ResolvedInitiative{ID: i.Id, Name: i.Name, SlugId: i.SlugId}, nil
+	match, matches, kind := matchByNameOrID(input, initiatives,
+		func(i linear.InitiativeListInitiativesInitiativeConnectionNodesInitiative) string { return i.SlugId },
+		func(i linear.InitiativeListInitiativesInitiativeConnectionNodesInitiative) string { return i.Name })
+	switch kind {
+	case matchFound:
+		return ResolvedInitiative{ID: match.Id, Name: match.Name, SlugId: match.SlugId}, nil
+	case matchAmbiguous:
+		parts := make([]string, len(matches))
+		for i, m := range matches {
+			parts[i] = fmt.Sprintf("%s (slug: %s)", m.Name, m.SlugId)
 		}
+		return ResolvedInitiative{}, ambiguousErr("initiative", "initiatives", input, parts, "use the slug ID or UUID")
 	}
 	var names []string
 	for _, i := range initiatives {
