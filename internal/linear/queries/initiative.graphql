@@ -73,6 +73,7 @@ mutation InitiativeCreate($input: InitiativeCreateInput!) {
 mutation InitiativeUpdate($id: String!, $input: InitiativeUpdateInput!) {
   initiativeUpdate(id: $id, input: $input) {
     success
+    initiative { id owner { id name } }
   }
 }
 

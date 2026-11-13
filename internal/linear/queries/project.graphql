@@ -120,6 +120,7 @@ mutation ProjectCreate($input: ProjectCreateInput!) {
 mutation ProjectUpdate($id: String!, $input: ProjectUpdateInput!) {
   projectUpdate(id: $id, input: $input) {
     success
+    project { id lead { id name } }
   }
 }
 

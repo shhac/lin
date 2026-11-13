@@ -4130,10 +4130,141 @@ func (v *DocumentSearchSearchDocumentsDocumentSearchPayloadPageInfo) __premarsha
 type DocumentUpdateDocumentUpdateDocumentPayload struct {
 	// Whether the operation was successful.
 	Success bool `json:"success"`
+	// The document that was created or updated.
+	Document DocumentUpdateDocumentUpdateDocumentPayloadDocument `json:"document"`
 }
 
 // GetSuccess returns DocumentUpdateDocumentUpdateDocumentPayload.Success, and is useful for accessing the field via an interface.
 func (v *DocumentUpdateDocumentUpdateDocumentPayload) GetSuccess() bool { return v.Success }
+
+// GetDocument returns DocumentUpdateDocumentUpdateDocumentPayload.Document, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayload) GetDocument() DocumentUpdateDocumentUpdateDocumentPayloadDocument {
+	return v.Document
+}
+
+// DocumentUpdateDocumentUpdateDocumentPayloadDocument includes the requested fields of the GraphQL type Document.
+// The GraphQL type's documentation follows.
+//
+// A rich-text document that lives within a project, initiative, team, issue, release, or cycle. Documents support collaborative editing via ProseMirror/Yjs and store their content in a separate DocumentContent entity. Each document is associated with exactly one parent entity.
+type DocumentUpdateDocumentUpdateDocumentPayloadDocument struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The project that the document is associated with. Null if the document belongs to a different parent entity type.
+	Project *DocumentUpdateDocumentUpdateDocumentPayloadDocumentProject `json:"project,omitempty"`
+	// [Internal] The team that the document is associated with. Null if the document belongs to a different parent entity type.
+	Team *DocumentUpdateDocumentUpdateDocumentPayloadDocumentTeam `json:"team,omitempty"`
+	// The initiative that the document is associated with. Null if the document belongs to a different parent entity type.
+	Initiative *DocumentUpdateDocumentUpdateDocumentPayloadDocumentInitiative `json:"initiative,omitempty"`
+	// The issue that the document is associated with. Null if the document belongs to a different parent entity type.
+	Issue *DocumentUpdateDocumentUpdateDocumentPayloadDocumentIssue `json:"issue,omitempty"`
+}
+
+// GetId returns DocumentUpdateDocumentUpdateDocumentPayloadDocument.Id, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocument) GetId() string { return v.Id }
+
+// GetProject returns DocumentUpdateDocumentUpdateDocumentPayloadDocument.Project, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocument) GetProject() *DocumentUpdateDocumentUpdateDocumentPayloadDocumentProject {
+	return v.Project
+}
+
+// GetTeam returns DocumentUpdateDocumentUpdateDocumentPayloadDocument.Team, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocument) GetTeam() *DocumentUpdateDocumentUpdateDocumentPayloadDocumentTeam {
+	return v.Team
+}
+
+// GetInitiative returns DocumentUpdateDocumentUpdateDocumentPayloadDocument.Initiative, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocument) GetInitiative() *DocumentUpdateDocumentUpdateDocumentPayloadDocumentInitiative {
+	return v.Initiative
+}
+
+// GetIssue returns DocumentUpdateDocumentUpdateDocumentPayloadDocument.Issue, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocument) GetIssue() *DocumentUpdateDocumentUpdateDocumentPayloadDocumentIssue {
+	return v.Issue
+}
+
+// DocumentUpdateDocumentUpdateDocumentPayloadDocumentInitiative includes the requested fields of the GraphQL type Initiative.
+// The GraphQL type's documentation follows.
+//
+// An initiative is a high-level strategic grouping of projects toward a business goal. Initiatives can contain multiple projects, have their own status updates and health tracking, and can be organized hierarchically with parent-child relationships.
+type DocumentUpdateDocumentUpdateDocumentPayloadDocumentInitiative struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The name of the initiative.
+	Name string `json:"name"`
+}
+
+// GetId returns DocumentUpdateDocumentUpdateDocumentPayloadDocumentInitiative.Id, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocumentInitiative) GetId() string { return v.Id }
+
+// GetName returns DocumentUpdateDocumentUpdateDocumentPayloadDocumentInitiative.Name, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocumentInitiative) GetName() string {
+	return v.Name
+}
+
+// DocumentUpdateDocumentUpdateDocumentPayloadDocumentIssue includes the requested fields of the GraphQL type Issue.
+// The GraphQL type's documentation follows.
+//
+// An issue is the core work item in Linear. Issues belong to a team, have a workflow status, can be assigned to users, carry a priority level, and can be organized into projects and cycles. Issues support sub-issues (parent-child hierarchy up to 10 levels deep), labels, due dates, estimates, and SLA tracking. They can also be linked to other issues via relations, attached to releases, and tracked through their full history of changes.
+type DocumentUpdateDocumentUpdateDocumentPayloadDocumentIssue struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// Issue's human readable identifier (e.g. ENG-123).
+	Identifier string `json:"identifier"`
+}
+
+// GetId returns DocumentUpdateDocumentUpdateDocumentPayloadDocumentIssue.Id, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocumentIssue) GetId() string { return v.Id }
+
+// GetIdentifier returns DocumentUpdateDocumentUpdateDocumentPayloadDocumentIssue.Identifier, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocumentIssue) GetIdentifier() string {
+	return v.Identifier
+}
+
+// DocumentUpdateDocumentUpdateDocumentPayloadDocumentProject includes the requested fields of the GraphQL type Project.
+// The GraphQL type's documentation follows.
+//
+// A project is a collection of issues working toward a shared goal. Projects have start and target dates, milestones, status tracking, and progress metrics. They can span multiple teams and be grouped under initiatives.
+type DocumentUpdateDocumentUpdateDocumentPayloadDocumentProject struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The name of the project.
+	Name string `json:"name"`
+	// The project's unique URL slug, used to construct human-readable URLs.
+	SlugId string `json:"slugId"`
+}
+
+// GetId returns DocumentUpdateDocumentUpdateDocumentPayloadDocumentProject.Id, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocumentProject) GetId() string { return v.Id }
+
+// GetName returns DocumentUpdateDocumentUpdateDocumentPayloadDocumentProject.Name, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocumentProject) GetName() string { return v.Name }
+
+// GetSlugId returns DocumentUpdateDocumentUpdateDocumentPayloadDocumentProject.SlugId, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocumentProject) GetSlugId() string {
+	return v.SlugId
+}
+
+// DocumentUpdateDocumentUpdateDocumentPayloadDocumentTeam includes the requested fields of the GraphQL type Team.
+// The GraphQL type's documentation follows.
+//
+// A team is the primary organizational unit in Linear. Issues belong to teams, and each team has its own workflow states, cycles, labels, and settings. Teams can be public (visible to all workspace members) or private (visible only to team members). Teams can also have sub-teams that inherit settings from their parent.
+type DocumentUpdateDocumentUpdateDocumentPayloadDocumentTeam struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The team's unique key, used as a prefix in issue identifiers (e.g., 'ENG' in 'ENG-123') and in URLs.
+	Key string `json:"key"`
+	// The team's name.
+	Name string `json:"name"`
+}
+
+// GetId returns DocumentUpdateDocumentUpdateDocumentPayloadDocumentTeam.Id, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocumentTeam) GetId() string { return v.Id }
+
+// GetKey returns DocumentUpdateDocumentUpdateDocumentPayloadDocumentTeam.Key, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocumentTeam) GetKey() string { return v.Key }
+
+// GetName returns DocumentUpdateDocumentUpdateDocumentPayloadDocumentTeam.Name, and is useful for accessing the field via an interface.
+func (v *DocumentUpdateDocumentUpdateDocumentPayloadDocumentTeam) GetName() string { return v.Name }
 
 // Input for updating an existing document.
 type DocumentUpdateInput struct {
@@ -5557,10 +5688,57 @@ var AllInitiativeUpdateHealthType = []InitiativeUpdateHealthType{
 type InitiativeUpdateInitiativeUpdateInitiativePayload struct {
 	// Whether the operation was successful.
 	Success bool `json:"success"`
+	// The initiative that was created or updated.
+	Initiative InitiativeUpdateInitiativeUpdateInitiativePayloadInitiative `json:"initiative"`
 }
 
 // GetSuccess returns InitiativeUpdateInitiativeUpdateInitiativePayload.Success, and is useful for accessing the field via an interface.
 func (v *InitiativeUpdateInitiativeUpdateInitiativePayload) GetSuccess() bool { return v.Success }
+
+// GetInitiative returns InitiativeUpdateInitiativeUpdateInitiativePayload.Initiative, and is useful for accessing the field via an interface.
+func (v *InitiativeUpdateInitiativeUpdateInitiativePayload) GetInitiative() InitiativeUpdateInitiativeUpdateInitiativePayloadInitiative {
+	return v.Initiative
+}
+
+// InitiativeUpdateInitiativeUpdateInitiativePayloadInitiative includes the requested fields of the GraphQL type Initiative.
+// The GraphQL type's documentation follows.
+//
+// An initiative is a high-level strategic grouping of projects toward a business goal. Initiatives can contain multiple projects, have their own status updates and health tracking, and can be organized hierarchically with parent-child relationships.
+type InitiativeUpdateInitiativeUpdateInitiativePayloadInitiative struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The user who owns the initiative. The owner is typically responsible for posting status updates and driving the initiative to completion. Null if no owner is assigned.
+	Owner *InitiativeUpdateInitiativeUpdateInitiativePayloadInitiativeOwnerUser `json:"owner,omitempty"`
+}
+
+// GetId returns InitiativeUpdateInitiativeUpdateInitiativePayloadInitiative.Id, and is useful for accessing the field via an interface.
+func (v *InitiativeUpdateInitiativeUpdateInitiativePayloadInitiative) GetId() string { return v.Id }
+
+// GetOwner returns InitiativeUpdateInitiativeUpdateInitiativePayloadInitiative.Owner, and is useful for accessing the field via an interface.
+func (v *InitiativeUpdateInitiativeUpdateInitiativePayloadInitiative) GetOwner() *InitiativeUpdateInitiativeUpdateInitiativePayloadInitiativeOwnerUser {
+	return v.Owner
+}
+
+// InitiativeUpdateInitiativeUpdateInitiativePayloadInitiativeOwnerUser includes the requested fields of the GraphQL type User.
+// The GraphQL type's documentation follows.
+//
+// A user that belongs to a workspace. Users can have different roles (admin, member, guest, or app) that determine their level of access. Users can be members of multiple teams, and can be active or deactivated. Guest users have limited access scoped to specific teams they are invited to.
+type InitiativeUpdateInitiativeUpdateInitiativePayloadInitiativeOwnerUser struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The user's full name.
+	Name string `json:"name"`
+}
+
+// GetId returns InitiativeUpdateInitiativeUpdateInitiativePayloadInitiativeOwnerUser.Id, and is useful for accessing the field via an interface.
+func (v *InitiativeUpdateInitiativeUpdateInitiativePayloadInitiativeOwnerUser) GetId() string {
+	return v.Id
+}
+
+// GetName returns InitiativeUpdateInitiativeUpdateInitiativePayloadInitiativeOwnerUser.Name, and is useful for accessing the field via an interface.
+func (v *InitiativeUpdateInitiativeUpdateInitiativePayloadInitiativeOwnerUser) GetName() string {
+	return v.Name
+}
 
 // The properties of the initiative to update.
 type InitiativeUpdateInput struct {
@@ -14976,10 +15154,53 @@ func (v *ProjectUpdateInput) GetLabelIds() []string { return v.LabelIds }
 type ProjectUpdateProjectUpdateProjectPayload struct {
 	// Whether the operation was successful.
 	Success bool `json:"success"`
+	// The project that was created or updated.
+	Project *ProjectUpdateProjectUpdateProjectPayloadProject `json:"project,omitempty"`
 }
 
 // GetSuccess returns ProjectUpdateProjectUpdateProjectPayload.Success, and is useful for accessing the field via an interface.
 func (v *ProjectUpdateProjectUpdateProjectPayload) GetSuccess() bool { return v.Success }
+
+// GetProject returns ProjectUpdateProjectUpdateProjectPayload.Project, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateProjectUpdateProjectPayload) GetProject() *ProjectUpdateProjectUpdateProjectPayloadProject {
+	return v.Project
+}
+
+// ProjectUpdateProjectUpdateProjectPayloadProject includes the requested fields of the GraphQL type Project.
+// The GraphQL type's documentation follows.
+//
+// A project is a collection of issues working toward a shared goal. Projects have start and target dates, milestones, status tracking, and progress metrics. They can span multiple teams and be grouped under initiatives.
+type ProjectUpdateProjectUpdateProjectPayloadProject struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The user who leads the project. The project lead is typically responsible for posting status updates and driving the project to completion. Null if no lead is assigned.
+	Lead *ProjectUpdateProjectUpdateProjectPayloadProjectLeadUser `json:"lead,omitempty"`
+}
+
+// GetId returns ProjectUpdateProjectUpdateProjectPayloadProject.Id, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateProjectUpdateProjectPayloadProject) GetId() string { return v.Id }
+
+// GetLead returns ProjectUpdateProjectUpdateProjectPayloadProject.Lead, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateProjectUpdateProjectPayloadProject) GetLead() *ProjectUpdateProjectUpdateProjectPayloadProjectLeadUser {
+	return v.Lead
+}
+
+// ProjectUpdateProjectUpdateProjectPayloadProjectLeadUser includes the requested fields of the GraphQL type User.
+// The GraphQL type's documentation follows.
+//
+// A user that belongs to a workspace. Users can have different roles (admin, member, guest, or app) that determine their level of access. Users can be members of multiple teams, and can be active or deactivated. Guest users have limited access scoped to specific teams they are invited to.
+type ProjectUpdateProjectUpdateProjectPayloadProjectLeadUser struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The user's full name.
+	Name string `json:"name"`
+}
+
+// GetId returns ProjectUpdateProjectUpdateProjectPayloadProjectLeadUser.Id, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateProjectUpdateProjectPayloadProjectLeadUser) GetId() string { return v.Id }
+
+// GetName returns ProjectUpdateProjectUpdateProjectPayloadProjectLeadUser.Name, and is useful for accessing the field via an interface.
+func (v *ProjectUpdateProjectUpdateProjectPayloadProjectLeadUser) GetName() string { return v.Name }
 
 // ProjectUpdateResponse is returned by ProjectUpdate on success.
 type ProjectUpdateResponse struct {
@@ -19432,6 +19653,27 @@ const DocumentUpdate_Operation = `
 mutation DocumentUpdate ($id: String!, $input: DocumentUpdateInput!) {
 	documentUpdate(id: $id, input: $input) {
 		success
+		document {
+			id
+			project {
+				id
+				name
+				slugId
+			}
+			team {
+				id
+				key
+				name
+			}
+			initiative {
+				id
+				name
+			}
+			issue {
+				id
+				identifier
+			}
+		}
 	}
 }
 `
@@ -19852,6 +20094,13 @@ const InitiativeUpdate_Operation = `
 mutation InitiativeUpdate ($id: String!, $input: InitiativeUpdateInput!) {
 	initiativeUpdate(id: $id, input: $input) {
 		success
+		initiative {
+			id
+			owner {
+				id
+				name
+			}
+		}
 	}
 }
 `
@@ -21551,6 +21800,13 @@ const ProjectUpdate_Operation = `
 mutation ProjectUpdate ($id: String!, $input: ProjectUpdateInput!) {
 	projectUpdate(id: $id, input: $input) {
 		success
+		project {
+			id
+			lead {
+				id
+				name
+			}
+		}
 	}
 }
 `

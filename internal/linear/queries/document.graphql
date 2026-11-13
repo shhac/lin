@@ -77,5 +77,12 @@ mutation DocumentCreate($input: DocumentCreateInput!) {
 mutation DocumentUpdate($id: String!, $input: DocumentUpdateInput!) {
   documentUpdate(id: $id, input: $input) {
     success
+    document {
+      id
+      project { id name slugId }
+      team { id key name }
+      initiative { id name }
+      issue { id identifier }
+    }
   }
 }
