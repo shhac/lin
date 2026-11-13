@@ -112,7 +112,7 @@ func TestSetField_EchoesResultingValue(t *testing.T) {
 	issue := linear.IssueUpdateResultFields{Identifier: "ENG-1", Title: "New title"}
 	mock.Handle("IssueUpdate", issueUpdateResponse(&issue))
 
-	got, err := setField(context.Background(), mock.Client(), fieldByName(t, "title"), "ENG-1", "New title")
+	got, err := fieldByName(t, "title").set(context.Background(), mock.Client(), "ENG-1", "New title")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -128,7 +128,7 @@ func TestSetField_DescriptionIsNotEchoed(t *testing.T) {
 	issue := linear.IssueUpdateResultFields{Identifier: "ENG-1", Title: "T"}
 	mock.Handle("IssueUpdate", issueUpdateResponse(&issue))
 
-	got, err := setField(context.Background(), mock.Client(), fieldByName(t, "description"), "ENG-1", "")
+	got, err := fieldByName(t, "description").set(context.Background(), mock.Client(), "ENG-1", "")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -152,7 +152,7 @@ func TestClearableFields_SetAndClearTargetTheSameInput(t *testing.T) {
 			defer mock.Close()
 			mock.Handle("IssueUpdate", issueUpdateResponse(&linear.IssueUpdateResultFields{Identifier: "ENG-1"}))
 
-			if _, err := setField(context.Background(), mock.Client(), f, "ENG-1", value); err != nil {
+			if _, err := f.set(context.Background(), mock.Client(), "ENG-1", value); err != nil {
 				t.Fatalf("set: %v", err)
 			}
 			setInput, _ := mock.Variables("IssueUpdate")["input"].(map[string]any)
@@ -160,7 +160,7 @@ func TestClearableFields_SetAndClearTargetTheSameInput(t *testing.T) {
 				t.Errorf("set sent %v, want only %q", setInput, f.clear)
 			}
 
-			if _, err := clearField(context.Background(), mock.Client(), f, "ENG-1"); err != nil {
+			if _, err := f.unset(context.Background(), mock.Client(), "ENG-1"); err != nil {
 				t.Fatalf("clear: %v", err)
 			}
 			clearInput, _ := mock.Variables("IssueUpdate")["input"].(map[string]any)
@@ -176,7 +176,7 @@ func TestClearField_ReportsCleared(t *testing.T) {
 	defer mock.Close()
 	mock.Handle("IssueUpdate", issueUpdateResponse(&linear.IssueUpdateResultFields{Identifier: "ENG-1"}))
 
-	got, err := clearField(context.Background(), mock.Client(), fieldByName(t, "project"), "ENG-1")
+	got, err := fieldByName(t, "project").unset(context.Background(), mock.Client(), "ENG-1")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -191,7 +191,7 @@ func TestClearField_ThatDidNotStickIsAnError(t *testing.T) {
 	issue := fullyPopulatedIssue()
 	mock.Handle("IssueUpdate", issueUpdateResponse(&issue))
 
-	_, err := clearField(context.Background(), mock.Client(), fieldByName(t, "labels"), "ENG-1")
+	_, err := fieldByName(t, "labels").unset(context.Background(), mock.Client(), "ENG-1")
 	if err == nil || !strings.Contains(err.Error(), "did not remove the labels") {
 		t.Errorf("want a not-removed error, got %v", err)
 	}
@@ -202,7 +202,7 @@ func TestClearField_WithoutIssueInPayloadDoesNotClaimCleared(t *testing.T) {
 	defer mock.Close()
 	mock.Handle("IssueUpdate", issueUpdateResponse(nil))
 
-	got, err := clearField(context.Background(), mock.Client(), fieldByName(t, "project"), "ENG-1")
+	got, err := fieldByName(t, "project").unset(context.Background(), mock.Client(), "ENG-1")
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}

@@ -41,28 +41,15 @@ func registerUpdate(parent *cobra.Command) {
 	parent.AddCommand(update)
 
 	for _, f := range fieldUpdates() {
-		update.AddCommand(fieldUpdateCommand(f))
+		update.AddCommand(f.valueArg().Command(f.short, f.set, f.unset))
 	}
 
 	output.HandleUnknownCommand(update, "Run 'lin issue usage' for available update subcommands")
 }
 
-func fieldUpdateCommand(f fieldUpdate) *cobra.Command {
-	set := func(ctx context.Context, client graphql.Client, id, value string) (map[string]any, error) {
-		return setField(ctx, client, f, id, value)
-	}
-	if !f.clearable() {
-		return f.valueArg().Command(f.short, set, nil)
-	}
-	clear := func(ctx context.Context, client graphql.Client, id string) (map[string]any, error) {
-		return clearField(ctx, client, f, id)
-	}
-	return f.valueArg().Command(f.short, set, clear)
-}
-
-// setField applies the value and echoes what Linear reports afterwards, so a
+// set applies the value and echoes what Linear reports afterwards, so a
 // mis-resolved input is visible rather than hidden behind "updated": true.
-func setField(ctx context.Context, client graphql.Client, f fieldUpdate, issueID, value string) (map[string]any, error) {
+func (f fieldUpdate) set(ctx context.Context, client graphql.Client, issueID, value string) (map[string]any, error) {
 	input, err := f.input(ctx, client, issueID, value)
 	if err != nil {
 		return nil, err
@@ -78,9 +65,9 @@ func setField(ctx context.Context, client graphql.Client, f fieldUpdate, issueID
 	return result, nil
 }
 
-// clearField empties the field and confirms from Linear's response that it
+// unset empties the field and confirms from Linear's response that it
 // stuck; a success that left the value in place is reported as an error.
-func clearField(ctx context.Context, client graphql.Client, f fieldUpdate, issueID string) (map[string]any, error) {
+func (f fieldUpdate) unset(ctx context.Context, client graphql.Client, issueID string) (map[string]any, error) {
 	resp, err := linear.IssueClear(ctx, client, issueID, f.clear)
 	if err != nil {
 		return nil, err

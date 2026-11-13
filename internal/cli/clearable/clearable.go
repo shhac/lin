@@ -36,8 +36,8 @@ func (a Arg) Use() string {
 }
 
 // Command builds the subcommand. Arguments are validated before a client is
-// created, so a usage mistake never needs credentials. clear may be nil when
-// the Arg isn't Clearable.
+// created, so a usage mistake never needs credentials. clear runs only when
+// the Arg is Clearable, since only then is --clear registered.
 func (a Arg) Command(short string, set SetFunc, clear ClearFunc) *cobra.Command {
 	clearing := false
 	cmd := &cobra.Command{
