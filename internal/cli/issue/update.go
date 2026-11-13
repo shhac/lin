@@ -2,13 +2,11 @@ package issue
 
 import (
 	"context"
-	"fmt"
-	"strings"
 
 	"github.com/Khan/genqlient/graphql"
 	"github.com/spf13/cobra"
 
-	apierrors "github.com/shhac/lin/internal/errors"
+	"github.com/shhac/lin/internal/cli/clearable"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
@@ -31,11 +29,8 @@ type fieldInput = func(ctx context.Context, client graphql.Client, issueID, valu
 
 func (f fieldUpdate) clearable() bool { return f.clear != "" }
 
-func (f fieldUpdate) use() string {
-	if f.clearable() {
-		return fmt.Sprintf("%s <id> [<%s> | --clear]", f.name, f.arg)
-	}
-	return fmt.Sprintf("%s <id> <%s>", f.name, f.arg)
+func (f fieldUpdate) valueArg() clearable.Arg {
+	return clearable.Arg{Parent: "lin issue update", Name: f.name, Placeholder: f.arg, Clearable: f.clearable()}
 }
 
 func registerUpdate(parent *cobra.Command) {
@@ -46,71 +41,23 @@ func registerUpdate(parent *cobra.Command) {
 	parent.AddCommand(update)
 
 	for _, f := range fieldUpdates() {
-		registerFieldUpdate(update, f)
+		update.AddCommand(fieldUpdateCommand(f))
 	}
 
 	output.HandleUnknownCommand(update, "Run 'lin issue usage' for available update subcommands")
 }
 
-func registerFieldUpdate(parent *cobra.Command, f fieldUpdate) {
-	clear := false
-	cmd := &cobra.Command{
-		Use:   f.use(),
-		Short: f.short,
-		Args:  cobra.RangeArgs(1, 2),
-		Run: func(_ *cobra.Command, args []string) {
-			ctx := context.Background()
-			if clear {
-				if err := checkClearArgs(f, args); err != nil {
-					output.WriteError(err)
-				}
-				printFieldUpdate(clearField(ctx, linear.GetClient(), f, args[0]))
-				return
-			}
-			value, err := setValue(f, args)
-			if err != nil {
-				output.WriteError(err)
-			}
-			printFieldUpdate(setField(ctx, linear.GetClient(), f, args[0], value))
-		},
+func fieldUpdateCommand(f fieldUpdate) *cobra.Command {
+	set := func(ctx context.Context, client graphql.Client, id, value string) (map[string]any, error) {
+		return setField(ctx, client, f, id, value)
 	}
-	if f.clearable() {
-		cmd.Flags().BoolVar(&clear, "clear", false, fmt.Sprintf("Remove the issue's %s", f.arg))
-	}
-	parent.AddCommand(cmd)
-}
-
-func printFieldUpdate(result map[string]any, err error) {
-	if err != nil {
-		output.HandleGraphQLError(err)
-	}
-	output.PrintJSON(result)
-}
-
-func checkClearArgs(f fieldUpdate, args []string) error {
-	if len(args) == 1 {
-		return nil
-	}
-	return apierrors.Newf(apierrors.FixableByAgent, "--clear takes only the issue ID; drop the %s value", f.arg).
-		WithHint(fmt.Sprintf("lin issue update %s <id> --clear", f.name))
-}
-
-// setValue returns the value to set. A blank value for a clearable field is
-// refused rather than sent: for a resolver-backed field Linear would match it
-// against everything, and for the rest it is never what was meant.
-func setValue(f fieldUpdate, args []string) (string, error) {
-	if len(args) != 2 || (f.clearable() && strings.TrimSpace(args[1]) == "") {
-		return "", missingValueErr(f)
-	}
-	return args[1], nil
-}
-
-func missingValueErr(f fieldUpdate) error {
-	err := apierrors.Newf(apierrors.FixableByAgent, "missing %s", f.arg)
 	if !f.clearable() {
-		return err.WithHint("lin issue update " + f.use())
+		return f.valueArg().Command(f.short, set, nil)
 	}
-	return err.WithHint(fmt.Sprintf("to set it: lin issue update %s <id> <%s>; to remove it: lin issue update %s <id> --clear", f.name, f.arg, f.name))
+	clear := func(ctx context.Context, client graphql.Client, id string) (map[string]any, error) {
+		return clearField(ctx, client, f, id)
+	}
+	return f.valueArg().Command(f.short, set, clear)
 }
 
 // setField applies the value and echoes what Linear reports afterwards, so a
@@ -143,7 +90,7 @@ func clearField(ctx context.Context, client graphql.Client, f fieldUpdate, issue
 		return result, nil
 	}
 	if _, stillSet := issue[f.key]; stillSet {
-		return nil, apierrors.Newf(apierrors.FixableByHuman, "Linear reported success but the %s is still set", f.arg)
+		return nil, f.valueArg().StillSetErr()
 	}
 	result["cleared"] = f.key
 	return result, nil

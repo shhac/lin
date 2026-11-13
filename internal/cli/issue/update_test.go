@@ -23,65 +23,17 @@ func fieldByName(t *testing.T, name string) fieldUpdate {
 	return fieldUpdate{}
 }
 
-func assertAPIError(t *testing.T, err error, wantMsg, wantHint string) *apierrors.APIError {
-	t.Helper()
-	var apiErr *apierrors.APIError
-	if !apierrors.As(err, &apiErr) {
-		t.Fatalf("want APIError, got %#v", err)
+func TestFieldUpdateArgs(t *testing.T) {
+	project := fieldByName(t, "project").valueArg()
+	if project.Parent != "lin issue update" || project.Name != "project" || !project.Clearable {
+		t.Errorf("project arg = %+v", project)
 	}
-	if !strings.Contains(apiErr.Error(), wantMsg) {
-		t.Errorf("error = %q, want it to contain %q", apiErr.Error(), wantMsg)
+	if _, err := fieldByName(t, "description").valueArg().Value([]string{"ENG-1", ""}); err != nil {
+		t.Errorf("a blank description is a real value, got %v", err)
 	}
-	if !strings.Contains(apiErr.Hint, wantHint) {
-		t.Errorf("hint = %q, want it to contain %q", apiErr.Hint, wantHint)
+	if _, err := project.Value([]string{"ENG-1", ""}); err == nil {
+		t.Error("a blank project must be refused")
 	}
-	return apiErr
-}
-
-func TestSetValue(t *testing.T) {
-	cases := []struct {
-		name     string
-		field    string
-		args     []string
-		want     string
-		wantErr  string
-		wantHint string
-	}{
-		{"value", "project", []string{"ENG-1", "Roadmap"}, "Roadmap", "", ""},
-		{"missing value", "project", []string{"ENG-1"}, "", "missing project", "--clear"},
-		{"blank value points at --clear", "project", []string{"ENG-1", ""}, "", "missing project", "lin issue update project <id> --clear"},
-		{"whitespace value", "assignee", []string{"ENG-1", "  "}, "", "missing user", "lin issue update assignee <id> --clear"},
-		{"blank description is a real value", "description", []string{"ENG-1", ""}, "", "", ""},
-		{"non-clearable missing value", "title", []string{"ENG-1"}, "", "missing title", "lin issue update title <id> <title>"},
-	}
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			f := fieldByName(t, tc.field)
-			value, err := setValue(f, tc.args)
-			if tc.wantErr == "" {
-				if err != nil {
-					t.Fatalf("unexpected error: %v", err)
-				}
-				if value != tc.want {
-					t.Errorf("value = %q, want %q", value, tc.want)
-				}
-				return
-			}
-			apiErr := assertAPIError(t, err, tc.wantErr, tc.wantHint)
-			if !f.clearable() && strings.Contains(apiErr.Hint, "--clear") {
-				t.Errorf("hint = %q offers --clear on a field without it", apiErr.Hint)
-			}
-		})
-	}
-}
-
-func TestCheckClearArgs(t *testing.T) {
-	f := fieldByName(t, "project")
-	if err := checkClearArgs(f, []string{"ENG-1"}); err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
-	err := checkClearArgs(f, []string{"ENG-1", "Roadmap"})
-	assertAPIError(t, err, "--clear takes only the issue ID", "lin issue update project <id> --clear")
 }
 
 func TestOnlyNullableFieldsAreClearable(t *testing.T) {
@@ -240,8 +192,8 @@ func TestClearField_ThatDidNotStickIsAnError(t *testing.T) {
 	mock.Handle("IssueUpdate", issueUpdateResponse(&issue))
 
 	_, err := clearField(context.Background(), mock.Client(), fieldByName(t, "labels"), "ENG-1")
-	if err == nil || !strings.Contains(err.Error(), "still set") {
-		t.Errorf("want a still-set error, got %v", err)
+	if err == nil || !strings.Contains(err.Error(), "did not remove the labels") {
+		t.Errorf("want a not-removed error, got %v", err)
 	}
 }
 
@@ -278,8 +230,13 @@ func TestEstimateInput(t *testing.T) {
 	}
 
 	_, err = estimateInput(ctx, mock.Client(), "ENG-1", "five")
-	assertAPIError(t, err, "invalid estimate", "")
+	var apiErr *apierrors.APIError
+	if !apierrors.As(err, &apiErr) || !strings.Contains(apiErr.Error(), "invalid estimate") {
+		t.Errorf("want an invalid-estimate APIError, got %#v", err)
+	}
 
 	_, err = estimateInput(ctx, mock.Client(), "ENG-1", "4")
-	assertAPIError(t, err, "", "")
+	if !apierrors.As(err, &apiErr) {
+		t.Errorf("want an off-scale APIError, got %#v", err)
+	}
 }
