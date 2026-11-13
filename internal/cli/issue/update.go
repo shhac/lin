@@ -91,7 +91,7 @@ func checkClearArgs(f fieldUpdate, args []string) error {
 	if len(args) == 1 {
 		return nil
 	}
-	return apierrors.Newf(apierrors.FixableByAgent, "--clear takes only the issue ID, got a %s too", f.arg).
+	return apierrors.Newf(apierrors.FixableByAgent, "--clear takes only the issue ID; drop the %s value", f.arg).
 		WithHint(fmt.Sprintf("lin issue update %s <id> --clear", f.name))
 }
 
