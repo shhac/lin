@@ -87,6 +87,7 @@ lin
 │   ├── get <id>...
 │   ├── new <title> --team <team>
 │   ├── update title|status|assignee|priority|project|labels|estimate|description|due-date|cycle|parent <id> <value>
+│   ├── update project|assignee|labels|estimate|due-date|cycle|parent <id> --clear
 │   ├── comment list|new|get|edit|replies <id> [<body>]
 │   ├── relation list|add|remove
 │   ├── requests <id> [--important]

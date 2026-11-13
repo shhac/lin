@@ -27,9 +27,17 @@ UPDATE (each is a subcommand):
   issue update title|status|assignee|priority|project|labels|description|estimate <id> <value>
   issue update due-date <id> <YYYY-MM-DD>
   issue update cycle <id> <cycle-id>  |  parent <id> <parent-id>
-  status: team-scoped (use "team states <team>"). labels: comma-separated names or IDs.
+  issue update project|assignee|labels|estimate|due-date|cycle|parent <id> --clear
+  status: team-scoped (use "team states <team>"). labels: comma-separated names or IDs (replaces).
   estimate: validated against team scale. assignee: name/email/ID.
-  project: moves the issue to a project — accepts project name, slug, or UUID.
+  project: moves the issue to a project — accepts project name, slug, or UUID. A name
+    shared by several projects is refused with each one's slug; pass the slug instead.
+  --clear: removes the value (issue leaves its project, is unassigned, ...). A blank
+    value ("") is refused, never matched. status/title/priority can't be cleared
+    (priority: use "none").
+  Output: {"updated":true,"identifier":"ENG-1","<field>":<value Linear now has>}
+    (same shapes as "issue get"; cycle is {id,number,name}); after --clear:
+    {"updated":true,"identifier":"ENG-1","cleared":"<field>"}. description isn't echoed.
 
 COMMENTS (--parent 1 level):
   issue comment list <id> [--limit] [--cursor]

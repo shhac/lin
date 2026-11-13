@@ -45,7 +45,8 @@ COMMANDS:
   issue list [filters]                    List issues (status, assignee, team, branchName)
   issue get <id>...                       Full details + commentCount, customerRequestCount, attachments, branchName (NDJSON)
   issue new <title> --team <t> [options]  Create issue
-  issue update <field> <id> <value>       Update (title|status|assignee|priority|project|labels|estimate|description)
+  issue update <field> <id> <value>       Update (title|status|assignee|priority|project|labels|estimate|description|due-date|cycle|parent)
+  issue update <field> <id> --clear       Remove (project|assignee|labels|estimate|due-date|cycle|parent)
   issue comment list <issue-id>           List comments with authors
   issue comment new <issue-id> <body>     Add comment
   issue comment get <comment-id>...       Get specific comment(s) (NDJSON)
