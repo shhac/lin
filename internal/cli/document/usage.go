@@ -25,6 +25,12 @@ UPDATE (each is a subcommand):
   document update title <id> <new-title>
   document update content <id> <markdown>
   document update project <id> <project>    Move to project
+  document update team <id> <team>          Move to team
+  document update initiative <id> <initiative>  Move to initiative
+    A document has exactly one parent: moving it replaces the old one, and it
+    can't be detached (Linear ignores a null parent). Echoes the new parent, e.g.
+    {"updated":true,"id":"…","team":{"id","key","name"}}; errors if Linear
+    reports success but the parent didn't change.
   document update icon <id> <emoji>
   document update color <id> <hex>
 

@@ -20,6 +20,7 @@ COMMANDS:
   project get <id>...                     Project summary + milestones + content (NDJSON)
   project issues <id>                     Issues in a project
   project update <field> <id> <value>     Update a field (title|status|description|lead|labels|...)
+  project update lead <id> --clear        Remove the lead
   project post new <project> <body> [--health]  Post a project update (health/status feed)
   project post list <project>             List project updates
   project post get <update-id>...         Get project update(s) (NDJSON)
@@ -33,13 +34,15 @@ COMMANDS:
   initiative projects <id>                Projects in an initiative
   initiative new <name> [options]         Create initiative
   initiative update <field> <id> <value>  Update (name|status|description|owner|content|color|icon|target-date)
+  initiative update owner <id> --clear    Remove the owner
   initiative archive|unarchive|delete <id> Lifecycle operations
 
   document search <text>                  Full-text search
   document list [--project] [--creator]   List documents
   document get <id>...                    Full details + content (markdown) (NDJSON)
   document new <title>                    Create document
-  document update title|content|project <id> <value>  Update field
+  document update title|content|icon|color <id> <value>  Update field
+  document update project|team|initiative <id> <target>  Move (a document has one parent)
 
   issue search <text>                     Full-text search
   issue list [filters]                    List issues (status, assignee, team, branchName)

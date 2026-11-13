@@ -31,7 +31,8 @@ UPDATE (each is a subcommand):
   project update status <id> <new-status>
   project update description <id> <description>
   project update content <id> <markdown>
-  project update lead <id> <user>
+  project update lead <id> <user> | --clear   set or remove the lead; echoes {"updated","id","lead":{id,name}}
+                                               or {"updated","id","cleared":"lead"}
   project update start-date <id> <YYYY-MM-DD>
   project update target-date <id> <YYYY-MM-DD>
   project update priority <id> <priority>    none|urgent|high|medium|low

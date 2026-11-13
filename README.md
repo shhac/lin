@@ -57,6 +57,7 @@ lin
 │   ├── requests <id> [--important]
 │   ├── new <name> --team <teams>
 │   ├── update title|status|description|content|lead|start-date|target-date|priority|icon|color|labels <id> <value>
+│   ├── update lead <id> --clear
 │   ├── post new|list|get <project|update-id> [<body>] [--health]
 │   ├── delete|unarchive <id>
 │   └── usage
@@ -67,6 +68,7 @@ lin
 │   ├── projects <id>
 │   ├── new <name> [options]
 │   ├── update name|description|owner|status|target-date|content|color|icon <id> <value>
+│   ├── update owner <id> --clear
 │   ├── archive|unarchive|delete <id>
 │   └── usage
 ├── document
@@ -74,7 +76,8 @@ lin
 │   ├── list [--project] [--creator]
 │   ├── get <id>...
 │   ├── new <title> [--project] [--content]
-│   ├── update title|content|project|icon|color <id> <value>
+│   ├── update title|content|icon|color <id> <value>
+│   ├── update project|team|initiative <id> <target>   # move (one parent)
 │   ├── history <id>
 │   └── usage
 ├── file

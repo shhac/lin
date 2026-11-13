@@ -33,7 +33,8 @@ UPDATE:
   initiative update description <id> <value>
   initiative update content <id> <value>
   initiative update status <id> <value>        planned|active|completed
-  initiative update owner <id> <user>          name, email, or user ID
+  initiative update owner <id> <user>          name, email, or user ID; echoes "owner":{id,name}
+  initiative update owner <id> --clear         remove the owner; echoes "cleared":"owner"
   initiative update target-date <id> <date>    YYYY-MM-DD
   initiative update color <id> <color>
   initiative update icon <id> <icon>
