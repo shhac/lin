@@ -16,6 +16,9 @@ type ResolvedCustomer struct {
 
 // ResolveCustomer resolves a customer from a UUID, slug, or exact name.
 func ResolveCustomer(client graphql.Client, input string) (ResolvedCustomer, error) {
+	if err := requireInput("customer", input); err != nil {
+		return ResolvedCustomer{}, err
+	}
 	resp, err := linear.CustomerGet(ctx(), client, input)
 	if err == nil {
 		return ResolvedCustomer{

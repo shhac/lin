@@ -17,6 +17,9 @@ type ResolvedInitiative struct {
 }
 
 func ResolveInitiative(client graphql.Client, input string) (ResolvedInitiative, error) {
+	if err := requireInput("initiative", input); err != nil {
+		return ResolvedInitiative{}, err
+	}
 	resp, err := linear.InitiativeGet(ctx(), client, input)
 	if err == nil {
 		return ResolvedInitiative{

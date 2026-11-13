@@ -18,6 +18,9 @@ type ResolvedUser struct {
 }
 
 func ResolveUser(client graphql.Client, input string) (ResolvedUser, error) {
+	if err := requireInput("user", input); err != nil {
+		return ResolvedUser{}, err
+	}
 	users, err := linear.FetchAll(func(first int, after *string) ([]linear.UserListUsersUserConnectionNodesUser, bool, *string, error) {
 		resp, err := linear.UserList(ctx(), client, nil, first, after)
 		if err != nil {

@@ -16,6 +16,9 @@ type ResolvedIssueLabel struct {
 
 func ResolveIssueLabels(client graphql.Client, input, teamID string) ([]string, error) {
 	inputs := splitAndTrim(input)
+	if len(inputs) == 0 {
+		return nil, emptyInputErr("labels")
+	}
 	labels, err := fetchIssueLabels(client, teamID)
 	if err != nil {
 		return nil, err

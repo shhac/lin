@@ -18,6 +18,9 @@ type ResolvedProjectLabel struct {
 // is no team scope to consider.
 func ResolveProjectLabels(client graphql.Client, input string) ([]string, error) {
 	inputs := splitAndTrim(input)
+	if len(inputs) == 0 {
+		return nil, emptyInputErr("labels")
+	}
 	labels, err := fetchProjectLabels(client)
 	if err != nil {
 		return nil, err

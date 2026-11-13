@@ -9,6 +9,20 @@ import (
 
 func ctx() context.Context { return context.Background() }
 
+// requireInput rejects blank resolver input before any lookup runs. Linear
+// treats an empty eqIgnoreCase comparator as match-all, so a blank name would
+// otherwise resolve to whichever entity the API happens to return first.
+func requireInput(noun, input string) error {
+	if strings.TrimSpace(input) != "" {
+		return nil
+	}
+	return emptyInputErr(noun)
+}
+
+func emptyInputErr(noun string) error {
+	return apierrors.Newf(apierrors.FixableByAgent, "%s must not be empty", noun)
+}
+
 // matchKind is the outcome of matchByNameOrID.
 type matchKind int
 

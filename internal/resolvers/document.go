@@ -15,6 +15,9 @@ type ResolvedDocument struct {
 }
 
 func ResolveDocument(client graphql.Client, input string) (ResolvedDocument, error) {
+	if err := requireInput("document", input); err != nil {
+		return ResolvedDocument{}, err
+	}
 	resp, err := linear.DocumentGet(ctx(), client, input)
 	if err == nil {
 		return ResolvedDocument{

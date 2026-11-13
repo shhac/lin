@@ -16,6 +16,9 @@ type ResolvedWorkflowState struct {
 }
 
 func ResolveWorkflowState(client graphql.Client, name, teamID string) (ResolvedWorkflowState, error) {
+	if err := requireInput("status", name); err != nil {
+		return ResolvedWorkflowState{}, err
+	}
 	filter := &linear.WorkflowStateFilter{
 		Team: &linear.TeamFilter{Id: &linear.IDComparator{Eq: ptr.To(teamID)}},
 	}

@@ -30,6 +30,9 @@ func ResolveOptionalTeamID(client graphql.Client, input string) (string, error) 
 }
 
 func ResolveTeam(client graphql.Client, input string) (ResolvedTeam, error) {
+	if err := requireInput("team", input); err != nil {
+		return ResolvedTeam{}, err
+	}
 	resp, err := linear.TeamGet(ctx(), client, input)
 	if err == nil {
 		return ResolvedTeam{ID: resp.Team.Id, Name: resp.Team.Name, Key: resp.Team.Key}, nil

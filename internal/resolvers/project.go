@@ -15,6 +15,9 @@ type ResolvedProject struct {
 }
 
 func ResolveProject(client graphql.Client, input string) (ResolvedProject, error) {
+	if err := requireInput("project", input); err != nil {
+		return ResolvedProject{}, err
+	}
 	resp, err := linear.ProjectGet(ctx(), client, input)
 	if err == nil {
 		return ResolvedProject{
