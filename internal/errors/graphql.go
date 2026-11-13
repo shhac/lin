@@ -19,6 +19,13 @@ func ClassifyGraphQLError(err error) *APIError {
 		return nil
 	}
 
+	// Already classified (e.g. a resolver's not-found or ambiguity error):
+	// re-classifying by message would drop its hint and fixable_by.
+	var apiErr *APIError
+	if As(err, &apiErr) {
+		return apiErr
+	}
+
 	// Check for HTTP-level errors (auth, rate limit, server errors)
 	var httpErr *graphql.HTTPError
 	if stderrors.As(err, &httpErr) {

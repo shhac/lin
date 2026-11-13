@@ -166,3 +166,13 @@ func TestClassifyHTTPError_418(t *testing.T) {
 		t.Errorf("FixableBy = %q, want %q", apiErr.FixableBy, FixableByAgent)
 	}
 }
+
+func TestClassifyGraphQLError_KeepsAlreadyClassifiedError(t *testing.T) {
+	in := New(`ambiguous project: "Roadmap" matches 2 projects`, FixableByAgent).WithHint("use the slug ID")
+
+	got := ClassifyGraphQLError(fmt.Errorf("resolving: %w", in))
+
+	if got != in {
+		t.Errorf("got %#v, want the original error back unchanged", got)
+	}
+}
