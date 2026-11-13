@@ -19,8 +19,8 @@ type fieldUpdate struct {
 	name  string // subcommand name, e.g. "due-date"
 	arg   string // value placeholder in usage, e.g. "date"
 	short string
-	// key is the MapIssueUpdateResult key echoed back; "" echoes nothing
-	// (description: the caller already has it, and it can be long).
+	// key is the MapIssueUpdateResult key echoed back. Description leaves it
+	// empty, which matches nothing: the caller already has it, and it can be long.
 	key string
 	// clear, when set, enables --clear and names the input field it empties.
 	clear linear.IssueClearField
@@ -59,22 +59,19 @@ func registerFieldUpdate(parent *cobra.Command, f fieldUpdate) {
 		Short: f.short,
 		Args:  cobra.RangeArgs(1, 2),
 		Run: func(_ *cobra.Command, args []string) {
-			value, err := parseFieldUpdateArgs(f, args, clear)
-			if err != nil {
-				output.WriteError(err)
-			}
-			client := linear.GetClient()
 			ctx := context.Background()
-
-			resp, err := applyFieldUpdate(ctx, client, f, args[0], value, clear)
-			if err != nil {
-				output.HandleGraphQLError(err)
+			if clear {
+				if err := checkClearArgs(f, args); err != nil {
+					output.WriteError(err)
+				}
+				printFieldUpdate(clearField(ctx, linear.GetClient(), f, args[0]))
+				return
 			}
-			result, err := fieldUpdateResult(f, resp.IssueUpdate, clear)
+			value, err := setValue(f, args)
 			if err != nil {
 				output.WriteError(err)
 			}
-			output.PrintJSON(result)
+			printFieldUpdate(setField(ctx, linear.GetClient(), f, args[0], value))
 		},
 	}
 	if f.clearable() {
@@ -83,21 +80,26 @@ func registerFieldUpdate(parent *cobra.Command, f fieldUpdate) {
 	parent.AddCommand(cmd)
 }
 
-// parseFieldUpdateArgs returns the value to set, or "" when clearing. A blank
-// value is refused rather than sent: for a resolver-backed field Linear would
-// match it against everything, and for the rest it is never what was meant.
-func parseFieldUpdateArgs(f fieldUpdate, args []string, clear bool) (string, error) {
-	if clear {
-		if len(args) != 1 {
-			return "", apierrors.Newf(apierrors.FixableByAgent, "--clear takes only the issue ID, got a %s too", f.arg).
-				WithHint(fmt.Sprintf("lin issue update %s <id> --clear", f.name))
-		}
-		return "", nil
+func printFieldUpdate(result map[string]any, err error) {
+	if err != nil {
+		output.HandleGraphQLError(err)
 	}
-	if len(args) != 2 {
-		return "", missingValueErr(f)
+	output.PrintJSON(result)
+}
+
+func checkClearArgs(f fieldUpdate, args []string) error {
+	if len(args) == 1 {
+		return nil
 	}
-	if f.clearable() && strings.TrimSpace(args[1]) == "" {
+	return apierrors.Newf(apierrors.FixableByAgent, "--clear takes only the issue ID, got a %s too", f.arg).
+		WithHint(fmt.Sprintf("lin issue update %s <id> --clear", f.name))
+}
+
+// setValue returns the value to set. A blank value for a clearable field is
+// refused rather than sent: for a resolver-backed field Linear would match it
+// against everything, and for the rest it is never what was meant.
+func setValue(f fieldUpdate, args []string) (string, error) {
+	if len(args) != 2 || (f.clearable() && strings.TrimSpace(args[1]) == "") {
 		return "", missingValueErr(f)
 	}
 	return args[1], nil
@@ -106,41 +108,55 @@ func parseFieldUpdateArgs(f fieldUpdate, args []string, clear bool) (string, err
 func missingValueErr(f fieldUpdate) error {
 	err := apierrors.Newf(apierrors.FixableByAgent, "missing %s", f.arg)
 	if !f.clearable() {
-		return err.WithHint(fmt.Sprintf("lin issue update %s <id> <%s>", f.name, f.arg))
+		return err.WithHint("lin issue update " + f.use())
 	}
 	return err.WithHint(fmt.Sprintf("to set it: lin issue update %s <id> <%s>; to remove it: lin issue update %s <id> --clear", f.name, f.arg, f.name))
 }
 
-func applyFieldUpdate(ctx context.Context, client graphql.Client, f fieldUpdate, issueID, value string, clear bool) (*linear.IssueUpdateResponse, error) {
-	if clear {
-		return linear.IssueClear(ctx, client, issueID, f.clear)
-	}
+// setField applies the value and echoes what Linear reports afterwards, so a
+// mis-resolved input is visible rather than hidden behind "updated": true.
+func setField(ctx context.Context, client graphql.Client, f fieldUpdate, issueID, value string) (map[string]any, error) {
 	input, err := f.input(ctx, client, issueID, value)
 	if err != nil {
 		return nil, err
 	}
-	return linear.IssueUpdate(ctx, client, issueID, input)
+	resp, err := linear.IssueUpdate(ctx, client, issueID, input)
+	if err != nil {
+		return nil, err
+	}
+	result, issue := updateResult(resp.IssueUpdate)
+	if v, ok := issue[f.key]; ok {
+		result[f.key] = v
+	}
+	return result, nil
 }
 
-// fieldUpdateResult echoes the value Linear reports after the update, so a
-// mis-resolved input is visible rather than hidden behind "updated": true.
-func fieldUpdateResult(f fieldUpdate, payload linear.IssueUpdateIssueUpdateIssuePayload, clear bool) (map[string]any, error) {
+// clearField empties the field and confirms from Linear's response that it
+// stuck; a success that left the value in place is reported as an error.
+func clearField(ctx context.Context, client graphql.Client, f fieldUpdate, issueID string) (map[string]any, error) {
+	resp, err := linear.IssueClear(ctx, client, issueID, f.clear)
+	if err != nil {
+		return nil, err
+	}
+	result, issue := updateResult(resp.IssueUpdate)
+	if issue == nil {
+		return result, nil
+	}
+	if _, stillSet := issue[f.key]; stillSet {
+		return nil, apierrors.Newf(apierrors.FixableByHuman, "Linear reported success but the %s is still set", f.arg)
+	}
+	result["cleared"] = f.key
+	return result, nil
+}
+
+// updateResult is the shared base of every update's output, plus the issue
+// as Linear reports it (nil when the payload carries none).
+func updateResult(payload linear.IssueUpdateIssueUpdateIssuePayload) (map[string]any, map[string]any) {
 	result := map[string]any{"updated": payload.Success}
 	if payload.Issue == nil {
 		return result, nil
 	}
 	issue := mappers.MapIssueUpdateResult(payload.Issue.IssueUpdateResultFields)
 	result["identifier"] = issue["identifier"]
-	value, stillSet := issue[f.key]
-	if !clear {
-		if f.key != "" && stillSet {
-			result[f.key] = value
-		}
-		return result, nil
-	}
-	if stillSet {
-		return nil, apierrors.Newf(apierrors.FixableByHuman, "Linear reported success but the %s is still set", f.arg)
-	}
-	result["cleared"] = f.key
-	return result, nil
+	return result, issue
 }
