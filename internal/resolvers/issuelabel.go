@@ -112,18 +112,17 @@ func resolveOneIssueLabel(input string, labels []ResolvedIssueLabel, teamScoped 
 		}
 		return ResolvedIssueLabel{}, labelNotFoundErr("label", input, names)
 	default:
-		parts := make([]string, len(matches))
-		for i, l := range matches {
-			if l.TeamKey != "" {
-				parts[i] = fmt.Sprintf("%s (id: %s, team: %s)", l.Name, l.ID, l.TeamKey)
-			} else {
-				parts[i] = fmt.Sprintf("%s (id: %s, workspace)", l.Name, l.ID)
-			}
-		}
 		hint := ""
 		if !teamScoped {
 			hint = ", tip: use --team to narrow scope"
 		}
-		return ResolvedIssueLabel{}, ambiguousLabelErr("label", input, parts, hint)
+		return ResolvedIssueLabel{}, ambiguousLabelErr("label", input, matches, describeIssueLabel, hint)
 	}
+}
+
+func describeIssueLabel(l ResolvedIssueLabel) string {
+	if l.TeamKey == "" {
+		return fmt.Sprintf("%s (id: %s, workspace)", l.Name, l.ID)
+	}
+	return fmt.Sprintf("%s (id: %s, team: %s)", l.Name, l.ID, l.TeamKey)
 }

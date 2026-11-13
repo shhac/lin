@@ -45,12 +45,12 @@ func ResolveInitiative(client graphql.Client, input string) (ResolvedInitiative,
 	case 0:
 		return ResolvedInitiative{}, initiativeNotFoundErr(input, initiatives)
 	default:
-		parts := make([]string, len(matches))
-		for i, m := range matches {
-			parts[i] = fmt.Sprintf("%s (slug: %s)", m.Name, m.SlugId)
-		}
-		return ResolvedInitiative{}, ambiguousErr("initiative", "initiatives", input, parts, "use the slug ID or UUID")
+		return ResolvedInitiative{}, ambiguousErr("initiative", "initiatives", input, matches, describeInitiative, "use the slug ID or UUID")
 	}
+}
+
+func describeInitiative(i linear.InitiativeListInitiativesInitiativeConnectionNodesInitiative) string {
+	return fmt.Sprintf("%s (slug: %s)", i.Name, i.SlugId)
 }
 
 func initiativeNotFoundErr(input string, initiatives []linear.InitiativeListInitiativesInitiativeConnectionNodesInitiative) error {

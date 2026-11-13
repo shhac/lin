@@ -41,15 +41,11 @@ func ResolveProject(client graphql.Client, input string) (ResolvedProject, error
 	case 0:
 		return ResolvedProject{}, apierrors.Newf(apierrors.FixableByAgent, "project not found: %q, provide a UUID, slug ID, or exact name", input)
 	default:
-		parts := make([]string, len(matches))
-		for i, p := range matches {
-			parts[i] = describeProject(p.ProjectSummaryFields)
-		}
-		return ResolvedProject{}, ambiguousErr("project", "projects", input, parts, "use the slug ID or UUID")
+		return ResolvedProject{}, ambiguousErr("project", "projects", input, matches, describeProject, "use the slug ID or UUID")
 	}
 }
 
-func describeProject(p linear.ProjectSummaryFields) string {
+func describeProject(p linear.ProjectListProjectsProjectConnectionNodesProject) string {
 	desc := fmt.Sprintf("%s (slug: %s", p.Name, p.SlugId)
 	if p.State != "" {
 		desc += ", state: " + p.State

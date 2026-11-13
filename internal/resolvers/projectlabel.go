@@ -73,10 +73,8 @@ func resolveOneProjectLabel(input string, labels []ResolvedProjectLabel) (Resolv
 		}
 		return ResolvedProjectLabel{}, labelNotFoundErr("project label", input, names)
 	default:
-		parts := make([]string, len(matches))
-		for i, l := range matches {
-			parts[i] = fmt.Sprintf("%s (id: %s)", l.Name, l.ID)
-		}
-		return ResolvedProjectLabel{}, ambiguousLabelErr("project label", input, parts, "")
+		return ResolvedProjectLabel{}, ambiguousLabelErr("project label", input, matches, func(l ResolvedProjectLabel) string {
+			return fmt.Sprintf("%s (id: %s)", l.Name, l.ID)
+		}, "")
 	}
 }

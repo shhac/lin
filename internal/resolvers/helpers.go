@@ -53,16 +53,20 @@ func labelNotFoundErr(noun, input string, names []string) error {
 // refuse rather than silently pick whichever the API returned first.
 const nameMatchLimit = 10
 
-// ambiguousErr builds the shared "ambiguous <noun>" error. parts are the
-// caller-formatted match descriptors; fix tells the agent how to pick one.
-func ambiguousErr(noun, plural, input string, parts []string, fix string) error {
+// ambiguousErr builds the shared "ambiguous <noun>" error, listing each match
+// as describe renders it; fix tells the agent how to pick one.
+func ambiguousErr[T any](noun, plural, input string, matches []T, describe func(T) string, fix string) error {
+	parts := make([]string, len(matches))
+	for i, m := range matches {
+		parts[i] = describe(m)
+	}
 	return apierrors.Newf(apierrors.FixableByAgent, "ambiguous %s: %q matches %d %s: %s, %s", noun, input, len(parts), plural, formatChoices(parts), fix)
 }
 
 // ambiguousLabelErr is ambiguousErr for the label resolvers; hint is an
 // optional trailing suffix (the issue resolver's --team tip).
-func ambiguousLabelErr(noun, input string, parts []string, hint string) error {
-	return ambiguousErr(noun, "labels", input, parts, "use the label ID to disambiguate"+hint)
+func ambiguousLabelErr[T any](noun, input string, matches []T, describe func(T) string, hint string) error {
+	return ambiguousErr(noun, "labels", input, matches, describe, "use the label ID to disambiguate"+hint)
 }
 
 // formatChoices renders a list of valid options for an error message as a

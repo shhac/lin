@@ -42,15 +42,11 @@ func ResolveCustomer(client graphql.Client, input string) (ResolvedCustomer, err
 	case 0:
 		return ResolvedCustomer{}, apierrors.Newf(apierrors.FixableByAgent, "customer not found: %q, provide a UUID, slug ID, or exact name", input)
 	default:
-		parts := make([]string, len(matches))
-		for i, c := range matches {
-			parts[i] = describeCustomer(c.CustomerSummaryFields)
-		}
-		return ResolvedCustomer{}, ambiguousErr("customer", "customers", input, parts, "use the slug ID or UUID")
+		return ResolvedCustomer{}, ambiguousErr("customer", "customers", input, matches, describeCustomer, "use the slug ID or UUID")
 	}
 }
 
-func describeCustomer(c linear.CustomerSummaryFields) string {
+func describeCustomer(c linear.CustomerListCustomersCustomerConnectionNodesCustomer) string {
 	desc := fmt.Sprintf("%s (slug: %s", c.Name, c.SlugId)
 	if c.Status.Name != "" {
 		desc += ", status: " + c.Status.Name

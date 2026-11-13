@@ -61,9 +61,7 @@ func userNotFoundErr(input string, users []linear.UserListUsersUserConnectionNod
 }
 
 func ambiguousUserErr(input string, matches []ResolvedUser) error {
-	parts := make([]string, len(matches))
-	for i, u := range matches {
-		parts[i] = fmt.Sprintf("%s <%s> (%s)", u.Name, u.Email, u.ID)
-	}
-	return ambiguousErr("user", "users", input, parts, "use a unique name, email, or ID")
+	return ambiguousErr("user", "users", input, matches, func(u ResolvedUser) string {
+		return fmt.Sprintf("%s <%s> (%s)", u.Name, u.Email, u.ID)
+	}, "use a unique name, email, or ID")
 }
