@@ -1,8 +1,11 @@
 package clearable
 
 import (
+	"context"
 	"strings"
 	"testing"
+
+	"github.com/Khan/genqlient/graphql"
 
 	apierrors "github.com/shhac/lin/internal/errors"
 )
@@ -28,10 +31,10 @@ func assertAPIError(t *testing.T, err error, wantMsg, wantHint string) *apierror
 }
 
 func TestUse(t *testing.T) {
-	if got := lead.Use(); got != "lead <id> [<user> | --clear]" {
+	if got := lead.use(); got != "lead <id> [<user> | --clear]" {
 		t.Errorf("clearable Use = %q", got)
 	}
-	if got := title.Use(); got != "title <id> <title>" {
+	if got := title.use(); got != "title <id> <title>" {
 		t.Errorf("plain Use = %q", got)
 	}
 }
@@ -73,10 +76,10 @@ func TestValue(t *testing.T) {
 }
 
 func TestCheckClearArgs(t *testing.T) {
-	if err := lead.CheckClearArgs([]string{"P-1"}); err != nil {
+	if err := lead.checkClearArgs([]string{"P-1"}); err != nil {
 		t.Errorf("unexpected error: %v", err)
 	}
-	err := lead.CheckClearArgs([]string{"P-1", "Alice"})
+	err := lead.checkClearArgs([]string{"P-1", "Alice"})
 	assertAPIError(t, err, "--clear takes only the ID; drop the user value", "lin project update lead <id> --clear")
 }
 
@@ -94,5 +97,55 @@ func TestCommand_OnlyClearableArgsGetTheFlag(t *testing.T) {
 	}
 	if title.Command("s", nil, nil).Flags().Lookup("clear") != nil {
 		t.Error("non-clearable command must not offer --clear")
+	}
+}
+
+func TestRun_DispatchesAfterValidatingWithoutAClient(t *testing.T) {
+	var calls []string
+	set := func(_ context.Context, _ graphql.Client, id, value string) (map[string]any, error) {
+		calls = append(calls, "set "+id+" "+value)
+		return map[string]any{"set": value}, nil
+	}
+	clear := func(_ context.Context, _ graphql.Client, id string) (map[string]any, error) {
+		calls = append(calls, "clear "+id)
+		return map[string]any{"cleared": id}, nil
+	}
+	cases := []struct {
+		name      string
+		args      []string
+		clearing  bool
+		wantCalls string
+		wantErr   string
+	}{
+		{"set", []string{"P-1", "Alice"}, false, "set P-1 Alice", ""},
+		{"clear", []string{"P-1"}, true, "clear P-1", ""},
+		{"clear with a value is refused", []string{"P-1", "Alice"}, true, "", "--clear takes only the ID"},
+		{"missing value is refused", []string{"P-1"}, false, "", "missing user"},
+		{"blank value is refused", []string{"P-1", " "}, false, "", "missing user"},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			calls = nil
+			clients := 0
+			newClient := func() graphql.Client { clients++; return nil }
+
+			_, err := lead.run(context.Background(), tc.args, tc.clearing, newClient, set, clear)
+
+			if tc.wantErr != "" {
+				if err == nil || !strings.Contains(err.Error(), tc.wantErr) {
+					t.Errorf("err = %v, want %q", err, tc.wantErr)
+				}
+				if clients != 0 || len(calls) != 0 {
+					t.Errorf("a usage error must not create a client or run (clients=%d, calls=%v)", clients, calls)
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			if strings.Join(calls, ";") != tc.wantCalls || clients != 1 {
+				t.Errorf("calls = %v, clients = %d, want %q once", calls, clients, tc.wantCalls)
+			}
+		})
 	}
 }

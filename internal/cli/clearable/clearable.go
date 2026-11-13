@@ -28,7 +28,7 @@ type (
 	ClearFunc func(ctx context.Context, client graphql.Client, id string) (map[string]any, error)
 )
 
-func (a Arg) Use() string {
+func (a Arg) use() string {
 	if a.Clearable {
 		return fmt.Sprintf("%s <id> [<%s> | --clear]", a.Name, a.Placeholder)
 	}
@@ -41,23 +41,15 @@ func (a Arg) Use() string {
 func (a Arg) Command(short string, set SetFunc, clear ClearFunc) *cobra.Command {
 	clearing := false
 	cmd := &cobra.Command{
-		Use:   a.Use(),
+		Use:   a.use(),
 		Short: short,
 		Args:  cobra.RangeArgs(1, 2),
 		Run: func(_ *cobra.Command, args []string) {
-			ctx := context.Background()
-			if clearing {
-				if err := a.CheckClearArgs(args); err != nil {
-					output.WriteError(err)
-				}
-				printResult(clear(ctx, linear.GetClient(), args[0]))
-				return
-			}
-			value, err := a.Value(args)
+			result, err := a.run(context.Background(), args, clearing, linear.GetClient, set, clear)
 			if err != nil {
-				output.WriteError(err)
+				output.HandleGraphQLError(err)
 			}
-			printResult(set(ctx, linear.GetClient(), args[0], value))
+			output.PrintJSON(result)
 		},
 	}
 	if a.Clearable {
@@ -66,14 +58,23 @@ func (a Arg) Command(short string, set SetFunc, clear ClearFunc) *cobra.Command 
 	return cmd
 }
 
-func printResult(result map[string]any, err error) {
-	if err != nil {
-		output.HandleGraphQLError(err)
+// run validates the arguments, then creates a client and dispatches to set or
+// clear. Usage errors return before newClient is called.
+func (a Arg) run(ctx context.Context, args []string, clearing bool, newClient func() graphql.Client, set SetFunc, clear ClearFunc) (map[string]any, error) {
+	if clearing {
+		if err := a.checkClearArgs(args); err != nil {
+			return nil, err
+		}
+		return clear(ctx, newClient(), args[0])
 	}
-	output.PrintJSON(result)
+	value, err := a.Value(args)
+	if err != nil {
+		return nil, err
+	}
+	return set(ctx, newClient(), args[0], value)
 }
 
-func (a Arg) CheckClearArgs(args []string) error {
+func (a Arg) checkClearArgs(args []string) error {
 	if len(args) == 1 {
 		return nil
 	}
@@ -94,7 +95,7 @@ func (a Arg) Value(args []string) (string, error) {
 func (a Arg) missingValueErr() error {
 	err := apierrors.Newf(apierrors.FixableByAgent, "missing %s", a.Placeholder)
 	if !a.Clearable {
-		return err.WithHint(a.Parent + " " + a.Use())
+		return err.WithHint(a.Parent + " " + a.use())
 	}
 	return err.WithHint(fmt.Sprintf("to set it: %s %s <id> <%s>; to remove it: %s %s <id> --clear", a.Parent, a.Name, a.Placeholder, a.Parent, a.Name))
 }
