@@ -27,6 +27,8 @@ var (
 	Newf = out.Newf
 	// Wrap is nil-safe in lib-agent-output v0.4.2+, matching the old local guard.
 	Wrap = out.Wrap
+	// FixableByStatus classifies an HTTP status: 401/402/403 human, 429/5xx retry, else agent.
+	FixableByStatus = out.FixableByStatus
 )
 
 // As keeps lin's typed double-pointer signature (callers pass **APIError).

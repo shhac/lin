@@ -10,6 +10,7 @@ import (
 
 	"github.com/Khan/genqlient/graphql"
 
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
 )
 
@@ -71,17 +72,17 @@ func fetchFile(fileURL, apiKey string) (fetchedFile, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return fetchedFile{}, fmt.Errorf("download failed: %v", err)
+		return fetchedFile{}, apierrors.Wrap(fmt.Errorf("download failed: %w", err), apierrors.FixableByRetry)
 	}
 	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode >= 400 {
-		return fetchedFile{}, fmt.Errorf("download failed: %d %s", resp.StatusCode, resp.Status)
+		return fetchedFile{}, apierrors.Newf(apierrors.FixableByStatus(resp.StatusCode), "download failed: %s", resp.Status)
 	}
 
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return fetchedFile{}, fmt.Errorf("download failed: %v", err)
+		return fetchedFile{}, apierrors.Wrap(fmt.Errorf("download failed: %w", err), apierrors.FixableByRetry)
 	}
 
 	contentType := resp.Header.Get("Content-Type")

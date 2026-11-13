@@ -6,6 +6,8 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	apierrors "github.com/shhac/lin/internal/errors"
 )
 
 func TestHTTPPutWithHeaders_OK(t *testing.T) {
@@ -69,6 +71,24 @@ func TestHTTPPutWithHeaders_RemoteError(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "signature mismatch") {
 		t.Errorf("error = %v, want to contain response body", err)
+	}
+	var apiErr *apierrors.APIError
+	if !apierrors.As(err, &apiErr) || apiErr.FixableBy != apierrors.FixableByHuman {
+		t.Errorf("err = %#v, want fixable_by human for 403", err)
+	}
+}
+
+func TestUploadFailed_NamesFileAndKeepsClassification(t *testing.T) {
+	inner := apierrors.New("429 Too Many Requests", apierrors.FixableByRetry).WithHint("wait and retry")
+
+	err := uploadFailed("shot.png", inner)
+
+	var apiErr *apierrors.APIError
+	if !apierrors.As(err, &apiErr) {
+		t.Fatalf("want APIError, got %#v", err)
+	}
+	if apiErr.Message != "upload failed for shot.png: 429 Too Many Requests" || apiErr.FixableBy != apierrors.FixableByRetry || apiErr.Hint != "wait and retry" {
+		t.Errorf("got %#v", apiErr)
 	}
 }
 

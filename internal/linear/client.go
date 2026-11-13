@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	apierrors "github.com/shhac/lin/internal/errors"
 )
 
 const initialAPIURL = "https://api.linear.app/graphql"
@@ -65,7 +67,7 @@ func (c *Client) do(ctx context.Context, query string, variables any, result any
 
 	resp, err := c.http.Do(req)
 	if err != nil {
-		return fmt.Errorf("request failed: %w", err)
+		return apierrors.Wrap(fmt.Errorf("request failed: %w", err), apierrors.FixableByRetry)
 	}
 	defer func() { _ = resp.Body.Close() }()
 
@@ -75,7 +77,7 @@ func (c *Client) do(ctx context.Context, query string, variables any, result any
 	}
 
 	if resp.StatusCode >= 400 {
-		return fmt.Errorf("HTTP %d: %s", resp.StatusCode, string(respBody))
+		return apierrors.Newf(apierrors.FixableByStatus(resp.StatusCode), "HTTP %d: %s", resp.StatusCode, string(respBody))
 	}
 
 	var gqlResp graphQLResponse

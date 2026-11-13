@@ -16,7 +16,7 @@ var opNameRE = regexp.MustCompile(`(?:query|mutation)\s+(\w+)`)
 // MockLinear creates a test HTTP server that responds to GraphQL operations.
 // Operations are matched by extracting the operation name from the query.
 type MockLinear struct {
-	Server   *httptest.Server
+	Server    *httptest.Server
 	mu        sync.RWMutex
 	handlers  map[string]any
 	variables map[string]map[string]any

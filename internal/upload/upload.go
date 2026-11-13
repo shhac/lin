@@ -12,6 +12,7 @@ import (
 
 	"github.com/Khan/genqlient/graphql"
 
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
 )
 
@@ -47,7 +48,7 @@ func uploadOne(client graphql.Client, filePath string) (UploadedFile, error) {
 
 	resp, err := linear.FileUpload(context.Background(), client, contentType, filename, size)
 	if err != nil {
-		return UploadedFile{}, fmt.Errorf("upload failed for %s: %v", filename, err)
+		return UploadedFile{}, uploadFailed(filename, err)
 	}
 	if resp.FileUpload.UploadFile == nil {
 		return UploadedFile{}, fmt.Errorf("upload failed for %s: no upload URL returned", filename)
@@ -66,7 +67,7 @@ func uploadOne(client graphql.Client, filePath string) (UploadedFile, error) {
 	defer func() { _ = f.Close() }()
 
 	if err := httpPutWithHeaders(uf.UploadUrl, f, int64(size), contentType, headers); err != nil {
-		return UploadedFile{}, fmt.Errorf("upload failed for %s: %v", filename, err)
+		return UploadedFile{}, uploadFailed(filename, err)
 	}
 
 	return UploadedFile{
@@ -74,6 +75,16 @@ func uploadOne(client graphql.Client, filePath string) (UploadedFile, error) {
 		AssetURL:    uf.AssetUrl,
 		ContentType: contentType,
 	}, nil
+}
+
+// uploadFailed names the file in err's message while keeping its
+// classification, so a rate limit stays retryable and an auth failure stays
+// the human's to fix.
+func uploadFailed(filename string, err error) error {
+	classified := apierrors.ClassifyGraphQLError(err)
+	return apierrors.Newf(classified.FixableBy, "upload failed for %s: %s", filename, classified.Message).
+		WithHint(classified.Hint).
+		WithCause(err)
 }
 
 // httpPutWithHeaders streams body to url via HTTP PUT with Linear's required
@@ -93,7 +104,7 @@ func httpPutWithHeaders(url string, body io.Reader, contentLength int64, content
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return err
+		return apierrors.Wrap(err, apierrors.FixableByRetry)
 	}
 	defer func() { _ = resp.Body.Close() }()
 	responseBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4*1024))
@@ -101,9 +112,9 @@ func httpPutWithHeaders(url string, body io.Reader, contentLength int64, content
 
 	if resp.StatusCode >= 300 {
 		if len(responseBody) > 0 {
-			return fmt.Errorf("%d %s: %s", resp.StatusCode, resp.Status, strings.TrimSpace(string(responseBody)))
+			return apierrors.Newf(apierrors.FixableByStatus(resp.StatusCode), "%s: %s", resp.Status, strings.TrimSpace(string(responseBody)))
 		}
-		return fmt.Errorf("%d %s", resp.StatusCode, resp.Status)
+		return apierrors.Newf(apierrors.FixableByStatus(resp.StatusCode), "%s", resp.Status)
 	}
 	return nil
 }

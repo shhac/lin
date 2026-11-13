@@ -5,6 +5,8 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	apierrors "github.com/shhac/lin/internal/errors"
 )
 
 func TestFetchFile_OK(t *testing.T) {
@@ -39,8 +41,23 @@ func TestFetchFile_HTTPError(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	if _, err := fetchFile(srv.URL, "test-key"); err == nil {
-		t.Fatal("expected error for 403 response")
+	_, err := fetchFile(srv.URL, "test-key")
+	var apiErr *apierrors.APIError
+	if !apierrors.As(err, &apiErr) || apiErr.FixableBy != apierrors.FixableByHuman {
+		t.Fatalf("err = %#v, want a fixable_by human error for 403", err)
+	}
+}
+
+func TestFetchFile_ServerErrorIsRetryable(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		w.WriteHeader(http.StatusServiceUnavailable)
+	}))
+	defer srv.Close()
+
+	_, err := fetchFile(srv.URL, "test-key")
+	var apiErr *apierrors.APIError
+	if !apierrors.As(err, &apiErr) || apiErr.FixableBy != apierrors.FixableByRetry {
+		t.Fatalf("err = %#v, want a fixable_by retry error for 503", err)
 	}
 }
 

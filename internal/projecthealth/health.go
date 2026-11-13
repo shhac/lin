@@ -2,9 +2,9 @@
 package projecthealth
 
 import (
-	"fmt"
 	"strings"
 
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
 )
 
@@ -28,5 +28,5 @@ func Validate(input string) (linear.ProjectUpdateHealthType, error) {
 	if h, ok := byInput[strings.ToLower(input)]; ok {
 		return h, nil
 	}
-	return "", fmt.Errorf("unknown project health: %q, valid values: %s", input, Values)
+	return "", apierrors.Newf(apierrors.FixableByAgent, "unknown project health: %q, valid values: %s", input, Values)
 }

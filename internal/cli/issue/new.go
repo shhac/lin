@@ -2,12 +2,12 @@ package issue
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
 	"github.com/Khan/genqlient/graphql"
 	"github.com/spf13/cobra"
 
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/output"
 	"github.com/shhac/lin/internal/priorities"
@@ -130,7 +130,7 @@ func parsePriority(s string) (*int, error) {
 	}
 	p, ok := priorities.Resolve(s)
 	if !ok {
-		return nil, fmt.Errorf("invalid priority: %q, valid values: %s", s, priorities.Values)
+		return nil, apierrors.Newf(apierrors.FixableByAgent, "invalid priority: %q, valid values: %s", s, priorities.Values)
 	}
 	return &p, nil
 }
@@ -189,7 +189,7 @@ func applyEstimate(input *linear.IssueCreateInput, estimate string) error {
 	}
 	n, err := strconv.Atoi(estimate)
 	if err != nil {
-		return fmt.Errorf("invalid estimate: %q, must be a number", estimate)
+		return apierrors.Newf(apierrors.FixableByAgent, "invalid estimate: %q, must be a number", estimate)
 	}
 	input.Estimate = &n
 	return nil

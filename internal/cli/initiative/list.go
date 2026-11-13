@@ -2,11 +2,11 @@ package initiative
 
 import (
 	"context"
-	"fmt"
 	"strings"
 
 	"github.com/spf13/cobra"
 
+	apierrors "github.com/shhac/lin/internal/errors"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/mappers"
 	"github.com/shhac/lin/internal/output"
@@ -24,7 +24,7 @@ func validateInitiativeStatus(input string) (string, error) {
 			return strings.ToUpper(s[:1]) + s[1:], nil
 		}
 	}
-	return "", fmt.Errorf("unknown initiative status: %q, valid values: %s", input, statusValues)
+	return "", apierrors.Newf(apierrors.FixableByAgent, "unknown initiative status: %q, valid values: %s", input, statusValues)
 }
 
 func registerList(parent *cobra.Command) {

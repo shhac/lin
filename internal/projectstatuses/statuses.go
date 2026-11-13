@@ -1,8 +1,9 @@
 package projectstatuses
 
 import (
-	"fmt"
 	"strings"
+
+	apierrors "github.com/shhac/lin/internal/errors"
 )
 
 var List = []string{"backlog", "planned", "started", "paused", "completed", "canceled"}
@@ -18,5 +19,5 @@ func Validate(input string) (string, error) {
 			return s, nil
 		}
 	}
-	return "", fmt.Errorf("unknown project status: %q, valid values: %s", input, Values)
+	return "", apierrors.Newf(apierrors.FixableByAgent, "unknown project status: %q, valid values: %s", input, Values)
 }
