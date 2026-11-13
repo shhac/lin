@@ -42,7 +42,7 @@ func registerNew(parent *cobra.Command) {
 			client := linear.GetClient()
 			input, err := buildIssueCreateInput(client, opts)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.IssueCreate(context.Background(), client, input)

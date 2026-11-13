@@ -48,7 +48,7 @@ func registerList(label *cobra.Command) {
 
 		teamID, err := resolvers.ResolveOptionalTeamID(client, teamFlag)
 		if err != nil {
-			output.PrintError(err.Error())
+			output.HandleGraphQLError(err)
 		}
 		runIssueLabelList(ctx, client, page, filters.IssueLabelFilterOpts{Name: nameFlag, IsGroup: groupPtr}, teamID)
 	}

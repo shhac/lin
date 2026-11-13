@@ -18,7 +18,7 @@ func registerUpdateStatus(parent *cobra.Command) {
 		Run: func(_ *cobra.Command, args []string) {
 			normalized, err := validateInitiativeStatus(args[1])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 			}
 
 			client := linear.GetClient()
@@ -26,7 +26,7 @@ func registerUpdateStatus(parent *cobra.Command) {
 
 			resolved, err := resolvers.ResolveInitiative(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			s := linear.InitiativeStatus(normalized)

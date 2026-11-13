@@ -28,7 +28,7 @@ func registerRequests(parent *cobra.Command) {
 
 		resolved, err := resolvers.ResolveProject(client, args[0])
 		if err != nil {
-			output.PrintError(err.Error())
+			output.HandleGraphQLError(err)
 		}
 
 		filter := filters.BuildCustomerNeedFilter(filters.CustomerNeedFilterOpts{Important: important})

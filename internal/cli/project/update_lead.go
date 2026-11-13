@@ -21,12 +21,12 @@ func registerUpdateLead(parent *cobra.Command) {
 
 			resolved, err := resolvers.ResolveProject(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			user, err := resolvers.ResolveUser(client, args[1])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, linear.ProjectUpdateInput{

@@ -44,7 +44,7 @@ func registerList(parent *cobra.Command) {
 		if status != "" {
 			normalized, err := validateInitiativeStatus(status)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 			}
 			filter = &linear.InitiativeFilter{
 				Status: &linear.StringComparator{EqIgnoreCase: &normalized},

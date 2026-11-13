@@ -38,7 +38,7 @@ func registerNew(parent *cobra.Command) {
 			client := linear.GetClient()
 			input, err := buildProjectCreateInput(client, opts)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.ProjectCreate(context.Background(), client, input)

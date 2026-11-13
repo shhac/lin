@@ -48,13 +48,13 @@ func registerQuery(apiCmd *cobra.Command) {
 			ctx := context.Background()
 			data, err := client.RawQuery(ctx, query, vars)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 				return
 			}
 
 			var decoded any
 			if err := json.Unmarshal(data, &decoded); err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 				return
 			}
 			output.PrintJSON(decoded)

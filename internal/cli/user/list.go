@@ -27,7 +27,7 @@ func registerList(user *cobra.Command) {
 		if teamFlag != "" {
 			resolved, err := resolvers.ResolveTeam(client, teamFlag)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.TeamMembers(ctx, client, resolved.ID, page.Size(), page.Cursor())

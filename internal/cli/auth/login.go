@@ -60,7 +60,7 @@ func registerLogin(auth *cobra.Command) {
 				Name:   org.Name,
 				URLKey: org.UrlKey,
 			}); err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 				return
 			}
 

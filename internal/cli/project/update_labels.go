@@ -21,12 +21,12 @@ func registerUpdateLabels(parent *cobra.Command) {
 
 			resolved, err := resolvers.ResolveProject(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			labelIds, err := resolvers.ResolveProjectLabels(client, args[1])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, linear.ProjectUpdateInput{LabelIds: labelIds})

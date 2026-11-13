@@ -30,7 +30,7 @@ func registerCommentNew(parent *cobra.Command) {
 			if len(files) > 0 {
 				uploaded, err := upload.UploadFiles(client, files)
 				if err != nil {
-					output.PrintError(err.Error())
+					output.WriteError(err)
 				}
 				body = body + "\n\n" + upload.FormatFileMarkdown(uploaded)
 			}

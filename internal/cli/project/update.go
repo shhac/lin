@@ -50,7 +50,7 @@ func registerSimpleProjectUpdate(parent *cobra.Command, use, short string, build
 
 			resolved, err := resolvers.ResolveProject(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, buildInput(args[1]))

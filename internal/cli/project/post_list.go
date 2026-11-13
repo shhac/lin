@@ -25,7 +25,7 @@ func registerPostList(parent *cobra.Command) {
 
 		resolved, err := resolvers.ResolveProject(client, args[0])
 		if err != nil {
-			output.PrintError(err.Error())
+			output.HandleGraphQLError(err)
 		}
 
 		resp, err := linear.ProjectPostList(ctx, client, resolved.ID, page.Size(), page.Cursor())

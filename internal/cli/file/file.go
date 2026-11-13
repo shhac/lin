@@ -37,7 +37,7 @@ func registerUpload(parent *cobra.Command) {
 			client := linear.GetClient()
 			results, err := upload.UploadFiles(client, args)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 			}
 			output.PrintJSON(results)
 		},
@@ -62,12 +62,12 @@ func registerDownload(parent *cobra.Command) {
 
 			orgID, err := dl.GetOrgID(client)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			parsed, err := dl.ParseFileURL(args[0], orgID)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 			}
 
 			result, err := dl.DownloadFile(parsed.URL, dl.DownloadOpts{
@@ -79,7 +79,7 @@ func registerDownload(parent *cobra.Command) {
 				DefaultDir: config.DownloadsDir(),
 			})
 			if err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 			}
 
 			if flagStdout {

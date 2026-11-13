@@ -24,7 +24,7 @@ func registerStates(team *cobra.Command) {
 
 			team, err := resolvers.ResolveTeam(client, teamInput)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			filter := &linear.WorkflowStateFilter{

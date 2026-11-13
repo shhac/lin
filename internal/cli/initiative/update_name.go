@@ -21,7 +21,7 @@ func registerUpdateName(parent *cobra.Command) {
 
 			resolved, err := resolvers.ResolveInitiative(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.InitiativeUpdate(ctx, client, resolved.ID, linear.InitiativeUpdateInput{

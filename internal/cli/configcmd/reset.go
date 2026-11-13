@@ -17,7 +17,7 @@ func registerReset(cfg *cobra.Command) {
 		Run: func(_ *cobra.Command, args []string) {
 			if len(args) == 0 {
 				if err := config.ResetSettings(); err != nil {
-					output.PrintError(err.Error())
+					output.WriteError(err)
 					return
 				}
 				output.PrintJSON(map[string]any{"reset": "all"})
@@ -35,7 +35,7 @@ func registerReset(cfg *cobra.Command) {
 			def.reset(settings)
 
 			if err := config.UpdateSettings(settings); err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 				return
 			}
 			output.PrintJSON(map[string]any{"reset": key})

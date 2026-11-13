@@ -21,12 +21,12 @@ func registerUpdateOwner(parent *cobra.Command) {
 
 			resolved, err := resolvers.ResolveInitiative(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			user, err := resolvers.ResolveUser(client, args[1])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.InitiativeUpdate(ctx, client, resolved.ID, linear.InitiativeUpdateInput{

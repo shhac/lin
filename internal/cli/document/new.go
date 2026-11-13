@@ -34,7 +34,7 @@ func registerNew(parent *cobra.Command) {
 			if project != "" {
 				resolved, err := resolvers.ResolveProject(client, project)
 				if err != nil {
-					output.PrintError(err.Error())
+					output.HandleGraphQLError(err)
 				}
 				input.ProjectId = &resolved.ID
 			}

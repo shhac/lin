@@ -40,7 +40,7 @@ func registerRequests(parent *cobra.Command) {
 		if customerID != "" {
 			resolved, err := resolvers.ResolveCustomer(client, customer)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 			customerID = resolved.ID
 		}

@@ -19,7 +19,7 @@ func registerLogout(auth *cobra.Command) {
 		Run: func(_ *cobra.Command, _ []string) {
 			if all {
 				if err := config.ClearAll(); err != nil {
-					output.PrintError(err.Error())
+					output.WriteError(err)
 					return
 				}
 				output.PrintJSON(map[string]any{"ok": true, "cleared": "all"})

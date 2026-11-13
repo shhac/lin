@@ -26,7 +26,7 @@ func registerDelete(parent *cobra.Command) {
 
 			resolved, err := resolvers.ResolveProject(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.ProjectDelete(context.Background(), client, resolved.ID)
@@ -51,7 +51,7 @@ func registerUnarchive(parent *cobra.Command) {
 
 			resolved, err := resolvers.ResolveProject(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.ProjectUnarchive(context.Background(), client, resolved.ID)

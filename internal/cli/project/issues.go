@@ -32,7 +32,7 @@ func registerIssues(parent *cobra.Command) {
 
 		resolved, err := resolvers.ResolveProject(client, args[0])
 		if err != nil {
-			output.PrintError(err.Error())
+			output.HandleGraphQLError(err)
 		}
 
 		filter := filters.BuildIssueFilter(filters.IssueFilterOpts{

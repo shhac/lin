@@ -29,7 +29,7 @@ func registerList(cycle *cobra.Command) {
 
 		resolved, err := resolvers.ResolveTeam(client, args[0])
 		if err != nil {
-			output.PrintError(err.Error())
+			output.HandleGraphQLError(err)
 		}
 
 		if current {

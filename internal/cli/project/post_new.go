@@ -24,7 +24,7 @@ func registerPostNew(parent *cobra.Command) {
 
 			resolved, err := resolvers.ResolveProject(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			body := args[1]
@@ -35,7 +35,7 @@ func registerPostNew(parent *cobra.Command) {
 			if health != "" {
 				h, err := projecthealth.Validate(health)
 				if err != nil {
-					output.PrintError(err.Error())
+					output.WriteError(err)
 				}
 				input.Health = &h
 			}

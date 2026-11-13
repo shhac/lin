@@ -25,12 +25,12 @@ func registerSet(cfg *cobra.Command) {
 			settings := config.GetSettings()
 			parsed, err := def.apply(settings, value)
 			if err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 				return
 			}
 
 			if err := config.UpdateSettings(settings); err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 				return
 			}
 			output.PrintJSON(map[string]any{key: parsed})

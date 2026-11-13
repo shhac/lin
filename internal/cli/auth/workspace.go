@@ -52,7 +52,7 @@ func registerWorkspaceSwitch(workspace *cobra.Command) {
 		Run: func(_ *cobra.Command, args []string) {
 			alias := args[0]
 			if err := config.SetDefaultWorkspace(alias); err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 				return
 			}
 			output.PrintJSON(map[string]any{"ok": true, "default_workspace": alias})
@@ -70,7 +70,7 @@ func registerWorkspaceRemove(workspace *cobra.Command) {
 			alias := args[0]
 			wasDefault := config.GetDefaultWorkspace() == alias
 			if err := config.RemoveWorkspace(alias); err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 				return
 			}
 			newDefault := config.GetDefaultWorkspace()

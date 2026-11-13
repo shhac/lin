@@ -19,7 +19,7 @@ func registerUpdateStatus(parent *cobra.Command) {
 		Run: func(cmd *cobra.Command, args []string) {
 			normalized, err := projectstatuses.Validate(args[1])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.WriteError(err)
 			}
 
 			client := linear.GetClient()
@@ -27,7 +27,7 @@ func registerUpdateStatus(parent *cobra.Command) {
 
 			resolved, err := resolvers.ResolveProject(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.ProjectUpdate(ctx, client, resolved.ID, linear.ProjectUpdateInput{

@@ -46,7 +46,7 @@ func registerSimpleInitiativeUpdate(parent *cobra.Command, use, short string, bu
 
 			resolved, err := resolvers.ResolveInitiative(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.InitiativeUpdate(ctx, client, resolved.ID, buildInput(args[1]))

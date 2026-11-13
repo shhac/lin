@@ -26,7 +26,7 @@ func registerArchive(parent *cobra.Command) {
 
 			resolved, err := resolvers.ResolveInitiative(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.InitiativeArchive(context.Background(), client, resolved.ID)
@@ -51,7 +51,7 @@ func registerUnarchive(parent *cobra.Command) {
 
 			resolved, err := resolvers.ResolveInitiative(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.InitiativeUnarchive(context.Background(), client, resolved.ID)
@@ -79,7 +79,7 @@ func registerDelete(parent *cobra.Command) {
 
 			resolved, err := resolvers.ResolveInitiative(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.InitiativeDelete(context.Background(), client, resolved.ID)

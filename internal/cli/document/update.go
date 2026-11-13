@@ -42,7 +42,7 @@ func registerSimpleDocumentUpdate(parent *cobra.Command, use, short string, buil
 
 			doc, err := resolvers.ResolveDocument(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.DocumentUpdate(ctx, client, doc.ID, buildInput(args[1]))
@@ -66,12 +66,12 @@ func registerUpdateProject(parent *cobra.Command) {
 
 			doc, err := resolvers.ResolveDocument(client, args[0])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resolved, err := resolvers.ResolveProject(client, args[1])
 			if err != nil {
-				output.PrintError(err.Error())
+				output.HandleGraphQLError(err)
 			}
 
 			resp, err := linear.DocumentUpdate(ctx, client, doc.ID, linear.DocumentUpdateInput{
