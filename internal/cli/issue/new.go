@@ -128,9 +128,9 @@ func parsePriority(s string) (*int, error) {
 	if s == "" {
 		return nil, nil
 	}
-	p, ok := priorities.Resolve(s)
-	if !ok {
-		return nil, apierrors.Newf(apierrors.FixableByAgent, "invalid priority: %q, valid values: %s", s, priorities.Values)
+	p, err := priorities.Validate(s)
+	if err != nil {
+		return nil, err
 	}
 	return &p, nil
 }

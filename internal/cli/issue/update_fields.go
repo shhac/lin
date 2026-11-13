@@ -56,9 +56,9 @@ func assigneeInput(_ context.Context, client graphql.Client, _, value string) (l
 }
 
 func priorityInput(_ context.Context, _ graphql.Client, _, value string) (linear.IssueUpdateInput, error) {
-	p, ok := priorities.Resolve(value)
-	if !ok {
-		return linear.IssueUpdateInput{}, apierrors.Newf(apierrors.FixableByAgent, "invalid priority: %q, valid values: %s", value, priorities.Values)
+	p, err := priorities.Validate(value)
+	if err != nil {
+		return linear.IssueUpdateInput{}, err
 	}
 	return linear.IssueUpdateInput{Priority: &p}, nil
 }

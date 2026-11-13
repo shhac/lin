@@ -1,6 +1,10 @@
 package priorities
 
-import "strings"
+import (
+	"strings"
+
+	apierrors "github.com/shhac/lin/internal/errors"
+)
 
 var Map = map[string]int{
 	"none":   0,
@@ -16,4 +20,14 @@ const Values = "none | urgent | high | medium | low"
 func Resolve(input string) (int, bool) {
 	p, ok := Map[strings.ToLower(input)]
 	return p, ok
+}
+
+// Validate resolves a priority name, or returns the invalid-choice error every
+// command reports for one.
+func Validate(input string) (int, error) {
+	p, ok := Resolve(input)
+	if !ok {
+		return 0, apierrors.Newf(apierrors.FixableByAgent, "invalid priority: %q, valid values: %s", input, Values)
+	}
+	return p, nil
 }

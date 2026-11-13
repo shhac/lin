@@ -1,6 +1,9 @@
 package priorities
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestResolve_ValidPriorities(t *testing.T) {
 	tests := []struct {
@@ -59,5 +62,15 @@ func TestMap_AllPresent(t *testing.T) {
 	}
 	if len(Map) != len(expected) {
 		t.Errorf("Map has %d entries, expected %d", len(Map), len(expected))
+	}
+}
+
+func TestValidate(t *testing.T) {
+	if p, err := Validate("High"); err != nil || p != 2 {
+		t.Errorf("Validate(High) = %d, %v", p, err)
+	}
+	_, err := Validate("bogus")
+	if err == nil || !strings.Contains(err.Error(), `invalid priority: "bogus", valid values: none | urgent | high | medium | low`) {
+		t.Errorf("Validate(bogus) err = %v", err)
 	}
 }

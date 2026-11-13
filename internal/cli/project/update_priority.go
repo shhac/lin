@@ -18,9 +18,9 @@ func registerUpdatePriority(parent *cobra.Command) {
 		Short: "Update project priority",
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
-			p, ok := priorities.Resolve(args[1])
-			if !ok {
-				output.PrintErrorf("Invalid priority: %q. Valid values: %s", args[1], priorities.Values)
+			p, err := priorities.Validate(args[1])
+			if err != nil {
+				output.WriteError(err)
 			}
 
 			client := linear.GetClient()
