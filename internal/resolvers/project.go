@@ -31,13 +31,14 @@ func ResolveProject(client graphql.Client, input string) (ResolvedProject, error
 	if err != nil {
 		return ResolvedProject{}, err
 	}
-	match, matches, kind := matchByNameOrID(input, listResp.Projects.Nodes,
+	matches := matchByNameOrID(input, listResp.Projects.Nodes,
 		func(p linear.ProjectListProjectsProjectConnectionNodesProject) string { return p.SlugId },
 		func(p linear.ProjectListProjectsProjectConnectionNodesProject) string { return p.Name })
-	switch kind {
-	case matchFound:
+	switch len(matches) {
+	case 1:
+		match := matches[0]
 		return ResolvedProject{ID: match.Id, Name: match.Name, SlugId: match.SlugId}, nil
-	case matchNone:
+	case 0:
 		return ResolvedProject{}, apierrors.Newf(apierrors.FixableByAgent, "project not found: %q, provide a UUID, slug ID, or exact name", input)
 	default:
 		parts := make([]string, len(matches))

@@ -59,13 +59,14 @@ func fetchProjectLabels(client graphql.Client) ([]ResolvedProjectLabel, error) {
 }
 
 func resolveOneProjectLabel(input string, labels []ResolvedProjectLabel) (ResolvedProjectLabel, error) {
-	match, matches, kind := matchByNameOrID(input, labels,
+	matches := matchByNameOrID(input, labels,
 		func(l ResolvedProjectLabel) string { return l.ID },
 		func(l ResolvedProjectLabel) string { return l.Name })
-	switch kind {
-	case matchFound:
+	switch len(matches) {
+	case 1:
+		match := matches[0]
 		return match, nil
-	case matchNone:
+	case 0:
 		names := make([]string, len(labels))
 		for i, l := range labels {
 			names[i] = l.Name

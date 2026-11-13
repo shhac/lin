@@ -35,26 +35,32 @@ func ResolveInitiative(client graphql.Client, input string) (ResolvedInitiative,
 	if err != nil {
 		return ResolvedInitiative{}, err
 	}
-	match, matches, kind := matchByNameOrID(input, initiatives,
+	matches := matchByNameOrID(input, initiatives,
 		func(i linear.InitiativeListInitiativesInitiativeConnectionNodesInitiative) string { return i.SlugId },
 		func(i linear.InitiativeListInitiativesInitiativeConnectionNodesInitiative) string { return i.Name })
-	switch kind {
-	case matchFound:
+	switch len(matches) {
+	case 1:
+		match := matches[0]
 		return ResolvedInitiative{ID: match.Id, Name: match.Name, SlugId: match.SlugId}, nil
-	case matchAmbiguous:
+	case 0:
+		return ResolvedInitiative{}, initiativeNotFoundErr(input, initiatives)
+	default:
 		parts := make([]string, len(matches))
 		for i, m := range matches {
 			parts[i] = fmt.Sprintf("%s (slug: %s)", m.Name, m.SlugId)
 		}
 		return ResolvedInitiative{}, ambiguousErr("initiative", "initiatives", input, parts, "use the slug ID or UUID")
 	}
-	var names []string
-	for _, i := range initiatives {
-		names = append(names, fmt.Sprintf("%s (%s)", i.Name, i.SlugId))
+}
+
+func initiativeNotFoundErr(input string, initiatives []linear.InitiativeListInitiativesInitiativeConnectionNodesInitiative) error {
+	names := make([]string, len(initiatives))
+	for i, in := range initiatives {
+		names[i] = fmt.Sprintf("%s (%s)", in.Name, in.SlugId)
 	}
 	hint := "none"
 	if len(names) > 0 {
 		hint = formatChoices(names)
 	}
-	return ResolvedInitiative{}, apierrors.Newf(apierrors.FixableByAgent, "initiative not found: %q, known initiatives: %s, provide a UUID, slug ID, or exact name", input, hint)
+	return apierrors.Newf(apierrors.FixableByAgent, "initiative not found: %q, known initiatives: %s, provide a UUID, slug ID, or exact name", input, hint)
 }

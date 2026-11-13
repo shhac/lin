@@ -23,23 +23,13 @@ func emptyInputErr(noun string) error {
 	return apierrors.Newf(apierrors.FixableByAgent, "%s must not be empty", noun)
 }
 
-// matchKind is the outcome of matchByNameOrID.
-type matchKind int
-
-const (
-	matchFound matchKind = iota
-	matchNone
-	matchAmbiguous
-)
-
-// matchByNameOrID finds the item whose id equals input, else the item(s) whose
-// name matches input case-insensitively. It returns the single match (kind
-// matchFound), the ambiguous set (matchAmbiguous), or nothing (matchNone) — the
-// shared resolution shape for name-or-UUID lookups over an already-fetched set.
-func matchByNameOrID[T any](input string, items []T, id, name func(T) string) (match T, ambiguous []T, kind matchKind) {
+// matchByNameOrID returns the item whose id equals input, else every item
+// whose name matches input case-insensitively: one match resolves, none is
+// not-found, and several are ambiguous.
+func matchByNameOrID[T any](input string, items []T, id, name func(T) string) []T {
 	for _, it := range items {
 		if id(it) == input {
-			return it, nil, matchFound
+			return []T{it}
 		}
 	}
 	lower := strings.ToLower(input)
@@ -49,16 +39,7 @@ func matchByNameOrID[T any](input string, items []T, id, name func(T) string) (m
 			matches = append(matches, it)
 		}
 	}
-	switch len(matches) {
-	case 1:
-		return matches[0], nil, matchFound
-	case 0:
-		var zero T
-		return zero, nil, matchNone
-	default:
-		var zero T
-		return zero, matches, matchAmbiguous
-	}
+	return matches
 }
 
 // labelNotFoundErr builds the shared "<noun> not found" error for the label

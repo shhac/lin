@@ -32,13 +32,14 @@ func ResolveCustomer(client graphql.Client, input string) (ResolvedCustomer, err
 	if err != nil {
 		return ResolvedCustomer{}, err
 	}
-	match, matches, kind := matchByNameOrID(input, listResp.Customers.Nodes,
+	matches := matchByNameOrID(input, listResp.Customers.Nodes,
 		func(c linear.CustomerListCustomersCustomerConnectionNodesCustomer) string { return c.SlugId },
 		func(c linear.CustomerListCustomersCustomerConnectionNodesCustomer) string { return c.Name })
-	switch kind {
-	case matchFound:
+	switch len(matches) {
+	case 1:
+		match := matches[0]
 		return ResolvedCustomer{ID: match.Id, Name: match.Name, SlugId: match.SlugId}, nil
-	case matchNone:
+	case 0:
 		return ResolvedCustomer{}, apierrors.Newf(apierrors.FixableByAgent, "customer not found: %q, provide a UUID, slug ID, or exact name", input)
 	default:
 		parts := make([]string, len(matches))

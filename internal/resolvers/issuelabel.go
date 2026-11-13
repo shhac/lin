@@ -98,13 +98,14 @@ func teamKeyOfIssueLabel(l linear.IssueLabelFields) string {
 }
 
 func resolveOneIssueLabel(input string, labels []ResolvedIssueLabel, teamScoped bool) (ResolvedIssueLabel, error) {
-	match, matches, kind := matchByNameOrID(input, labels,
+	matches := matchByNameOrID(input, labels,
 		func(l ResolvedIssueLabel) string { return l.ID },
 		func(l ResolvedIssueLabel) string { return l.Name })
-	switch kind {
-	case matchFound:
+	switch len(matches) {
+	case 1:
+		match := matches[0]
 		return match, nil
-	case matchNone:
+	case 0:
 		names := make([]string, len(labels))
 		for i, l := range labels {
 			names[i] = l.Name
