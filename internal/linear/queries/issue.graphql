@@ -192,6 +192,7 @@ mutation IssueCreate($input: IssueCreateInput!) {
 mutation IssueUpdate($id: String!, $input: IssueUpdateInput!) {
   issueUpdate(id: $id, input: $input) {
     success
+    issue { ...IssueUpdateResultFields }
   }
 }
 

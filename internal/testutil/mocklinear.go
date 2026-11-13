@@ -17,8 +17,9 @@ var opNameRE = regexp.MustCompile(`(?:query|mutation)\s+(\w+)`)
 // Operations are matched by extracting the operation name from the query.
 type MockLinear struct {
 	Server   *httptest.Server
-	mu       sync.RWMutex
-	handlers map[string]any
+	mu        sync.RWMutex
+	handlers  map[string]any
+	variables map[string]map[string]any
 }
 
 type graphqlRequest struct {
@@ -29,7 +30,8 @@ type graphqlRequest struct {
 
 func NewMockLinear() *MockLinear {
 	m := &MockLinear{
-		handlers: make(map[string]any),
+		handlers:  make(map[string]any),
+		variables: make(map[string]map[string]any),
 	}
 	m.Server = httptest.NewServer(http.HandlerFunc(m.handle))
 	return m
@@ -40,6 +42,15 @@ func (m *MockLinear) Handle(operationName string, response any) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	m.handlers[operationName] = response
+}
+
+// Variables returns the variables of the most recent request for an
+// operation, as decoded from the wire — so an explicit null shows up as a
+// present key with a nil value, distinct from an omitted key.
+func (m *MockLinear) Variables(operationName string) map[string]any {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return m.variables[operationName]
 }
 
 // Client returns a genqlient graphql.Client pointing at the mock server.
@@ -71,9 +82,10 @@ func (m *MockLinear) handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m.mu.RLock()
+	m.mu.Lock()
+	m.variables[opName] = req.Variables
 	handler, ok := m.handlers[opName]
-	m.mu.RUnlock()
+	m.mu.Unlock()
 
 	if !ok {
 		writeGraphQLError(w, fmt.Sprintf("no handler for operation: %s", opName))

@@ -104,3 +104,17 @@ fragment CustomerNeedSummaryFields on CustomerNeed {
   issue { identifier title }
   project { id name }
 }
+
+fragment IssueUpdateResultFields on Issue {
+  identifier
+  title
+  priorityLabel
+  estimate
+  dueDate
+  state { id name type }
+  assignee { id name }
+  project { id name }
+  cycle { id number name }
+  parent { id identifier }
+  labels { nodes { id name } }
+}

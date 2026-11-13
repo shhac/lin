@@ -9849,10 +9849,154 @@ func (v *IssueUpdateInput) GetAutoClosedByParentClosing() *bool { return v.AutoC
 type IssueUpdateIssueUpdateIssuePayload struct {
 	// Whether the operation was successful.
 	Success bool `json:"success"`
+	// The issue that was created or updated.
+	Issue *IssueUpdateIssueUpdateIssuePayloadIssue `json:"issue,omitempty"`
 }
 
 // GetSuccess returns IssueUpdateIssueUpdateIssuePayload.Success, and is useful for accessing the field via an interface.
 func (v *IssueUpdateIssueUpdateIssuePayload) GetSuccess() bool { return v.Success }
+
+// GetIssue returns IssueUpdateIssueUpdateIssuePayload.Issue, and is useful for accessing the field via an interface.
+func (v *IssueUpdateIssueUpdateIssuePayload) GetIssue() *IssueUpdateIssueUpdateIssuePayloadIssue {
+	return v.Issue
+}
+
+// IssueUpdateIssueUpdateIssuePayloadIssue includes the requested fields of the GraphQL type Issue.
+// The GraphQL type's documentation follows.
+//
+// An issue is the core work item in Linear. Issues belong to a team, have a workflow status, can be assigned to users, carry a priority level, and can be organized into projects and cycles. Issues support sub-issues (parent-child hierarchy up to 10 levels deep), labels, due dates, estimates, and SLA tracking. They can also be linked to other issues via relations, attached to releases, and tracked through their full history of changes.
+type IssueUpdateIssueUpdateIssuePayloadIssue struct {
+	IssueUpdateResultFields `json:"-"`
+}
+
+// GetIdentifier returns IssueUpdateIssueUpdateIssuePayloadIssue.Identifier, and is useful for accessing the field via an interface.
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) GetIdentifier() string {
+	return v.IssueUpdateResultFields.Identifier
+}
+
+// GetTitle returns IssueUpdateIssueUpdateIssuePayloadIssue.Title, and is useful for accessing the field via an interface.
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) GetTitle() string {
+	return v.IssueUpdateResultFields.Title
+}
+
+// GetPriorityLabel returns IssueUpdateIssueUpdateIssuePayloadIssue.PriorityLabel, and is useful for accessing the field via an interface.
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) GetPriorityLabel() string {
+	return v.IssueUpdateResultFields.PriorityLabel
+}
+
+// GetEstimate returns IssueUpdateIssueUpdateIssuePayloadIssue.Estimate, and is useful for accessing the field via an interface.
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) GetEstimate() *float64 {
+	return v.IssueUpdateResultFields.Estimate
+}
+
+// GetDueDate returns IssueUpdateIssueUpdateIssuePayloadIssue.DueDate, and is useful for accessing the field via an interface.
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) GetDueDate() *string {
+	return v.IssueUpdateResultFields.DueDate
+}
+
+// GetState returns IssueUpdateIssueUpdateIssuePayloadIssue.State, and is useful for accessing the field via an interface.
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) GetState() IssueUpdateResultFieldsStateWorkflowState {
+	return v.IssueUpdateResultFields.State
+}
+
+// GetAssignee returns IssueUpdateIssueUpdateIssuePayloadIssue.Assignee, and is useful for accessing the field via an interface.
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) GetAssignee() *IssueUpdateResultFieldsAssigneeUser {
+	return v.IssueUpdateResultFields.Assignee
+}
+
+// GetProject returns IssueUpdateIssueUpdateIssuePayloadIssue.Project, and is useful for accessing the field via an interface.
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) GetProject() *IssueUpdateResultFieldsProject {
+	return v.IssueUpdateResultFields.Project
+}
+
+// GetCycle returns IssueUpdateIssueUpdateIssuePayloadIssue.Cycle, and is useful for accessing the field via an interface.
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) GetCycle() *IssueUpdateResultFieldsCycle {
+	return v.IssueUpdateResultFields.Cycle
+}
+
+// GetParent returns IssueUpdateIssueUpdateIssuePayloadIssue.Parent, and is useful for accessing the field via an interface.
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) GetParent() *IssueUpdateResultFieldsParentIssue {
+	return v.IssueUpdateResultFields.Parent
+}
+
+// GetLabels returns IssueUpdateIssueUpdateIssuePayloadIssue.Labels, and is useful for accessing the field via an interface.
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) GetLabels() IssueUpdateResultFieldsLabelsIssueLabelConnection {
+	return v.IssueUpdateResultFields.Labels
+}
+
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) UnmarshalJSON(b []byte) error {
+
+	if string(b) == "null" {
+		return nil
+	}
+
+	var firstPass struct {
+		*IssueUpdateIssueUpdateIssuePayloadIssue
+		graphql.NoUnmarshalJSON
+	}
+	firstPass.IssueUpdateIssueUpdateIssuePayloadIssue = v
+
+	err := json.Unmarshal(b, &firstPass)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(
+		b, &v.IssueUpdateResultFields)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type __premarshalIssueUpdateIssueUpdateIssuePayloadIssue struct {
+	Identifier string `json:"identifier"`
+
+	Title string `json:"title"`
+
+	PriorityLabel string `json:"priorityLabel"`
+
+	Estimate *float64 `json:"estimate,omitempty"`
+
+	DueDate *string `json:"dueDate,omitempty"`
+
+	State IssueUpdateResultFieldsStateWorkflowState `json:"state"`
+
+	Assignee *IssueUpdateResultFieldsAssigneeUser `json:"assignee,omitempty"`
+
+	Project *IssueUpdateResultFieldsProject `json:"project,omitempty"`
+
+	Cycle *IssueUpdateResultFieldsCycle `json:"cycle,omitempty"`
+
+	Parent *IssueUpdateResultFieldsParentIssue `json:"parent,omitempty"`
+
+	Labels IssueUpdateResultFieldsLabelsIssueLabelConnection `json:"labels"`
+}
+
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) MarshalJSON() ([]byte, error) {
+	premarshaled, err := v.__premarshalJSON()
+	if err != nil {
+		return nil, err
+	}
+	return json.Marshal(premarshaled)
+}
+
+func (v *IssueUpdateIssueUpdateIssuePayloadIssue) __premarshalJSON() (*__premarshalIssueUpdateIssueUpdateIssuePayloadIssue, error) {
+	var retval __premarshalIssueUpdateIssueUpdateIssuePayloadIssue
+
+	retval.Identifier = v.IssueUpdateResultFields.Identifier
+	retval.Title = v.IssueUpdateResultFields.Title
+	retval.PriorityLabel = v.IssueUpdateResultFields.PriorityLabel
+	retval.Estimate = v.IssueUpdateResultFields.Estimate
+	retval.DueDate = v.IssueUpdateResultFields.DueDate
+	retval.State = v.IssueUpdateResultFields.State
+	retval.Assignee = v.IssueUpdateResultFields.Assignee
+	retval.Project = v.IssueUpdateResultFields.Project
+	retval.Cycle = v.IssueUpdateResultFields.Cycle
+	retval.Parent = v.IssueUpdateResultFields.Parent
+	retval.Labels = v.IssueUpdateResultFields.Labels
+	return &retval, nil
+}
 
 // IssueUpdateResponse is returned by IssueUpdate on success.
 type IssueUpdateResponse struct {
@@ -9864,6 +10008,200 @@ type IssueUpdateResponse struct {
 func (v *IssueUpdateResponse) GetIssueUpdate() IssueUpdateIssueUpdateIssuePayload {
 	return v.IssueUpdate
 }
+
+// IssueUpdateResultFields includes the GraphQL fields of Issue requested by the fragment IssueUpdateResultFields.
+// The GraphQL type's documentation follows.
+//
+// An issue is the core work item in Linear. Issues belong to a team, have a workflow status, can be assigned to users, carry a priority level, and can be organized into projects and cycles. Issues support sub-issues (parent-child hierarchy up to 10 levels deep), labels, due dates, estimates, and SLA tracking. They can also be linked to other issues via relations, attached to releases, and tracked through their full history of changes.
+type IssueUpdateResultFields struct {
+	// Issue's human readable identifier (e.g. ENG-123).
+	Identifier string `json:"identifier"`
+	// The issue's title. This is the primary human-readable summary of the work item.
+	Title string `json:"title"`
+	// Label for the priority.
+	PriorityLabel string `json:"priorityLabel"`
+	// The estimate of the complexity of the issue. The specific scale used depends on the team's estimation configuration (e.g., points, T-shirt sizes). Null if no estimate has been set.
+	Estimate *float64 `json:"estimate,omitempty"`
+	// The date at which the issue is due.
+	DueDate *string `json:"dueDate,omitempty"`
+	// The workflow state (issue status) that the issue is currently in. Workflow states represent the issue's progress through the team's workflow, such as Triage, Todo, In Progress, Done, or Canceled.
+	State IssueUpdateResultFieldsStateWorkflowState `json:"state"`
+	// The user to whom the issue is assigned. Null if the issue is unassigned.
+	Assignee *IssueUpdateResultFieldsAssigneeUser `json:"assignee,omitempty"`
+	// The project that the issue is associated with. Null if the issue is not part of any project.
+	Project *IssueUpdateResultFieldsProject `json:"project,omitempty"`
+	// The cycle that the issue is associated with. Null if the issue is not part of any cycle.
+	Cycle *IssueUpdateResultFieldsCycle `json:"cycle,omitempty"`
+	// The parent of the issue.
+	Parent *IssueUpdateResultFieldsParentIssue `json:"parent,omitempty"`
+	// Labels associated with this issue.
+	Labels IssueUpdateResultFieldsLabelsIssueLabelConnection `json:"labels"`
+}
+
+// GetIdentifier returns IssueUpdateResultFields.Identifier, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFields) GetIdentifier() string { return v.Identifier }
+
+// GetTitle returns IssueUpdateResultFields.Title, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFields) GetTitle() string { return v.Title }
+
+// GetPriorityLabel returns IssueUpdateResultFields.PriorityLabel, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFields) GetPriorityLabel() string { return v.PriorityLabel }
+
+// GetEstimate returns IssueUpdateResultFields.Estimate, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFields) GetEstimate() *float64 { return v.Estimate }
+
+// GetDueDate returns IssueUpdateResultFields.DueDate, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFields) GetDueDate() *string { return v.DueDate }
+
+// GetState returns IssueUpdateResultFields.State, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFields) GetState() IssueUpdateResultFieldsStateWorkflowState {
+	return v.State
+}
+
+// GetAssignee returns IssueUpdateResultFields.Assignee, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFields) GetAssignee() *IssueUpdateResultFieldsAssigneeUser {
+	return v.Assignee
+}
+
+// GetProject returns IssueUpdateResultFields.Project, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFields) GetProject() *IssueUpdateResultFieldsProject { return v.Project }
+
+// GetCycle returns IssueUpdateResultFields.Cycle, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFields) GetCycle() *IssueUpdateResultFieldsCycle { return v.Cycle }
+
+// GetParent returns IssueUpdateResultFields.Parent, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFields) GetParent() *IssueUpdateResultFieldsParentIssue { return v.Parent }
+
+// GetLabels returns IssueUpdateResultFields.Labels, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFields) GetLabels() IssueUpdateResultFieldsLabelsIssueLabelConnection {
+	return v.Labels
+}
+
+// IssueUpdateResultFieldsAssigneeUser includes the requested fields of the GraphQL type User.
+// The GraphQL type's documentation follows.
+//
+// A user that belongs to a workspace. Users can have different roles (admin, member, guest, or app) that determine their level of access. Users can be members of multiple teams, and can be active or deactivated. Guest users have limited access scoped to specific teams they are invited to.
+type IssueUpdateResultFieldsAssigneeUser struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The user's full name.
+	Name string `json:"name"`
+}
+
+// GetId returns IssueUpdateResultFieldsAssigneeUser.Id, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsAssigneeUser) GetId() string { return v.Id }
+
+// GetName returns IssueUpdateResultFieldsAssigneeUser.Name, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsAssigneeUser) GetName() string { return v.Name }
+
+// IssueUpdateResultFieldsCycle includes the requested fields of the GraphQL type Cycle.
+// The GraphQL type's documentation follows.
+//
+// A time-boxed iteration (similar to a sprint) used for planning and tracking work. Cycles belong to a team and have defined start and end dates. Issues are assigned to cycles for time-based planning, and progress is tracked via completed, in-progress, and total scope. Cycles are automatically completed when their end date passes, and uncompleted issues can be carried over to the next cycle.
+type IssueUpdateResultFieldsCycle struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The auto-incrementing number of the cycle, unique within its team. This value is assigned automatically by the database and cannot be set on creation.
+	Number float64 `json:"number"`
+	// The custom name of the cycle. If not set, the cycle is displayed using its number (e.g., "Cycle 5").
+	Name *string `json:"name,omitempty"`
+}
+
+// GetId returns IssueUpdateResultFieldsCycle.Id, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsCycle) GetId() string { return v.Id }
+
+// GetNumber returns IssueUpdateResultFieldsCycle.Number, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsCycle) GetNumber() float64 { return v.Number }
+
+// GetName returns IssueUpdateResultFieldsCycle.Name, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsCycle) GetName() *string { return v.Name }
+
+// IssueUpdateResultFieldsLabelsIssueLabelConnection includes the requested fields of the GraphQL type IssueLabelConnection.
+type IssueUpdateResultFieldsLabelsIssueLabelConnection struct {
+	Nodes []IssueUpdateResultFieldsLabelsIssueLabelConnectionNodesIssueLabel `json:"nodes,omitempty"`
+}
+
+// GetNodes returns IssueUpdateResultFieldsLabelsIssueLabelConnection.Nodes, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsLabelsIssueLabelConnection) GetNodes() []IssueUpdateResultFieldsLabelsIssueLabelConnectionNodesIssueLabel {
+	return v.Nodes
+}
+
+// IssueUpdateResultFieldsLabelsIssueLabelConnectionNodesIssueLabel includes the requested fields of the GraphQL type IssueLabel.
+// The GraphQL type's documentation follows.
+//
+// Labels that can be associated with issues. Labels help categorize and filter issues across a workspace. They can be workspace-level (shared across all teams) or team-scoped. Labels have a color for visual identification and can be organized hierarchically into groups, where a parent label acts as a group containing child labels. Labels may also be inherited from parent teams to sub-teams.
+type IssueUpdateResultFieldsLabelsIssueLabelConnectionNodesIssueLabel struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The label's name.
+	Name string `json:"name"`
+}
+
+// GetId returns IssueUpdateResultFieldsLabelsIssueLabelConnectionNodesIssueLabel.Id, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsLabelsIssueLabelConnectionNodesIssueLabel) GetId() string {
+	return v.Id
+}
+
+// GetName returns IssueUpdateResultFieldsLabelsIssueLabelConnectionNodesIssueLabel.Name, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsLabelsIssueLabelConnectionNodesIssueLabel) GetName() string {
+	return v.Name
+}
+
+// IssueUpdateResultFieldsParentIssue includes the requested fields of the GraphQL type Issue.
+// The GraphQL type's documentation follows.
+//
+// An issue is the core work item in Linear. Issues belong to a team, have a workflow status, can be assigned to users, carry a priority level, and can be organized into projects and cycles. Issues support sub-issues (parent-child hierarchy up to 10 levels deep), labels, due dates, estimates, and SLA tracking. They can also be linked to other issues via relations, attached to releases, and tracked through their full history of changes.
+type IssueUpdateResultFieldsParentIssue struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// Issue's human readable identifier (e.g. ENG-123).
+	Identifier string `json:"identifier"`
+}
+
+// GetId returns IssueUpdateResultFieldsParentIssue.Id, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsParentIssue) GetId() string { return v.Id }
+
+// GetIdentifier returns IssueUpdateResultFieldsParentIssue.Identifier, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsParentIssue) GetIdentifier() string { return v.Identifier }
+
+// IssueUpdateResultFieldsProject includes the requested fields of the GraphQL type Project.
+// The GraphQL type's documentation follows.
+//
+// A project is a collection of issues working toward a shared goal. Projects have start and target dates, milestones, status tracking, and progress metrics. They can span multiple teams and be grouped under initiatives.
+type IssueUpdateResultFieldsProject struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The name of the project.
+	Name string `json:"name"`
+}
+
+// GetId returns IssueUpdateResultFieldsProject.Id, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsProject) GetId() string { return v.Id }
+
+// GetName returns IssueUpdateResultFieldsProject.Name, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsProject) GetName() string { return v.Name }
+
+// IssueUpdateResultFieldsStateWorkflowState includes the requested fields of the GraphQL type WorkflowState.
+// The GraphQL type's documentation follows.
+//
+// A state in a team's workflow, representing an issue status such as Triage, Backlog, Todo, In Progress, In Review, Done, or Canceled. Each team has its own set of workflow states that define the progression of issues through the team's process. Workflow states have a type that categorizes them (triage, backlog, unstarted, started, completed, canceled), a position that determines their display order, and a color for visual identification. States can be inherited from parent teams to sub-teams.
+type IssueUpdateResultFieldsStateWorkflowState struct {
+	// The unique identifier of the entity.
+	Id string `json:"id"`
+	// The state's human-readable name (e.g., 'In Progress', 'Done', 'Backlog').
+	Name string `json:"name"`
+	// The type of the state. One of "triage", "backlog", "unstarted", "started", "completed", "canceled", "duplicate".
+	Type string `json:"type"`
+}
+
+// GetId returns IssueUpdateResultFieldsStateWorkflowState.Id, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsStateWorkflowState) GetId() string { return v.Id }
+
+// GetName returns IssueUpdateResultFieldsStateWorkflowState.Name, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsStateWorkflowState) GetName() string { return v.Name }
+
+// GetType returns IssueUpdateResultFieldsStateWorkflowState.Type, and is useful for accessing the field via an interface.
+func (v *IssueUpdateResultFieldsStateWorkflowState) GetType() string { return v.Type }
 
 // Comment filtering options.
 type NullableCommentFilter struct {
@@ -20463,6 +20801,44 @@ const IssueUpdate_Operation = `
 mutation IssueUpdate ($id: String!, $input: IssueUpdateInput!) {
 	issueUpdate(id: $id, input: $input) {
 		success
+		issue {
+			... IssueUpdateResultFields
+		}
+	}
+}
+fragment IssueUpdateResultFields on Issue {
+	identifier
+	title
+	priorityLabel
+	estimate
+	dueDate
+	state {
+		id
+		name
+		type
+	}
+	assignee {
+		id
+		name
+	}
+	project {
+		id
+		name
+	}
+	cycle {
+		id
+		number
+		name
+	}
+	parent {
+		id
+		identifier
+	}
+	labels {
+		nodes {
+			id
+			name
+		}
 	}
 }
 `
