@@ -1,8 +1,6 @@
 package configcmd
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 
 	"github.com/shhac/lin/internal/config"
@@ -18,7 +16,7 @@ func registerSet(cfg *cobra.Command) {
 			key, value := args[0], args[1]
 			def, ok := settingDefs[key]
 			if !ok {
-				output.PrintError(fmt.Sprintf("Unknown setting: %s. Valid keys: %s", key, validKeysStr()))
+				output.PrintErrorf("Unknown setting: %s. Valid keys: %s", key, validKeysStr())
 				return
 			}
 

@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/spf13/cobra"
 
@@ -40,7 +39,7 @@ func registerQuery(apiCmd *cobra.Command) {
 			var vars any
 			if variables != "" {
 				if err := json.Unmarshal([]byte(variables), &vars); err != nil {
-					output.PrintError(fmt.Sprintf("Invalid --variables JSON: %s", err.Error()))
+					output.PrintErrorf("Invalid --variables JSON: %s", err.Error())
 					return
 				}
 			}

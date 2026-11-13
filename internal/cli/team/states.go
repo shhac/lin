@@ -2,7 +2,6 @@ package team
 
 import (
 	"context"
-	"fmt"
 	"sort"
 
 	"github.com/spf13/cobra"
@@ -37,7 +36,7 @@ func registerStates(team *cobra.Command) {
 
 			nodes := resp.WorkflowStates.Nodes
 			if len(nodes) == 0 {
-				output.PrintError(fmt.Sprintf("No workflow states found for team %q.", teamInput))
+				output.PrintErrorf("No workflow states found for team %q.", teamInput)
 			}
 
 			sort.Slice(nodes, func(i, j int) bool {

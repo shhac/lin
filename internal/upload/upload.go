@@ -110,13 +110,14 @@ func httpPutWithHeaders(url string, body io.Reader, contentLength int64, content
 	responseBody, _ := io.ReadAll(io.LimitReader(resp.Body, 4*1024))
 	_, _ = io.Copy(io.Discard, resp.Body)
 
-	if resp.StatusCode >= 300 {
-		if len(responseBody) > 0 {
-			return apierrors.Newf(apierrors.FixableByStatus(resp.StatusCode), "%s: %s", resp.Status, strings.TrimSpace(string(responseBody)))
-		}
-		return apierrors.Newf(apierrors.FixableByStatus(resp.StatusCode), "%s", resp.Status)
+	if resp.StatusCode < 300 {
+		return nil
 	}
-	return nil
+	msg := resp.Status
+	if body := strings.TrimSpace(string(responseBody)); body != "" {
+		msg += ": " + body
+	}
+	return apierrors.New(msg, apierrors.FixableByStatus(resp.StatusCode))
 }
 
 func FormatFileMarkdown(files []UploadedFile) string {

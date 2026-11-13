@@ -33,6 +33,9 @@ func TestSetOwner_EchoesTheOwnerLinearReports(t *testing.T) {
 	if !reflect.DeepEqual(got, want) {
 		t.Errorf("result = %#v, want %#v", got, want)
 	}
+	if input := mock.Variables("InitiativeUpdate")["input"]; !reflect.DeepEqual(input, map[string]any{"ownerId": "u-1"}) {
+		t.Errorf("input = %#v", input)
+	}
 }
 
 func TestClearOwner_SendsNullAndReportsCleared(t *testing.T) {
