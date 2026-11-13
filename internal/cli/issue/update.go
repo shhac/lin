@@ -24,8 +24,10 @@ type fieldUpdate struct {
 	key string
 	// clear, when set, enables --clear and names the input field it empties.
 	clear linear.IssueClearField
-	input func(ctx context.Context, client graphql.Client, issueID, value string) (linear.IssueUpdateInput, error)
+	input fieldInput
 }
+
+type fieldInput = func(ctx context.Context, client graphql.Client, issueID, value string) (linear.IssueUpdateInput, error)
 
 func (f fieldUpdate) clearable() bool { return f.clear != "" }
 
@@ -141,15 +143,4 @@ func fieldUpdateResult(f fieldUpdate, payload linear.IssueUpdateIssueUpdateIssue
 	}
 	result["cleared"] = f.key
 	return result, nil
-}
-
-func resolveIssueTeamID(ctx context.Context, client graphql.Client, issueID string) (string, error) {
-	resp, err := linear.IssueTeam(ctx, client, issueID)
-	if err != nil {
-		return "", err
-	}
-	if resp.Issue.Team.Id == "" {
-		return "", apierrors.New("could not resolve team for this issue", apierrors.FixableByAgent)
-	}
-	return resp.Issue.Team.Id, nil
 }

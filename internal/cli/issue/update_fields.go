@@ -2,10 +2,12 @@ package issue
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/Khan/genqlient/graphql"
 
 	apierrors "github.com/shhac/lin/internal/errors"
+	"github.com/shhac/lin/internal/estimates"
 	"github.com/shhac/lin/internal/linear"
 	"github.com/shhac/lin/internal/priorities"
 	"github.com/shhac/lin/internal/resolvers"
@@ -26,8 +28,6 @@ func fieldUpdates() []fieldUpdate {
 		{name: "parent", arg: "parent-id", short: "Set parent issue (make sub-issue), or detach from parent", key: "parent", clear: linear.ClearParent, input: literalInput(func(v string) linear.IssueUpdateInput { return linear.IssueUpdateInput{ParentId: &v} })},
 	}
 }
-
-type fieldInput = func(ctx context.Context, client graphql.Client, issueID, value string) (linear.IssueUpdateInput, error)
 
 func literalInput(build func(string) linear.IssueUpdateInput) fieldInput {
 	return func(_ context.Context, _ graphql.Client, _, value string) (linear.IssueUpdateInput, error) {
@@ -81,4 +81,39 @@ func labelsInput(ctx context.Context, client graphql.Client, issueID, value stri
 		return linear.IssueUpdateInput{}, err
 	}
 	return linear.IssueUpdateInput{LabelIds: ids}, nil
+}
+
+func estimateInput(ctx context.Context, client graphql.Client, issueID, value string) (linear.IssueUpdateInput, error) {
+	est, err := strconv.Atoi(value)
+	if err != nil {
+		return linear.IssueUpdateInput{}, apierrors.Newf(apierrors.FixableByAgent, "invalid estimate: %q, must be a number", value)
+	}
+	teamID, err := resolveIssueTeamID(ctx, client, issueID)
+	if err != nil {
+		return linear.IssueUpdateInput{}, err
+	}
+	teamDetail, err := linear.TeamGet(ctx, client, teamID)
+	if err != nil {
+		return linear.IssueUpdateInput{}, err
+	}
+	cfg := estimates.Config{
+		Type:      teamDetail.Team.IssueEstimationType,
+		AllowZero: teamDetail.Team.IssueEstimationAllowZero,
+		Extended:  teamDetail.Team.IssueEstimationExtended,
+	}
+	if err := estimates.Validate(cfg, est); err != nil {
+		return linear.IssueUpdateInput{}, apierrors.Wrap(err, apierrors.FixableByAgent)
+	}
+	return linear.IssueUpdateInput{Estimate: &est}, nil
+}
+
+func resolveIssueTeamID(ctx context.Context, client graphql.Client, issueID string) (string, error) {
+	resp, err := linear.IssueTeam(ctx, client, issueID)
+	if err != nil {
+		return "", err
+	}
+	if resp.Issue.Team.Id == "" {
+		return "", apierrors.New("could not resolve team for this issue", apierrors.FixableByAgent)
+	}
+	return resp.Issue.Team.Id, nil
 }
